@@ -1,0 +1,33 @@
+#!/usr/env/bin fish
+
+alias __sc set_color
+
+set token (eval echo -- (commandline -t)) # expand vars & tidle
+set token (string unescape -- $token) # unescape to void compromise the path
+
+
+set header_msg (__sc brcyan)':: <'(__sc bryellow)'alt-i'(__sc brcyan)'> to' \
+    (__sc brred)'Exclude hidden files'
+
+set -a fzf_cmd \
+    --bind 'alt-i:reload:eval $find_cmd --no-ignore --no-ignore-vcs' \
+    --bind 'alt-i:+change-header:' \
+    --header "$header_msg"
+
+
+# If the current token is a directory and has a trailing slash,
+# then use it as fd's base directory.
+if [ -d "$token" ] && string match -q -- '*/' $token
+    $find_cmd --base-directory $token \
+        | $fzf_cmd --border-label " $token " \
+        | awk "{print $token\$1}" \
+        | read -f result
+    or return 1
+else
+    $find_cmd \
+        | $fzf_cmd --query "$token" --border-label " $(string replace $HOME '~' (pwd)) " \
+        | read -f result
+    or return 1
+end
+
+source (type --path __fzf_open_path) $result

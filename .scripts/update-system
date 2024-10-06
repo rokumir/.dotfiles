@@ -1,0 +1,15 @@
+#!/usr/bin/env fish
+
+# TODO:
+# - check for external lib packages
+# - add logs
+
+# System builtin package manager
+sudo pacman -Syu; or return
+
+# Rust package manager
+rustup update; or return
+cargo install-update -a; or return
+
+# NeoVim version manager
+bob update nightly; or return

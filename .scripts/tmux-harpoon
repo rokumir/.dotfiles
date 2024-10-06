@@ -1,0 +1,118 @@
+#!/usr/bin/env fish
+
+[ -z "$argv" ]; and return 1
+
+############################
+## Prequisites
+set editor nvim
+
+set cache_file $TMUX_HARPOON_CACHE_FILE
+[ -z "$cache_file" ]; and set cache_file (echo -- ~/.cache/tmux-harpoon-sessions)
+
+not [ -f $cache_file ]; and touch $cache_file
+
+
+############################
+## Helper Functions
+function add_bookmark
+    echo (_get_session_info) >>$cache_file
+    awk -i inplace '!seen[$0]++' $cache_file # de-duplicate
+    tmux display -d 1000 "Tracking session '#{session_name}'"
+end
+
+function edit_bookmarks
+    tmux popup -h 40% -w 60% -E "$SHELL -c '$editor $cache_file'"
+end
+
+function view_bookmarks
+    set -fa fzf_cmd \
+        --border-label (_c cyan)' Tmux Harpoon ' \
+        # crazy, IK
+        --header (_c -i cyan)':: <'(_c yellow)'ctrl-e'(_c cyan)'> to '(_c red)'Edit Bookmarks' \
+        --bind ctrl-e:become:'tmux-harpoon --edit'
+
+    begin
+        for info in (cat $cache_file)
+            string split = $info | read -L name path
+
+            set item \
+                (_c -o magenta)$name \
+                (_c -io brblack)(string replace $HOME '~' $path) \
+                $indicator
+
+            if _is_attached $name $path
+                set -a item (_c -o yellow)
+            else if _has_session $name $path
+            else
+                set item '\e[9m'(string join -n '\e[9m ' $item)
+            end
+
+            echo -e $item(_c normal)
+        end
+    end \
+        | awk '{ print NR ": " $0 }' \
+        | $fzf_cmd \
+        | awk '{ print $2,$3 }' \
+        | read -t name path
+    or return 1
+
+    [ -z "$name" -o -d "$(realpath $path)" ]; and return 1
+
+    _goto_bookmark $name $path
+end
+
+function goto_bookmark
+    set index (math $argv)
+    set bookmarks (cat $cache_file)
+    set bookmark_info $bookmarks[$index]
+    [ -z "$bookmarks[$index]" ]; and return 1
+    string split = $bookmark_info | read -L name path
+    _goto_bookmark $name $path
+end
+
+
+function _goto_bookmark
+    set name $argv[1]
+    set path (string unescape (eval echo -- $argv[2]))
+
+    if not _has_session $name $path
+        tmux new -ds $name -c $path
+    end
+
+    tmux switch-client -t $name
+end
+
+function _get_session_info
+    tmux display -p '#{session_name}=#{session_path}'
+end
+
+function _has_session
+    tmux ls -F '#{session_name}=#{session_path}' | grep -wq "^$argv[1]=$argv[2]"
+    or return 1
+end
+function _is_attached
+    tmux ls -F "#{session_name}=#{session_path}: #{?session_attached,attached,not attached}" | grep -wq "^$argv[1]=$argv[2]: attached"
+    or return 1
+end
+function _c
+    set_color $argv
+end
+
+
+[ (count $argv) -gt 2 ]; and return 1
+
+begin
+    switch "$argv"
+        case --view
+            view_bookmarks
+        case --add
+            add_bookmark
+        case --edit
+            edit_bookmarks
+        case '--index *'
+            goto_bookmark $argv[2]
+        case '-*'
+            tmux display -p "Unknown option $argv"
+            return 1
+    end
+end || true # suppress error pipe to tmux display (pretty annoying)
