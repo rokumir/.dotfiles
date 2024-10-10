@@ -30,7 +30,7 @@ alias l ls
 alias g git
 alias gd 'git --git-dir $HOME/.dotfiles -C $HOME --work-tree $HOME'
 
-function mdcd
+function mkcd
     mkdir $argv
     cd $argv
 end

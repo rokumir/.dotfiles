@@ -33,11 +33,11 @@ return {
 		-- my custom options
 		filetypes = { -- vim settings
 			pattern = {
-				-- ['%.env%.[%w_.-]+'] = 'conf',
-				-- ['.env.*'] = 'conf',
 				['${TMUX_HARPOON_CACHE_FILE}'] = 'tmux-harpoon',
+				['%.env%.[%w_.-]+'] = 'dotenv',
 			},
 			filename = {
+				['.env'] = 'dotenv',
 				['.ignore'] = 'gitignore',
 				['Podfile'] = 'ruby',
 			},
@@ -46,9 +46,10 @@ return {
 				tmux = 'tmux',
 			},
 		},
+		---@type table<string, string|string[]>
 		treesitter = {
 			markdown = 'mdx',
-			conf = 'tmux-harpoon',
+			-- sh = { 'tmux-harpoon', 'dotenv' },
 		},
 	},
 	config = function(_, opts)

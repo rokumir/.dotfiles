@@ -33,3 +33,13 @@ vim.api.nvim_create_autocmd('InsertLeave', {
 	pattern = '*',
 	command = 'set nopaste',
 })
+
+-- Dsiable diagnostic
+vim.api.nvim_create_autocmd('FileType', {
+	group = augroup 'disable_diagnostic',
+	callback = function() vim.diagnostic.enable(false) end,
+	pattern = {
+		'.env',
+		'.env.*',
+	},
+})
