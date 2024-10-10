@@ -49,7 +49,7 @@ return {
 		---@type table<string, string|string[]>
 		treesitter = {
 			markdown = 'mdx',
-			-- sh = { 'tmux-harpoon', 'dotenv' },
+			bash = { 'tmux-harpoon', 'dotenv' },
 		},
 	},
 	config = function(_, opts)
