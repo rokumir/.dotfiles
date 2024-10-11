@@ -38,25 +38,20 @@ return {
 		'supermaven-inc/supermaven-nvim',
 		event = 'VeryLazy',
 		priority = 1000,
-		enabled = vim.g.supermaven_enabled ~= false,
 		init = function()
-			LazyVim.toggle.map('<leader><leader>a', {
-				name = 'Smart Suggestion (Supermaven)',
-				get = function() return vim.g.supermaven_enabled end,
-				set = function(state)
-					vim.g.supermaven_enabled = state
-					if state then
-						vim.cmd 'SupermavenStart'
-					else
-						vim.cmd 'SupermavenStop'
-					end
-				end,
-			})
+			vim.keymap.set('n', '<leader><leader>a', function()
+				require('supermaven-nvim.api').toggle()
+				local is_on = require('supermaven-nvim.api').is_running()
+				LazyVim.notify((is_on and 'Enabled' or 'Disabled') .. ' Smart Suggestion (Supermaven)', {
+					title = 'Smart Suggestion (Supermaven)',
+					icon = '',
+					level = is_on and vim.log.levels.INFO or vim.log.levels.WARN,
+				})
+			end, { desc = 'Toggle Smart Suggestion (Supermaven)' })
 		end,
 		opts = {
-			disable_inline_completion = false,
+			disable_inline_completion = true,
 			disable_keymaps = true,
-			ignore_filetypes = {},
 		},
 	},
 

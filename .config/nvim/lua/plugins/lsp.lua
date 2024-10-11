@@ -59,6 +59,9 @@ return {
 
 						map('n', '<a-s-o>', ':VTSOrganizeImports <cr>', { desc = 'VTS Organize Imports' })
 
+						-- turn inlay hints on anyway
+						vim.lsp.inlay_hint.enable(true)
+
 						require('twoslash-queries').attach(client, bufnr)
 					end,
 
@@ -67,7 +70,7 @@ return {
 							inlayHints = {
 								parameterNames = { enabled = 'literal' },
 								propertyDeclarationTypes = { enabled = true },
-								functionLikeReturnTypes = { enabled = true },
+								functionLikeReturnTypes = { enabled = false },
 								enumMemberValues = { enabled = true },
 							},
 						},
