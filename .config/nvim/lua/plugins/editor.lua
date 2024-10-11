@@ -91,13 +91,13 @@ return {
 			}
 
 			-- PROVIDERS
-			if not opts.grep then opts.grep = {} end
+			opts.grep = opts.grep or {}
 			opts.grep.formatter = 'path.filename_first'
 
-			if not opts.live_grep then opts.live_grep = {} end
+			opts.live_grep = opts.live_grep or {}
 			opts.live_grep.formatter = 'path.filename_first'
 
-			if not opts.files then opts.files = {} end
+			opts.files = opts.files or {}
 			opts.files.cmd = 'rg --no-require-git --follow --hidden --files --sortr modified'
 			opts.files.formatter = 'path.filename_first'
 			opts.files.cwd_prompt = false

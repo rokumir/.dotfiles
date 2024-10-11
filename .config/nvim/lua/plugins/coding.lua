@@ -128,6 +128,11 @@ return {
 		end,
 	},
 
+	{ -- add my custom snippet dir
+		'garymjr/nvim-snippets',
+		opts = function(_, opts) opts.search_paths = { vim.fn.stdpath 'config' .. '/misc/snippets' } end,
+	},
+
 	{ -- Lua Type: Wezterm
 		'justinsgithub/wezterm-types',
 		lazy = true,
@@ -135,8 +140,13 @@ return {
 		cond = function() return vim.fn.fnamemodify(vim.fn.expand '%', ':t') == 'wezterm.lua' end,
 	},
 
-	{ -- add my custom snippet dir
-		'garymjr/nvim-snippets',
-		opts = function(_, opts) opts.search_paths = { vim.fn.stdpath 'config' .. '/misc/snippets' } end,
+	{ -- Typescript type debug
+		'marilari88/twoslash-queries.nvim',
+		ft = { 'typescript', 'typescriptreact', 'astro' },
+		opts = {
+			multi_line = true,
+			is_enabled = true,
+			highlight = 'Comment',
+		},
 	},
 }

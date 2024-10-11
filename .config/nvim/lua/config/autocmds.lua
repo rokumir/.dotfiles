@@ -11,8 +11,6 @@ vim.api.nvim_create_autocmd('FileType', {
 		vim.opt.showcmd = false
 		vim.opt.wrap = false
 
-		vim.diagnostic.enable(false)
-
 		local map = function(m, l, r) vim.keymap.set(m, l, r, { buffer = e.buf, silent = true }) end
 		map('n', '<c-q>', '<cmd>quit <cr>')
 		map('n', '<c-s>', '<cmd>write | quit <cr>')
@@ -24,7 +22,10 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.api.nvim_create_autocmd('FileType', {
 	group = augroup 'no_conceal',
 	pattern = { 'json', 'jsonc', 'markdown' },
-	command = 'set conceallevel=0',
+	callback = function(e)
+		vim.opt.conceallevel = 0
+		vim.opt.wrap = false
+	end,
 })
 
 -- Turn off paste mode when leaving insert
@@ -32,14 +33,4 @@ vim.api.nvim_create_autocmd('InsertLeave', {
 	group = augroup 'no_paste',
 	pattern = '*',
 	command = 'set nopaste',
-})
-
--- Dsiable diagnostic
-vim.api.nvim_create_autocmd('FileType', {
-	group = augroup 'disable_diagnostic',
-	callback = function() vim.diagnostic.enable(false) end,
-	pattern = {
-		'.env',
-		'.env.*',
-	},
 })

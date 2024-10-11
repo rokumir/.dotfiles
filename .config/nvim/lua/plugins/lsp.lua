@@ -1,8 +1,8 @@
-return { -- lsp servers
-	'neovim/nvim-lspconfig',
-	opts = function(_, opts)
-		opts = vim.tbl_deep_extend('force', {}, opts, {
-			inlay_hints = { enabled = true },
+return {
+	{
+		'neovim/nvim-lspconfig',
+		opts = {
+			inlay_hints = { enabled = false },
 			codelens = { enabled = false },
 
 			---@type vim.diagnostic.Opts
@@ -44,30 +44,54 @@ return { -- lsp servers
 					},
 				},
 
-				tsserver = {
-					single_file_support = false,
-					root_dir = function(...) return require('lspconfig.util').root_pattern('tsconfig.json', 'jsconfig.json', 'package.json', '.git')(...) end,
+				vtsls = {
 					init_options = {
 						preferences = {
 							importModuleSpecifierPreference = 'non-relative',
 						},
 					},
 
-					on_attach = function(client, bufnr) require('twoslash-queries').attach(client, bufnr) end,
+					on_attach = function(client, bufnr)
+						local function map(mode, lhs, rhs, opts)
+							opts = vim.tbl_deep_extend('keep', { noremap = true, silent = true, buffer = bufnr }, opts or {})
+							vim.keymap.set(mode, lhs, rhs, opts)
+						end
+
+						map('n', '<a-s-o>', ':VTSOrganizeImports <cr>', { desc = 'VTS Organize Imports' })
+
+						require('twoslash-queries').attach(client, bufnr)
+					end,
 
 					settings = {
 						typescript = {
 							inlayHints = {
-								includeInlayParameterNameHints = 'literal',
-								includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-								includeInlayFunctionParameterTypeHints = true,
-								includeInlayVariableTypeHints = false,
-								includeInlayPropertyDeclarationTypeHints = true,
-								includeInlayFunctionLikeReturnTypeHints = true,
-								includeInlayEnumMemberValueHints = true,
+								parameterNames = { enabled = 'literal' },
+								propertyDeclarationTypes = { enabled = true },
+								functionLikeReturnTypes = { enabled = true },
+								enumMemberValues = { enabled = true },
 							},
 						},
 					},
+
+					commands = (function()
+						local function perform(command)
+							command = 'typescript.' .. command ---@type string
+							return function()
+								vim.lsp.buf.execute_command {
+									command = command,
+									arguments = { vim.api.nvim_buf_get_name(0) },
+									title = '',
+								}
+							end
+						end
+
+						return {
+							VTSOrganizeImports = { perform 'organizeImports', description = 'Organize Imports' },
+							VTSRestartServer = { perform 'restartTsServer', description = 'Restart TS Server' },
+							VTSReloadProjects = { perform 'reloadProjects', description = 'Reload Projects' },
+							VTSSelectTypeScriptVersion = { perform 'selectTypeScriptVersion', description = 'Select TypeScript Version' },
+						}
+					end)(),
 				},
 				cssls = {
 					settings = {
@@ -168,7 +192,23 @@ return { -- lsp servers
 				},
 			},
 
-			keymaps = {
+			---@type table<string, fun(server:string, opts:_.lspconfig.options):boolean?>
+			setup = {
+				-- example to setup with typescript.nvim
+				-- tsserver = function(_, opts)
+				--   require("typescript").setup({ server = opts })
+				--   return true
+				-- end,
+				-- Specify * to use this function as a fallback for any server
+				-- ["*"] = function(server, opts) end,
+			},
+		},
+	},
+
+	{
+		'neovim/nvim-lspconfig',
+		opts = function()
+			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), {
 				{
 					'🔥', -- use unicode to map unique keymap
 					function() require('fzf-lua').lsp_code_actions { winopts = { height = 0.4, width = 0.6 } } end,
@@ -176,14 +216,7 @@ return { -- lsp servers
 					desc = 'Code actions',
 					has = 'codeAction',
 				},
-			},
-		})
-
-		local lsp_maps = require('lazyvim.plugins.lsp.keymaps').get()
-		for _, keymap in ipairs(opts.keymaps) do
-			lsp_maps[#lsp_maps + 1] = keymap
-		end
-
-		return opts
-	end,
+			})
+		end,
+	},
 }
