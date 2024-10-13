@@ -1,14 +1,4 @@
----@class LoptKeymapFunArgs : vim.keymap.set.Opts, table
----@field [1] string
----@field [2] function|string
----@field mode? table|string
----@param args LoptKeymapFunArgs
-local function map(args)
-	local opts = require('lazy.core.handler.keys').opts(args) ---@class table
-	opts.silent = opts.silent ~= false
-	opts.noremap = opts.noremap ~= false
-	vim.keymap.set(args.mode or 'n', args[1], args[2], opts)
-end
+local map = require('nihil.keymap').map
 
 map { 'K', '<nop>' }
 

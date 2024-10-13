@@ -300,4 +300,21 @@ return {
 		event = 'BufReadPost',
 		opts = { open_fold_hl_timeout = 0 },
 	},
+
+	{ -- scrollbar
+		'lewis6991/satellite.nvim',
+		event = 'VeryLazy',
+		priority = 1000,
+		opts = {
+			current_only = false,
+			width = 1,
+			handlers = {
+				cursor = { enable = true },
+				search = { enable = true },
+				diagnostic = { enable = true },
+				gitsigns = { enable = true },
+				marks = { enable = true },
+			},
+		},
+	},
 }

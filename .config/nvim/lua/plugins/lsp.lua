@@ -1,3 +1,9 @@
+local map = require('nihil.keymap').map
+local function perform(cmd) ---@param cmd string
+	local args = { command = 'typescript.' .. cmd, arguments = { vim.api.nvim_buf_get_name(0) }, title = '' }
+	return function() vim.lsp.buf.execute_command(args) end
+end
+
 return {
 	{
 		'neovim/nvim-lspconfig',
@@ -52,16 +58,7 @@ return {
 					},
 
 					on_attach = function(client, bufnr)
-						local function map(mode, lhs, rhs, opts)
-							opts = vim.tbl_deep_extend('keep', { noremap = true, silent = true, buffer = bufnr }, opts or {})
-							vim.keymap.set(mode, lhs, rhs, opts)
-						end
-
-						map('n', '<a-s-o>', ':VTSOrganizeImports <cr>', { desc = 'VTS Organize Imports' })
-
-						-- turn inlay hints on anyway
-						vim.lsp.inlay_hint.enable(true)
-
+						map { '<a-s-o>', ':VtsOrganizeImports <cr>', buffer = bufnr, desc = 'VTS Organize Imports' }
 						require('twoslash-queries').attach(client, bufnr)
 					end,
 
@@ -76,25 +73,12 @@ return {
 						},
 					},
 
-					commands = (function()
-						local function perform(command)
-							command = 'typescript.' .. command ---@type string
-							return function()
-								vim.lsp.buf.execute_command {
-									command = command,
-									arguments = { vim.api.nvim_buf_get_name(0) },
-									title = '',
-								}
-							end
-						end
-
-						return {
-							VTSOrganizeImports = { perform 'organizeImports', description = 'Organize Imports' },
-							VTSRestartServer = { perform 'restartTsServer', description = 'Restart TS Server' },
-							VTSReloadProjects = { perform 'reloadProjects', description = 'Reload Projects' },
-							VTSSelectTypeScriptVersion = { perform 'selectTypeScriptVersion', description = 'Select TypeScript Version' },
-						}
-					end)(),
+					commands = {
+						VtsOrganizeImports = { perform 'organizeImports', description = 'Organize Imports' },
+						VtsRestartServer = { perform 'restartTsServer', description = 'Restart TS Server' },
+						VtsReloadProjects = { perform 'reloadProjects', description = 'Reload Projects' },
+						VtsSelectTypeScriptVersion = { perform 'selectTypeScriptVersion', description = 'Select TypeScript Version' },
+					},
 				},
 				cssls = {
 					settings = {
@@ -117,6 +101,7 @@ return {
 
 					-- lazy-load schemastore when needed
 					on_new_config = function(new_config)
+						---@diagnostic disable-next-line: no-unknown
 						new_config.settings.yaml.schemas =
 							vim.tbl_deep_extend('force', new_config.settings.yaml.schemas or {}, require('schemastore').yaml.schemas())
 					end,
@@ -174,18 +159,18 @@ return {
 									strict = 'Warning',
 								},
 								groupFileStatus = {
-									['ambiguity'] = 'Opened',
-									['await'] = 'Opened',
-									['codestyle'] = 'None',
-									['duplicate'] = 'Opened',
-									['global'] = 'Opened',
-									['luadoc'] = 'Opened',
-									['redefined'] = 'Opened',
-									['strict'] = 'Opened',
-									['strong'] = 'Opened',
+									ambiguity = 'Opened',
+									await = 'Opened',
+									codestyle = 'None',
+									duplicate = 'Opened',
+									global = 'Opened',
+									luadoc = 'Opened',
+									redefined = 'Opened',
+									strict = 'Opened',
+									strong = 'Opened',
+									unbalanced = 'Opened',
+									unused = 'Opened',
 									['type-check'] = 'Opened',
-									['unbalanced'] = 'Opened',
-									['unused'] = 'Opened',
 								},
 								unusedLocalExclude = { '_*' },
 								globals = { 'vim', 'it', 'describe', 'before_each', 'after_each' },

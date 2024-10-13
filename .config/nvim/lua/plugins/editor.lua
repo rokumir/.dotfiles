@@ -116,11 +116,13 @@ return {
 				return vim.tbl_contains(ctx.symbols_filter, entry.kind)
 			end
 
+			local pretty_pwd = string.format('  %s  ', vim.fn.getcwd():gsub(vim.env.HOME, '~')) -- static "prettify" pwd
+
 			return {
 				{ '\\\\', '<cmd>FzfLua resume <cr>' },
 				{
 					'<c-e>',
-					function() require('fzf-lua').files { winopts = { title_pos = 'center', title = vim.g.nihil_pretty_pwd } } end,
+					function() require('fzf-lua').files { winopts = { title_pos = 'center', title = pretty_pwd } } end,
 					desc = 'Files',
 				},
 
@@ -160,9 +162,20 @@ return {
 	{ -- File explorer
 		'nvim-neo-tree/neo-tree.nvim',
 
-		init = function() vim.g.nihil_neotree_position = vim.g.nihil_neotree_position or 'float' end,
-
 		keys = function()
+			vim.g.nihil_neotree_position = vim.g.nihil_neotree_position or 'float'
+			LazyVim.toggle.map(
+				'<leader><leader>m',
+				LazyVim.toggle.wrap {
+					name = 'File Explorer Float Position',
+					get = function() return vim.g.nihil_neotree_position == 'float' end,
+					set = function()
+						local is_float = vim.g.nihil_neotree_position == 'float'
+						vim.g.nihil_neotree_position = is_float and 'right' or 'float'
+					end,
+				}
+			)
+
 			local function open_file(opts)
 				return function()
 					require('neo-tree.command').execute(vim.tbl_extend('force', {}, opts, {
@@ -171,17 +184,7 @@ return {
 				end
 			end
 
-			LazyVim.toggle.map('<leader><leader>m', {
-				name = 'File Explorer Float Position',
-				get = function() return vim.g.nihil_neotree_position == 'float' end,
-				set = function()
-					local is_float = vim.g.nihil_neotree_position == 'float'
-					vim.g.nihil_neotree_position = is_float and 'right' or 'float'
-				end,
-			})
-
 			return {
-				{ '<leader><leader>M', desc = 'Switch File Explorer Position (float/right)' },
 				{ ';f', open_file {}, desc = 'Files' },
 				{ 'ss', open_file { reveal = true }, desc = 'Reveal File' },
 				{ 'sf', open_file { toggle = true }, desc = 'Files' },
@@ -396,13 +399,31 @@ return {
 		end,
 	},
 
-	{
+	{ -- better ts error ui
 		'OlegGulevskyy/better-ts-errors.nvim',
 		ft = { 'typescript', 'typescriptreact' },
-		config = {
+		opts = {
 			keymaps = {
 				toggle = '<leader>dd', -- default '<leader>dd'
 				go_to_definition = '<leader>dx', -- default '<leader>dx'
+			},
+		},
+	},
+
+	{
+		'ziontee113/color-picker.nvim',
+		event = 'VeryLazy',
+		priority = 1000,
+		keys = {
+			{ '<c-c>', '<cmd>PickColor <cr>', noremap = true, silent = true, desc = 'Color Picker' },
+			{ '<c-c>', '<cmd>PickColorInsert <cr>', mode = 'i', noremap = true, silent = true, desc = 'Color Picker' },
+		},
+		opts = { -- for changing icons & mappings
+			icons = { '󰝤', ' ⚡' },
+			border = 'rounded',
+			keymap = {
+				['<c-j>'] = '<Plug>ColorPickerSlider5Decrease',
+				['<c-k>'] = '<Plug>ColorPickerSlider5Increase',
 			},
 		},
 	},

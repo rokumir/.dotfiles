@@ -39,15 +39,14 @@ return {
 		event = 'VeryLazy',
 		priority = 1000,
 		init = function()
-			vim.keymap.set('n', '<leader><leader>a', function()
-				require('supermaven-nvim.api').toggle()
-				local is_on = require('supermaven-nvim.api').is_running()
-				LazyVim.notify((is_on and 'Enabled' or 'Disabled') .. ' Smart Suggestion (Supermaven)', {
-					title = 'Smart Suggestion (Supermaven)',
-					icon = '',
-					level = is_on and vim.log.levels.INFO or vim.log.levels.WARN,
-				})
-			end, { desc = 'Toggle Smart Suggestion (Supermaven)' })
+			LazyVim.toggle.map(
+				'<leader><leader>a',
+				LazyVim.toggle.wrap {
+					name = 'Smart Suggestion (Supermaven)',
+					get = require('supermaven-nvim.api').is_running,
+					set = function(s) require('supermaven-nvim.api')[s and 'start' or 'stop']() end,
+				}
+			)
 		end,
 		opts = {
 			disable_inline_completion = true,
@@ -57,6 +56,7 @@ return {
 
 	{ -- Change case
 		'gregorias/coerce.nvim',
+		enabled = false,
 		keys = {
 			{ 'cs', desc = 'Change Case', mode = { 'n', 'x' } },
 			{ 'gcs', desc = 'Change Case Motion', mode = 'o' },
@@ -126,22 +126,5 @@ return {
 	{ -- add my custom snippet dir
 		'garymjr/nvim-snippets',
 		opts = function(_, opts) opts.search_paths = { vim.fn.stdpath 'config' .. '/misc/snippets' } end,
-	},
-
-	{ -- Lua Type: Wezterm
-		'justinsgithub/wezterm-types',
-		lazy = true,
-		dependencies = { 'lazydev.nvim', opts = function(_, opts) table.insert(opts.library, { path = 'wezterm-types', mods = { 'wezterm' } }) end },
-		cond = function() return vim.fn.fnamemodify(vim.fn.expand '%', ':t') == 'wezterm.lua' end,
-	},
-
-	{ -- Typescript type debug
-		'marilari88/twoslash-queries.nvim',
-		ft = { 'typescript', 'typescriptreact', 'astro' },
-		opts = {
-			multi_line = true,
-			is_enabled = true,
-			highlight = 'Comment',
-		},
 	},
 }
