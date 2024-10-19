@@ -6,7 +6,7 @@ begin
 end \
     | sort -ur \
     | string replace "$HOME/" '' \
-    | $fzf_cmd --border-label ' Home Projects ' \
+    | $fzf_cmd --border-label ' Goto Work Directory ' \
     | read -l result
 or return
 
