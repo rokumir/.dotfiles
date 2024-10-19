@@ -67,5 +67,5 @@ function fish_user_key_bindings
 
     # extenal scripts needed to be sourced, otherwise it won't work as expected
     bind --preset -M insert \ce "source $(type -p fzf_search_path)"
-    bind --preset -M insert \cd "source $(type -p fzf_home_projects)"
+    bind --preset -M insert \cd "source $(type -p fzf_goto_work_dir)"
 end
