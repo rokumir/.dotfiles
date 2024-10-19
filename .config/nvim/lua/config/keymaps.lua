@@ -5,7 +5,7 @@ map { 'K', '<nop>' }
 map { 'jj', '<esc>', mode = 'i' }
 map { 'jk', '<esc>', mode = 'i' }
 map { '<c-q>', '<c-c>', mode = 'c' }
-map { '<c-a>', 'gg<s-v><s-g>' }
+map { '<c-a>', 'ggVG' }
 map { 'H', '^', mode = { 'n', 'v', 'o' } }
 map { 'L', '$', mode = { 'n', 'v', 'o' } }
 
@@ -26,7 +26,7 @@ map { 'N', [['nN'[v:searchforward].'zz']], mode = { 'x', 'o' }, expr = true, des
 
 ------------------------------
 --- Editor
-map { '<c-q>', function() pcall(vim.cmd.close) end, desc = 'Close Buffer' }
+map { '<c-q>', function() pcall(vim.cmd.bwipeout) end, desc = 'Close Buffer' }
 map { 'ZZ', vim.cmd.quitall, desc = 'Close Session' }
 map { '<c-s>', '<cmd>write<cr><esc>', mode = { 'i', 'x', 'n', 's' }, desc = 'Save File' }
 
@@ -85,12 +85,12 @@ map { '<a-k>', '<esc><cmd>m .-2<cr>==gi', mode = 'i', desc = 'Move Up' }
 map { '<a-j>', [[:m '>+1<cr>gv=gv]], mode = 'v', desc = 'Move Down' }
 map { '<a-k>', [[:m '<-2<cr>gv=gv]], mode = 'v', desc = 'Move Up' }
 -- duplication
-map { '<s-a-j>', '<cmd>t. <cr>', desc = 'Duplicate Lines Down' }
-map { '<s-a-k>', '<cmd>t. <cr>k', desc = 'Duplicate Lines Up' }
-map { '<s-a-j>', '<cmd>t. <cr>', mode = 'i', desc = 'Duplicate Line Down' }
-map { '<s-a-k>', '<cmd>t. | -1 <cr>', mode = 'i', desc = 'Duplicate Line Up' }
-map { '<s-a-j>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate Lines Down' }
-map { '<s-a-k>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate Lines Up' }
+map { '<a-J>', '<cmd>t. <cr>', desc = 'Duplicate Lines Down' }
+map { '<a-K>', '<cmd>t. <cr>k', desc = 'Duplicate Lines Up' }
+map { '<a-J>', '<cmd>t. <cr>', mode = 'i', desc = 'Duplicate Line Down' }
+map { '<a-K>', '<cmd>t. | -1 <cr>', mode = 'i', desc = 'Duplicate Line Up' }
+map { '<a-J>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate Lines Down' }
+map { '<a-K>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate Lines Up' }
 
 ------------------------------
 --- Split
@@ -113,7 +113,7 @@ map { ']b', ':bnext <cr>', desc = 'Next Buffer' }
 map { '[b', ':bprevious <cr>', desc = 'Prev Buffer' }
 map { '<leader>`', ':b# <cr>', desc = 'Alternate buffer' }
 map { '<leader>bd', ':bwipeout <cr>', desc = 'Delete Buffer' }
-map { '<leader>b<s-d>', ':%bd | e# <cr>', desc = 'Delete all buffers except active buffer.' }
+map { '<leader>bD', ':%bd | e# <cr>', desc = 'Delete all buffers except active buffer.' }
 
 ------------------------------
 --- Providers/Info

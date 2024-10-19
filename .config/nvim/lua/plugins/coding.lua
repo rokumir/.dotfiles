@@ -34,26 +34,6 @@ return {
 		},
 	},
 
-	{ -- Supermaven
-		'supermaven-inc/supermaven-nvim',
-		event = 'VeryLazy',
-		priority = 1000,
-		init = function()
-			LazyVim.toggle.map(
-				'<leader><leader>a',
-				LazyVim.toggle.wrap {
-					name = 'Smart Suggestion (Supermaven)',
-					get = require('supermaven-nvim.api').is_running,
-					set = function(s) require('supermaven-nvim.api')[s and 'start' or 'stop']() end,
-				}
-			)
-		end,
-		opts = {
-			disable_inline_completion = true,
-			disable_keymaps = true,
-		},
-	},
-
 	{ -- Change case
 		'gregorias/coerce.nvim',
 		enabled = false,
@@ -126,5 +106,51 @@ return {
 	{ -- add my custom snippet dir
 		'garymjr/nvim-snippets',
 		opts = function(_, opts) opts.search_paths = { vim.fn.stdpath 'config' .. '/misc/snippets' } end,
+	},
+
+	{
+		'copilot.lua',
+		opts = {
+			panel = {
+				enabled = true,
+				auto_refresh = false,
+				keymap = {
+					jump_prev = '[[',
+					jump_next = ']]',
+					accept = '<cr>',
+					refresh = 'gr',
+					open = '<m-c>',
+				},
+				layout = {
+					position = 'bottom', -- | top | left | right
+					ratio = 0.4,
+				},
+			},
+			suggestion = {
+				enabled = true,
+				auto_trigger = true,
+				hide_during_completion = true,
+				debounce = 75,
+				keymap = {
+					accept = '<m-h>',
+					accept_word = '<m-l>',
+					accept_line = '<m-L>',
+					next = '<m-]>',
+					prev = '<m-[>',
+					dismiss = '<esc>',
+				},
+			},
+			filetypes = {
+				yaml = false,
+				help = false,
+				gitcommit = false,
+				gitrebase = false,
+				hgcommit = false,
+				svn = false,
+				cvs = false,
+				['.'] = false,
+			},
+			server_opts_overrides = {},
+		},
 	},
 }

@@ -10,7 +10,7 @@ return {
 			-- experimental = { ghost_text = true },
 
 			lsp_kind_priority = {
-				Supermaven = 120,
+				Copilot = 120,
 
 				Variable = 100,
 				Reference = 95,
@@ -42,7 +42,7 @@ return {
 
 				Codeium = 0,
 				TabNine = 0,
-				Copilot = 0,
+				Supermaven = 0,
 			},
 		},
 	},
@@ -52,7 +52,6 @@ return {
 		opts = function(_, opts)
 			vim.list_extend(opts.sources, {
 				{ name = 'emoji' },
-				{ name = 'supermaven' },
 			})
 		end,
 	},
@@ -65,7 +64,16 @@ return {
 			--- Mappings
 			local select_behavior = { behavior = cmp.SelectBehavior.Select } ---@diagnostic disable-line: no-unknown
 			local cmp_close = { i = cmp.mapping.abort(), c = cmp.mapping.close() }
-			local sm = require 'supermaven-nvim.completion_preview'
+			local function select_mapping(fun)
+				return function(fallback)
+					if fun then fun() end
+					if cmp.visible() then
+						cmp.confirm { select = true }
+					else
+						fallback()
+					end
+				end
+			end
 
 			opts.mapping = cmp.mapping.preset.insert {
 				---@type function
@@ -78,17 +86,13 @@ return {
 				['<cr>'] = cmp.mapping.confirm { select = true },
 				['<c-q>'] = cmp_close,
 				['<c-e>'] = cmp_close,
-				['<tab>'] = function(fallback) return cmp.visible() and cmp.confirm { select = true } or fallback() end,
-
-				-- SuperMaven mappings
-				['<c-l>'] = function() return sm.has_suggestion() and sm.on_accept_suggestion(true) end,
+				['<tab>'] = select_mapping(),
+				['<c-l>'] = select_mapping(),
 			}
 
 			-----------------------------------------------------
 			--- Formatting
 			local icons = vim.deepcopy(LazyVim.config.icons.kinds)
-			icons.Supermaven = ''
-
 			opts.formatting = { ---@type cmp.FormattingConfig
 				expandable_indicator = false,
 				fields = { 'kind', 'abbr' },

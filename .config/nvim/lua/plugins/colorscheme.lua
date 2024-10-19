@@ -65,8 +65,6 @@ return {
 				CmpItemAbbrMatch = { fg = 'foam', bg = 'none', bold = true },
 				CmpItemAbbrMatchFuzzy = { fg = 'foam', bg = 'none', bold = true },
 				CmpItemMenu = { fg = 'rose', bg = 'none', italic = true },
-
-				CmpItemKindSupermaven = { link = 'CmpGhostText', default = true },
 			},
 		},
 	},

@@ -1,5 +1,13 @@
 return {
-	{ 'williamboman/mason.nvim', opts = { ui = { border = 'rounded' } } },
+	{
+		'williamboman/mason.nvim',
+		opts = {
+			ui = { border = 'rounded' },
+			ensure_installed = {
+				'stylua',
+			},
+		},
+	},
 
 	{ -- keymaps helper
 		'folke/which-key.nvim',
@@ -34,4 +42,5 @@ return {
 	{ 'nvimdev/dashboard-nvim', cond = false },
 	{ 'folke/persistence.nvim', cond = false },
 	{ 'echasnovski/mini.pairs', cond = false },
+	{ 'echasnovski/mini.ai', cond = false },
 }

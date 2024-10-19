@@ -31,8 +31,11 @@ return {
 				gopls = {},
 				pyright = {},
 				prismals = {},
-				tailwindcss = {},
 				astro = {},
+
+				tailwindcss = {
+					root_dir = function(...) return require('lspconfig.util').root_pattern 'tailwind.config.*'(...) end,
+				},
 
 				markdown_oxide = {
 					workspace = {

@@ -99,7 +99,6 @@ return {
 						{ find = '%d+ fewer' },
 						{ find = '%d+ lines' },
 						{ find = 'Already at' },
-						{ find = 'Supermaven' },
 					},
 				},
 			})
