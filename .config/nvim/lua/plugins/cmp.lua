@@ -10,8 +10,6 @@ return {
 			-- experimental = { ghost_text = true },
 
 			lsp_kind_priority = {
-				Copilot = 120,
-
 				Variable = 100,
 				Reference = 95,
 				Constant = 90,
@@ -43,6 +41,7 @@ return {
 				Codeium = 0,
 				TabNine = 0,
 				Supermaven = 0,
+				Copilot = 0,
 			},
 		},
 	},
@@ -57,6 +56,7 @@ return {
 	},
 	{
 		'hrsh7th/nvim-cmp',
+		dependencies = { 'roobert/tailwindcss-colorizer-cmp.nvim' },
 		opts = function(_, opts)
 			local cmp = require 'cmp'
 
@@ -96,7 +96,10 @@ return {
 			opts.formatting = { ---@type cmp.FormattingConfig
 				expandable_indicator = false,
 				fields = { 'kind', 'abbr' },
-				format = function(_, item)
+				format = function(entry, item)
+					local tw_item = require('tailwindcss-colorizer-cmp').formatter(entry, item)
+					if tw_item.kind == 'XX' then return tw_item end
+
 					item.kind = icons[item.kind] or ' ' -- icon
 					return item
 				end,

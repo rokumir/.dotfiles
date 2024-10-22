@@ -109,22 +109,18 @@ return {
 	},
 
 	{
-		'copilot.lua',
+		'zbirenbaum/copilot.lua',
+		priority = 1000,
+		lazy = false,
+		keys = {
+			{ '<leader><leader>a', '<cmd>Copilot toggle <cr>', silent = true, desc = 'Toggle Copilot' },
+		},
 		opts = {
 			panel = {
-				enabled = true,
+				enabled = false,
 				auto_refresh = false,
-				keymap = {
-					jump_prev = '[[',
-					jump_next = ']]',
-					accept = '<cr>',
-					refresh = 'gr',
-					open = '<m-c>',
-				},
-				layout = {
-					position = 'bottom', -- | top | left | right
-					ratio = 0.4,
-				},
+				keymap = { jump_prev = '[[', jump_next = ']]', accept = '<cr>', refresh = 'gr', open = '<m-c>' },
+				layout = { position = 'bottom', ratio = 0.4 },
 			},
 			suggestion = {
 				enabled = true,
@@ -137,7 +133,7 @@ return {
 					accept_line = '<m-L>',
 					next = '<m-]>',
 					prev = '<m-[>',
-					dismiss = '<esc>',
+					dismiss = '<c-[>',
 				},
 			},
 			filetypes = {

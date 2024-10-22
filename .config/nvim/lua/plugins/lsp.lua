@@ -1,6 +1,6 @@
 local map = require('nihil.keymap').map
 local function perform(cmd) ---@param cmd string
-	local args = { command = 'typescript.' .. cmd, arguments = { vim.api.nvim_buf_get_name(0) }, title = '' }
+	local args = { command = cmd, arguments = { vim.api.nvim_buf_get_name(0) }, title = '' }
 	return function() vim.lsp.buf.execute_command(args) end
 end
 
@@ -23,7 +23,7 @@ return {
 
 			capabilities = {}, -- add any global capabilities here
 
-			---@type lspconfig.options
+			---@type table<string, lspconfig.Config>
 			servers = {
 				rust_analyzer = {},
 				emmet_ls = {},
@@ -77,10 +77,10 @@ return {
 					},
 
 					commands = {
-						VtsOrganizeImports = { perform 'organizeImports', description = 'Organize Imports' },
-						VtsRestartServer = { perform 'restartTsServer', description = 'Restart TS Server' },
-						VtsReloadProjects = { perform 'reloadProjects', description = 'Reload Projects' },
-						VtsSelectTypeScriptVersion = { perform 'selectTypeScriptVersion', description = 'Select TypeScript Version' },
+						VtsOrganizeImports = { perform 'typescript.organizeImports', description = 'Organize Imports' },
+						VtsRestartServer = { perform 'typescript.restartTsServer', description = 'Restart TS Server' },
+						VtsReloadProjects = { perform 'typescript.reloadProjects', description = 'Reload Projects' },
+						VtsSelectTypeScriptVersion = { perform 'typescript.selectTypeScriptVersion', description = 'Select TypeScript Version' },
 					},
 				},
 				cssls = {
@@ -200,6 +200,8 @@ return {
 		'neovim/nvim-lspconfig',
 		opts = function()
 			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), {
+				{ '<c-k>', false, mode = 'i' },
+				{ '<c-a-k>', vim.lsp.buf.signature_help, mode = 'i', desc = 'Signature Help', has = 'signatureHelp' },
 				{
 					'🔥', -- use unicode to map unique keymap
 					function() require('fzf-lua').lsp_code_actions { winopts = { height = 0.4, width = 0.6 } } end,

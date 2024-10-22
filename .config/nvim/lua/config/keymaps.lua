@@ -40,7 +40,7 @@ map { '-', '<c-x>', mode = { 'n', 'v' }, desc = 'Decrease Number' }
 map { '<', '<gv', mode = 'v', desc = 'Indent' }
 map { '>', '>gv', mode = 'v', desc = 'Unindent' }
 
-map { '<leader>sr', [[:%s/\<<c-r><c-w>\>/<c-r><c-w> /gc<c-left><bs>]], desc = 'Replace Word Under Cursor', silent = false }
+-- map { '<leader>sr', [[:%s/\<<c-r><c-w>\>/<c-r><c-w> /gc<c-left><bs>]], desc = 'Replace Word Under Cursor', silent = false }
 
 ------------------------------
 --- UI
@@ -117,10 +117,11 @@ map { '<leader>bD', ':%bd | e# <cr>', desc = 'Delete all buffers except active b
 
 ------------------------------
 --- Providers/Info
-map { '<leader>mm', '<cmd>Lazy <cr>', desc = 'Lazy Menu' }
-map { '<leader>ms', '<cmd>Mason <cr>', desc = 'Mason Menu' }
-map { '<leader>ml', '<cmd>LspInfo <cr>', desc = 'Lsp Info' }
+map { '<leader>ml', '<cmd>Lazy <cr>', desc = 'Lazy Menu' }
+map { '<leader>mm', '<cmd>Mason <cr>', desc = 'Mason Menu' }
 map { '<leader>mf', '<cmd>ConformInfo <cr>', desc = 'Conform Info' }
+map { '<leader>mi', '<cmd>LspInfo <cr>', desc = 'Lsp Info' }
+map { '<leader>mI', '<cmd>LspRestart <cr>', desc = 'Restart Lsp' }
 
 ------------------------------
 --- Formatting

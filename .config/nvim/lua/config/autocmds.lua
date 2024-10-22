@@ -34,3 +34,13 @@ vim.api.nvim_create_autocmd('InsertLeave', {
 	pattern = '*',
 	command = 'set nopaste',
 })
+
+vim.api.nvim_create_autocmd('FileType', {
+	group = augroup 'ts_config',
+	pattern = { 'astro', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+	callback = function()
+		vim.opt.tabstop = 2
+		vim.opt.softtabstop = 2
+		vim.opt.shiftwidth = 2
+	end,
+})
