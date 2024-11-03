@@ -80,7 +80,10 @@ return {
 			opts.winopts.preview = { wrap = 'nowrap', hidden = 'hidden' }
 
 			opts.keymap = {
-				fzf = { ['ctrl-l'] = 'accept' },
+				fzf = {
+					['ctrl-l'] = 'accept',
+					['🔥'] = 'accept',
+				},
 				builtin = {
 					['<a-/>'] = 'toggle-help',
 					['<a-p>'] = 'toggle-preview',
@@ -106,7 +109,6 @@ return {
 				width = 0.6,
 				preview = { layout = 'vertical' },
 			}
-
 			if vim.env.GLOBAL_IGNORE_FILE then opts.files.cmd = opts.files.cmd .. ' --ignore-file ' .. vim.env.GLOBAL_IGNORE_FILE end
 		end,
 		keys = function()
