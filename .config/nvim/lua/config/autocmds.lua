@@ -1,3 +1,4 @@
+local map = require('nihil.keymap').map
 local function augroup(name, opts) return vim.api.nvim_create_augroup('nihil_' .. name, opts or { clear = true }) end
 
 -- Settings for the greatest script of all time
@@ -11,9 +12,8 @@ vim.api.nvim_create_autocmd('FileType', {
 		vim.opt.showcmd = false
 		vim.opt.wrap = false
 
-		local map = function(m, l, r) vim.keymap.set(m, l, r, { buffer = e.buf, silent = true }) end
-		map('n', '<c-q>', '<cmd>quit <cr>')
-		map('n', '<c-s>', '<cmd>write | quit <cr>')
+		map { 'n', '<c-q>', '<cmd>quit <cr>', buf = e.buf }
+		map { 'n', '<c-s>', '<cmd>write | quit <cr>', buf = e.buf }
 	end,
 })
 
@@ -22,7 +22,7 @@ vim.api.nvim_create_autocmd('FileType', {
 vim.api.nvim_create_autocmd('FileType', {
 	group = augroup 'no_conceal',
 	pattern = { 'json', 'jsonc', 'markdown' },
-	callback = function(e)
+	callback = function()
 		vim.opt.conceallevel = 0
 		vim.opt.wrap = false
 	end,
@@ -35,12 +35,12 @@ vim.api.nvim_create_autocmd('InsertLeave', {
 	command = 'set nopaste',
 })
 
-vim.api.nvim_create_autocmd('FileType', {
-	group = augroup 'ts_config',
-	pattern = { 'astro', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
-	callback = function()
-		vim.opt.tabstop = 2
-		vim.opt.softtabstop = 2
-		vim.opt.shiftwidth = 2
-	end,
-})
+-- vim.api.nvim_create_autocmd('FileType', {
+-- 	group = augroup 'ts_config',
+-- 	pattern = { 'astro', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+-- 	callback = function()
+-- 		vim.opt.tabstop = 2
+-- 		vim.opt.softtabstop = 2
+-- 		vim.opt.shiftwidth = 2
+-- 	end,
+-- })

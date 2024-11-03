@@ -1,8 +1,5 @@
+---@diagnostic disable: assign-type-mismatch
 local map = require('nihil.keymap').map
-local function perform(cmd) ---@param cmd string
-	local args = { command = cmd, arguments = { vim.api.nvim_buf_get_name(0) }, title = '' }
-	return function() vim.lsp.buf.execute_command(args) end
-end
 
 return {
 	{
@@ -30,8 +27,36 @@ return {
 				html = {},
 				gopls = {},
 				pyright = {},
-				prismals = {},
-				astro = {},
+
+				denols = {
+					enabled = false,
+					cmd = { 'deno', 'lsp' },
+					filetypes = {
+						'astro',
+						'typescript',
+						'typescriptreact',
+						'javascript',
+						'javascriptreact',
+					},
+					cmd_env = {
+						DENO_DIR = vim.fn.stdpath 'cache' .. '/.deno',
+						DENO_INSTALL_ROOT = vim.fn.stdpath 'cache' .. '/.deno',
+					},
+					settings = {
+						{
+							deno = {
+								enable = true,
+								suggest = {
+									imports = {
+										hosts = {
+											['https://deno.land'] = true,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
 
 				tailwindcss = {
 					root_dir = function(...) return require('lspconfig.util').root_pattern 'tailwind.config.*'(...) end,
@@ -45,7 +70,6 @@ return {
 					},
 				},
 
-				-- TODO: add eslint (https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/extras/linting/eslint.lua)
 				eslint = {
 					settings = {
 						-- helps eslint find the eslintrc when it's placed in a subfolder instead of the cwd root
@@ -60,10 +84,10 @@ return {
 						},
 					},
 
-					on_attach = function(client, bufnr)
-						map { '<a-s-o>', ':VtsOrganizeImports <cr>', buffer = bufnr, desc = 'VTS Organize Imports' }
-						require('twoslash-queries').attach(client, bufnr)
-					end,
+					on_attach = function(client, bufnr) require('twoslash-queries').attach(client, bufnr) end,
+					keys = {
+						{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], desc = 'Organize Imports' },
+					},
 
 					settings = {
 						typescript = {
@@ -75,14 +99,8 @@ return {
 							},
 						},
 					},
-
-					commands = {
-						VtsOrganizeImports = { perform 'typescript.organizeImports', description = 'Organize Imports' },
-						VtsRestartServer = { perform 'typescript.restartTsServer', description = 'Restart TS Server' },
-						VtsReloadProjects = { perform 'typescript.reloadProjects', description = 'Reload Projects' },
-						VtsSelectTypeScriptVersion = { perform 'typescript.selectTypeScriptVersion', description = 'Select TypeScript Version' },
-					},
 				},
+
 				cssls = {
 					settings = {
 						css = { validate = true, lint = { unknownAtRules = 'ignore' } },
@@ -183,7 +201,7 @@ return {
 				},
 			},
 
-			---@type table<string, fun(server:string, opts:_.lspconfig.options):boolean?>
+			-----@type table<string, fun(server:string, opts:_.lspconfig.options):boolean?>
 			setup = {
 				-- example to setup with typescript.nvim
 				-- tsserver = function(_, opts)
@@ -200,10 +218,15 @@ return {
 		'neovim/nvim-lspconfig',
 		opts = function()
 			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), {
+				{ 'K', require('noice.lsp').hover, desc = 'Hover' },
+				{ '<c-u>', function() require('noice.lsp').scroll(-4) end, has = 'documentHighlight', mode = { 'n', 'i' }, desc = 'Scroll Up LSP Docs' },
+				{ '<c-d>', function() require('noice.lsp').scroll(4) end, has = 'documentHighlight', mode = { 'n', 'i' }, desc = 'Scroll Down LSP Docs' },
 				{ '<c-k>', false, mode = 'i' },
-				{ '<c-a-k>', vim.lsp.buf.signature_help, mode = 'i', desc = 'Signature Help', has = 'signatureHelp' },
+				{ '<c-a-k>', require('noice.lsp').signature, mode = 'i', desc = 'Signature Help', has = 'signatureHelp' },
+				{ 'gK', require('noice.lsp').signature, desc = 'Signature Help', has = 'signatureHelp' },
+
 				{
-					'🔥', -- use unicode to map unique keymap
+					'🔥', -- map unicode to ctrl+period
 					function() require('fzf-lua').lsp_code_actions { winopts = { height = 0.4, width = 0.6 } } end,
 					mode = { 'n', 'v', 'i' },
 					desc = 'Code actions',

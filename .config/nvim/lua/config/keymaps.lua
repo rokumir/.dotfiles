@@ -26,7 +26,8 @@ map { 'N', [['nN'[v:searchforward].'zz']], mode = { 'x', 'o' }, expr = true, des
 
 ------------------------------
 --- Editor
-map { '<c-q>', function() pcall(vim.cmd.bwipeout) end, desc = 'Close Buffer' }
+-- map { '<c-q>', function() pcall(vim.cmd.bwipeout) end, desc = 'Close Buffer' }
+map { '<c-q>', function() pcall(vim.cmd.close) end, desc = 'Close' }
 map { 'ZZ', vim.cmd.quitall, desc = 'Close Session' }
 map { '<c-s>', '<cmd>write<cr><esc>', mode = { 'i', 'x', 'n', 's' }, desc = 'Save File' }
 
@@ -117,11 +118,11 @@ map { '<leader>bD', ':%bd | e# <cr>', desc = 'Delete all buffers except active b
 
 ------------------------------
 --- Providers/Info
-map { '<leader>ml', '<cmd>Lazy <cr>', desc = 'Lazy Menu' }
-map { '<leader>mm', '<cmd>Mason <cr>', desc = 'Mason Menu' }
-map { '<leader>mf', '<cmd>ConformInfo <cr>', desc = 'Conform Info' }
-map { '<leader>mi', '<cmd>LspInfo <cr>', desc = 'Lsp Info' }
-map { '<leader>mI', '<cmd>LspRestart <cr>', desc = 'Restart Lsp' }
+map { '<leader>ll', '<cmd>Lazy <cr>', desc = 'Lazy Menu' }
+map { '<leader>lm', '<cmd>Mason <cr>', desc = 'Mason Menu' }
+map { '<leader>lf', '<cmd>ConformInfo <cr>', desc = 'Conform Info' }
+map { '<leader>li', '<cmd>LspInfo <cr>', desc = 'Lsp Info' }
+map { '<leader>lI', '<cmd>LspRestart <cr>', desc = 'Restart Lsp' }
 
 ------------------------------
 --- Formatting
