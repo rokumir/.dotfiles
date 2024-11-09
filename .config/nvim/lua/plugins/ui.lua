@@ -3,57 +3,27 @@ return {
 		'stevearc/dressing.nvim',
 		lazy = true,
 		event = 'VeryLazy',
-		init = function()
-			vim.ui.select = function(...)
-				require('lazy').load { plugins = { 'dressing.nvim' } }
-				return vim.ui.select(...)
-			end
-			vim.ui.input = function(...)
-				require('lazy').load { plugins = { 'dressing.nvim' } }
-				return vim.ui.input(...)
-			end
-		end,
-		opts = {
-			input = {
-				mappings = {
-					['<esc>'] = 'Close',
-					['<c-q>'] = 'Close',
-					['<c-c>'] = 'Close',
-					['<cr>'] = 'Confirm',
-					['<c-j>'] = 'Confirm',
-					['<c-o>'] = 'Confirm',
-					['<c-h>'] = 'HistoryPrev',
-					['<c-l>'] = 'HistoryNext',
-					['<up>'] = 'HistoryPrev',
-					['<down>'] = 'HistoryNext',
-				},
-			},
-		},
 		config = function(_, opts)
+			local mappings = {
+				['<esc>'] = 'Close',
+				['<c-q>'] = 'Close',
+				['<c-c>'] = 'Close',
+				['<cr>'] = 'Confirm',
+				['<c-j>'] = 'Confirm',
+				['<c-o>'] = 'Confirm',
+				['<c-h>'] = 'HistoryPrev',
+				['<c-l>'] = 'HistoryNext',
+				['<up>'] = 'HistoryPrev',
+				['<down>'] = 'HistoryNext',
+			}
+
 			opts.input.mappings = {
-				n = opts.input.mappings,
-				i = opts.input.mappings,
+				n = mappings,
+				i = mappings,
 			}
 
 			require('dressing').setup(opts)
 		end,
-	},
-
-	{ -- better vim.notify
-		'rcarriga/nvim-notify',
-		keys = {
-			{
-				'<leader>nc',
-				function() require('notify').dismiss { silent = true, pending = true } end,
-				desc = 'Dismiss All Notifications',
-			},
-		},
-		opts = {
-			render = 'wrapped-compact',
-			stages = 'fade',
-			timeout = 5000,
-			background_colour = '#000000',
-		},
 	},
 
 	{ -- highly experimental plugin that completely replaces the UI for messages, cmdline and the popupmenu.
@@ -208,26 +178,6 @@ return {
 		},
 	},
 
-	{ -- floating filename
-		'b0o/incline.nvim',
-		event = 'VeryLazy',
-		opts = {
-			window = {
-				padding = 1,
-				margin = { vertical = 0, horizontal = 1 },
-			},
-			hide = { cursorline = true },
-			render = function(props)
-				local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ':t')
-				local icon, color = require('nvim-web-devicons').get_icon_color(filename)
-
-				if vim.bo[props.buf].modified then filename = filename .. '  ' end
-
-				return { { icon, guifg = color }, '  ', filename }
-			end,
-		},
-	},
-
 	{ -- highlight hex colors
 		'brenoprata10/nvim-highlight-colors',
 		event = 'VeryLazy',
@@ -298,22 +248,5 @@ return {
 		dependencies = 'kevinhwang91/promise-async',
 		event = 'BufReadPost',
 		opts = { open_fold_hl_timeout = 0 },
-	},
-
-	{ -- scrollbar
-		'lewis6991/satellite.nvim',
-		event = 'VeryLazy',
-		priority = 1000,
-		opts = {
-			current_only = false,
-			width = 1,
-			handlers = {
-				cursor = { enable = true },
-				search = { enable = true },
-				diagnostic = { enable = true },
-				gitsigns = { enable = true },
-				marks = { enable = true },
-			},
-		},
 	},
 }

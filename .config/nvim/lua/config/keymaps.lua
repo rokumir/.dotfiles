@@ -1,6 +1,7 @@
 local map = require('nihil.keymap').map
 
 map { 'K', '<nop>' }
+map { '<c-z>', '<nop>' }
 
 map { 'jj', '<esc>', mode = 'i' }
 map { 'jk', '<esc>', mode = 'i' }
@@ -58,17 +59,27 @@ map { '<leader>uc', clear_ui_noises, desc = 'Clear Visual Noises', nowait = true
 map { '<c-l>', clear_ui_noises, desc = 'Clear Visual Noises', mode = { 'n', 'i' }, nowait = true }
 
 ---- Toggles
-LazyVim.toggle.map('<leader><leader>f', LazyVim.toggle.format())
-LazyVim.toggle.map('<leader><leader>F', LazyVim.toggle.format(true))
-LazyVim.toggle.map('<leader><leader>s', LazyVim.toggle('spell', { name = 'Spelling' }))
-LazyVim.toggle.map('<a-z>', LazyVim.toggle('wrap', { name = 'Wrap' }))
-LazyVim.toggle.map('<leader><leader>w', LazyVim.toggle('wrap', { name = 'Wrap' }))
-LazyVim.toggle.map('<leader><leader>r', LazyVim.toggle('relativenumber', { name = 'Relative Number' }))
-LazyVim.toggle.map('<leader><leader>d', LazyVim.toggle.diagnostics)
-LazyVim.toggle.map('<leader><leader>n', LazyVim.toggle.number)
-LazyVim.toggle.map('<leader><leader>c', LazyVim.toggle('conceallevel', { values = { 0, vim.o.conceallevel > 0 and vim.o.conceallevel or 2 } }))
-LazyVim.toggle.map('<leader><leader>T', LazyVim.toggle.treesitter)
-if vim.lsp.inlay_hint then LazyVim.toggle.map('<leader><leader>H', LazyVim.toggle.inlay_hints) end
+LazyVim.format.snacks_toggle():map '<leader>uf'
+LazyVim.format.snacks_toggle(true):map '<leader>uF'
+Snacks.toggle.option('spell'):map '<leader><leader>s'
+Snacks.toggle.option('wrap'):map '<leader><leader>w'
+Snacks.toggle.option('wrap'):map '<a-z>'
+Snacks.toggle.line_number():map '<leader><leader>n'
+Snacks.toggle.option('relativenumber'):map '<leader><leader>r'
+Snacks.toggle.option('conceallevel', { off = 0, on = { 0, vim.o.conceallevel > 0 and vim.o.conceallevel or 2 }, name = 'Conceal' }):map '<leader><leader>c'
+Snacks.toggle.treesitter():map '<leader><leader>T'
+Snacks.toggle.option('background', { off = 'light', on = 'dark', name = 'Dark Background' }):map '<leader><leader>b'
+if vim.lsp.inlay_hint then Snacks.toggle.inlay_hints():map '<leader><leader>H' end
+
+vim.g.nihil_neotree_position = vim.g.nihil_neotree_position or 'float'
+Snacks.toggle({
+	name = 'File Explorer Float Position',
+	get = function() return vim.g.nihil_neotree_position == 'float' end,
+	set = function()
+		local is_float = vim.g.nihil_neotree_position == 'float'
+		vim.g.nihil_neotree_position = is_float and 'right' or 'float'
+	end,
+}):map '<leader><leader>m'
 
 -- commands
 map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File Executable' }

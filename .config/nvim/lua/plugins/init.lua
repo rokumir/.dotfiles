@@ -39,8 +39,8 @@ return {
 		},
 	},
 
-	{ 'nvimdev/dashboard-nvim', cond = false },
-	{ 'folke/persistence.nvim', cond = false },
-	{ 'echasnovski/mini.pairs', cond = false },
-	{ 'echasnovski/mini.ai', cond = false },
+	{ 'nvimdev/dashboard-nvim', enabled = false },
+	{ 'folke/persistence.nvim', enabled = false },
+	{ 'echasnovski/mini.pairs', enabled = false },
+	{ 'echasnovski/mini.ai', enabled = false },
 }

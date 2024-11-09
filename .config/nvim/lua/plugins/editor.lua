@@ -165,19 +165,6 @@ return {
 		'nvim-neo-tree/neo-tree.nvim',
 
 		keys = function()
-			vim.g.nihil_neotree_position = vim.g.nihil_neotree_position or 'float'
-			LazyVim.toggle.map(
-				'<leader><leader>m',
-				LazyVim.toggle.wrap {
-					name = 'File Explorer Float Position',
-					get = function() return vim.g.nihil_neotree_position == 'float' end,
-					set = function()
-						local is_float = vim.g.nihil_neotree_position == 'float'
-						vim.g.nihil_neotree_position = is_float and 'right' or 'float'
-					end,
-				}
-			)
-
 			local function open_file(opts)
 				return function()
 					require('neo-tree.command').execute(vim.tbl_extend('force', {}, opts, {
@@ -412,13 +399,14 @@ return {
 		},
 	},
 
-	{
+	{ -- color picker
 		'ziontee113/color-picker.nvim',
 		event = 'VeryLazy',
 		priority = 1000,
+		enabled = false,
 		keys = {
-			{ '<c-c>', '<cmd>PickColor <cr>', noremap = true, silent = true, desc = 'Color Picker' },
-			{ '<c-c>', '<cmd>PickColorInsert <cr>', mode = 'i', noremap = true, silent = true, desc = 'Color Picker' },
+			{ '<c-a-c>', '<cmd>PickColor <cr>', noremap = true, silent = true, desc = 'Color Picker' },
+			{ '<c-a-c>', '<cmd>PickColorInsert <cr>', mode = 'i', noremap = true, silent = true, desc = 'Color Picker' },
 		},
 		opts = { -- for changing icons & mappings
 			icons = { '󰝤', ' ⚡' },
