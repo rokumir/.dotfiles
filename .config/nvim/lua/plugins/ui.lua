@@ -1,31 +1,4 @@
 return {
-	{ -- better vim.ui
-		'stevearc/dressing.nvim',
-		lazy = true,
-		event = 'VeryLazy',
-		config = function(_, opts)
-			local mappings = {
-				['<esc>'] = 'Close',
-				['<c-q>'] = 'Close',
-				['<c-c>'] = 'Close',
-				['<cr>'] = 'Confirm',
-				['<c-j>'] = 'Confirm',
-				['<c-o>'] = 'Confirm',
-				['<c-h>'] = 'HistoryPrev',
-				['<c-l>'] = 'HistoryNext',
-				['<up>'] = 'HistoryPrev',
-				['<down>'] = 'HistoryNext',
-			}
-
-			opts.input.mappings = {
-				n = mappings,
-				i = mappings,
-			}
-
-			require('dressing').setup(opts)
-		end,
-	},
-
 	{ -- highly experimental plugin that completely replaces the UI for messages, cmdline and the popupmenu.
 		'folke/noice.nvim',
 		keys = {
@@ -159,25 +132,6 @@ return {
 		end,
 	},
 
-	{ -- Tabline
-		'akinsho/bufferline.nvim',
-		keys = {
-			{ '<tab>', '<cmd>BufferLineCycleNext <cr>', desc = 'Next Buffer' },
-			{ '<s-tab>', '<cmd>BufferLineCyclePrev <cr>', desc = 'Prev Buffer' },
-		},
-		opts = {
-			options = {
-				mode = 'tabs',
-				show_close_icon = false,
-				show_tab_indicators = false,
-				always_show_bufferline = false,
-				show_buffer_close_icons = false,
-				indicator = { style = 'underline' },
-				separator_style = { nil, nil },
-			},
-		},
-	},
-
 	{ -- highlight hex colors
 		'brenoprata10/nvim-highlight-colors',
 		event = 'VeryLazy',
@@ -199,15 +153,7 @@ return {
 			enable_var_usage = true, ---Highlight CSS variables, e.g. 'var(--testing-color)'
 			enable_named_colors = true, ---Highlight named colors, e.g. 'green'
 			enable_tailwind = true, ---Highlight tailwind colors, e.g. 'bg-blue-500'
-
-			---Set custom colors
-			---Label must be properly escaped with '%' to adhere to `string.gmatch`
-			--- :help string.gmatch
-			custom_colors = {},
-
-			-- Exclude filetypes or buftypes from highlighting e.g. 'exclude_buftypes = {'text'}'
 			exclude_filetypes = { 'text' },
-			exclude_buftypes = {},
 		},
 	},
 
@@ -241,12 +187,5 @@ return {
 				map('n', '<leader>gh<s-r>', gs.reset_buffer, 'Reset Buffer')
 			end
 		end,
-	},
-
-	{ -- VSCode like folding
-		'kevinhwang91/nvim-ufo',
-		dependencies = 'kevinhwang91/promise-async',
-		event = 'BufReadPost',
-		opts = { open_fold_hl_timeout = 0 },
 	},
 }

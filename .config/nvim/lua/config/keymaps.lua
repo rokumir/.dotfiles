@@ -19,6 +19,9 @@ map { 'k', [[v:count == 0 ? 'gk' : 'k']], mode = { 'n', 'x' }, expr = true }
 map { '<c-k>', '5kzz', mode = { 'n', 'v' }, nowait = true }
 map { '<c-j>', '5jzz', mode = { 'n', 'v' }, nowait = true }
 
+map { 'zO', '<cmd>set foldlevel=99 <cr>', nowait = true }
+map { 'zC', '<cmd>set foldlevel=0 <cr>', nowait = true }
+
 -- Better Next/Prev (https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n)
 map { 'n', [['Nn'[v:searchforward].'zzzv']], expr = true, desc = 'Next Search Result' }
 map { 'N', [['nN'[v:searchforward].'zzzv']], expr = true, desc = 'Prev Search Result' }
@@ -53,7 +56,8 @@ local function clear_ui_noises()
 	vim.cmd.diffupdate() -- Redraw the screen
 	vim.cmd.redraw() -- Update the diff highlighting and folds.
 	pcall(vim.cmd.NoiceDismiss) -- Clear noice mini view
-	pcall(require('notify').dismiss, { silent = true, pending = true }) -- Clear notifications
+	-- pcall(require('notify').dismiss, { silent = true, pending = true }) -- Clear notifications
+	Snacks.words.clear()
 end
 map { '<leader>uc', clear_ui_noises, desc = 'Clear Visual Noises', nowait = true }
 map { '<c-l>', clear_ui_noises, desc = 'Clear Visual Noises', mode = { 'n', 'i' }, nowait = true }
@@ -113,18 +117,18 @@ map { '<c-a-right>', ':vertical resize +1 <cr>', desc = 'Increase Window Width' 
 
 ------------------------------
 --- Tabs
-map { '<tab>', ':tabnext <cr>', desc = 'Next Tab' }
-map { '<s-tab>', ':tabprev <cr>', desc = 'Prev Tab' }
-map { '<leader><tab>d', ':tabclose <cr>', desc = 'Close Tab' }
-map { '<c-s-right>', ':tabm +1 <cr>', desc = 'Move Tab Right' }
-map { '<c-s-left>', ':tabm -1 <cr>', desc = 'Move Tab Left' }
-
+-- map { '<tab>', ':tabnext <cr>', desc = 'Next Tab' }
+-- map { '<s-tab>', ':tabprev <cr>', desc = 'Prev Tab' }
+-- map { '<leader><tab>d', ':tabclose <cr>', desc = 'Close Tab' }
+-- map { '<c-s-right>', ':tabm +1 <cr>', desc = 'Move Tab Right' }
+-- map { '<c-s-left>', ':tabm -1 <cr>', desc = 'Move Tab Left' }
 ------------------------------
---- Buffers
-map { ']b', ':bnext <cr>', desc = 'Next Buffer' }
-map { '[b', ':bprevious <cr>', desc = 'Prev Buffer' }
+--- Buffers (use like tab)
+map { '<tab>', ':bnext <cr>', desc = 'Next Buffer' }
+map { '<s-tab>', ':bprevious <cr>', desc = 'Prev Buffer' }
 map { '<leader>`', ':b# <cr>', desc = 'Alternate buffer' }
 map { '<leader>bd', ':bwipeout <cr>', desc = 'Delete Buffer' }
+map { '<c-q>', ':bwipeout <cr>', desc = 'Delete Buffer' }
 map { '<leader>bD', ':%bd | e# <cr>', desc = 'Delete all buffers except active buffer.' }
 
 ------------------------------

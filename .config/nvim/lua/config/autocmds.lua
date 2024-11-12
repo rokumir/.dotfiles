@@ -17,17 +17,6 @@ vim.api.nvim_create_autocmd('FileType', {
 	end,
 })
 
--- Disable the concealing in some file formats
--- The default conceallevel is 3 in LazyVim
-vim.api.nvim_create_autocmd('FileType', {
-	group = augroup 'no_conceal',
-	pattern = { 'json', 'jsonc', 'markdown' },
-	callback = function()
-		vim.opt.conceallevel = 0
-		vim.opt.wrap = false
-	end,
-})
-
 -- Turn off paste mode when leaving insert
 vim.api.nvim_create_autocmd('InsertLeave', {
 	group = augroup 'no_paste',
@@ -35,12 +24,8 @@ vim.api.nvim_create_autocmd('InsertLeave', {
 	command = 'set nopaste',
 })
 
--- vim.api.nvim_create_autocmd('FileType', {
--- 	group = augroup 'ts_config',
--- 	pattern = { 'astro', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
--- 	callback = function()
--- 		vim.opt.tabstop = 2
--- 		vim.opt.softtabstop = 2
--- 		vim.opt.shiftwidth = 2
--- 	end,
--- })
+vim.api.nvim_create_autocmd('FileType', {
+	group = augroup 'concealment',
+	pattern = { 'json', 'jsonc', 'markdown' },
+	callback = function() vim.opt.wrap = false end,
+})

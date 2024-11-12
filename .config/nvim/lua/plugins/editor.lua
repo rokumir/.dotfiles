@@ -399,22 +399,6 @@ return {
 		},
 	},
 
-	{ -- color picker
-		'ziontee113/color-picker.nvim',
-		event = 'VeryLazy',
-		priority = 1000,
-		enabled = false,
-		keys = {
-			{ '<c-a-c>', '<cmd>PickColor <cr>', noremap = true, silent = true, desc = 'Color Picker' },
-			{ '<c-a-c>', '<cmd>PickColorInsert <cr>', mode = 'i', noremap = true, silent = true, desc = 'Color Picker' },
-		},
-		opts = { -- for changing icons & mappings
-			icons = { '󰝤', ' ⚡' },
-			border = 'rounded',
-			keymap = {
-				['<c-j>'] = '<Plug>ColorPickerSlider5Decrease',
-				['<c-k>'] = '<Plug>ColorPickerSlider5Increase',
-			},
-		},
-	},
+	-- Automatically set indent settings base on the content of the file
+	{ 'tpope/vim-sleuth', event = 'VeryLazy', priority = 1000 },
 }
