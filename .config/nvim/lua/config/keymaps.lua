@@ -70,7 +70,7 @@ Snacks.toggle.option('wrap'):map '<leader><leader>w'
 Snacks.toggle.option('wrap'):map '<a-z>'
 Snacks.toggle.line_number():map '<leader><leader>n'
 Snacks.toggle.option('relativenumber'):map '<leader><leader>r'
-Snacks.toggle.option('conceallevel', { off = 0, on = { 0, vim.o.conceallevel > 0 and vim.o.conceallevel or 2 }, name = 'Conceal' }):map '<leader><leader>c'
+Snacks.toggle.option('conceallevel', { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 3, name = 'Conceal' }):map '<leader><leader>c'
 Snacks.toggle.treesitter():map '<leader><leader>T'
 Snacks.toggle.option('background', { off = 'light', on = 'dark', name = 'Dark Background' }):map '<leader><leader>b'
 if vim.lsp.inlay_hint then Snacks.toggle.inlay_hints():map '<leader><leader>H' end

@@ -58,15 +58,20 @@ return {
 		},
 	},
 
+	{ -- Bizarre markdown ui rendering
+		'MeanderingProgrammer/render-markdown.nvim',
+		ft = { 'markdown', 'codecompanion' },
+		cmd = 'RenderMarkdown',
+		keys = { { '<leader><leader>M', '<cmd>RenderMarkdown toggle <cr>', desc = 'Toggle Render Markdown' } },
+	},
 	{
 		'olimorris/codecompanion.nvim',
 		dependencies = {
-			{ 'MeanderingProgrammer/render-markdown.nvim', ft = { 'markdown', 'codecompanion' } },
 			{ 'github/copilot.vim', lazy = true, commands = 'Copilot' },
 		},
 		keys = {
-			{ '<a-L>', '<cmd>CodeCompanionActions <cr>', mode = { 'n', 'v' } },
-			{ '<leader><leader>ac', '<cmd>CodeCompanionChat Toggle <cr>', mode = { 'n', 'v' } },
+			{ '<a-L>', '<cmd>CodeCompanionActions <cr>', mode = { 'n', 'v' }, desc = 'CodeCompanion Action Menu' },
+			{ '<leader><leader>ac', '<cmd>CodeCompanionChat Toggle <cr>', mode = { 'n', 'v' }, desc = 'Toggle CodeCompanion Chat' },
 		},
 		config = true,
 	},
@@ -75,8 +80,7 @@ return {
 		'kawre/neotab.nvim',
 		event = 'InsertEnter',
 		opts = {
-			tabkey = '<Tab>',
-			act_as_tab = true,
+			tabkey = '<tab>',
 			behavior = 'nested',
 			pairs = {
 				{ open = '(', close = ')' },
