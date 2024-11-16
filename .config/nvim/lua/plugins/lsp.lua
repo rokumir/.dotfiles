@@ -4,6 +4,7 @@ local map = require('nihil.keymap').map
 return {
 	{
 		'neovim/nvim-lspconfig',
+		lazy = false,
 		opts = {
 			inlay_hints = { enabled = false },
 			codelens = { enabled = false },
@@ -30,27 +31,27 @@ return {
 
 				denols = {
 					enabled = false,
-					cmd = { 'deno', 'lsp' },
-					filetypes = {
-						'astro',
-						'typescript',
-						'typescriptreact',
-						'javascript',
-						'javascriptreact',
-					},
+					root_dir = require('lspconfig').util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock'),
+					single_file_support = false,
 					cmd_env = {
-						DENO_DIR = vim.fn.stdpath 'cache' .. '/.deno',
-						DENO_INSTALL_ROOT = vim.fn.stdpath 'cache' .. '/.deno',
+						DENO_DIR = vim.fn.getenv 'XDG_CACHE_HOME' .. '/deno',
+						DENO_INSTALL_ROOT = vim.fn.getenv 'XDG_CACHE_HOME' .. '/deno',
+					},
+					init_options = {
+						enable = true,
+						lint = true,
+						unstable = true,
+						importMap = './deno.json',
 					},
 					settings = {
-						{
-							deno = {
-								enable = true,
-								suggest = {
-									imports = {
-										hosts = {
-											['https://deno.land'] = true,
-										},
+						deno = {
+							enable = true,
+							suggest = {
+								imports = {
+									hosts = {
+										['https://deno.land'] = true,
+										['https://cdn.nest.land'] = true,
+										['https://crux.land'] = true,
 									},
 								},
 							},
@@ -85,9 +86,6 @@ return {
 					},
 
 					on_attach = function(client, bufnr) require('twoslash-queries').attach(client, bufnr) end,
-					keys = {
-						{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], desc = 'Organize Imports' },
-					},
 
 					settings = {
 						typescript = {
@@ -204,12 +202,9 @@ return {
 			-----@type table<string, fun(server:string, opts:_.lspconfig.options):boolean?>
 			setup = {
 				-- example to setup with typescript.nvim
-				-- tsserver = function(_, opts)
-				--   require("typescript").setup({ server = opts })
-				--   return true
-				-- end,
+				--tsserver = function(_, opts); require("typescript").setup({ server = opts }); return true; end,
 				-- Specify * to use this function as a fallback for any server
-				-- ["*"] = function(server, opts) end,
+				--["*"] = function(server, opts) end,
 			},
 		},
 	},
@@ -224,7 +219,7 @@ return {
 				{ '<c-k>', false, mode = 'i' },
 				{ '<c-a-k>', require('noice.lsp').signature, mode = 'i', desc = 'Signature Help', has = 'signatureHelp' },
 				{ 'gK', require('noice.lsp').signature, desc = 'Signature Help', has = 'signatureHelp' },
-
+				{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], desc = 'Organize Imports', has = 'organizeImports' },
 				{
 					'🔥', -- map unicode to ctrl+period
 					function() require('fzf-lua').lsp_code_actions { winopts = { height = 0.4, width = 0.6 } } end,

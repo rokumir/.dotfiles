@@ -58,15 +58,10 @@ return {
 		},
 	},
 
-	{ -- Bizarre markdown ui rendering
-		'MeanderingProgrammer/render-markdown.nvim',
-		ft = { 'markdown', 'codecompanion' },
-		cmd = 'RenderMarkdown',
-		keys = { { '<leader><leader>M', '<cmd>RenderMarkdown toggle <cr>', desc = 'Toggle Render Markdown' } },
-	},
 	{
 		'olimorris/codecompanion.nvim',
 		dependencies = {
+			'MeanderingProgrammer/render-markdown.nvim',
 			{ 'github/copilot.vim', lazy = true, commands = 'Copilot' },
 		},
 		keys = {

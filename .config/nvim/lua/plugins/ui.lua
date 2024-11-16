@@ -188,4 +188,17 @@ return {
 			end
 		end,
 	},
+
+	{ -- Bizarre markdown ui rendering
+		'MeanderingProgrammer/render-markdown.nvim',
+		ft = { 'markdown', 'codecompanion' },
+		cmd = 'RenderMarkdown',
+		keys = { { '<leader><leader>M', '<cmd>RenderMarkdown toggle <cr>', desc = 'Toggle Render Markdown' } },
+		opts = {
+			win_options = {
+				conceallevel = { default = 0, rendered = 3 },
+				concealcursor = { default = '', rendered = 'n' },
+			},
+		},
+	},
 }

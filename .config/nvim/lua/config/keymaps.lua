@@ -1,7 +1,6 @@
 local map = require('nihil.keymap').map
 
 map { 'K', '<nop>' }
-map { '<c-z>', '<nop>' }
 
 map { 'jj', '<esc>', mode = 'i' }
 map { 'jk', '<esc>', mode = 'i' }
@@ -63,8 +62,8 @@ map { '<leader>uc', clear_ui_noises, desc = 'Clear Visual Noises', nowait = true
 map { '<c-l>', clear_ui_noises, desc = 'Clear Visual Noises', mode = { 'n', 'i' }, nowait = true }
 
 ---- Toggles
-LazyVim.format.snacks_toggle():map '<leader>uf'
-LazyVim.format.snacks_toggle(true):map '<leader>uF'
+LazyVim.format.snacks_toggle():map '<leader><leader>f'
+LazyVim.format.snacks_toggle(true):map '<leader><leader>F'
 Snacks.toggle.option('spell'):map '<leader><leader>s'
 Snacks.toggle.option('wrap'):map '<leader><leader>w'
 Snacks.toggle.option('wrap'):map '<a-z>'
