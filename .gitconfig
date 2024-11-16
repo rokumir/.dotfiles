@@ -1,5 +1,5 @@
 [user]
-    name = loppylopt
+    name = lopt
     email = quocdat.438317@gmail.com
 [core]
     autocrlf = false
@@ -52,3 +52,5 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
+[safe]
+	directory = %(prefix)///wsl.localhost/Arch/home/rokumir/.cache/yay/omnisharp-roslyn/src/omnisharp-roslyn
