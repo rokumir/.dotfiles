@@ -26,11 +26,15 @@ set -gx PAGER bat
 
 
 fish_add_path -g $MY_SCRIPT_HOME
-fish_add_path -g $XDG_DATA_HOME/fnm && type -q fnm && fnm env --use-on-cd --shell=fish --version-file-strategy=recursive | source
-fish_add_path -g $XDG_DATA_HOME/bob/nvim-bin
 fish_add_path -g ~/.local/bin # third parties' scripts
 
+fish_add_path -g ~/go/bin
 fish_add_path -g ~/.bun/bin ~/.cache/.bun/bin
 fish_add_path -g ~/.cargo/bin
-fish_add_path -g ~/go/bin
 fish_add_path -g ~/.deno/bin
+fish_add_path -g $XDG_DATA_HOME/bob/nvim-bin
+
+fish_add_path -g $XDG_DATA_HOME/fnm
+type -q fnm && fnm env --use-on-cd --shell=fish --version-file-strategy=recursive | source
+
+fish_add_path -g ~/.dotnet/tools/
