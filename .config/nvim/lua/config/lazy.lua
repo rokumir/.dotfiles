@@ -17,6 +17,7 @@ require('lazy').setup {
 			'LazyVim/LazyVim',
 			import = 'lazyvim.plugins',
 			opts = {
+				colorscheme = 'rose-pine',
 				news = {
 					lazyvim = true,
 					neovim = true,
@@ -30,7 +31,6 @@ require('lazy').setup {
 		-- import any extras modules here
 		{ import = 'lazyvim.plugins.extras.editor.refactoring' },
 		{ import = 'lazyvim.plugins.extras.editor.dial' },
-		{ import = 'lazyvim.plugins.extras.ui.mini-indentscope' },
 		{ import = 'lazyvim.plugins.extras.coding.neogen' },
 		{ import = 'lazyvim.plugins.extras.coding.blink' },
 		-- { import = 'lazyvim.plugins.extras.coding.yanky' },
@@ -44,6 +44,7 @@ require('lazy').setup {
 		{ import = 'lazyvim.plugins.extras.lang.tailwind' },
 		{ import = 'lazyvim.plugins.extras.lang.astro' },
 		{ import = 'lazyvim.plugins.extras.lang.omnisharp' },
+		{ import = 'lazyvim.plugins.extras.lang.svelte' },
 
 		{ import = 'lazyvim.plugins.extras.util.dot' },
 

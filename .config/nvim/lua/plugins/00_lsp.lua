@@ -1,6 +1,3 @@
----@diagnostic disable: assign-type-mismatch
-local map = require('nihil.keymap').map
-
 return {
 	{
 		'neovim/nvim-lspconfig',
@@ -21,7 +18,7 @@ return {
 
 			capabilities = {}, -- add any global capabilities here
 
-			---@type table<string, lspconfig.Config>
+			---@type table<string, lspconfig.Config | {}>
 			servers = {
 				rust_analyzer = {},
 				emmet_ls = {},
@@ -60,7 +57,18 @@ return {
 				},
 
 				tailwindcss = {
-					root_dir = function(...) return require('lspconfig.util').root_pattern 'tailwind.config.*'(...) end,
+					settings = {
+						tailwindCSS = {
+							-- classAttributes = { 'class', 'classess', 'className', 'class:list', 'classList', 'ngClass' },
+							experimental = {
+								classRegex = {
+									{ 'cva\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' },
+									{ 'cx\\(([^)]*)\\)', "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+									{ 'cn\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' },
+								},
+							},
+						},
+					},
 				},
 
 				markdown_oxide = {
@@ -199,12 +207,15 @@ return {
 				},
 			},
 
-			-----@type table<string, fun(server:string, opts:_.lspconfig.options):boolean?>
+			---@type table<string, fun(server:string, opts:lspconfig.Config|{}):boolean?>
 			setup = {
 				-- example to setup with typescript.nvim
 				--tsserver = function(_, opts); require("typescript").setup({ server = opts }); return true; end,
 				-- Specify * to use this function as a fallback for any server
 				--["*"] = function(server, opts) end,
+
+				--NOTE: IDK why this is needed, but it is for my tailwindcss config to work
+				tailwindcss = function(_, opts) require('lspconfig').tailwindcss.setup(opts) end,
 			},
 		},
 	},
@@ -227,6 +238,7 @@ return {
 					desc = 'Code actions',
 					has = 'codeAction',
 				},
+				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, desc = 'Rename', has = 'rename' },
 			})
 		end,
 	},

@@ -1,27 +1,9 @@
----@diagnostic disable: no-unknown
 return {
 	{ -- Rose Pine
 		'rose-pine/neovim',
 		name = 'rose-pine',
 		priority = 1000,
-		dependencies = {
-			{ 'LazyVim/LazyVim', opts = function(_, opts) opts.colorscheme = 'rose-pine' end },
-			{
-				'lualine.nvim',
-				opts = function(_, opts)
-					local palette = require 'lualine.themes.rose-pine'
-					palette.normal.c.bg = 'NONE'
-					palette.insert.c.bg = 'NONE'
-					palette.visual.c.bg = 'NONE'
-					palette.replace.c.bg = 'NONE'
-					palette.command.c.bg = 'NONE'
-					palette.inactive.a.bg = 'NONE'
-					palette.inactive.b.bg = 'NONE'
-					palette.inactive.c.bg = 'NONE'
-					opts.options.theme = palette
-				end,
-			},
-		},
+		lazy = false,
 		opts = {
 			variant = 'auto', -- auto, main, moon, or dawn
 			dark_variant = 'main', -- main, moon, or dawn
@@ -38,6 +20,9 @@ return {
 
 			---@type table<string, vim.api.keyset.highlight>
 			highlight_groups = {
+				IndentChar = { fg = 'highlight_low' },
+				IndentCharActive = { fg = 'highlight_high' },
+
 				Comment = { fg = 'muted' },
 				Folded = { bg = 'base' },
 				VertSplit = { fg = 'overlay', bg = 'muted' },
@@ -60,11 +45,7 @@ return {
 				IlluminatedWordWrite = { bg = 'highlight_low' },
 				NeoTreeCursorLine = { bg = 'base', bold = true },
 
-				CmpGhostText = { link = 'Comment', default = true },
-				CmpItemAbbrDeprecated = { fg = 'muted', bg = 'none', strikethrough = true },
-				CmpItemAbbrMatch = { fg = 'foam', bg = 'none', bold = true },
-				CmpItemAbbrMatchFuzzy = { fg = 'foam', bg = 'none', bold = true },
-				CmpItemMenu = { fg = 'rose', bg = 'none', italic = true },
+				WhichKeyBorder = { fg = 'highlight_med' },
 			},
 		},
 	},
@@ -73,6 +54,8 @@ return {
 		'catppuccin/nvim',
 		name = 'catppuccin',
 		cond = false,
+		lazy = false,
+		priority = 1000,
 		opts = {
 			flavour = 'mocha', -- latte, frappe, macchiato, mocha
 			transparent_background = true,
@@ -85,11 +68,11 @@ return {
 		},
 	},
 
-	{ 'tokyonight.nvim', cond = false },
-
 	{ -- Nightfox
 		'EdenEast/nightfox.nvim',
 		cond = false,
+		lazy = false,
+		priority = 1000,
 		opts = {
 			options = {
 				transparent = true,

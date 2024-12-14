@@ -65,24 +65,22 @@ map { '<c-l>', clear_ui_noises, desc = 'Clear Visual Noises', mode = { 'n', 'i' 
 LazyVim.format.snacks_toggle():map '<leader><leader>f'
 LazyVim.format.snacks_toggle(true):map '<leader><leader>F'
 Snacks.toggle.option('spell'):map '<leader><leader>s'
-Snacks.toggle.option('wrap'):map '<leader><leader>w'
 Snacks.toggle.option('wrap'):map '<a-z>'
 Snacks.toggle.line_number():map '<leader><leader>n'
 Snacks.toggle.option('relativenumber'):map '<leader><leader>r'
 Snacks.toggle.option('conceallevel', { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 3, name = 'Conceal' }):map '<leader><leader>c'
 Snacks.toggle.treesitter():map '<leader><leader>T'
 Snacks.toggle.option('background', { off = 'light', on = 'dark', name = 'Dark Background' }):map '<leader><leader>b'
-if vim.lsp.inlay_hint then Snacks.toggle.inlay_hints():map '<leader><leader>H' end
+Snacks.toggle.dim():map '<leader><leader>D'
+Snacks.toggle.animate():map '<leader><leader>m'
+Snacks.toggle.indent():map '<leader><leader>g'
+Snacks.toggle.scroll():map '<leader><leader>S'
+Snacks.toggle.profiler():map '<leader><leader>pp'
+Snacks.toggle.profiler_highlights():map '<leader><leader>ph'
+Snacks.toggle.zoom():map '<leader><leader>w'
+Snacks.toggle.zen():map '<leader><leader>z'
 
-vim.g.nihil_neotree_position = vim.g.nihil_neotree_position or 'float'
-Snacks.toggle({
-	name = 'File Explorer Float Position',
-	get = function() return vim.g.nihil_neotree_position == 'float' end,
-	set = function()
-		local is_float = vim.g.nihil_neotree_position == 'float'
-		vim.g.nihil_neotree_position = is_float and 'right' or 'float'
-	end,
-}):map '<leader><leader>m'
+if vim.lsp.inlay_hint then Snacks.toggle.inlay_hints():map '<leader><leader>H' end
 
 -- commands
 map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File Executable' }
@@ -93,12 +91,13 @@ map { ',', '"_', mode = { 'n', 's', 'x', 'o' }, desc = 'Void Reigster' }
 map { ',s', '"+', mode = { 'n', 's', 'x', 'o' }, desc = 'System Clipboard Register' }
 
 -- move lines
-map { '<a-j>', ':m .+1<cr>==', desc = 'Move Down' }
-map { '<a-k>', ':m .-2<cr>==', desc = 'Move Up' }
-map { '<a-j>', '<esc><cmd>m .+1<cr>==gi', mode = 'i', desc = 'Move Down' }
-map { '<a-k>', '<esc><cmd>m .-2<cr>==gi', mode = 'i', desc = 'Move Up' }
-map { '<a-j>', [[:m '>+1<cr>gv=gv]], mode = 'v', desc = 'Move Down' }
-map { '<a-k>', [[:m '<-2<cr>gv=gv]], mode = 'v', desc = 'Move Up' }
+map { '<a-j>', [[<cmd>execute 'move .+' . v:count1<cr>==]], desc = 'Move Down' }
+map { '<a-k>', [[<cmd>execute 'move .-' . (v:count1 + 1)<cr>==]], desc = 'Move Up' }
+map { '<a-j>', [[<esc><cmd>m .+1<cr>==gi]], mode = 'i', desc = 'Move Down' }
+map { '<a-k>', [[<esc><cmd>m .-2<cr>==gi]], mode = 'i', desc = 'Move Up' }
+map { '<a-j>', [[:<c-u>execute "'<,'>move '>+" . v:count1<cr>gv=gv]], mode = 'v', desc = 'Move Down' }
+map { '<a-k>', [[:<c-u>execute "'<,'>move '<-" . (v:count1 + 1)<cr>gv=gv]], mode = 'v', desc = 'Move Up' }
+
 -- duplication
 map { '<a-J>', '<cmd>t. <cr>', desc = 'Duplicate Lines Down' }
 map { '<a-K>', '<cmd>t. <cr>k', desc = 'Duplicate Lines Up' }

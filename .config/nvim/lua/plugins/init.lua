@@ -13,7 +13,7 @@ return {
 		'folke/which-key.nvim',
 		event = 'VeryLazy',
 		opts = {
-			win = { border = 'single' },
+			win = { border = 'rounded' },
 			spec = {
 				mode = { 'n', 'v' },
 				{ ';x', group = 'extras', icon = '' },
@@ -22,6 +22,7 @@ return {
 				{ '<leader>m', group = 'menu', icon = '󰒲' },
 				{ '<leader>!', group = 'shell', icon = '' },
 				{ '<leader><leader>', group = 'toggle' },
+				{ '<leader><leader>a', group = 'AI' },
 				{ '<leader><tab>', group = 'tab' },
 				{ '<leader>b', group = 'buffer' },
 				{ '<leader>c', group = 'code' },
@@ -39,8 +40,8 @@ return {
 		},
 	},
 
-	{ 'nvimdev/dashboard-nvim', enabled = false },
 	{ 'folke/persistence.nvim', enabled = false },
 	{ 'echasnovski/mini.pairs', enabled = false },
 	{ 'echasnovski/mini.ai', enabled = false },
+	{ 'tokyonight.nvim', cond = false },
 }
