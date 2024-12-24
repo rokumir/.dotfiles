@@ -34,6 +34,7 @@ vim.api.nvim_create_autocmd('FileType', {
 ---@type table<number, {token:lsp.ProgressToken, msg:string, done:boolean}[]>
 local progress = vim.defaulttable()
 vim.api.nvim_create_autocmd('LspProgress', {
+	group = augroup 'better_lsp_progress',
 	---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
 	callback = function(ev)
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
@@ -67,3 +68,33 @@ vim.api.nvim_create_autocmd('LspProgress', {
 		})
 	end,
 })
+
+-- Function to check and disable diagnostics based on modeline in the first 3 lines
+-- Create an autocommand to run the function when a buffer is read or entered
+-- vim.api.nvim_create_autocmd({ 'FileType', 'BufRead', 'BufEnter' }, {
+-- 	group = augroup 'disable_diagnostics_comment',
+-- 	pattern = { 'typescript', 'typescriptreact' },
+-- 	callback = function()
+-- 		local bufnr = vim.api.nvim_get_current_buf()
+-- 		local lines = vim.api.nvim_buf_get_lines(bufnr, 0, 3, false)
+-- 		if not lines or #lines == 0 then
+-- 			return -- Buffer is empty
+-- 		end
+--
+-- 		-- Get the comment string for the current filetype
+-- 		local comment_string = vim.bo[bufnr].commentstring:match '^(.-)%%s'
+-- 		if not comment_string then return end -- No valid comment string found
+--
+-- 		-- Build a Lua pattern to match the modeline
+-- 		-- Allows for flexible whitespace between the comment and the directive
+-- 		local pattern = string.format('^%s%s%s$', comment_string, '%s+', 'vim:diagnostics%s*disable')
+--
+-- 		for _, line in ipairs(lines) do
+-- 			if line:match(pattern) then
+-- 				vim.diagnostic.enable(false, { bufnr = bufnr })
+-- 				Snacks.notify.info '-------Match-------'
+-- 				return
+-- 			end
+-- 		end
+-- 	end,
+-- })

@@ -1,7 +1,6 @@
 vim.g.mapleader = ' '
-vim.g.markdown_recommended_style = 0 -- Fix markdown indentation settings
 vim.g.lazyvim_picker = 'fzf'
-vim.g.markdown_fenced_languages = { 'ts=typescript' }
+vim.g.lazyvim_blink_main = true
 
 vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'

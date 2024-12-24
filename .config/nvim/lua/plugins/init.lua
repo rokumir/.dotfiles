@@ -43,5 +43,5 @@ return {
 	{ 'folke/persistence.nvim', enabled = false },
 	{ 'echasnovski/mini.pairs', enabled = false },
 	{ 'echasnovski/mini.ai', enabled = false },
-	{ 'tokyonight.nvim', cond = false },
+	{ 'tokyonight.nvim', enabled = false },
 }

@@ -1,6 +1,6 @@
 local map = require('nihil.keymap').map
 
-map { 'K', '<nop>' }
+map { 'K', '<nop>', mode = { 'n', 's', 'x' } }
 
 map { 'jj', '<esc>', mode = 'i' }
 map { 'jk', '<esc>', mode = 'i' }
@@ -72,6 +72,7 @@ Snacks.toggle.option('conceallevel', { off = 0, on = vim.o.conceallevel > 0 and 
 Snacks.toggle.treesitter():map '<leader><leader>T'
 Snacks.toggle.option('background', { off = 'light', on = 'dark', name = 'Dark Background' }):map '<leader><leader>b'
 Snacks.toggle.dim():map '<leader><leader>D'
+Snacks.toggle.diagnostics():map '<leader><leader>d'
 Snacks.toggle.animate():map '<leader><leader>m'
 Snacks.toggle.indent():map '<leader><leader>g'
 Snacks.toggle.scroll():map '<leader><leader>S'

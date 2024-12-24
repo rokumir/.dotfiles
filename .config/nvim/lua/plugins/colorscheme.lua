@@ -33,6 +33,7 @@ return {
 				Normal = { bg = 'none' },
 				NormalFloat = { bg = 'none' },
 				PmenuSel = { bg = 'highlight_low', fg = 'none' },
+				Pmenu = { fg = 'highlight_med' },
 
 				LspReferenceText = { bg = 'highlight_low', fg = 'none' },
 				LspReferenceRead = { bg = 'highlight_low', fg = 'none' },
@@ -46,6 +47,7 @@ return {
 				NeoTreeCursorLine = { bg = 'base', bold = true },
 
 				WhichKeyBorder = { fg = 'highlight_med' },
+				LazyGitBorder = { fg = 'highlight_med' },
 			},
 		},
 	},

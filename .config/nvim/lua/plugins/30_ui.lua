@@ -31,6 +31,10 @@ return {
 				},
 				spamming = 5,
 			},
+
+			terminal = {
+				win = { style = 'terminal', border = 'rounded' },
+			},
 		},
 	},
 
@@ -73,8 +77,6 @@ return {
 			presets = {
 				bottom_search = true,
 				command_palette = true,
-				long_message_to_split = false,
-				inc_rename = false,
 				lsp_doc_border = true,
 			},
 
@@ -88,23 +90,6 @@ return {
 				},
 			},
 		},
-		opts_ = function(_, opts)
-			opts.lsp.override = {
-				['vim.lsp.util.convert_input_to_markdown_lines'] = true,
-				['vim.lsp.util.stylize_markdown'] = true,
-				['cmp.entry.get_documentation'] = true,
-			}
-			opts.lsp.signature = {
-				enabled = true,
-				auto_open = { enabled = false },
-			}
-			opts.lsp.progress = {
-				enabled = true,
-				format = 'lsp_progress',
-				format_done = 'lsp_progress_done',
-				view = 'mini',
-			}
-		end,
 	},
 
 	{ -- Statusline

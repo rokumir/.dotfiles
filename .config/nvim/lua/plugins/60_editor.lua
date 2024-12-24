@@ -168,7 +168,7 @@ return {
 			local function open_file(opts)
 				return function()
 					require('neo-tree.command').execute(vim.tbl_extend('force', {}, opts, {
-						position = opts.position or vim.g.nihil_neotree_position,
+						position = 'float',
 					}))
 				end
 			end
@@ -401,4 +401,26 @@ return {
 
 	-- Automatically set indent settings base on the content of the file
 	{ 'tpope/vim-sleuth', event = 'VeryLazy', priority = 1000 },
+
+	{ -- Lazygit
+		'kdheepak/lazygit.nvim',
+		lazy = true,
+		cmd = {
+			'LazyGit',
+			'LazyGitConfig',
+			'LazyGitCurrentFile',
+			'LazyGitFilter',
+			'LazyGitFilterCurrentFile',
+		},
+		keys = {
+			{ '<leader>gg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
+			{ '<leader>gG', '<cmd>LazyGitCurrentFile<cr>', desc = 'LazyGit Current File' },
+		},
+		init = function()
+			vim.g.lazygit_floating_window_winblend = 0
+			vim.g.lazygit_floating_window_scaling_factor = 0.9
+			vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }
+			vim.g.lazygit_floating_window_use_plenary = 0 -- use plenary.nvim to manage floating window if available
+		end,
+	},
 }
