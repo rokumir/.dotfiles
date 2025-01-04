@@ -7,6 +7,8 @@ return {
 
 		---@type snacks.Config
 		opts = {
+			scroll = { enabled = false },
+
 			indent = {
 				priority = 200,
 				indent = { enabled = true, hl = 'IndentChar' },
@@ -20,20 +22,31 @@ return {
 						corner_bottom = '╰',
 						horizontal = '─',
 						vertical = '│',
-						arrow = '>',
+						arrow = '',
 					},
 				},
-			},
-			scroll = {
-				animate = {
-					fps = 10,
-					duration = { step = 1, total = 5 },
-				},
-				spamming = 5,
 			},
 
 			terminal = {
 				win = { style = 'terminal', border = 'rounded' },
+			},
+
+			zen = {
+				-- You can add any `Snacks.toggle` id here.
+				-- Toggle state is restored when the window is closed.
+				-- Toggle config options are NOT merged.
+				---@type table<string, boolean>
+				toggles = {
+					dim = false,
+					git_signs = false,
+					mini_diff_signs = false,
+					diagnostics = true,
+					inlay_hints = false,
+				},
+				show = {
+					statusline = false,
+					tabline = false,
+				},
 			},
 		},
 	},
@@ -187,6 +200,7 @@ return {
 		'eero-lehtinen/oklch-color-picker.nvim',
 		event = 'VeryLazy',
 		lazy = false,
+		enabled = false,
 		opts = {
 			highlight = {
 				enabled = true,

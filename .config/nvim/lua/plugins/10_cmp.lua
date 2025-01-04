@@ -1,6 +1,11 @@
 return {
 	{
 		'blink.cmp',
+
+		dependencies = {
+			'moyiz/blink-emoji.nvim',
+		},
+
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config | {}
 		opts = {
@@ -22,25 +27,33 @@ return {
 				['<down>'] = { 'select_next', 'fallback' },
 			},
 
+			sources = {
+				default = {
+					'emoji',
+				},
+				providers = {
+					emoji = {
+						module = 'blink-emoji',
+						name = 'Emoji',
+						score_offset = 15, -- Tune by preference
+					},
+				},
+			},
+
 			---@diagnostic disable: missing-fields
 			completion = {
 				trigger = {
 					show_on_trigger_character = true,
 				},
 				menu = {
-					auto_show = false,
+					auto_show = true,
 					border = 'rounded',
 					draw = {
 						gap = 2,
 						padding = 2,
-						columns = { { 'kind_icon' }, { 'label', 'label_description', gap = 1 } },
 						components = {
 							kind_icon = {
-								ellipsis = false,
-								text = function(ctx)
-									local kind_icon, _, _ = require('mini.icons').get('lsp', ctx.kind)
-									return kind_icon
-								end,
+								ellipsis = true,
 							},
 						},
 					},

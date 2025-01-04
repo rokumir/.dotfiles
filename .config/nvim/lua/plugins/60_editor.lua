@@ -93,6 +93,9 @@ return {
 				},
 			}
 
+			opts.file_icons = 'mini'
+			opts.multiprocess = true
+
 			-- PROVIDERS
 			opts.grep = opts.grep or {}
 			opts.grep.formatter = 'path.filename_first'
