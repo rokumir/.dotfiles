@@ -25,7 +25,7 @@ alias rm 'rm -iv'
 alias mkdir 'mkdir -pv'
 alias which 'type -a'
 alias vi nvim
-alias ls 'eza -laU --icons --no-filesize --no-user --group-directories-first'
+alias ls 'eza -laU --icons --no-user --group-directories-first'
 alias l ls
 alias g git
 alias gd 'git --git-dir $HOME/.dotfiles -C $HOME --work-tree $HOME'
