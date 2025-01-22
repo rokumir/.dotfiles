@@ -6,3 +6,4 @@ debug
 *.log
 data
 lazy-lock.json
+.news

@@ -89,8 +89,9 @@ return {
 		},
 	},
 
-	{ -- NOTE: DEPRECATED in favor of custom made plugin
-		-- Convert color likes hex to smth else
+	-- NOTE: DEPRECATED in favor of custom made plugin
+	-- Convert color likes hex to smth else
+	{
 		'cjodo/convert.nvim',
 		enabled = false,
 		cond = false,
@@ -108,6 +109,60 @@ return {
 				close = { '<esc>', '<c-c>', '<c-q>' },
 				submit = { '<cr>', '<space>', 'l' },
 			},
+		},
+	},
+	-- NOTE: DEPRECATED in favor of custom made plugin
+	{ -- General Color highlight & picker (with oklch)
+		'eero-lehtinen/oklch-color-picker.nvim',
+		event = 'VeryLazy',
+		lazy = false,
+		enabled = false,
+		opts = {
+			highlight = {
+				enabled = true,
+				edit_delay = 60,
+				scroll_delay = 0,
+			},
+			patterns = {
+				css_oklch = { priority = -1, '()oklch%([^,]-%)()' },
+				hex_literal = { priority = -1, '()0x%x%x%x%x%x%x+%f[%W]()' },
+				tailwind = {
+					priority = -2,
+					custom_parse = function(str) return require('oklch-color-picker.tailwind').custom_parse(str) end,
+					'%f[%w][%l%-]-%-()%l-%-%d%d%d?%f[%W]()',
+				},
+				hex = false,
+				css_rgb = false,
+				css_hsl = false,
+				numbers_in_brackets = false,
+			},
+			auto_download = false,
+			register_cmds = false,
+		},
+	},
+	-- NOTE: DEPRECATED in favor of custom made plugin
+	{ -- highlight hex colors
+		'brenoprata10/nvim-highlight-colors',
+		event = 'VeryLazy',
+		lazy = false,
+		keys = {
+			{ '<leader>uh', ':HighlightColors Toggle<cr>', desc = 'Toggle color highlight (HEX, RGB, etc.)' },
+		},
+		opts = {
+			render = 'virtual', --- background | foreground | virtual
+			virtual_symbol = '', -- requires `vitual` mode
+			virtual_symbol_prefix = '',
+			virtual_symbol_suffix = ' ',
+			virtual_symbol_position = 'inline',
+
+			enable_hex = true, ---Highlight hex colors, e.g. '#FFFFFF'
+			enable_short_hex = false, ---Highlight short hex colors e.g. '#fff'
+			enable_rgb = true, ---Highlight rgb colors, e.g. 'rgb(0 0 0)'
+			enable_hsl = true, ---Highlight hsl colors, e.g. 'hsl(150deg 30% 40%)'
+			enable_var_usage = true, ---Highlight CSS variables, e.g. 'var(--testing-color)'
+			enable_named_colors = false, ---Highlight named colors, e.g. 'green'
+			enable_tailwind = true, ---Highlight tailwind colors, e.g. 'bg-blue-500'
+			exclude_filetypes = { 'text', 'lazy', 'help' },
 		},
 	},
 }

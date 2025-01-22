@@ -28,7 +28,11 @@ return {
 			},
 
 			terminal = {
-				win = { style = 'terminal', border = 'rounded' },
+				win = {
+					relative = true,
+					style = 'terminal',
+					border = 'rounded',
+				},
 			},
 
 			zen = {
@@ -105,6 +109,94 @@ return {
 		},
 	},
 
+	-- { -- Tabline
+	-- 	'bufferline.nvim',
+	-- 	keys = {
+	-- 		{ '<tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
+	-- 		{ '<s-tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Next Buffer' },
+	-- 	},
+	-- 	opts = function(_, _opts)
+	-- 		local opts = vim.tbl_deep_extend('keep', _opts, {
+	-- 			options = {
+	-- 				close_command = 'bp|sp|bn|bd! %d',
+	-- 				right_mouse_command = 'bp|sp|bn|bd! %d',
+	-- 				left_mouse_command = 'buffer %d',
+	-- 				buffer_close_icon = '',
+	-- 				modified_icon = '',
+	-- 				close_icon = '',
+	-- 				show_close_icon = false,
+	-- 				left_trunc_marker = '',
+	-- 				right_trunc_marker = '',
+	-- 				max_name_length = 14,
+	-- 				max_prefix_length = 13,
+	-- 				tab_size = 10,
+	-- 				show_tab_indicators = true,
+	-- 				indicator = {
+	-- 					style = 'underline',
+	-- 				},
+	-- 				enforce_regular_tabs = false,
+	-- 				view = 'multiwindow',
+	-- 				show_buffer_close_icons = true,
+	-- 				separator_style = 'thin',
+	-- 				-- separator_style = "slant",
+	-- 				always_show_bufferline = true,
+	-- 				diagnostics = false,
+	-- 				themable = true,
+	-- 			},
+	-- 		})
+	--
+	-- 		-- Buffers belong to tabs
+	-- 		local cache = {}
+	-- 		local last_tab = 0
+	--
+	-- 		local utils = {}
+	--
+	-- 		utils.is_valid = function(buf_num)
+	-- 			if not buf_num or buf_num < 1 then return false end
+	-- 			local exists = vim.api.nvim_buf_is_valid(buf_num)
+	-- 			return vim.bo[buf_num].buflisted and exists
+	-- 		end
+	--
+	-- 		utils.get_valid_buffers = function()
+	-- 			local buf_nums = vim.api.nvim_list_bufs()
+	-- 			local ids = {}
+	-- 			for _, buf in ipairs(buf_nums) do
+	-- 				if utils.is_valid(buf) then ids[#ids + 1] = buf end
+	-- 			end
+	-- 			return ids
+	-- 		end
+	--
+	-- 		local autocmd = vim.api.nvim_create_autocmd
+	--
+	-- 		autocmd('TabEnter', {
+	-- 			callback = function()
+	-- 				local tab = vim.api.nvim_get_current_tabpage()
+	-- 				local buf_nums = cache[tab]
+	-- 				if buf_nums then
+	-- 					for _, k in pairs(buf_nums) do
+	-- 						vim.api.nvim_set_option_value('buflisted', true, { buf = k })
+	-- 					end
+	-- 				end
+	-- 			end,
+	-- 		})
+	-- 		autocmd('TabLeave', {
+	-- 			callback = function()
+	-- 				local tab = vim.api.nvim_get_current_tabpage()
+	-- 				local buf_nums = utils.get_valid_buffers()
+	-- 				cache[tab] = buf_nums
+	-- 				for _, k in pairs(buf_nums) do
+	-- 					vim.api.nvim_set_option_value('buflisted', false, { buf = k })
+	-- 				end
+	-- 				last_tab = tab
+	-- 			end,
+	-- 		})
+	-- 		autocmd('TabClosed', { callback = function() cache[last_tab] = nil end })
+	-- 		autocmd('TabNewEntered', {
+	-- 			callback = function(e) vim.api.nvim_set_option_value('buflisted', true, { buf = e.buf }) end,
+	-- 		})
+	-- 	end,
+	-- },
+
 	{ -- Statusline
 		'nvim-lualine/lualine.nvim',
 		init = function(self)
@@ -114,19 +206,11 @@ return {
 			local refresh_statusline = function() require('lualine').refresh { place = { 'statusline' } } end
 			vim.api.nvim_create_autocmd('RecordingEnter', { callback = refresh_statusline })
 			vim.api.nvim_create_autocmd('RecordingLeave', {
-				callback = function() vim.loop.new_timer():start(50, 0, vim.schedule_wrap(refresh_statusline)) end,
+				callback = function() vim.uv.new_timer():start(50, 0, vim.schedule_wrap(refresh_statusline)) end,
 			})
 		end,
 
 		opts = function(_, opts)
-			local palette_exists, palette = pcall(require, 'lualine.themes.' .. (vim.g.colors_name or ''))
-			palette.normal.c.bg = 'NONE'
-			palette.insert.c.bg = 'NONE'
-			palette.visual.c.bg = 'NONE'
-			palette.replace.c.bg = 'NONE'
-			palette.command.c.bg = 'NONE'
-			opts.options.theme = palette
-
 			opts.options.component_separators = { left = '', right = '' }
 			opts.options.section_separators = { left = '', right = '' }
 
@@ -194,59 +278,5 @@ return {
 				map('n', '<leader>gh<s-r>', gs.reset_buffer, 'Reset Buffer')
 			end
 		end,
-	},
-
-	{ -- General Color highlight & picker (with oklch)
-		'eero-lehtinen/oklch-color-picker.nvim',
-		event = 'VeryLazy',
-		lazy = false,
-		enabled = false,
-		opts = {
-			highlight = {
-				enabled = true,
-				edit_delay = 60,
-				scroll_delay = 0,
-			},
-			patterns = {
-				css_oklch = { priority = -1, '()oklch%([^,]-%)()' },
-				hex_literal = { priority = -1, '()0x%x%x%x%x%x%x+%f[%W]()' },
-				tailwind = {
-					priority = -2,
-					custom_parse = function(str) return require('oklch-color-picker.tailwind').custom_parse(str) end,
-					'%f[%w][%l%-]-%-()%l-%-%d%d%d?%f[%W]()',
-				},
-				hex = false,
-				css_rgb = false,
-				css_hsl = false,
-				numbers_in_brackets = false,
-			},
-			auto_download = false,
-			register_cmds = false,
-		},
-	},
-
-	{ -- highlight hex colors
-		'brenoprata10/nvim-highlight-colors',
-		event = 'VeryLazy',
-		lazy = false,
-		keys = {
-			{ '<leader>uh', '<cmd>HighlightColors Toggle <cr>', desc = 'Toggle color highlight (HEX, RGB, etc.)' },
-		},
-		opts = {
-			render = 'virtual', --- background | foreground | virtual
-			virtual_symbol = '', -- requires `vitual` mode
-			virtual_symbol_prefix = '',
-			virtual_symbol_suffix = ' ',
-			virtual_symbol_position = 'inline',
-
-			enable_hex = true, ---Highlight hex colors, e.g. '#FFFFFF'
-			enable_short_hex = false, ---Highlight short hex colors e.g. '#fff'
-			enable_rgb = true, ---Highlight rgb colors, e.g. 'rgb(0 0 0)'
-			enable_hsl = true, ---Highlight hsl colors, e.g. 'hsl(150deg 30% 40%)'
-			enable_var_usage = true, ---Highlight CSS variables, e.g. 'var(--testing-color)'
-			enable_named_colors = true, ---Highlight named colors, e.g. 'green'
-			enable_tailwind = true, ---Highlight tailwind colors, e.g. 'bg-blue-500'
-			exclude_filetypes = { 'text', 'lazy', 'help' },
-		},
 	},
 }

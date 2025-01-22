@@ -74,12 +74,16 @@ return {
 	},
 
 	{ -- Fuzzy picker
-		'ibhagwan/fzf-lua',
-		opts = function(_, opts)
-			if not opts.winopts then opts.winopts = {} end
-			opts.winopts.preview = { wrap = 'nowrap', hidden = 'hidden' }
+		'fzf-lua',
+		opts = {
+			file_icons = 'mini',
+			multiprocess = true,
 
-			opts.keymap = {
+			winopts = {
+				preview = { wrap = 'nowrap', hidden = 'hidden' },
+			},
+
+			keymap = {
 				fzf = {
 					['ctrl-l'] = 'accept',
 					['🔥'] = 'accept',
@@ -91,29 +95,27 @@ return {
 					['<c-d>'] = 'preview-down',
 					['<a-z>'] = 'toggle-preview-wrap',
 				},
-			}
-
-			opts.file_icons = 'mini'
-			opts.multiprocess = true
+			},
 
 			-- PROVIDERS
-			opts.grep = opts.grep or {}
-			opts.grep.formatter = 'path.filename_first'
+			grep = {
+				formatter = 'path.filename_first',
+			},
+			live_grep = {
+				formatter = 'path.filename_first',
+			},
+			files = {
+				cmd = 'rg --no-require-git --follow --hidden --files --sortr modified',
+				formatter = 'path.filename_first',
+				cwd_prompt = false,
+				silent = true,
+				winopts = {
+					width = 0.6,
+					preview = { layout = 'vertical' },
+				},
+			},
+		},
 
-			opts.live_grep = opts.live_grep or {}
-			opts.live_grep.formatter = 'path.filename_first'
-
-			opts.files = opts.files or {}
-			opts.files.cmd = 'rg --no-require-git --follow --hidden --files --sortr modified'
-			opts.files.formatter = 'path.filename_first'
-			opts.files.cwd_prompt = false
-			opts.files.silent = true
-			opts.files.winopts = {
-				width = 0.6,
-				preview = { layout = 'vertical' },
-			}
-			if vim.env.GLOBAL_IGNORE_FILE then opts.files.cmd = opts.files.cmd .. ' --ignore-file ' .. vim.env.GLOBAL_IGNORE_FILE end
-		end,
 		keys = function()
 			local function symbols_filter(entry, ctx)
 				if ctx.symbols_filter == nil then ctx.symbols_filter = LazyVim.config.get_kind_filter(ctx.bufnr) or false end
@@ -161,6 +163,18 @@ return {
 				{ ';xb', '<cmd>FzfLua grep_curbuf <cr>', desc = 'Buffers' },
 				{ ';xg', '<cmd>FzfLua git_files <cr>', desc = 'Find Git Files' },
 			}
+		end,
+	},
+	{
+		'fzf-lua',
+		opts = function(_, opts)
+			if vim.env.GLOBAL_IGNORE_FILE then opts.files.cmd = opts.files.cmd .. ' --ignore-file ' .. vim.env.GLOBAL_IGNORE_FILE end
+
+			local actions = require 'fzf-lua.actions'
+			local trouble_actions = require('trouble.sources.fzf').actions
+			opts.actions = opts.actions or {}
+			opts.actions.files = opts.actions.files or { true }
+			opts.actions.files['alt-q'] = trouble_actions.open_selected
 		end,
 	},
 
@@ -344,16 +358,38 @@ return {
 				open_folds = 'zO',
 			},
 		},
-		keys = {
-			{ '<leader>xx', '<cmd>Trouble diagnostics toggle filter.buf=0 <cr>', desc = 'Diagnostics (buffer)' },
-			{ '<leader>xX', '<cmd>Trouble diagnostics toggle <cr>', desc = 'Diagnostics' },
-			{ '<leader>xl', '<cmd>Trouble loclist toggle <cr>', desc = 'Locations' },
-			{ '<leader>xq', '<cmd>Trouble quickfix toggle <cr>', desc = 'Quickfixes' },
-			{ '<leader>cs', false },
-			{ '<leader>cS', false },
-			{ '<leader>xL', false },
-			{ '<leader>xQ', false },
-		},
+		keys = function()
+			return {
+				{ '<leader>xx', '<cmd>Trouble diagnostics toggle filter.buf=0 <cr>', desc = 'Diagnostics (buffer)' },
+				{ '<leader>xX', '<cmd>Trouble diagnostics toggle <cr>', desc = 'Diagnostics' },
+				{ '<leader>xl', '<cmd>Trouble loclist toggle <cr>', desc = 'Locations' },
+				{ '<leader>xq', '<cmd>Trouble quickfix toggle <cr>', desc = 'Quickfixes' },
+				{
+					'[q',
+					function()
+						if require('trouble').is_open() then
+							require('trouble').prev { skip_groups = true, jump = true }
+						else
+							local ok, err = pcall(vim.cmd.cprev)
+							if not ok then vim.notify(err, vim.log.levels.ERROR) end
+						end
+					end,
+					desc = 'Previous Trouble/Quickfix Item',
+				},
+				{
+					']q',
+					function()
+						if require('trouble').is_open() then
+							require('trouble').next { skip_groups = true, jump = true }
+						else
+							local ok, err = pcall(vim.cmd.cnext)
+							if not ok then vim.notify(err, vim.log.levels.ERROR) end
+						end
+					end,
+					desc = 'Next Trouble/Quickfix Item',
+				},
+			}
+		end,
 	},
 
 	{ -- Refactoring (primeagen)
@@ -405,25 +441,24 @@ return {
 	-- Automatically set indent settings base on the content of the file
 	{ 'tpope/vim-sleuth', event = 'VeryLazy', priority = 1000 },
 
-	{ -- Lazygit
-		'kdheepak/lazygit.nvim',
-		lazy = true,
-		cmd = {
-			'LazyGit',
-			'LazyGitConfig',
-			'LazyGitCurrentFile',
-			'LazyGitFilter',
-			'LazyGitFilterCurrentFile',
+	{
+		'SuperBo/fugit2.nvim',
+		opts = {
+			width = 100,
 		},
+		cmd = { 'Fugit2', 'Fugit2Diff', 'Fugit2Graph' },
 		keys = {
-			{ '<leader>gg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
-			{ '<leader>gG', '<cmd>LazyGitCurrentFile<cr>', desc = 'LazyGit Current File' },
+			{ '<leader>gf', mode = 'n', '<cmd>Fugit2<cr>' },
 		},
-		init = function()
-			vim.g.lazygit_floating_window_winblend = 0
-			vim.g.lazygit_floating_window_scaling_factor = 0.9
-			vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }
-			vim.g.lazygit_floating_window_use_plenary = 0 -- use plenary.nvim to manage floating window if available
-		end,
+	},
+	{
+		'sindrets/diffview.nvim',
+		cmd = {
+			'DiffviewFileHistory',
+			'DiffviewOpen',
+			'DiffviewToggleFiles',
+			'DiffviewFocusFiles',
+			'DiffviewRefresh',
+		},
 	},
 }

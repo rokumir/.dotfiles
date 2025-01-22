@@ -21,7 +21,7 @@ return {
 			---@type table<string, lspconfig.Config | {}>
 			servers = {
 				rust_analyzer = {},
-				emmet_ls = {},
+				-- emmet_ls = {},
 				html = {},
 				gopls = {},
 				pyright = {},

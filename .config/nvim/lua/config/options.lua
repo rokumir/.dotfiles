@@ -30,12 +30,12 @@ _.mouse = 'n'
 _.mousefocus = true
 _.smoothscroll = true
 _.cursorline = false
+_.cursorline = true
+_.cursorlineopt = 'number'
 _.wrap = true
 _.laststatus = 3 -- global statusline
+_.colorcolumn = '80,120'
 
--- _.tabstop = 4
--- _.softtabstop = 4
--- _.shiftwidth = 4
 _.smarttab = true
 _.expandtab = true
 _.showbreak = ''

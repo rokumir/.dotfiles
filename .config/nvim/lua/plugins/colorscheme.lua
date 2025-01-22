@@ -22,6 +22,8 @@ return {
 			highlight_groups = {
 				IndentChar = { fg = 'highlight_low' },
 				IndentCharActive = { fg = 'highlight_high' },
+				ColorColumn = { fg = 'highlight_low', bg = 'none' },
+				CursorLineNr = { fg = 'foam', bold = true, italic = true },
 
 				Comment = { fg = 'muted' },
 				Folded = { bg = 'base' },
@@ -29,7 +31,7 @@ return {
 				Search = { bg = 'highlight_med', fg = 'none' },
 				IncSearch = { bg = 'gold', fg = 'black' },
 				CurSearch = { bg = 'highlight_low', fg = 'none', underline = true },
-				Visual = { bg = '#343242' },
+				Visual = { bg = 'subtle' },
 				Normal = { bg = 'none' },
 				NormalFloat = { bg = 'none' },
 				PmenuSel = { bg = 'highlight_low', fg = 'none' },

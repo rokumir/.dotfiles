@@ -116,8 +116,8 @@ map { '<c-a-right>', ':vertical resize +1 <cr>', desc = 'Increase Window Width' 
 
 ------------------------------
 --- Tabs
-map { 't]', ':tabnext <cr>', desc = 'Next Tab' }
-map { 't[', ':tabprev <cr>', desc = 'Prev Tab' }
+map { '<c-s-right>', ':tabnext <cr>', desc = 'Next Tab' }
+map { '<c-s-left>', ':tabprev <cr>', desc = 'Prev Tab' }
 -- map { '<leader><tab>d', ':tabclose <cr>', desc = 'Close Tab' }
 -- map { '<c-s-right>', ':tabm +1 <cr>', desc = 'Move Tab Right' }
 -- map { '<c-s-left>', ':tabm -1 <cr>', desc = 'Move Tab Left' }
