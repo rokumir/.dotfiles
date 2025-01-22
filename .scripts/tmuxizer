@@ -6,9 +6,9 @@ begin
 end \
     | sort -ur \
     | string replace "$HOME/" '' \
-    | $fzf_cmd --border-label ' New Work Session ' \
+    | $fzf_cmd --border-label ' Open new session ' \
     | read -l selected_path
-or return
+or return 0
 
 set selected_path (realpath ~/$selected_path)
 set selected_name (basename $selected_path | tr . _)
