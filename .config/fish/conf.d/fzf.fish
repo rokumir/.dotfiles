@@ -1,6 +1,5 @@
 set -gx FZF_DEFAULT_OPTS \
     --padding 0,1 \
-    --border rounded \
     --cycle --reverse \
     --scrollbar │ --marker │ --pointer ┃ \
     --ansi --inline-info \
@@ -27,7 +26,7 @@ set -gx FZF_HOME_PROJECTS \
 
 ## For only scripts use
 set -gx fzf_cmd fzf
-[ -n "$TMUX" ]; and set -gxa fzf_cmd --tmux 70%,85%
+[ -n "$TMUX" ]; and set -gxa fzf_cmd --tmux 70%,85% --border rounded
 
 set -gx find_cmd fd $FD_DEFAULT_OPTS \
     --no-require-git
