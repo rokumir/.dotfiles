@@ -4,6 +4,7 @@
 [core]
     autocrlf = false
     askpass = # disable credential manager
+    pager = delta
 [alias]
     br = branch
     a = add
@@ -54,3 +55,15 @@
 	helper = !/usr/bin/gh auth git-credential
 [safe]
 	directory = %(prefix)///wsl.localhost/Arch/home/rokumir/.cache/yay/omnisharp-roslyn/src/omnisharp-roslyn
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true  # use n and N to move between diff sections
+    dark = true      # or light = true, or omit for auto-detection
+
+[merge]
+    conflictstyle = zdiff3
+[pull]
+	ff = only
