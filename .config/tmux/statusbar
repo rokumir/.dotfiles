@@ -1,6 +1,7 @@
 #!/usr/bin/env fish
 # vim:ft=fish
 
+## -----------------------------------------------------------------------------
 ## Helpers
 function t-set
     tmux set-option -gq $argv[1] "$argv[2..]"
@@ -9,43 +10,47 @@ function t-setw
     tmux set-window-option -gq $argv[1] "$argv[2..]"
 end
 
-
+## -----------------------------------------------------------------------------
 ## Display
-set -l left_content ' マフル' # ノラ
-set -l right_content '%a %d %b %H:%M'
-set -l sep_left_fill 
-set -l sep_right_fill 
-set -l sep_left_tail_fill 
-set -l sep_left 
-set -l sep_right 
+set left_content ' マフル' # ノラ
+set right_content '%a %d %b %H:%M'
+set sep_left_fill 
+set sep_right_fill 
+set sep_left_tail_fill 
+set sep_left 
+set sep_right 
 
+## -----------------------------------------------------------------------------
 ## Color palette
-set -l bg default
-set -l fg '#cdd6f4'
-set -l fg1 '#7f849c'
-set -l violet '#945eff'
-set -l teal '#31ebb8'
-set -l null '#0c0c0c'
-set -l black '#26272e'
-set -l gray '#343540'
-set -l gray1 '#494952'
-set -l gray2 '#51585e'
+set bg default
+set fg '#cdd6f4'
+set fg1 '#7f849c'
+set violet '#945eff'
+set teal '#31ebb8'
+set null '#0c0c0c'
+set black '#26272e'
+set gray '#343540'
+set gray1 '#494952'
+set gray2 '#51585e'
 
-
+## -----------------------------------------------------------------------------
 ## Modes (also includes selection style)
 t-setw mode-style fg=$teal bg=$gray
 
+## -----------------------------------------------------------------------------
 ## Message
 t-set message-style fg=$teal bg=$bg align=centre
 t-set message-command-style fg=$teal bg=$bg align=centre
 
+## -----------------------------------------------------------------------------
 ## Clock
 t-setw clock-mode-colour "$teal"
 
+## -----------------------------------------------------------------------------
 ## Status
 t-set status on
 t-set status-style bg=$bg fg=$fg
-t-set status-justify left
+t-set status-justify center
 t-set status-left-length 100
 t-set status-right-length 100
 t-set status-left-style
@@ -69,8 +74,12 @@ t-set status-right (string join '' \
     "#[fg=$teal bg=$black bold] #S" \ 
 )
 
+## -----------------------------------------------------------------------------
+## Windows (Tabs)
+# set pane_title "#{b:pane_current_path}> #{pane_current_command}"
+set pane_title "#{b:pane_current_path}: #{pane_current_command}"
 
-## Window (tab)
+# Windows Options
 t-setw window-status-activity-style fg=$fg bg=$bg none
 t-setw window-status-separator
 t-setw window-status-style fg=$fg bg=$bg none
@@ -79,14 +88,14 @@ t-setw window-status-activity-style underscore fg=$gray1 bg=$bg
 t-setw window-status-separator
 t-setw window-status-style NONE fg=$gray1 bg=$bg
 
-# idle state
-t-setw window-status-format " #[default fg=$fg1] #I $sep_left #{b:pane_current_path}  "
+# State: Idle
+t-setw window-status-format " #[default fg=$fg1] #I $sep_left $pane_title  "
 
-# active state
+# State: Active
 t-setw window-status-current-format (string join '' \
     "#[fg=$gray1]$sep_left_tail_fill" \
     "#[bg=$gray1 fg=$teal bold] #I " \
     "#[fg=$gray1 bg=$black]$sep_left_fill " \
-    "#[fg=$teal noitalics nobold]#{b:pane_current_path} " \
+    "#[fg=$teal noitalics nobold]$pane_title " \
     "#[fg=$black bg=$bg nobold]$sep_left_fill" \
 )
