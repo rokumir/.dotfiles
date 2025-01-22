@@ -1,6 +1,5 @@
-local M = {}
-local L = {}
-local U = {}
+local L = {} --- Locals
+local U = {} --- Utils
 
 -- ------------------------------------------------------------------------------
 --                     CONFIGS
@@ -143,11 +142,9 @@ L.init = function()
 	})
 end
 
-M.setup = function()
-	if not L.initialized then
-		L.init()
-		L.initialized = true
-	end
+-- -----------------------------------------------
+-- Main
+if not L.initialized then
+	L.init()
+	L.initialized = true
 end
-
-return M

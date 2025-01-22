@@ -21,4 +21,10 @@ return {
 		dependencies = { 'lazydev.nvim', opts = function(_, opts) table.insert(opts.library, { path = 'wezterm-types', mods = { 'wezterm' } }) end },
 		cond = function() return vim.fn.fnamemodify(vim.fn.expand '%', ':t') == 'wezterm.lua' end,
 	},
+
+	{ -- virt columns
+		'nihil/virt-column',
+		-- name = 'virt-column',
+		-- config = function() require('virt-column').setup() end,
+	},
 }

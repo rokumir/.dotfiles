@@ -12,6 +12,13 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup {
+	---@diagnostic disable-next-line: assign-type-mismatch
+	dev = {
+		path = vim.fn.stdpath 'config' .. '/nihil',
+		-- path = '~/.config/nvim/nihil',
+		patterns = { 'nihil' },
+		fallback = false,
+	},
 	spec = {
 		{
 			'LazyVim/LazyVim',
@@ -33,7 +40,6 @@ require('lazy').setup {
 		{ import = 'lazyvim.plugins.extras.editor.dial' },
 		{ import = 'lazyvim.plugins.extras.coding.neogen' },
 		{ import = 'lazyvim.plugins.extras.coding.blink' },
-		-- { import = 'lazyvim.plugins.extras.coding.yanky' },
 
 		{ import = 'lazyvim.plugins.extras.linting.eslint' },
 		{ import = 'lazyvim.plugins.extras.formatting.prettier' },

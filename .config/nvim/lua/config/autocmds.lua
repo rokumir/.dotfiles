@@ -1,4 +1,4 @@
-local map = require('nihil.keymap').map
+local map = require('utils.keymap').map
 local function augroup(name, opts) return vim.api.nvim_create_augroup('nihil_' .. name, opts or { clear = true }) end
 
 -- Settings for the greatest script of all time

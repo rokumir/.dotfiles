@@ -1,4 +1,4 @@
-local map = require('nihil.keymap').map
+local map = require('utils.keymap').map
 
 map { 'K', '<nop>', mode = { 'n', 's', 'x' } }
 
