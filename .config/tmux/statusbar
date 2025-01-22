@@ -71,13 +71,13 @@ t-set status-right (string join '' \
     "#[fg=$gray1 bg=$bg]$sep_right_fill" \
     "#[fg=$gray bg=$gray1]$sep_right_fill" \
     "#[fg=$black bg=$gray]$sep_right_fill" \
-    "#[fg=$teal bg=$black bold] #S" \ 
+    "#[fg=$teal bg=$black bold] #S " \
 )
 
 ## -----------------------------------------------------------------------------
 ## Windows (Tabs)
-# set pane_title "#{b:pane_current_path}> #{pane_current_command}"
-set pane_title "#{b:pane_current_path}: #{pane_current_command}"
+set pane_title_separator '> '
+set pane_title "\$#{b:pane_current_path}#{?#{==:#{pane_current_command},fish},,$pane_title_separator#{pane_current_command}}"
 
 # Windows Options
 t-setw window-status-activity-style fg=$fg bg=$bg none
