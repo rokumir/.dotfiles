@@ -74,7 +74,7 @@ return {
 	},
 
 	{ -- Fuzzy picker
-		'fzf-lua',
+		'ibhagwan/fzf-lua',
 		opts = {
 			file_icons = 'mini',
 			multiprocess = true,
@@ -439,7 +439,15 @@ return {
 	},
 
 	-- Automatically set indent settings base on the content of the file
-	{ 'tpope/vim-sleuth', event = 'VeryLazy', priority = 1000 },
+	{
+		'tpope/vim-sleuth',
+		event = 'VeryLazy',
+		priority = 1000,
+		init = function()
+			vim.g.sleuth_heuristics = 1
+			vim.g.sleuth_ps1_heuristics = 0
+		end,
+	},
 
 	{
 		'SuperBo/fugit2.nvim',

@@ -1,3 +1,6 @@
+local map_key = require('utils.keymap').map
+
+---@diagnostic disable: inject-field
 return {
 	{
 		'neovim/nvim-lspconfig',
@@ -21,7 +24,7 @@ return {
 			---@type table<string, lspconfig.Config | {}>
 			servers = {
 				rust_analyzer = {},
-				-- emmet_ls = {},
+				emmet_language_server = {},
 				html = {},
 				gopls = {},
 				pyright = {},
@@ -59,12 +62,12 @@ return {
 				tailwindcss = {
 					settings = {
 						tailwindCSS = {
-							-- classAttributes = { 'class', 'classess', 'className', 'class:list', 'classList', 'ngClass' },
 							experimental = {
 								classRegex = {
 									{ 'cva\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' },
 									{ 'cx\\(([^)]*)\\)', "(?:'|\"|`)([^']*)(?:'|\"|`)" },
 									{ 'cn\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' },
+									{ '([a-zA-Z_]+classNames)\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' },
 								},
 							},
 						},
@@ -87,6 +90,7 @@ return {
 				},
 
 				vtsls = {
+					enabled = false,
 					init_options = {
 						preferences = {
 							importModuleSpecifierPreference = 'non-relative',
@@ -230,7 +234,16 @@ return {
 				{ '<c-k>', false, mode = 'i' },
 				{ '<c-a-k>', require('noice.lsp').signature, mode = 'i', desc = 'Signature Help', has = 'signatureHelp' },
 				{ 'gK', require('noice.lsp').signature, desc = 'Signature Help', has = 'signatureHelp' },
-				{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], desc = 'Organize Imports', has = 'organizeImports' },
+				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, desc = 'Rename', has = 'rename' },
+				{
+					'<a-s-o>',
+					function()
+						pcall(LazyVim.lsp.action['source.organizeImports'])
+						pcall(vim.cmd.TSToolsOrganizeImports)
+					end,
+					desc = 'Organize Imports',
+					has = 'organizeImports',
+				},
 				{
 					'🔥', -- map unicode to ctrl+period
 					function() require('fzf-lua').lsp_code_actions { winopts = { height = 0.4, width = 0.6 } } end,
@@ -238,8 +251,89 @@ return {
 					desc = 'Code actions',
 					has = 'codeAction',
 				},
-				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, desc = 'Rename', has = 'rename' },
 			})
+		end,
+	},
+
+	{
+		'pmizio/typescript-tools.nvim',
+		opts = {
+			handlers = {},
+			settings = {
+				separate_diagnostic_server = true,
+				publish_diagnostic_on = 'insert_leave',
+				expose_as_code_action = 'all',
+
+				tsserver_file_preferences = {
+					disableSuggestions = false,
+					quotePreference = 'single', -- Optional string: "auto", "double", or "single"
+					includeCompletionsForModuleExports = true,
+					includeCompletionsForImportStatements = true,
+					includeCompletionsWithSnippetText = false,
+					includeCompletionsWithInsertText = true,
+					includeAutomaticOptionalChainCompletions = false,
+					includeCompletionsWithClassMemberSnippets = true,
+					includeCompletionsWithObjectLiteralMethodSnippets = false,
+					useLabelDetailsInCompletionEntries = true,
+					allowIncompleteCompletions = false,
+					importModuleSpecifierPreference = 'project-relative', -- Optional string: "shortest", "project-relative", "relative", "non-relative"
+					importModuleSpecifierEnding = 'auto', -- Optional string: "auto", "minimal", "index", "js"
+					allowTextChangesInNewFiles = true,
+					lazyConfiguredProjectsFromExternalProject = false,
+					providePrefixAndSuffixTextForRename = true,
+					provideRefactorNotApplicableReason = false,
+					allowRenameOfImportPath = true,
+					includePackageJsonAutoImports = 'auto', -- Optional string: "auto", "on", "off"
+					jsxAttributeCompletionStyle = 'auto', -- Optional string: "auto", "braces", "none"
+					displayPartsForJSDoc = true,
+					generateReturnInDocTemplate = false,
+					includeInlayParameterNameHints = 'all', -- Optional string: "none", "literals", "all"
+					includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+					includeInlayFunctionParameterTypeHints = false,
+					includeInlayVariableTypeHints = true,
+					includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+					includeInlayPropertyDeclarationTypeHints = true,
+					includeInlayFunctionLikeReturnTypeHints = false,
+					includeInlayEnumMemberValueHints = true,
+
+					organizeImportsIgnoreCase = 'auto', -- Optional string or boolean
+					organizeImportsCollation = 'ordinal', -- Optional string: "ordinal" or "unicode"
+					organizeImportsCollationLocale = 'en', -- Optional string
+					organizeImportsNumericCollation = false,
+					organizeImportsAccentCollation = true,
+					organizeImportsCaseFirst = 'lower', -- Optional string: "upper", "lower", or false
+					disableLineTextInReferences = true,
+				},
+
+				tsserver_locale = 'en',
+				complete_function_calls = true,
+				include_completions_with_insert_text = true,
+				code_lens = 'off',
+				disable_member_code_lens = true,
+				jsx_close_tag = { enable = false },
+			},
+
+			---@type table<number, KeymapingFunArgs>
+			keys = {
+				{ '<leader>cM', '<cmd>TSToolsAddMissingImports<cr>', desc = 'Add missing imports' },
+				{ '<leader>cD', '<cmd>TSToolsFixAll<cr>', desc = 'Fix all diagnostics' },
+				{ '<leader>cR', '<cmd>TSToolsRenameFile<cr>', desc = 'Rename file' },
+			},
+		},
+
+		config = function(_, opts)
+			opts.on_attach = function(client, bufnr)
+				client.server_capabilities.documentFormattingProvider = false
+				client.server_capabilities.documentRangeFormattingProvider = false
+
+				---@diagnostic disable-next-line: no-unknown
+				for _, keymap_args in ipairs(opts.keys) do
+					keymap_args.buffer = bufnr
+					map_key(keymap_args)
+				end
+			end
+
+			require('typescript-tools').setup(opts)
 		end,
 	},
 }

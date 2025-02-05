@@ -200,6 +200,8 @@ return {
 	{ -- Statusline
 		'nvim-lualine/lualine.nvim',
 		init = function(self)
+			vim.g.lualine_laststatus = 3
+
 			if self then self.init() end
 
 			-- recording cmp: init refresh to avoid delay

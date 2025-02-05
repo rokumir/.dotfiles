@@ -1,9 +1,13 @@
 return {
+	{ 'rktjmp/lush.nvim' },
 	{ -- Rose Pine
 		'rose-pine/neovim',
 		name = 'rose-pine',
-		priority = 1000,
+		cond = true,
 		lazy = false,
+		priority = 1000,
+
+		---@type Options
 		opts = {
 			variant = 'auto', -- auto, main, moon, or dawn
 			dark_variant = 'main', -- main, moon, or dawn
@@ -68,25 +72,6 @@ return {
 				comments = { 'italic' },
 				conditionals = { 'italic' },
 				types = { 'bold' },
-			},
-		},
-	},
-
-	{ -- Nightfox
-		'EdenEast/nightfox.nvim',
-		cond = false,
-		lazy = false,
-		priority = 1000,
-		opts = {
-			options = {
-				transparent = true,
-				terminal_colors = true,
-				styles = {
-					comments = 'italic',
-					conditionals = 'italic',
-					constants = 'italic,bold',
-					keywords = 'italic',
-				},
 			},
 		},
 	},

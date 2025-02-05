@@ -1,7 +1,6 @@
 vim.g.mapleader = ' '
 vim.g.lazyvim_picker = 'fzf'
 vim.g.lazyvim_blink_main = true
-vim.g.lualine_laststatus = 3
 
 local _ = vim.opt
 
@@ -37,7 +36,9 @@ _.laststatus = 3 -- global statusline
 _.colorcolumn = '80,120'
 
 _.smarttab = true
-_.expandtab = true
+_.expandtab = false
+-- _.shiftwidth = 2
+-- _.tabstop = 2
 _.showbreak = ''
 _.linebreak = true
 _.autoindent = true
