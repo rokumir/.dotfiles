@@ -2,100 +2,167 @@
 # vim:ft=fish
 
 ## -----------------------------------------------------------------------------
-## Helpers
-function t-set
+## Configuration Variables
+## -----------------------------------------------------------------------------
+
+# Theme Configuration
+set -g theme_config \
+    LEFT_CONTENT ' マフル' \
+    RIGHT_CONTENT '%a %d %b %H:%M' \
+    SEP_LEFT_FILL  \
+    SEP_RIGHT_FILL  \
+    SEP_LEFT_TAIL_FILL  \
+    SEP_LEFT  \
+    set SEP_RIGHT  \
+    PANE_TITLE_SEPARATOR '> '
+
+
+# Color Configuration
+set -g color_palette \
+    BG default \
+    FG '#e0e0e0' \
+    FG1 '#949aa8' \
+    VIOLET '#a77bca' \
+    TEAL '#4db6ac' \
+    BLACK '#1e1e2f' \
+    GRAY '#2e2e3e' \
+    GRAY1 '#3c3c4f' \
+    GRAY2 '#4a4a5a'
+
+## -----------------------------------------------------------------------------
+## Helper Functions
+## -----------------------------------------------------------------------------
+
+function t-set -d "Set tmux global option"
     tmux set-option -gq $argv[1] "$argv[2..]"
 end
-function t-setw
+
+function t-setw -d "Set tmux window option"
     tmux set-window-option -gq $argv[1] "$argv[2..]"
 end
 
-## -----------------------------------------------------------------------------
-## Display
-set left_content ' マフル' # ノラ
-set right_content '%a %d %b %H:%M'
-set sep_left_fill 
-set sep_right_fill 
-set sep_left_tail_fill 
-set sep_left 
-set sep_right 
+function get_theme -d "Get theme configuration value"
+    set -l index (contains -i -- $argv[1] $theme_config)
+    if test $index
+        echo $theme_config[(math $index + 1)]
+    end
+end
+
+function get_color -d "Get color from palette"
+    set -l index (contains -i -- $argv[1] $color_palette)
+    if test $index
+        echo $color_palette[(math $index + 1)]
+    end
+end
 
 ## -----------------------------------------------------------------------------
-## Color palette
-set bg default
-set fg '#cdd6f4'
-set fg1 '#7f849c'
-set violet '#945eff'
-set teal '#31ebb8'
-set null '#0c0c0c'
-set black '#26272e'
-set gray '#343540'
-set gray1 '#494952'
-set gray2 '#51585e'
+## Status Bar Components
+## -----------------------------------------------------------------------------
+
+function build_left_status -d "Build left status bar content"
+    set -l prefix_indicator (build_prefix_indicator)
+    set -l separators (build_left_separators)
+
+    string join '' \
+        $prefix_indicator \
+        $separators
+end
+
+function build_right_status -d "Build right status bar content"
+    set -l time_display "#[fg="(get_color FG1)" italics] "(get_theme RIGHT_CONTENT)" #[none]"
+    set -l separators (build_right_separators)
+    set -l session_name "#[fg="(get_color TEAL)" bg="(get_color BLACK)" bold] #S "
+
+    string join '' \
+        $time_display \
+        $separators \
+        $session_name
+end
+
+function build_prefix_indicator -d "Build prefix indicator segment"
+    string join '' \
+        "#[bg="(get_color BLACK)" bold]#{?client_prefix," \
+        "#[fg="(get_color VIOLET)"]"(get_theme LEFT_CONTENT) "," \
+        "#[fg="(get_color TEAL)"]"(get_theme LEFT_CONTENT)"}"
+end
+
+function build_left_separators -d "Build left separator chain"
+    string join '' \
+        "#[fg="(get_color BLACK)" bg="(get_color GRAY)" none]"(get_theme SEP_LEFT_FILL) \
+        "#[fg="(get_color GRAY)" bg="(get_color GRAY1)"]"(get_theme SEP_LEFT_FILL) \
+        "#[fg="(get_color GRAY1)" bg="(get_color BG)"]"(get_theme SEP_LEFT_FILL)
+end
+
+function build_right_separators -d "Build right separator chain"
+    string join '' \
+        "#[fg="(get_color GRAY1)" bg="(get_color BG)"]"(get_theme SEP_RIGHT_FILL) \
+        "#[fg="(get_color GRAY)" bg="(get_color GRAY1)"]"(get_theme SEP_RIGHT_FILL) \
+        "#[fg="(get_color BLACK)" bg="(get_color GRAY)"]"(get_theme SEP_RIGHT_FILL)
+end
 
 ## -----------------------------------------------------------------------------
-## Modes (also includes selection style)
-t-setw mode-style fg=$teal bg=$gray
+## Window Status Formatting
+## -----------------------------------------------------------------------------
+
+function configure_window_status -d "Configure window status display"
+    set -l pane_title "\$#{b:pane_current_path}#{?#{==:#{pane_current_command},fish},,"(get_theme PANE_TITLE_SEPARATOR)"#{pane_current_command}}"
+
+    # Regular window status
+    t-setw window-status-format " #[default fg="(get_color FG1)"] #I "(get_theme SEP_LEFT)" $pane_title  "
+
+    # Active window status
+    t-setw window-status-current-format (build_active_window_format $pane_title)
+end
+
+function build_active_window_format -a pane_title -d "Build active window status format"
+    string join '' \
+        "#[fg="(get_color GRAY1)"]"(get_theme SEP_LEFT_TAIL_FILL) \
+        "#[bg="(get_color GRAY1)" fg="(get_color TEAL)" bold] #I " \
+        "#[fg="(get_color GRAY1)" bg="(get_color BLACK)"]"(get_theme SEP_LEFT_FILL)" " \
+        "#[fg="(get_color TEAL)" noitalics nobold]$pane_title " \
+        "#[fg="(get_color BLACK)" bg="(get_color BG)" nobold]"(get_theme SEP_LEFT_FILL)
+end
 
 ## -----------------------------------------------------------------------------
-## Message
-t-set message-style fg=$teal bg=$bg align=centre
-t-set message-command-style fg=$teal bg=$bg align=centre
+## Main Configuration
+## -----------------------------------------------------------------------------
+
+function apply_base_configuration -d "Apply basic tmux configuration"
+    # Status bar basics
+    t-set status on
+    t-set status-style "bg="(get_color BG)" fg="(get_color FG)
+    t-set status-justify center
+    t-set status-left-length 100
+    t-set status-right-length 100
+
+    # Apply status bar content
+    t-set status-left (build_left_status)
+    t-set status-right (build_right_status)
+end
+
+function apply_mode_styles -d "Apply mode and message styles"
+    t-setw mode-style "fg="(get_color TEAL)" bg="(get_color GRAY)
+    t-set message-style "fg="(get_color TEAL)" bg="(get_color BG)" align=centre"
+    t-set message-command-style "fg="(get_color TEAL)" bg="(get_color BG)" align=centre"
+    t-setw clock-mode-colour (get_color TEAL)
+end
+
+function apply_window_styles -d "Apply window styling"
+    t-setw window-status-activity-style "fg="(get_color FG)" bg="(get_color BG)" none"
+    t-setw window-status-separator ""
+    t-setw window-status-style "fg="(get_color FG)" bg="(get_color BG)" none"
+end
 
 ## -----------------------------------------------------------------------------
-## Clock
-t-setw clock-mode-colour "$teal"
-
+## Initialize Configuration
 ## -----------------------------------------------------------------------------
-## Status
-t-set status on
-t-set status-style bg=$bg fg=$fg
-t-set status-justify center
-t-set status-left-length 100
-t-set status-right-length 100
-t-set status-left-style
-t-set status-right-style
 
-t-set status-left (string join '' \
-    "#[bg=$black bold]#{?client_prefix," \
-    "#[fg=$violet]$left_content" "," \
-    "#[fg=$teal]$left_content}" \
-    "#[fg=$black bg=$gray none]$sep_left_fill" \
-    "#[fg=$gray bg=$gray1]$sep_left_fill" \
-    "#[fg=$gray1 bg=$bg]$sep_left_fill" \
-)
+function main
+    apply_base_configuration
+    apply_mode_styles
+    apply_window_styles
+    configure_window_status
+end
 
-t-set status-right (string join '' \
-    "#[fg=$fg1 italics] $right_content " \
-    "#[none]" \
-    "#[fg=$gray1 bg=$bg]$sep_right_fill" \
-    "#[fg=$gray bg=$gray1]$sep_right_fill" \
-    "#[fg=$black bg=$gray]$sep_right_fill" \
-    "#[fg=$teal bg=$black bold] #S " \
-)
-
-## -----------------------------------------------------------------------------
-## Windows (Tabs)
-set pane_title_separator '> '
-set pane_title "\$#{b:pane_current_path}#{?#{==:#{pane_current_command},fish},,$pane_title_separator#{pane_current_command}}"
-
-# Windows Options
-t-setw window-status-activity-style fg=$fg bg=$bg none
-t-setw window-status-separator
-t-setw window-status-style fg=$fg bg=$bg none
-
-t-setw window-status-activity-style underscore fg=$gray1 bg=$bg
-t-setw window-status-separator
-t-setw window-status-style NONE fg=$gray1 bg=$bg
-
-# State: Idle
-t-setw window-status-format " #[default fg=$fg1] #I $sep_left $pane_title  "
-
-# State: Active
-t-setw window-status-current-format (string join '' \
-    "#[fg=$gray1]$sep_left_tail_fill" \
-    "#[bg=$gray1 fg=$teal bold] #I " \
-    "#[fg=$gray1 bg=$black]$sep_left_fill " \
-    "#[fg=$teal noitalics nobold]$pane_title " \
-    "#[fg=$black bg=$bg nobold]$sep_left_fill" \
-)
+# Run the configuration
+main
