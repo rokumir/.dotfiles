@@ -13,7 +13,7 @@ or return 0
 set selected_path (realpath ~/$selected_path)
 set selected_name (basename $selected_path | tr . _)
 
-if not tmux has-session -t $selected_name 2>/dev/null
+if not contains -- $session_name (tmux list-sessions -F '#{session_name}')
     tmux new-session -c $selected_path -s $selected_name -d
 end
 
