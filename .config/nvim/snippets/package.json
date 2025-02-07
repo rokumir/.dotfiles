@@ -1,0 +1,22 @@
+{
+  "name": "nihil",
+  "contributes": {
+    "snippets": [
+      {
+        "language": "prettierrc",
+        "path": "./prettierrc.json"
+      },
+      {
+        "language": [
+          "javascript",
+          "typescript"
+        ],
+        "path": "./js.json"
+      },
+      {
+        "language": "all",
+        "path": "./all.json"
+      }
+    ]
+  }
+}
