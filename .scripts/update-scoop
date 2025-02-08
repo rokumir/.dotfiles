@@ -1,0 +1,3 @@
+#!/usr/bin/env fish
+
+pwsh -c 'scoop update | scoop status | foreach { scoop update $_.Name }'

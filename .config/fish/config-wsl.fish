@@ -1,5 +1,4 @@
 alias pwsh 'pwsh.exe -WorkingDirectory "~"'
-alias update-scoop "pwsh -c 'scoop update | scoop status | foreach { scoop update \$_.Name }'"
 
 function get-window-home
     # flag_u: unix  |  flag_m: windows

@@ -1,24 +1,28 @@
 #!/usr/bin/env fish
 
+set -l fzf_border_label ' Open new session '
+
+# Start selection
 begin
     string unescape $FZF_HOME_PROJECTS
     fd -HLa -td -d1 -- . $FZF_HOME_PROJECTS
 end \
     | sort -ur \
     | string replace "$HOME/" '' \
-    | $fzf_cmd --border-label ' Open new session ' \
-    | read -l selected_path
+    | $fzf_cmd --border-label "$fzf_border_label" \
+    | read -l session_path
 or return 0
 
-set selected_path (realpath ~/$selected_path)
-set selected_name (basename $selected_path | tr . _)
+# Set variables
+set -l session_path (realpath ~/$session_path)
+set -l session_name (basename $session_path | tr . _)
 
-if not contains -- $session_name (tmux list-sessions -F '#{session_name}')
-    tmux new-session -c $selected_path -s $selected_name -d
+# Tmux session handling
+set sessions_list (pgrep tmux && tmux list-sessions -F '#{session_name}')
+if not contains -- $session_name "$sessions_list" 2>/dev/null
+    tmux new-session -c "$session_path" -s "$session_name" -d
 end
 
-if [ -n "$TMUX" ]
-    tmux switch-client -t $selected_name
-else
-    tmux attach-session -t $selected_name
-end
+# Attach or switch to session
+set tmux_action ([ -n "$TMUX" ] && echo switch-session || echo attach-session)
+tmux $tmux_action -t "$session_name"

@@ -22,9 +22,5 @@ return {
 		cond = function() return vim.fn.fnamemodify(vim.fn.expand '%', ':t') == 'wezterm.lua' end,
 	},
 
-	{ -- virt columns
-		'nihil/virt-column',
-		-- name = 'virt-column',
-		-- config = function() require('virt-column').setup() end,
-	},
+	{ 'nihil/virt-column', priority = 1000 },
 }

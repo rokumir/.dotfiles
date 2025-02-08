@@ -1,10 +1,4 @@
-local function deno_fmt(ft)
-	return {
-		'deno_fmt',
-		args = { '--ext', ft, '--stdin-filepath', '$FILENAME', '--unstable-component' },
-	}
-end
-local biome = { 'biome' }
+local biome = { 'biome', 'prettier', 'prettierd' }
 
 local web_dev_formatters_by_ft = {} ---@type table<string, table>
 for _, ft in ipairs {
@@ -32,7 +26,10 @@ return {
 	{
 		'stevearc/conform.nvim',
 		opts = {
-			formatters_by_ft = web_dev_formatters_by_ft,
+			log_level = vim.log.levels.WARN,
+			notify_on_error = false,
+			notify_no_formatters = true,
+			formatters_by_ft = vim.tbl_deep_extend('force', {}, web_dev_formatters_by_ft, {}),
 		},
 	},
 }
