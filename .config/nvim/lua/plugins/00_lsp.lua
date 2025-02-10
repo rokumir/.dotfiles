@@ -23,7 +23,7 @@ return {
 
 			---@type table<string, lspconfig.Config | {}>
 			servers = {
-				biome = {},
+				-- biome = {},
 				rust_analyzer = {},
 				emmet_language_server = {},
 				html = {},

@@ -8,7 +8,7 @@ return {
 			keymap = {
 				preset = 'enter',
 				['<c-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
-				['<cr>'] = { 'select_and_accept' },
+				['<cr>'] = { 'select_accept_and_enter' },
 				['<c-y>'] = { 'select_and_accept' },
 				['<c-l>'] = { 'select_and_accept' },
 				['<c-e>'] = { 'hide', 'fallback' },
