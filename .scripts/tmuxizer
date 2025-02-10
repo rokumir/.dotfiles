@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
 
-set -l fzf_border_label ' Open new session '
+set fzf_border_label ' Open new session '
 
 # Start selection
 begin
@@ -18,11 +18,11 @@ set -l session_path (realpath ~/$session_path)
 set -l session_name (basename $session_path | tr . _)
 
 # Tmux session handling
-set sessions_list (pgrep tmux && tmux list-sessions -F '#{session_name}')
-if not contains -- $session_name "$sessions_list" 2>/dev/null
+set sessions_list (pgrep tmux && tmux list-sessions -F '#{session_name}' || echo)
+if not contains -- $session_name $sessions_list 2>/dev/null
     tmux new-session -c "$session_path" -s "$session_name" -d
 end
 
 # Attach or switch to session
-set tmux_action ([ -n "$TMUX" ] && echo switch-session || echo attach-session)
+set tmux_action ([ -n "$TMUX" ] && echo switch-client || echo attach-session)
 tmux $tmux_action -t "$session_name"
