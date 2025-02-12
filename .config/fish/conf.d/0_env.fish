@@ -16,7 +16,6 @@ set -gx MY_SCRIPT_HOME ~/.scripts
 
 
 set -gx GLOBAL_IGNORE_FILE $XDG_CONFIG_HOME/.gitignore
-set -gx TMUX_HARPOON_CACHE_FILE $XDG_CACHE_HOME/.tmux-harpoon-sessions
 
 
 set -gx TERM wezterm # enable undercurl ~/.terminfo/w/wezterm

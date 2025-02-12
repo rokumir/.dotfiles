@@ -21,7 +21,8 @@ set -gx FD_DEFAULT_OPTS --follow --hidden
 
 set -gx FZF_HOME_PROJECTS \
     $MY_WORK_HOME/ $MY_PROJECT_HOME/ $MY_THROWAWAY_HOME/ $MY_SCRIPT_HOME/ \
-    ~/.config/ ~/documents/
+    ~/.config/ ~/documents/ \
+    ~/documents/throwaways/__SERVER/
 
 
 ## For only scripts use
