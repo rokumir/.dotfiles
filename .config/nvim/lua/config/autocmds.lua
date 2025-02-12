@@ -12,8 +12,8 @@ vim.api.nvim_create_autocmd('FileType', {
 		vim.opt.showcmd = false
 		vim.opt.wrap = false
 
-		map { 'n', '<c-q>', '<cmd>quit <cr>', buf = e.buf }
-		map { 'n', '<c-s>', '<cmd>write | quit <cr>', buf = e.buf }
+		map { 'n', '<c-q>', '<cmd>quit <cr>', buffer = e.buf }
+		map { 'n', '<c-s>', '<cmd>write | quit <cr>', buffer = e.buf }
 	end,
 })
 

@@ -1,4 +1,5 @@
 local map_key = require('utils.keymap').map
+local util = require 'lspconfig.util'
 
 ---@diagnostic disable: inject-field
 return {
@@ -23,12 +24,28 @@ return {
 
 			---@type table<string, lspconfig.Config | {}>
 			servers = {
-				-- biome = {},
 				rust_analyzer = {},
 				emmet_language_server = {},
 				html = {},
 				gopls = {},
 				pyright = {},
+
+				biome = {
+					filetypes = {
+						'astro',
+						'graphql',
+						'javascript',
+						'javascriptreact',
+						'json',
+						'jsonc',
+						'svelte',
+						'typescript',
+						'typescript.tsx',
+						'typescriptreact',
+						'vue',
+					},
+					root_dir = util.root_pattern('biome.json', 'biome.jsonc'),
+				},
 
 				denols = {
 					enabled = false,

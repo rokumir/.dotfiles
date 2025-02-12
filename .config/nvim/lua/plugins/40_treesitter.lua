@@ -25,7 +25,7 @@ return {
 		-- my custom options
 		filetypes = { -- vim settings
 			pattern = {
-				['${TMUX_HARPOON_CACHE_FILE}'] = 'tmux-harpoon',
+				['%.tmux%-harpoon%-sessions'] = 'tmux-harpoon',
 				['%.env%.[%w_.-]+'] = 'dotenv',
 			},
 			filename = {
