@@ -1,118 +1,170 @@
-#!/usr/bin/env fish
+#!/bin/sh
 
-[ -z "$argv" ]; and return 1
+# ==============================================================================
+#  Description: A tool to bookmark tmux sessions efficiently, supporting
+#               auto-creation.  Allows tracking, viewing, and switching
+#               between tmux session bookmarks easily.
+#  Author:      Chaitanya Baweja
+#  Source Repo: https://github.com/Chaitanyabsprip/tmux-harpoon
+#  Original URL: https://github.com/Chaitanyabsprip/tmux-harpoon/blob/main/harpoon
+# ==============================================================================
 
-############################
-## Prequisites
-set editor nvim
+get_default_cache_dir() {
+	if [ -n "$XDG_CACHE_HOME" ]; then
+		echo "$XDG_CACHE_HOME"
+	elif [ "$(uname)" = "Darwin" ]; then
+		echo "$HOME/Library/Caches"
+	else
+		echo "$HOME/.cache"
+	fi
+}
 
-set cache_file $TMUX_HARPOON_CACHE_FILE
-[ -z "$cache_file" ]; and set cache_file (echo -- ~/.cache/tmux-harpoon-sessions)
+cachefile="$(get_default_cache_dir)/.tmux-harpoon-sessions"
 
-not [ -f $cache_file ]; and touch $cache_file
+help() {
+	echo
+	echo "Usage:"
+	echo "    ${0##*/} [options] [args]"
+	echo "Options:"
+	echo "    -a                    Track current tmux session"
+	echo "    -A                    Track pane within current tmux session"
+	echo "    -r <index>            Replace tracked entry at index with current session"
+	echo "    -R <index>            Replace tracked entry at index with current pane within session"
+	echo "    -d [session_name]     Stop tracking session with session name. If"
+	echo "                          session_name is not passed then remove current session"
+	echo "    -l                    List tracked sessions"
+	echo "    -s <index>            Switch to the session at the specified index in the"
+	echo "                          list of tracked sessions"
+	echo "    -e                    Edit the sessions file"
+	echo "    -h                    Display this help message"
+}
 
+remove() {
+	session_name="$1"
+	sed -i "/^$session_name/d" "$cachefile"
+}
 
-############################
-## Helper Functions
-function add_bookmark
-    echo (_get_session_info) >>$cache_file
-    awk -i inplace '!seen[$0]++' $cache_file # de-duplicate
-    tmux display -d 1000 "Tracking session '#{session_name}'"
-end
+view() {
+	FZF_CMD="$(_getFZFCmd)"
+	entry="$(awk -v home="$HOME" -v bold="$(tput setaf 4)" -v sgr0="$(tput sgr0)" '{
+        split($0, parts, "=")
+        key = parts[1]
+        value = parts[2]
+        sub(home "/", "", value)
+        printf "%s%s%s %s\n", bold, key, sgr0, value
+    }' "$cachefile" | $FZF_CMD --ansi)"
+	name="$(echo "$entry" | cut -d ' ' -f 1)"
+	path="$HOME/$(echo "$entry" | rev | cut -d ' ' -f 1 | rev)"
+	{ [ -z "$name" ] || [ -z "$path" ]; } && exit 0
+	_switch "$name" "$path"
+}
 
-function edit_bookmarks
-    tmux popup -h 40% -w 60% -E "$SHELL -c '$editor $cache_file'"
-end
+_getFZFCmd() {
+	! type fzf >/dev/null 2>&1 && echo "Harpoon depends on fzf" && exit 1
+	FZF_VERSION=$(fzf --version | cut -d ' ' -f1)
+	REQUIRED_VERSION="0.53.0"
 
-function view_bookmarks
-    set -fa fzf_cmd \
-        --border-label (_c cyan)' Tmux Harpoon ' \
-        # crazy, IK
-        --header (_c -i cyan)':: <'(_c yellow)'ctrl-e'(_c cyan)'> to '(_c red)'Edit Bookmarks' \
-        --bind ctrl-e:become:'tmux-harpoon --edit'
+	version_gt() { [ "$(printf '%s\n' "$@" | sort -V | head -n1)" != "$1" ] || [ "$1" = "$2" ]; }
 
-    begin
-        for info in (cat $cache_file)
-            string split = $info | read -L name path
+	if version_gt "$FZF_VERSION" "$REQUIRED_VERSION"; then
+		echo "fzf --tmux 50%"
+		return 0
+	fi
+	if type fzf-tmux >/dev/null 2>&1; then
+		echo "fzf-tmux -p '50%,50%'"
+		return 0
+	fi
+	echo "fzf"
+	return 0
+}
 
-            set item \
-                (_c -o magenta)$name \
-                (_c -io brblack)(string replace $HOME '~' $path) \
-                $indicator
+_getBookmark() {
+	extended=$1
 
-            if _is_attached $name $path
-                set -a item (_c -o yellow)
-            else if _has_session $name $path
-            else
-                set item '\e[9m'(string join -n '\e[9m ' $item)
-            end
+	base_info='#{session_name}=#{session_path}'
+	pane_info=':#{window_index}.#{pane_index}'
+	tmux display -p "$base_info$([ "$extended" = true ] && echo "$pane_info")"
+}
 
-            echo -e $item(_c normal)
-        end
-    end \
-        | awk '{ print NR ": " $0 }' \
-        | $fzf_cmd \
-        | awk '{ print $2,$3 }' \
-        | read -t name path
-    or return 1
+_dedupe() {
+	tmpfile="$(mktemp)"
+	command cat -n "$cachefile" | sort -uk2 | sort -n | cut -f2- >"$tmpfile"
+	mv "$tmpfile" "$cachefile"
+	rm "$tmpfile"
+}
 
-    [ -z "$name" -o -d "$(realpath $path)" ]; and return 1
+replace() {
+	bookmark=$(_getBookmark "$1")
+	index=$2
 
-    _goto_bookmark $name $path
-end
+	linenumbers=$(wc -l <"$cachefile")
+	if [ "$linenumbers" -ge "$index" ]; then
+		escaped_bookmark=$(echo "$bookmark" | sed 's/\//\\\//g')
+		sed -i "${index}s/.*/$escaped_bookmark/" "$cachefile"
+	else
+		echo "$bookmark" >>"$cachefile"
+	fi
 
-function goto_bookmark
-    set index (math $argv)
-    set bookmarks (cat $cache_file)
-    set bookmark_info $bookmarks[$index]
-    [ -z "$bookmarks[$index]" ]; and return 1
-    string split = $bookmark_info | read -L name path
-    _goto_bookmark $name $path
-end
+	_dedupe
+	exec tmux display "Tracking session #{session_name} in index $index"
+}
 
+add() {
+	bookmark=$(_getBookmark "$1")
+	echo "$bookmark" >>"$cachefile"
+	_dedupe
+	exec tmux display 'Tracking session #{session_name}'
+}
 
-function _goto_bookmark
-    set name $argv[1]
-    set path (string unescape (eval echo -- $argv[2]))
+_switch() {
+	name="$1"
+	path="$2"
+	dirpath="${path%%:*}"
+	pane="${path#*:}"
+	[ "$dirpath" = "$pane" ] && pane=""
+	if ! sessions_has_match "$name=$dirpath"; then
+		if [ "$(uname)" = "Darwin" ]; then sedi="sed -i ''"; else sedi="sed -i"; fi
+		$sedi "s|^$name=.*|$name=$dirpath:1.1|" "$cachefile"
+		tmux new -ds "$name" -c "$dirpath"
+	fi
+	exec tmux switch-client -t "$name:$pane"
+}
 
-    if not _has_session $name $path
-        tmux new -ds $name -c $path
-    end
+switch() {
+	index="$1"
+	count=1
+	while IFS='=' read -r name path; do
+		if [ "$count" = "$index" ]; then
+			_switch "$name" "$path"
+		fi
+		count=$((count + 1))
+	done <"$cachefile"
+}
 
-    tmux switch-client -t $name
-end
+edit_file() { exec tmux popup -E "$EDITOR $cachefile"; }
 
-function _get_session_info
-    tmux display -p '#{session_name}=#{session_path}'
-end
+sessions_has_match() { list_sessions | grep -wq "^$1"; }
 
-function _has_session
-    tmux ls -F '#{session_name}=#{session_path}' | grep -wq "^$argv[1]=$argv[2]"
-    or return 1
-end
-function _is_attached
-    tmux ls -F "#{session_name}=#{session_path}: #{?session_attached,attached,not attached}" | grep -wq "^$argv[1]=$argv[2]: attached"
-    or return 1
-end
-function _c
-    set_color $argv
-end
+list_sessions() { tmux ls -F '#{session_name}=#{session_path}'; }
 
+bold() { printf "\033[1m%s\033[0m\n" "$*"; }
 
-[ (count $argv) -gt 2 ]; and return 1
+main() {
+	! [ -f "$cachefile" ] && touch "$cachefile"
+	while getopts ":haAr:R:d:ls:e" opt; do
+		case "$opt" in
+		h | :) help && exit 0 ;;
+		a) add false ;;
+		A) add true ;;
+		r) replace false "$OPTARG" ;;
+		R) replace true "$OPTARG" ;;
+		d) remove "$OPTARG" ;;
+		l) view ;;
+		s) switch "$OPTARG" ;;
+		e) edit_file ;;
+		\?) help && exit 1 ;;
+		esac
+	done
+}
 
-begin
-    switch "$argv"
-        case --view
-            view_bookmarks
-        case --add
-            add_bookmark
-        case --edit
-            edit_bookmarks
-        case '--index *'
-            goto_bookmark $argv[2]
-        case '-*'
-            tmux display -p "Unknown option $argv"
-            return 1
-    end
-end || true # suppress error pipe to tmux display (pretty annoying)
+main "$@"
