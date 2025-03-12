@@ -1,10 +1,12 @@
 [user]
     name = lopt
-    email = quocdat.438317@gmail.com
+    email = lopt.loptr@proton.me
+
 [core]
     autocrlf = false
     askpass = # disable credential manager
     pager = delta
+
 [alias]
     br = branch
     a = add
@@ -27,17 +29,22 @@
 
     # list aliases
     la = !git config -l | grep alias | cut -c 7-
+
 [color]
     ui = true
     branch = auto
     diff = auto
     interactive = auto
     status = auto
+
 [branch] # Avoid messy merge commits with autorebase
     autosetuprebase = always
+
 [init]
     defaultBranch = main
+
 [push] # Push the current branch by default
+    autoSetupRemote = true
     default = current
 [help] # Guess what you really meant
     autocorrect = 1
@@ -48,11 +55,11 @@
     # instead of using a and b notation
     mnemonicprefix = true
 [credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+    helper = 
+    helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+    helper = 
+    helper = !/usr/bin/gh auth git-credential
 [safe]
 	directory = %(prefix)///wsl.localhost/Arch/home/rokumir/.cache/yay/omnisharp-roslyn/src/omnisharp-roslyn
 
