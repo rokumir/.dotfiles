@@ -1,5 +1,5 @@
 vim.g.mapleader = ' '
-vim.g.lazyvim_picker = 'fzf'
+vim.g.lazyvim_picker = 'auto'
 vim.g.lazyvim_blink_main = true
 
 local _ = vim.opt
@@ -31,9 +31,9 @@ _.smoothscroll = true
 _.cursorline = false
 _.cursorline = true
 _.cursorlineopt = 'number'
-_.wrap = true
-_.laststatus = 3 -- global statusline
+_.wrap = false
 _.colorcolumn = '80,120'
+_.conceallevel = 0
 
 _.smarttab = true
 _.expandtab = false
@@ -46,3 +46,7 @@ _.smartindent = true
 _.breakindent = true
 _.breakindentopt = { 'shift:4', 'min:40', 'sbr' }
 _.backspace = { 'start', 'eol', 'indent' }
+
+-- global statusline
+_.laststatus = 3
+vim.go.laststatus = 3

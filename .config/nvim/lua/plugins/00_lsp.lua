@@ -2,6 +2,7 @@ local map_key = require('utils.keymap').map
 local util = require 'lspconfig.util'
 
 ---@diagnostic disable: inject-field
+---@type table<number, LazyPluginSpec>
 return {
 	{
 		'neovim/nvim-lspconfig',
@@ -25,31 +26,23 @@ return {
 			---@type table<string, lspconfig.Config | {}>
 			servers = {
 				rust_analyzer = {},
-				emmet_language_server = {},
 				html = {},
 				gopls = {},
 				pyright = {},
+				markdown_oxide = {},
 
-				biome = {
-					filetypes = {
-						'astro',
-						'graphql',
-						'javascript',
-						'javascriptreact',
-						'json',
-						'jsonc',
-						'svelte',
-						'typescript',
-						'typescript.tsx',
-						'typescriptreact',
-						'vue',
-					},
-					root_dir = util.root_pattern('biome.json', 'biome.jsonc'),
+				biome = {},
+
+				css_variables = {
+					filetypes = { 'css', 'scss', 'sass', 'less' },
+				},
+				emmet_language_server = {
+					filetypes = { 'html', 'javascriptreact', 'typescriptreact', 'htmlangular', 'vue' },
 				},
 
 				denols = {
 					enabled = false,
-					root_dir = require('lspconfig').util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock'),
+					root_dir = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock', 'package.json', 'node_modules'),
 					single_file_support = false,
 					cmd_env = {
 						DENO_DIR = vim.fn.getenv 'XDG_CACHE_HOME' .. '/deno',
@@ -78,6 +71,18 @@ return {
 				},
 
 				tailwindcss = {
+					root_dir = util.root_pattern(
+						'tailwind.config.js',
+						'tailwind.config.cjs',
+						'tailwind.config.mjs',
+						'tailwind.config.ts',
+						'postcss.config.js',
+						'postcss.config.cjs',
+						'postcss.config.mjs',
+						'postcss.config.ts',
+						'package.json',
+						'node_modules'
+					),
 					settings = {
 						tailwindCSS = {
 							experimental = {
@@ -88,14 +93,6 @@ return {
 									{ '([a-zA-Z_]+classNames)\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' },
 								},
 							},
-						},
-					},
-				},
-
-				markdown_oxide = {
-					workspace = {
-						didChangeWatchedFiles = {
-							dynamicRegistration = true,
 						},
 					},
 				},
@@ -246,6 +243,11 @@ return {
 		'neovim/nvim-lspconfig',
 		opts = function()
 			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), {
+				{ 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Goto Definition' },
+				{ 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Goto Declaration' },
+				{ 'gr', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
+				{ 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Goto Implementation' },
+				{ 'gy', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
 				{ 'K', require('noice.lsp').hover, desc = 'Hover' },
 				{ '<c-u>', function() require('noice.lsp').scroll(-4) end, has = 'documentHighlight', mode = { 'n', 'i' }, desc = 'Scroll Up LSP Docs' },
 				{ '<c-d>', function() require('noice.lsp').scroll(4) end, has = 'documentHighlight', mode = { 'n', 'i' }, desc = 'Scroll Down LSP Docs' },
@@ -264,7 +266,7 @@ return {
 				},
 				{
 					'🔥', -- map unicode to ctrl+period
-					function() require('fzf-lua').lsp_code_actions { winopts = { height = 0.4, width = 0.6 } } end,
+					vim.lsp.buf.code_action,
 					mode = { 'n', 'v', 'i' },
 					desc = 'Code actions',
 					has = 'codeAction',

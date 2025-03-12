@@ -1,3 +1,4 @@
+---@type table<number, LazyPluginSpec>
 return {
 	{
 		'williamboman/mason.nvim',
@@ -5,6 +6,7 @@ return {
 			ui = { border = 'rounded' },
 			ensure_installed = {
 				'stylua',
+				'css-variables-language-server',
 			},
 		},
 	},
@@ -14,10 +16,8 @@ return {
 		event = 'VeryLazy',
 		opts = {
 			win = { border = 'rounded' },
-			spec = {
+			default = {
 				mode = { 'n', 'v' },
-				{ ';x', group = 'extras', icon = '' },
-				{ ';h', group = 'harpoon', icon = '󱡀' },
 				{ '<leader>r', group = 'refactor', icon = '' },
 				{ '<leader>m', group = 'menu', icon = '󰒲' },
 				{ '<leader>!', group = 'shell', icon = '' },
@@ -35,16 +35,7 @@ return {
 				{ '[', group = 'prev' },
 				{ ']', group = 'next' },
 				{ 'g', group = 'goto' },
-				{ 'z', group = 'fold' },
 			},
 		},
 	},
-
-	{ 'echasnovski/mini.icons', lazy = false },
-
-	-- Disable LazyVim's plugins
-	{ 'folke/persistence.nvim', enabled = false },
-	{ 'echasnovski/mini.pairs', enabled = false },
-	{ 'echasnovski/mini.ai', enabled = false },
-	{ 'folke/tokyonight.nvim', enabled = false, cond = false },
 }

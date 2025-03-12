@@ -1,5 +1,5 @@
+---@type table<number, LazyPluginSpec>
 return {
-	{ 'rktjmp/lush.nvim' },
 	{ -- Rose Pine
 		'rose-pine/neovim',
 		name = 'rose-pine',
@@ -28,6 +28,7 @@ return {
 				IndentCharActive = { fg = 'highlight_high' },
 				ColorColumn = { fg = 'highlight_low', bg = 'none' },
 				CursorLineNr = { fg = 'foam', bold = true, italic = true },
+				FloatBorder = { fg = 'overlay' },
 
 				Comment = { fg = 'muted' },
 				Folded = { bg = 'base' },

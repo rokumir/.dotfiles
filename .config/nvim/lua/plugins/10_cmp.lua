@@ -1,3 +1,4 @@
+---@type table<number, LazyPluginSpec>
 return {
 	{
 		'saghen/blink.cmp',
@@ -84,7 +85,7 @@ return {
 			---@diagnostic disable: missing-fields
 			completion = {
 				trigger = {
-					show_on_trigger_character = true,
+					show_on_insert_on_trigger_character = true,
 				},
 				accept = {
 					create_undo_point = true,
@@ -177,6 +178,11 @@ return {
 					Operator = '󰆕',
 					TypeParameter = '󰅲',
 				},
+			},
+
+			fuzzy = {
+				max_typos = function(keyword) return math.floor(#keyword / 10) end,
+				use_frecency = false,
 			},
 		},
 	},

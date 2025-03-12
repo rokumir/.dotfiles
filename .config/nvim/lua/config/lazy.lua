@@ -41,8 +41,9 @@ require('lazy').setup {
 		{ import = 'lazyvim.plugins.extras.coding.neogen' },
 		{ import = 'lazyvim.plugins.extras.coding.blink' },
 
-		-- { import = 'lazyvim.plugins.extras.linting.eslint' },
-		-- { import = 'lazyvim.plugins.extras.formatting.prettier' },
+		{ import = 'lazyvim.plugins.extras.linting.eslint' },
+		-- { import = 'lazyvim.plugins.extras.formatting.biome' },
+		{ import = 'lazyvim.plugins.extras.formatting.prettier' },
 
 		-- { import = 'lazyvim.plugins.extras.dap.core' },
 		-- { import = 'lazyvim.plugins.extras.lang.typescript' },
@@ -55,6 +56,14 @@ require('lazy').setup {
 		{ import = 'lazyvim.plugins.extras.util.dot' },
 
 		{ import = 'plugins' },
+
+		-- Disable LazyVim's plugins
+		{ 'folke/persistence.nvim', enabled = false },
+		{ 'echasnovski/mini.pairs', enabled = false },
+		{ 'echasnovski/mini.ai', enabled = false },
+		{ 'folke/tokyonight.nvim', enabled = false },
+		{ 'nvim-neo-tree/neo-tree.nvim', enabled = false },
+		{ 'ibhagwan/fzf-lua', enabled = false },
 	},
 	checker = { enabled = false }, -- automatically check for plugin updates
 	performance = {

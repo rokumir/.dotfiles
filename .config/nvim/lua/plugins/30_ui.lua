@@ -1,88 +1,10 @@
 ---@diagnostic disable: no-unknown
+---@module 'lazy'
+---@type table<number, LazyPluginSpec>
 return {
-	{ -- Lazy snacks
-		'folke/snacks.nvim',
-		priority = 1000,
-		lazy = false,
-
-		---@type snacks.Config
-		opts = {
-			scroll = { enabled = false },
-
-			indent = {
-				priority = 200,
-				indent = { enabled = true, hl = 'IndentChar' },
-				animate = { enabled = true, style = 'out' },
-				scope = { enabled = false },
-				chunk = {
-					enabled = true,
-					hl = 'IndentCharActive',
-					char = {
-						corner_top = '╭',
-						corner_bottom = '╰',
-						horizontal = '─',
-						vertical = '│',
-						arrow = '',
-					},
-				},
-			},
-
-			terminal = {
-				win = {
-					relative = true,
-					style = 'terminal',
-					border = 'rounded',
-				},
-			},
-
-			zen = {
-				-- You can add any `Snacks.toggle` id here.
-				-- Toggle state is restored when the window is closed.
-				-- Toggle config options are NOT merged.
-				---@type table<string, boolean>
-				toggles = {
-					dim = false,
-					git_signs = false,
-					mini_diff_signs = false,
-					diagnostics = true,
-					inlay_hints = false,
-				},
-				show = {
-					statusline = false,
-					tabline = false,
-				},
-			},
-		},
-	},
-
 	{ -- Better general UI (should be deprecated soon)
 		'folke/noice.nvim',
 		opts = {
-			routes = {
-				{
-					opts = { skip = true },
-					filter = {
-						event = 'notify',
-						find = 'No information available',
-					},
-				},
-				{ -- show messages in mini
-					view = 'mini',
-					filter = {
-						event = 'msg_show',
-						any = {
-							{ find = '%d+L, %d+B' },
-							{ find = '; after #%d+' },
-							{ find = '; before #%d+' },
-							{ find = '%d+ more' },
-							{ find = '%d+ fewer' },
-							{ find = '%d+ lines' },
-							{ find = 'Already at' },
-						},
-					},
-				},
-			},
-
 			commands = {
 				all = { -- options for the message history that you get with `:Noice`
 					view = 'split',
@@ -95,6 +17,9 @@ return {
 				bottom_search = true,
 				command_palette = true,
 				lsp_doc_border = true,
+				inc_rename = true,
+				cmdline_output_to_split = true,
+				long_message_to_split = true,
 			},
 
 			lsp = {
@@ -108,94 +33,6 @@ return {
 			},
 		},
 	},
-
-	-- { -- Tabline
-	-- 	'bufferline.nvim',
-	-- 	keys = {
-	-- 		{ '<tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
-	-- 		{ '<s-tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Next Buffer' },
-	-- 	},
-	-- 	opts = function(_, _opts)
-	-- 		local opts = vim.tbl_deep_extend('keep', _opts, {
-	-- 			options = {
-	-- 				close_command = 'bp|sp|bn|bd! %d',
-	-- 				right_mouse_command = 'bp|sp|bn|bd! %d',
-	-- 				left_mouse_command = 'buffer %d',
-	-- 				buffer_close_icon = '',
-	-- 				modified_icon = '',
-	-- 				close_icon = '',
-	-- 				show_close_icon = false,
-	-- 				left_trunc_marker = '',
-	-- 				right_trunc_marker = '',
-	-- 				max_name_length = 14,
-	-- 				max_prefix_length = 13,
-	-- 				tab_size = 10,
-	-- 				show_tab_indicators = true,
-	-- 				indicator = {
-	-- 					style = 'underline',
-	-- 				},
-	-- 				enforce_regular_tabs = false,
-	-- 				view = 'multiwindow',
-	-- 				show_buffer_close_icons = true,
-	-- 				separator_style = 'thin',
-	-- 				-- separator_style = "slant",
-	-- 				always_show_bufferline = true,
-	-- 				diagnostics = false,
-	-- 				themable = true,
-	-- 			},
-	-- 		})
-	--
-	-- 		-- Buffers belong to tabs
-	-- 		local cache = {}
-	-- 		local last_tab = 0
-	--
-	-- 		local utils = {}
-	--
-	-- 		utils.is_valid = function(buf_num)
-	-- 			if not buf_num or buf_num < 1 then return false end
-	-- 			local exists = vim.api.nvim_buf_is_valid(buf_num)
-	-- 			return vim.bo[buf_num].buflisted and exists
-	-- 		end
-	--
-	-- 		utils.get_valid_buffers = function()
-	-- 			local buf_nums = vim.api.nvim_list_bufs()
-	-- 			local ids = {}
-	-- 			for _, buf in ipairs(buf_nums) do
-	-- 				if utils.is_valid(buf) then ids[#ids + 1] = buf end
-	-- 			end
-	-- 			return ids
-	-- 		end
-	--
-	-- 		local autocmd = vim.api.nvim_create_autocmd
-	--
-	-- 		autocmd('TabEnter', {
-	-- 			callback = function()
-	-- 				local tab = vim.api.nvim_get_current_tabpage()
-	-- 				local buf_nums = cache[tab]
-	-- 				if buf_nums then
-	-- 					for _, k in pairs(buf_nums) do
-	-- 						vim.api.nvim_set_option_value('buflisted', true, { buf = k })
-	-- 					end
-	-- 				end
-	-- 			end,
-	-- 		})
-	-- 		autocmd('TabLeave', {
-	-- 			callback = function()
-	-- 				local tab = vim.api.nvim_get_current_tabpage()
-	-- 				local buf_nums = utils.get_valid_buffers()
-	-- 				cache[tab] = buf_nums
-	-- 				for _, k in pairs(buf_nums) do
-	-- 					vim.api.nvim_set_option_value('buflisted', false, { buf = k })
-	-- 				end
-	-- 				last_tab = tab
-	-- 			end,
-	-- 		})
-	-- 		autocmd('TabClosed', { callback = function() cache[last_tab] = nil end })
-	-- 		autocmd('TabNewEntered', {
-	-- 			callback = function(e) vim.api.nvim_set_option_value('buflisted', true, { buf = e.buf }) end,
-	-- 		})
-	-- 	end,
-	-- },
 
 	{ -- Statusline
 		'nvim-lualine/lualine.nvim',

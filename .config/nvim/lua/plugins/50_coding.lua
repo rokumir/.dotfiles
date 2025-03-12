@@ -1,4 +1,5 @@
 ---@diagnostic disable: no-unknown
+---@type table<number, LazyPluginSpec>
 return {
 	{ -- Delimiter pairs
 		'windwp/nvim-autopairs',
@@ -30,6 +31,41 @@ return {
 				change_line = false,
 			},
 		},
+	},
+
+	{ -- Refactoring (primeagen)
+		'ThePrimeagen/refactoring.nvim',
+		keys = function()
+			return {
+				{
+					'<leader>rs',
+					function()
+						local fzf_lua = require 'fzf-lua'
+						local results = require('refactoring').get_refactors()
+						local refactoring = require 'refactoring'
+						fzf_lua.fzf_exec(results, {
+							fzf_opts = {},
+							fzf_colors = true,
+							actions = {
+								['default'] = function(selected) refactoring.refactor(selected[1]) end,
+							},
+						})
+					end,
+					mode = 'v',
+					desc = 'Refactor',
+				},
+				{ '<leader>ri', function() require('refactoring').refactor 'Inline Variable' end, mode = { 'n', 'v' }, desc = 'Inline Variable' },
+				{ '<leader>rb', function() require('refactoring').refactor 'Extract Block' end, desc = 'Extract Block' },
+				{ '<leader>rf', function() require('refactoring').refactor 'Extract Block To File' end, desc = 'Extract Block To File' },
+				{ '<leader>rf', function() require('refactoring').refactor 'Extract Function' end, mode = 'v', desc = 'Extract Function' },
+				{ '<leader>rF', function() require('refactoring').refactor 'Extract Function To File' end, mode = 'v', desc = 'Extract Function To File' },
+				{ '<leader>rx', function() require('refactoring').refactor 'Extract Variable' end, mode = 'v', desc = 'Extract Variable' },
+				{ '<leader>rp', function() require('refactoring').debug.print_var { normal = true } end, desc = 'Debug Print Variable' },
+				{ '<leader>rp', function() require('refactoring').debug.print_var {} end, mode = 'v', desc = 'Debug Print Variable' },
+				{ '<leader>rP', function() require('refactoring').debug.printf { below = false } end, desc = 'Debug Print' },
+				{ '<leader>rc', function() require('refactoring').debug.cleanup {} end, desc = 'Debug Cleanup' },
+			}
+		end,
 	},
 
 	{ -- Tabout
@@ -86,83 +122,6 @@ return {
 				current = 'CurSearch',
 				others = 'Search',
 			},
-		},
-	},
-
-	-- NOTE: DEPRECATED in favor of custom made plugin
-	-- Convert color likes hex to smth else
-	{
-		'cjodo/convert.nvim',
-		enabled = false,
-		cond = false,
-		dependencies = 'MunifTanjim/nui.nvim',
-		ft = { 'lua', 'typescript', 'javascript', 'typescriptreact', 'javascriptreact', 'json', 'yaml', 'html', 'css', 'scss', 'less', 'markdown' },
-		keys = {
-			{ '<a-c><a-n>', '<cmd>ConvertFindNext <cr>', desc = 'Color Convertor: Find next' },
-			{ '<a-c><a-c>', '<cmd>ConvertFindCurrent <cr>', desc = 'Color Convertor: Find current line' },
-			{ '<a-c><a-a>', '<cmd>ConvertAll <cr>', desc = 'Color Convertor: Convert all' },
-		},
-		opts = {
-			keymaps = {
-				focus_next = { 'j', '<down>' },
-				focus_prev = { 'k', '<up>' },
-				close = { '<esc>', '<c-c>', '<c-q>' },
-				submit = { '<cr>', '<space>', 'l' },
-			},
-		},
-	},
-	-- NOTE: DEPRECATED in favor of custom made plugin
-	{ -- General Color highlight & picker (with oklch)
-		'eero-lehtinen/oklch-color-picker.nvim',
-		event = 'VeryLazy',
-		lazy = false,
-		enabled = false,
-		opts = {
-			highlight = {
-				enabled = true,
-				edit_delay = 60,
-				scroll_delay = 0,
-			},
-			patterns = {
-				css_oklch = { priority = -1, '()oklch%([^,]-%)()' },
-				hex_literal = { priority = -1, '()0x%x%x%x%x%x%x+%f[%W]()' },
-				tailwind = {
-					priority = -2,
-					custom_parse = function(str) return require('oklch-color-picker.tailwind').custom_parse(str) end,
-					'%f[%w][%l%-]-%-()%l-%-%d%d%d?%f[%W]()',
-				},
-				hex = false,
-				css_rgb = false,
-				css_hsl = false,
-				numbers_in_brackets = false,
-			},
-			auto_download = false,
-			register_cmds = false,
-		},
-	},
-	-- NOTE: DEPRECATED in favor of custom made plugin
-	{ -- highlight hex colors
-		'brenoprata10/nvim-highlight-colors',
-		event = 'VeryLazy',
-		lazy = false,
-		keys = {
-			{ '<leader>uh', ':HighlightColors Toggle<cr>', desc = 'Toggle color highlight (HEX, RGB, etc.)' },
-		},
-		opts = {
-			render = 'virtual', --- background | foreground | virtual
-			virtual_symbol = '', -- requires `vitual` mode
-			virtual_symbol_prefix = '',
-			virtual_symbol_suffix = ' ',
-			virtual_symbol_position = 'inline',
-
-			enable_hex = true, ---Highlight hex colors, e.g. '#FFFFFF'
-			enable_short_hex = false, ---Highlight short hex colors e.g. '#fff'
-			enable_rgb = true, ---Highlight rgb colors, e.g. 'rgb(0 0 0)'
-			enable_hsl = true, ---Highlight hsl colors, e.g. 'hsl(150deg 30% 40%)'
-			enable_var_usage = true, ---Highlight CSS variables, e.g. 'var(--testing-color)'
-			enable_named_colors = false, ---Highlight named colors, e.g. 'green'
-			enable_tailwind = true, ---Highlight tailwind colors, e.g. 'bg-blue-500'
-			exclude_filetypes = { 'text', 'lazy', 'help' },
 		},
 	},
 }
