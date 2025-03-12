@@ -14,15 +14,12 @@ set -gx MY_WORK_HOME ~/documents/works
 set -gx MY_THROWAWAY_HOME ~/documents/throwaways
 set -gx MY_SCRIPT_HOME ~/.scripts
 
-
 set -gx GLOBAL_IGNORE_FILE $XDG_CONFIG_HOME/.gitignore
-
 
 set -gx TERM wezterm # enable undercurl ~/.terminfo/w/wezterm
 set -gx GIT_EDITOR nvim # nvim cus git uses sh internally
 set -gx EDITOR vi
 set -gx PAGER bat
-
 
 fish_add_path -g $MY_SCRIPT_HOME
 fish_add_path -g ~/.local/bin # third parties' scripts
@@ -37,3 +34,7 @@ fish_add_path -g $XDG_DATA_HOME/fnm
 type -q fnm && fnm env --use-on-cd --shell=fish --version-file-strategy=recursive | source
 
 fish_add_path -g ~/.dotnet/tools/
+
+set -gx QT_QPA_PLATFORM wayland
+set -gx XDG_SESSION_TYPE wayland
+set -gx DISPLAY 172.20.32.1:0

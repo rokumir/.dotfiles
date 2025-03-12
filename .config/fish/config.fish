@@ -1,14 +1,9 @@
-## os
-switch (uname -sr)
-    case 'Linux*WSL*'
-        source (dirname (status --current-filename))/config-wsl.fish
-end
-
 ## fish options
 set -U fish_greeting ''
 set -U fish_vi_force_cursor true
 set -U fish_cursor_insert line blink
 set -U fish_cursor_default block blink
+set -U fish_prompt_pwd_dir_length 3
 
 ## plugins
 if functions -q fundle
@@ -68,4 +63,10 @@ function fish_user_key_bindings
     # extenal scripts needed to be sourced, otherwise it won't work as expected
     bind --preset -M insert \ce "source $(type -p fzf_search_path)"
     bind --preset -M insert \cd "source $(type -p fzf_goto_work_dir)"
+end
+
+## os
+switch (uname -sr)
+    case 'Linux*WSL*'
+        source (dirname (status --current-filename))/config-wsl.fish
 end
