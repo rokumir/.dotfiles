@@ -6,52 +6,51 @@
 ## -----------------------------------------------------------------------------
 
 # Theme Configuration
-set -g theme_config \
-    LEFT_CONTENT ' マフル' \
+set constants \
+    LEFT_CONTENT Rokumir \
     RIGHT_CONTENT '%a %d %b %H:%M' \
     SEP_LEFT_FILL  \
     SEP_RIGHT_FILL  \
     SEP_LEFT_TAIL_FILL  \
     SEP_LEFT  \
-    set SEP_RIGHT  \
-    PANE_TITLE_SEPARATOR '> '
-
+    SEP_RIGHT 
 
 # Color Configuration
-set -g color_palette \
+set palette \
     BG default \
     FG '#e0e0e0' \
     FG1 '#949aa8' \
+    FG_MUTED '#6e6a86' \
     VIOLET '#a77bca' \
     TEAL '#4db6ac' \
-    BLACK '#1e1e2f' \
-    GRAY '#2e2e3e' \
-    GRAY1 '#3c3c4f' \
-    GRAY2 '#4a4a5a'
+    BLACK '#191724' \
+    GRAY '#1f1d2e' \
+    GRAY1 '#26233a' \
+    GRAY2 '#403d52'
 
 ## -----------------------------------------------------------------------------
 ## Helper Functions
 ## -----------------------------------------------------------------------------
 
-function t-set -d "Set tmux global option"
-    tmux set-option -gq $argv[1] "$argv[2..]"
-end
-
-function t-setw -d "Set tmux window option"
-    tmux set-window-option -gq $argv[1] "$argv[2..]"
-end
-
-function get_theme -d "Get theme configuration value"
-    set -l index (contains -i -- $argv[1] $theme_config)
-    if test $index
-        echo $theme_config[(math $index + 1)]
+function t-set -d "Set tmux option"
+    if test "$argv[1]" = -w
+        tmux set-window-option -gq $argv[2] "$argv[3..]"
+    else
+        tmux set-option -gq $argv[1] "$argv[2..]"
     end
 end
 
-function get_color -d "Get color from palette"
-    set -l index (contains -i -- $argv[1] $color_palette)
+function _const -d "Get theme configuration value"
+    set -l index (contains -i -- $argv[1] $constants)
     if test $index
-        echo $color_palette[(math $index + 1)]
+        echo $constants[(math $index + 1)]
+    end
+end
+
+function _color -d "Get color from palette"
+    set -l index (contains -i -- $argv[1] $palette)
+    if test $index
+        echo $palette[(math $index + 1)]
     end
 end
 
@@ -60,44 +59,27 @@ end
 ## -----------------------------------------------------------------------------
 
 function build_left_status -d "Build left status bar content"
-    set -l prefix_indicator (build_prefix_indicator)
-    set -l separators (build_left_separators)
-
     string join '' \
-        $prefix_indicator \
-        $separators
+        # prefix indicator
+        "#[bg=$(_color BLACK) bold] #{?client_prefix," \
+        '' "#[fg=$(_color VIOLET)]$(_const LEFT_CONTENT)," \
+        '' "#[fg=$(_color TEAL)]$(_const LEFT_CONTENT)}" \
+        # separators
+        "#[fg=$(_color BLACK) bg=$(_color GRAY) none]$(_const SEP_LEFT_FILL)" \
+        "#[fg=$(_color GRAY) bg=$(_color GRAY1)]$(_const SEP_LEFT_FILL)" \
+        "#[fg=$(_color GRAY1) bg=$(_color BG)]$(_const SEP_LEFT_FILL)"
 end
 
 function build_right_status -d "Build right status bar content"
-    set -l time_display "#[fg="(get_color FG1)" italics] "(get_theme RIGHT_CONTENT)" #[none]"
-    set -l separators (build_right_separators)
-    set -l session_name "#[fg="(get_color TEAL)" bg="(get_color BLACK)" bold] #S "
-
     string join '' \
-        $time_display \
-        $separators \
-        $session_name
-end
-
-function build_prefix_indicator -d "Build prefix indicator segment"
-    string join '' \
-        "#[bg="(get_color BLACK)" bold]#{?client_prefix," \
-        "#[fg="(get_color VIOLET)"]"(get_theme LEFT_CONTENT) "," \
-        "#[fg="(get_color TEAL)"]"(get_theme LEFT_CONTENT)"}"
-end
-
-function build_left_separators -d "Build left separator chain"
-    string join '' \
-        "#[fg="(get_color BLACK)" bg="(get_color GRAY)" none]"(get_theme SEP_LEFT_FILL) \
-        "#[fg="(get_color GRAY)" bg="(get_color GRAY1)"]"(get_theme SEP_LEFT_FILL) \
-        "#[fg="(get_color GRAY1)" bg="(get_color BG)"]"(get_theme SEP_LEFT_FILL)
-end
-
-function build_right_separators -d "Build right separator chain"
-    string join '' \
-        "#[fg="(get_color GRAY1)" bg="(get_color BG)"]"(get_theme SEP_RIGHT_FILL) \
-        "#[fg="(get_color GRAY)" bg="(get_color GRAY1)"]"(get_theme SEP_RIGHT_FILL) \
-        "#[fg="(get_color BLACK)" bg="(get_color GRAY)"]"(get_theme SEP_RIGHT_FILL)
+        # time_display
+        "#[fg=$(_color FG1) italics] $(_const RIGHT_CONTENT) #[none]" \
+        # separators
+        "#[fg=$(_color GRAY1) bg=$(_color BG)]$(_const SEP_RIGHT_FILL)" \
+        "#[fg=$(_color GRAY) bg=$(_color GRAY1)]$(_const SEP_RIGHT_FILL)" \
+        "#[fg=$(_color BLACK) bg=$(_color GRAY)]$(_const SEP_RIGHT_FILL)" \
+        # session name
+        "#[fg=$(_color TEAL) bg=$(_color BLACK) bold] #S "
 end
 
 ## -----------------------------------------------------------------------------
@@ -105,22 +87,21 @@ end
 ## -----------------------------------------------------------------------------
 
 function configure_window_status -d "Configure window status display"
-    set -l pane_title "\$#{b:pane_current_path}#{?#{==:#{pane_current_command},fish},,"(get_theme PANE_TITLE_SEPARATOR)"#{pane_current_command}}"
+    set pane_cmd "#[fg=$(_color FG_MUTED)]#{?#{==:#{pane_current_command},fish},, 󰅁#{pane_current_command}󰅂}"
+    set pane_title "#(fish -c 'prompt_pwd --full-length-dirs=2 --dir-length=1')"
 
-    # Regular window status
-    t-setw window-status-format " #[default fg="(get_color FG1)"] #I "(get_theme SEP_LEFT)" $pane_title  "
-
-    # Active window status
-    t-setw window-status-current-format (build_active_window_format $pane_title)
+    #NOTE: ACTIVE
+    t-set -w window-status-current-format (build_active_window_format " $pane_title$pane_cmd ")
+    #NOTE: IDLE
+    t-set -w window-status-format "  #[default fg=$(_color FG1)]$pane_title$pane_cmd #[fg=$(_color GRAY2)]$(_const SEP_LEFT)"
 end
 
 function build_active_window_format -a pane_title -d "Build active window status format"
     string join '' \
-        "#[fg="(get_color GRAY1)"]"(get_theme SEP_LEFT_TAIL_FILL) \
-        "#[bg="(get_color GRAY1)" fg="(get_color TEAL)" bold] #I " \
-        "#[fg="(get_color GRAY1)" bg="(get_color BLACK)"]"(get_theme SEP_LEFT_FILL)" " \
-        "#[fg="(get_color TEAL)" noitalics nobold]$pane_title " \
-        "#[fg="(get_color BLACK)" bg="(get_color BG)" nobold]"(get_theme SEP_LEFT_FILL)
+        "#[fg=$(_color BLACK)]$(_const SEP_LEFT_TAIL_FILL)" \
+        "#[fg=$(_color GRAY1) bg=$(_color BLACK)]" \
+        "#[fg=$(_color TEAL) noitalics nobold]$pane_title" \
+        "#[fg=$(_color BLACK) bg=$(_color BG) nobold]$(_const SEP_LEFT_FILL)"
 end
 
 ## -----------------------------------------------------------------------------
@@ -130,7 +111,7 @@ end
 function apply_base_configuration -d "Apply basic tmux configuration"
     # Status bar basics
     t-set status on
-    t-set status-style "bg="(get_color BG)" fg="(get_color FG)
+    t-set status-style "bg=$(_color BG) fg=$(_color FG)"
     t-set status-justify center
     t-set status-left-length 100
     t-set status-right-length 100
@@ -141,16 +122,16 @@ function apply_base_configuration -d "Apply basic tmux configuration"
 end
 
 function apply_mode_styles -d "Apply mode and message styles"
-    t-setw mode-style "fg="(get_color TEAL)" bg="(get_color GRAY)
-    t-set message-style "fg="(get_color TEAL)" bg="(get_color BG)" align=centre"
-    t-set message-command-style "fg="(get_color TEAL)" bg="(get_color BG)" align=centre"
-    t-setw clock-mode-colour (get_color TEAL)
+    t-set -w mode-style "fg=$(_color TEAL) bg=$(_color GRAY)"
+    t-set message-style "fg=$(_color TEAL) bg=$(_color BG) align=centre"
+    t-set message-command-style "fg=$(_color TEAL) bg=$(_color BG) align=centre"
+    t-set -w clock-mode-colour (_color TEAL)
 end
 
 function apply_window_styles -d "Apply window styling"
-    t-setw window-status-activity-style "fg="(get_color FG)" bg="(get_color BG)" none"
-    t-setw window-status-separator ""
-    t-setw window-status-style "fg="(get_color FG)" bg="(get_color BG)" none"
+    t-set -w window-status-activity-style "fg=$(_color FG) bg=$(_color BG) none"
+    t-set -w window-status-separator ""
+    t-set -w window-status-style "fg=$(_color FG) bg=$(_color BG) none"
 end
 
 ## -----------------------------------------------------------------------------
