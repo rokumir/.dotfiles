@@ -1,0 +1,50 @@
+#!/usr/bin/fish
+
+# Downloads multiple files from a GitHub repo given link and file paths.
+# Extracts user/repo/branch from link; downloads each file using curl.
+# Handles file paths as an array.
+
+function download_file
+    set file_path $argv[1]
+    set filename (basename "$file_path")
+
+    set repo_link_dest (string split / -- "$repo_link")
+    set user "$repo_link_dest[4]"
+    set repo "$repo_link_dest[5]"
+    if not [ "$repo_link_dest[1]" = 'https:' ]
+        set user "$repo_link_dest[2]"
+        set repo "$repo_link_dest[3]"
+    end
+    set url "https://raw.githubusercontent.com/$user/$repo/$branch/$file_path"
+
+    # Check if any of the required variables are empty
+    if [ -z "$file_path" -o -z "$user" -o -z "$repo" -o -z "$branch" ]
+        echo -- (set_color --bold red)Error: Bad Arguments\n >&2
+        return 1
+    end
+
+    if curl -sSL -o "$filename" "$url"
+        echo "Downloaded $file_path"
+    else
+        echo "- Failed to download $filename from $url" >&2
+        return 1 # Indicate failure
+    end
+end
+
+if test (count $argv) -lt 3
+    echo "Usage: gh-get-file <repo_link> <branch> <file_path1> <file_path2> ..."
+    echo
+    echo "  repo_link                     Link to the GitHub repository (e.g., https://github.com/user/repo)"
+    echo "  branch                        The branch to download from (e.g., main, master)"
+    echo "  <file_path1> <file_path2> ...  List of file paths within the repository"
+    echo
+    exit 1
+end
+
+set repo_link $argv[1]
+set branch $argv[2]
+set file_paths $argv[3..-1]
+
+for file_path in $file_paths
+    download_file $file_path
+end

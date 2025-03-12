@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# ==============================================================================
+# =================================================================================
 #  Description: A tool to bookmark tmux sessions efficiently, supporting
 #               auto-creation.  Allows tracking, viewing, and switching
 #               between tmux session bookmarks easily.
 #  Author:      Chaitanya Baweja
 #  Source Repo: https://github.com/Chaitanyabsprip/tmux-harpoon
 #  Original URL: https://github.com/Chaitanyabsprip/tmux-harpoon/blob/main/harpoon
-# ==============================================================================
+# ==================================================================================
 
 get_default_cache_dir() {
 	if [ -n "$XDG_CACHE_HOME" ]; then
