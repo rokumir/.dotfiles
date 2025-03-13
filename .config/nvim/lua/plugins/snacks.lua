@@ -1,11 +1,13 @@
-local default_keymaps = {
+local default_keymaps = { -- default keymaps
+	['l'] = 'confirm',
+	['🔥'] = { 'confirm', mode = { 'n', 'i' } },
+	['<c-l>'] = { 'confirm', mode = { 'n', 'i' } },
 	['<esc>'] = { 'close', mode = { 'n', 'i' } },
 	['<c-q>'] = { 'close', mode = { 'n', 'i' } },
-	['<c-l>'] = { 'confirm', mode = { 'n', 'i' } },
-	['l'] = 'confirm',
 	['<a-q>'] = { 'qflist', mode = { 'i', 'n' } },
 	['I'] = 'toggle_ignored',
 	['H'] = 'toggle_hidden',
+	['<m-h>'] = { 'toggle_hidden_all', mode = { 'i', 'n' } }, --NOTE: custom action
 }
 
 ---@module 'snacks'
@@ -53,7 +55,7 @@ return {
 			-- Toggle config options are NOT merged.
 			---@type table<string, boolean>
 			toggles = {
-				dim = false,
+				dim = true,
 				git_signs = false,
 				mini_diff_signs = false,
 				diagnostics = true,
@@ -89,9 +91,7 @@ return {
 				ignorecase = true, -- use ignorecase
 				sort_empty = false, -- sort results when the search string is empty
 				filename_bonus = true, -- give bonus for matching file names (last part of the path)
-				file_pos = true, -- support patterns like `file:line:col` and `file:line`
-				-- the bonusses below, possibly require string concatenation and path normalization,
-				-- so this can have a performance impact for large lists and increase memory usage
+				file_pos = true, -- e.g.: file:line:col, file:line
 				cwd_bonus = false, -- give bonus for matching files in the cwd
 				frecency = true, -- frecency bonus
 				history_bonus = true, -- give more weight to chronological order
@@ -103,25 +103,24 @@ return {
 				input = { keys = default_keymaps },
 			},
 
+			---@diagnostic disable-next-line: inject-field
+			config = function(opts) opts.hidden = vim.g.snacks_show_hidden == true end,
+			actions = {
+				toggle_hidden_all = function(picker)
+					vim.g.snacks_show_hidden = not vim.g.snacks_show_hidden
+					picker:action 'toggle_hidden'
+				end,
+			},
+
 			sources = {
 				explorer = {
 					layout = {
 						preset = 'sidebar',
 						hidden = { 'input' },
-						layout = {
-							position = 'right',
-							border = 'left',
-						},
+						layout = { position = 'right', border = 'left' },
 					},
 					formatters = {
 						severity = { pos = 'right' },
-					},
-
-					actions = {
-						toggle_hidden_all = function(picker)
-							vim.g.snacks_show_hidden = not vim.g.snacks_show_hidden
-							picker:action 'toggle_hidden'
-						end,
 					},
 
 					win = {
@@ -142,7 +141,6 @@ return {
 								['<c-c>'] = 'tcd',
 								['<c-f>'] = 'picker_grep',
 								['.'] = 'explorer_focus',
-								['<m-h>'] = 'toggle_hidden_all', --NOTE: custom action
 								['zC'] = 'explorer_close_all',
 								[']g'] = 'explorer_git_next',
 								['[g'] = 'explorer_git_prev',
@@ -206,72 +204,68 @@ return {
 		},
 	},
 
-	keys = function()
-		local open_explorer = function() Snacks.explorer.open { hidden = vim.g.snacks_show_hidden == true } end
+	keys = {
+		{ '\\\\', function() Snacks.picker.resume() end, desc = 'Resume' },
 
-		return {
-			{ '\\\\', function() Snacks.picker.resume() end, desc = 'Resume' },
+		-- Top Pickers & Explorer
+		{ '<c-e>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' },
+		{ ';e', function() Snacks.picker.recent { filter = { cwd = true } } end, desc = 'Recent' },
+		{ ';b', function() Snacks.picker.buffers() end, desc = 'Buffers' },
+		{ ';/', function() Snacks.picker.grep() end, desc = 'Grep' },
+		{ ';:', function() Snacks.picker.command_history() end, desc = 'Command History' },
+		{ ';n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
+		{ 'ss', function() Snacks.explorer.reveal() end, desc = 'File Explorer' },
+		{ 'sf', function() Snacks.explorer.open() end, desc = 'File Explorer' },
 
-			-- Top Pickers & Explorer
-			{ '<c-e>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' },
-			{ ';e', function() Snacks.picker.recent { filter = { cwd = true } } end, desc = 'Recent' },
-			{ ';b', function() Snacks.picker.buffers() end, desc = 'Buffers' },
-			{ ';/', function() Snacks.picker.grep() end, desc = 'Grep' },
-			{ ';:', function() Snacks.picker.command_history() end, desc = 'Command History' },
-			{ ';n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
-			{ 'ss', open_explorer, desc = 'File Explorer' },
-			{ 'sf', open_explorer, desc = 'File Explorer' },
+		-- Find
+		{ ';f', '', desc = 'find' },
+		{ ';fb', function() Snacks.picker.buffers() end, desc = 'Buffers' },
+		{ ';ff', function() Snacks.picker.files() end, desc = 'Find Files' },
+		{ ';fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
+		{ ';fp', function() Snacks.picker.projects() end, desc = 'Projects' },
+		{ ';fr', function() Snacks.picker.recent() end, desc = 'Recent' },
+		{ ';fc', function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end, desc = 'Find Config File' },
 
-			-- Find
-			{ ';f', '', desc = 'find' },
-			{ ';fb', function() Snacks.picker.buffers() end, desc = 'Buffers' },
-			{ ';ff', function() Snacks.picker.files() end, desc = 'Find Files' },
-			{ ';fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
-			{ ';fp', function() Snacks.picker.projects() end, desc = 'Projects' },
-			{ ';fr', function() Snacks.picker.recent() end, desc = 'Recent' },
-			{ ';fc', function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end, desc = 'Find Config File' },
+		-- Git
+		{ ';g', '', desc = 'git' },
+		{ ';gb', function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
+		{ ';gl', function() Snacks.picker.git_log() end, desc = 'Git Log' },
+		{ ';gL', function() Snacks.picker.git_log_line() end, desc = 'Git Log Line' },
+		{ ';gs', function() Snacks.picker.git_status() end, desc = 'Git Status' },
+		{ ';gS', function() Snacks.picker.git_stash() end, desc = 'Git Stash' },
+		{ ';gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
+		{ ';gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
 
-			-- Git
-			{ ';g', '', desc = 'git' },
-			{ ';gb', function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
-			{ ';gl', function() Snacks.picker.git_log() end, desc = 'Git Log' },
-			{ ';gL', function() Snacks.picker.git_log_line() end, desc = 'Git Log Line' },
-			{ ';gs', function() Snacks.picker.git_status() end, desc = 'Git Status' },
-			{ ';gS', function() Snacks.picker.git_stash() end, desc = 'Git Stash' },
-			{ ';gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
-			{ ';gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
-
-			-- Search
-			{ ';s', '', desc = 'search' },
-			-- grep
-			{ ';sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
-			{ ';sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
-			{ ';sg', function() Snacks.picker.grep() end, desc = 'Grep' },
-			{ ';sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
-			-- others
-			{ ';s"', function() Snacks.picker.registers() end, desc = 'Registers' },
-			{ ';s/', function() Snacks.picker.search_history() end, desc = 'Search History' },
-			{ ';sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
-			{ ';sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
-			{ ';sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
-			{ ';sC', function() Snacks.picker.commands() end, desc = 'Commands' },
-			{ ';sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
-			{ ';sD', function() Snacks.picker.diagnostics_buffer() end, desc = 'Buffer Diagnostics' },
-			{ ';sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
-			{ ';sH', function() Snacks.picker.highlights() end, desc = 'Highlights' },
-			{ ';si', function() Snacks.picker.icons() end, desc = 'Icons' },
-			{ ';sj', function() Snacks.picker.jumps() end, desc = 'Jumps' },
-			{ ';sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
-			{ ';sl', function() Snacks.picker.loclist() end, desc = 'Location List' },
-			{ ';sm', function() Snacks.picker.marks() end, desc = 'Marks' },
-			{ ';sM', function() Snacks.picker.man() end, desc = 'Man Pages' },
-			{ ';sp', function() Snacks.picker.lazy() end, desc = 'Search for Plugin Spec' },
-			{ ';sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
-			{ ';su', function() Snacks.picker.undo() end, desc = 'Undo History' },
-			{ ';sC', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
-			-- lsp
-			{ ';ss', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
-			{ ';sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
-		}
-	end,
+		-- Search
+		{ ';s', '', desc = 'search' },
+		-- grep
+		{ ';sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
+		{ ';sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
+		{ ';sg', function() Snacks.picker.grep() end, desc = 'Grep' },
+		{ ';sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
+		-- others
+		{ ';s"', function() Snacks.picker.registers() end, desc = 'Registers' },
+		{ ';s/', function() Snacks.picker.search_history() end, desc = 'Search History' },
+		{ ';sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
+		{ ';sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
+		{ ';sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
+		{ ';sC', function() Snacks.picker.commands() end, desc = 'Commands' },
+		{ ';sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
+		{ ';sD', function() Snacks.picker.diagnostics_buffer() end, desc = 'Buffer Diagnostics' },
+		{ ';sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
+		{ ';sH', function() Snacks.picker.highlights() end, desc = 'Highlights' },
+		{ ';si', function() Snacks.picker.icons() end, desc = 'Icons' },
+		{ ';sj', function() Snacks.picker.jumps() end, desc = 'Jumps' },
+		{ ';sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
+		{ ';sl', function() Snacks.picker.loclist() end, desc = 'Location List' },
+		{ ';sm', function() Snacks.picker.marks() end, desc = 'Marks' },
+		{ ';sM', function() Snacks.picker.man() end, desc = 'Man Pages' },
+		{ ';sp', function() Snacks.picker.lazy() end, desc = 'Search for Plugin Spec' },
+		{ ';sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
+		{ ';su', function() Snacks.picker.undo() end, desc = 'Undo History' },
+		{ ';sC', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+		-- lsp
+		{ ';ss', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
+		{ ';sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
+	},
 }
