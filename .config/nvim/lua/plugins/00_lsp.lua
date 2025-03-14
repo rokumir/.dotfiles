@@ -33,9 +33,6 @@ return {
 
 				biome = {},
 
-				css_variables = {
-					filetypes = { 'css', 'scss', 'sass', 'less' },
-				},
 				emmet_language_server = {
 					filetypes = { 'html', 'javascriptreact', 'typescriptreact', 'htmlangular', 'vue' },
 				},

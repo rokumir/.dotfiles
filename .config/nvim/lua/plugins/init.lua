@@ -6,7 +6,6 @@ return {
 			ui = { border = 'rounded' },
 			ensure_installed = {
 				'stylua',
-				'css-variables-language-server',
 			},
 		},
 	},
