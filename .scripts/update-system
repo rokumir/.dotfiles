@@ -1,8 +1,7 @@
 #!/usr/bin/env fish
 
-# TODO:
-# - check for external lib packages
-# - add logs
+# NOTE: Still an immature script.
+# TODO: Add more/better logic.
 
 # System builtin package manager
 sudo pacman -Syu; or return
@@ -13,3 +12,6 @@ cargo install-update -a; or return
 
 # NeoVim version manager
 bob update nightly; or return
+
+# Bun
+which bun &>/dev/null; and bun upgrade; or return
