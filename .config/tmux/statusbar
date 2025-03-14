@@ -88,7 +88,7 @@ end
 
 function configure_window_status -d "Configure window status display"
     set pane_cmd "#[fg=$(_color FG_MUTED)]#{?#{==:#{pane_current_command},fish},, 󰅁#{pane_current_command}󰅂}"
-    set pane_title "#(fish -c 'prompt_pwd --full-length-dirs=2 --dir-length=1')"
+    set pane_title '#(fish -c \'prompt_pwd --full-length-dirs=2 --dir-length=1 | read -l p; test (string length "$p") -gt 16 && echo "…"(string sub -s -16 "$p") || echo "$p"\')'
 
     #NOTE: ACTIVE
     t-set -w window-status-current-format (build_active_window_format " $pane_title$pane_cmd ")
