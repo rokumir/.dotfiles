@@ -15,15 +15,13 @@ set -gx FZF_DEFAULT_OPTS \
     --color spinner:#F6C177,info:#9CCFD8,separator:#44415A \
     --color pointer:#C4A7E7,marker:#EB6F92,prompt:#908CAA
 
-
 ## For other parties to use
 set -gx FD_DEFAULT_OPTS --follow --hidden
 
 set -gx FZF_HOME_PROJECTS \
     $MY_WORK_HOME/ $MY_PROJECT_HOME/ $MY_THROWAWAY_HOME/ $MY_SCRIPT_HOME/ \
     ~/.config/ ~/documents/ \
-    ~/documents/throwaways/__SERVER/
-
+    ~/documents/throwaways/__SERVER__/
 
 ## For only scripts use
 set -gx fzf_cmd fzf

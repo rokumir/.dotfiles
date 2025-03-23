@@ -3,7 +3,8 @@ set -U fish_greeting ''
 set -U fish_vi_force_cursor true
 set -U fish_cursor_insert line blink
 set -U fish_cursor_default block blink
-set -U fish_prompt_pwd_dir_length 3
+set -U fish_prompt_pwd_dir_length 1
+set -U fish_prompt_pwd_full_dirs 3
 
 ## plugins
 if functions -q fundle
