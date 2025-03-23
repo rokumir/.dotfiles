@@ -1,7 +1,8 @@
 # vim:ft=conf
 
 # Alias for '--decorations always --color always'
---force-colorization
+# --force-colorization
+--decorations auto --color auto
 
 --pager 'less -RF'
 
