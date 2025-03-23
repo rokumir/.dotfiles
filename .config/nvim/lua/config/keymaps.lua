@@ -5,6 +5,7 @@ local ui_utils = require 'utils.ui'
 --#region --- UNMAP
 map { 'K', '<nop>', mode = { 'n', 's', 'x' } }
 map { '<c-e>', '<nop>', mode = { 'i' } }
+map { '<c-f>', '<nop>', mode = { 'n', 's', 'x' } }
 --#endregion UNMAP
 
 --#region --- MISC
@@ -146,11 +147,11 @@ map { '<leader>bD', ':%bd | e# <cr>', desc = 'Delete all buffers except active b
 --#endregion WINDOWS
 
 --#region --- SYSTEM
-map { '<leader>ll', '<cmd>Lazy <cr>', desc = 'Lazy Menu' }
-map { '<leader>lm', '<cmd>Mason <cr>', desc = 'Mason Menu' }
-map { '<leader>lf', '<cmd>ConformInfo <cr>', desc = 'Conform Info' }
-map { '<leader>li', '<cmd>LspInfo <cr>', desc = 'Lsp Info' }
-map { '<leader>lI', '<cmd>LspRestart <cr>', desc = 'Restart Lsp' }
+map { '<leader>ll', '<cmd>Lazy <cr>', desc = 'Lazy' }
+map { '<leader>lL', '<cmd>LspInfo <cr>', desc = 'Lsp: Project info' }
+map { '<leader>lR', '<cmd>LspRestart <cr>', desc = 'Lsp: Restart' }
+map { '<leader>lm', '<cmd>Mason <cr>', desc = 'Mason' }
+map { '<leader>lf', '<cmd>ConformInfo <cr>', desc = 'Conform' }
 --#endregion SYSTEM
 
 --#region --- LSP

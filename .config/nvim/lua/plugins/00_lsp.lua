@@ -142,30 +142,18 @@ return {
 						},
 					},
 
-					-- lazy-load schemastore when needed
-					on_new_config = function(new_config)
-						---@diagnostic disable-next-line: no-unknown
-						new_config.settings.yaml.schemas =
-							vim.tbl_deep_extend('force', new_config.settings.yaml.schemas or {}, require('schemastore').yaml.schemas())
-					end,
 					settings = {
 						redhat = { telemetry = { enabled = false } },
 						yaml = {
 							keyOrdering = false,
 							validate = true,
-							schemaStore = {
-								enable = false, -- Must disable built-in schemaStore support to use schemas from SchemaStore.nvim plugin
-								url = '', -- Avoid TypeError: Cannot read properties of undefined (reading 'length')
-							},
+							-- Must disable built-in schemaStore support to use schemas from SchemaStore.nvim plugin
+							-- Avoid TypeError: Cannot read properties of undefined (reading 'length')
+							schemaStore = { enable = false, url = '' },
 						},
 					},
 				},
 				jsonls = {
-					-- lazy-load schemastore when needed
-					on_new_config = function(new_config)
-						new_config.settings.json.schemas = new_config.settings.json.schemas or {}
-						vim.list_extend(new_config.settings.json.schemas, require('schemastore').json.schemas())
-					end,
 					settings = {
 						json = {
 							format = { enable = true },
@@ -274,6 +262,7 @@ return {
 
 	{
 		'pmizio/typescript-tools.nvim',
+
 		opts = {
 			handlers = {},
 			settings = {
@@ -330,27 +319,22 @@ return {
 				jsx_close_tag = { enable = false },
 			},
 
-			---@type table<number, KeymapingFunArgs>
-			keys = {
-				{ '<leader>cM', '<cmd>TSToolsAddMissingImports<cr>', desc = 'Add missing imports' },
-				{ '<leader>cD', '<cmd>TSToolsFixAll<cr>', desc = 'Fix all diagnostics' },
-				{ '<leader>cR', '<cmd>TSToolsRenameFile<cr>', desc = 'Rename file' },
-			},
-		},
+			on_attach = function(client, bufnr)
+				---@type table<number, KeymapingFunArgs>
+				local keymaps = {
+					{ '<leader>cM', '<cmd>TSToolsAddMissingImports<cr>', desc = 'Add missing imports' },
+					{ '<leader>cD', '<cmd>TSToolsFixAll<cr>', desc = 'Fix all diagnostics' },
+					{ '<leader>cR', '<cmd>TSToolsRenameFile<cr>', desc = 'Rename file' },
+				}
 
-		config = function(_, opts)
-			opts.on_attach = function(client, bufnr)
 				client.server_capabilities.documentFormattingProvider = false
 				client.server_capabilities.documentRangeFormattingProvider = false
 
-				---@diagnostic disable-next-line: no-unknown
-				for _, keymap_args in ipairs(opts.keys) do
+				for _, keymap_args in ipairs(keymaps) do
 					keymap_args.buffer = bufnr
 					map_key(keymap_args)
 				end
-			end
-
-			require('typescript-tools').setup(opts)
-		end,
+			end,
+		},
 	},
 }

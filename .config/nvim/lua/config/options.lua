@@ -2,6 +2,8 @@ vim.g.mapleader = ' '
 vim.g.lazyvim_picker = 'auto'
 vim.g.lazyvim_blink_main = true
 
+vim.g.nihil_autocmd_tmux_pane_title_update = false
+
 local _ = vim.opt
 
 _.encoding = 'utf-8'

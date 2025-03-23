@@ -5,9 +5,8 @@ local default_keymaps = { -- default keymaps
 	['<esc>'] = { 'close', mode = { 'n', 'i' } },
 	['<c-q>'] = { 'close', mode = { 'n', 'i' } },
 	['<a-q>'] = { 'qflist', mode = { 'i', 'n' } },
-	['I'] = 'toggle_ignored',
-	['H'] = 'toggle_hidden',
-	['<m-h>'] = { 'toggle_hidden_all', mode = { 'i', 'n' } }, --NOTE: custom action
+	['<a-i>'] = { 'toggle_ignored', mode = { 'i', 'n' } },
+	['<a-h>'] = { 'toggle_hidden_all', mode = { 'i', 'n' } }, --NOTE: custom action
 }
 
 ---@module 'snacks'
@@ -134,14 +133,17 @@ return {
 								['<a-c>'] = 'explorer_copy',
 								['<a-m>'] = 'explorer_move',
 								['<a-o>'] = 'explorer_open', -- open with system application
-								['<a-p'] = 'toggle_preview',
-								['y'] = { 'explorer_yank', mode = { 'n', 'x' } },
+								['<a-y>'] = { 'explorer_yank', mode = { 'n', 'x' } },
 								['<a-p>'] = 'explorer_paste',
-								['u'] = 'explorer_update',
+								['<a-u>'] = 'explorer_update',
+								['<a-.>'] = 'explorer_focus',
+
+								['<c-p>'] = 'toggle_preview',
 								['<c-c>'] = 'tcd',
 								['<c-f>'] = 'picker_grep',
-								['.'] = 'explorer_focus',
+
 								['zC'] = 'explorer_close_all',
+								['zO'] = 'explorer_open_all',
 								[']g'] = 'explorer_git_next',
 								['[g'] = 'explorer_git_prev',
 								[']d'] = 'explorer_diagnostic_next',
@@ -155,7 +157,6 @@ return {
 					},
 				},
 
-				--- TODO: search picker using fzf (type of search)
 				smart = {
 					ignore = true,
 					multi = { 'recent', 'files' },
@@ -163,7 +164,7 @@ return {
 
 					---@type snacks.picker.sort.Config
 					sort = {
-						fields = { 'score:desc', 'sort', 'idx', 'recent' },
+						fields = { 'recent', 'score:desc', 'idx', 'sort' },
 					},
 					filter = { cwd = true },
 					matcher = {
@@ -214,8 +215,8 @@ return {
 		{ ';/', function() Snacks.picker.grep() end, desc = 'Grep' },
 		{ ';:', function() Snacks.picker.command_history() end, desc = 'Command History' },
 		{ ';n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
-		{ 'ss', function() Snacks.explorer.reveal() end, desc = 'File Explorer' },
-		{ 'sf', function() Snacks.explorer.open() end, desc = 'File Explorer' },
+		{ 'ss', function() Snacks.explorer.open { focus = true } end, desc = 'File Explorer' },
+		{ 'sf', function() Snacks.explorer.open { focus = false } end, desc = 'File Explorer' },
 
 		-- Find
 		{ ';f', '', desc = 'find' },
@@ -239,6 +240,7 @@ return {
 		-- Search
 		{ ';s', '', desc = 'search' },
 		-- grep
+		{ '<a-/>', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
 		{ ';sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
 		{ ';sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
 		{ ';sg', function() Snacks.picker.grep() end, desc = 'Grep' },
@@ -247,7 +249,6 @@ return {
 		{ ';s"', function() Snacks.picker.registers() end, desc = 'Registers' },
 		{ ';s/', function() Snacks.picker.search_history() end, desc = 'Search History' },
 		{ ';sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
-		{ ';sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
 		{ ';sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
 		{ ';sC', function() Snacks.picker.commands() end, desc = 'Commands' },
 		{ ';sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
@@ -263,7 +264,7 @@ return {
 		{ ';sp', function() Snacks.picker.lazy() end, desc = 'Search for Plugin Spec' },
 		{ ';sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 		{ ';su', function() Snacks.picker.undo() end, desc = 'Undo History' },
-		{ ';sC', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+		{ ';st', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
 		-- lsp
 		{ ';ss', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
 		{ ';sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
