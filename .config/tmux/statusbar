@@ -4,7 +4,6 @@
 ## -----------------------------------------------------------------------------
 ## Configuration Variables
 ## -----------------------------------------------------------------------------
-
 # Theme Configuration
 set constants \
     LEFT_CONTENT Rokumir \
@@ -31,7 +30,6 @@ set palette \
 ## -----------------------------------------------------------------------------
 ## Helper Functions
 ## -----------------------------------------------------------------------------
-
 function t-set -d "Set tmux option"
     if test "$argv[1]" = -w
         tmux set-window-option -gq $argv[2] "$argv[3..]"
@@ -46,7 +44,6 @@ function _const -d "Get theme configuration value"
         echo $constants[(math $index + 1)]
     end
 end
-
 function _color -d "Get color from palette"
     set -l index (contains -i -- $argv[1] $palette)
     if test $index
@@ -57,7 +54,6 @@ end
 ## -----------------------------------------------------------------------------
 ## Status Bar Components
 ## -----------------------------------------------------------------------------
-
 function build_left_status -d "Build left status bar content"
     string join '' \
         # prefix indicator
@@ -85,10 +81,9 @@ end
 ## -----------------------------------------------------------------------------
 ## Window Status Formatting
 ## -----------------------------------------------------------------------------
-
 function configure_window_status -d "Configure window status display"
     set pane_cmd "#[fg=$(_color FG_MUTED)]#{?#{==:#{pane_current_command},fish},, 󰅁#{pane_current_command}󰅂}"
-    set pane_title '#(fish -c \'prompt_pwd --full-length-dirs=2 --dir-length=1 | read -l p; test (string length "$p") -gt 16 && echo "…"(string sub -s -16 "$p") || echo "$p"\')'
+    set pane_title '#(fish -c \'basename "#{pane_current_path}"\')'
 
     #NOTE: ACTIVE
     t-set -w window-status-current-format (build_active_window_format " $pane_title$pane_cmd ")
@@ -107,7 +102,6 @@ end
 ## -----------------------------------------------------------------------------
 ## Main Configuration
 ## -----------------------------------------------------------------------------
-
 function apply_base_configuration -d "Apply basic tmux configuration"
     # Status bar basics
     t-set status on
@@ -137,13 +131,7 @@ end
 ## -----------------------------------------------------------------------------
 ## Initialize Configuration
 ## -----------------------------------------------------------------------------
-
-function main
-    apply_base_configuration
-    apply_mode_styles
-    apply_window_styles
-    configure_window_status
-end
-
-# Run the configuration
-main
+apply_base_configuration
+apply_mode_styles
+apply_window_styles
+configure_window_status
