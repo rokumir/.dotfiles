@@ -1,0 +1,33 @@
+return {}
+
+--#region module: "catgoose/nvim-colorizer.lua"
+---@class CatgooseColorizerOptions
+---@field filetypes? string[] A list of filetypes to apply the colorizer to.
+---@field buftypes? string[] A list of buftypes to apply the colorizer to.
+---@field user_commands? boolean Enable all or some user commands.
+---@field lazy_load? boolean Lazily schedule buffer highlighting setup function.
+---@field user_default_options? UserDefaultOptions A table containing user default options.
+
+---@class UserDefaultOptions
+---@field names? boolean Enable name codes highlighting.
+---@field names_opts? { lowercase? : boolean, camelcase? : boolean, uppercase? : boolean, strip_digits? : boolean } Options for mutating/filtering names.
+---@field names_custom? boolean|table|function|false Custom names to be highlighted.
+---@field RGB? boolean Enable #RGB hex codes.
+---@field RGBA? boolean Enable #RGBA hex codes.
+---@field RRGGBB? boolean Enable #RRGGBB hex codes.
+---@field RRGGBBAA? boolean Enable #RRGGBBAA hex codes.
+---@field AARRGGBB? boolean Enable 0xAARRGGBB hex codes.
+---@field rgb_fn? boolean Enable CSS rgb() and rgba() functions.
+---@field hsl_fn? boolean Enable CSS hsl() and hsla() functions.
+---@field css? boolean Enable all CSS features.
+---@field css_fn? boolean Enable all CSS functions.
+---@field tailwind? boolean|string|'normal'|'lsp'|'both' Enable tailwind colors.
+---@field tailwind_opts? { update_names? : boolean } Options for highlighting tailwind names.
+---@field sass? { enable? : boolean, parsers? : string[] } Options for enabling sass colors.
+---@field mode? 'background'|'foreground'|'virtualtext' Highlighting mode.
+---@field virtualtext? string Virtualtext character to use.
+---@field virtualtext_inline? boolean|string|'before'|'after' Display virtualtext inline with color.
+---@field virtualtext_mode? 'background'|'foreground' Virtualtext highlight mode.
+---@field always_update? boolean Update color values even if buffer is not focused.
+---@field hooks? { disable_line_highlight? : boolean|function } Hooks to invert control of colorizer.
+--#endregion

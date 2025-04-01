@@ -56,6 +56,7 @@ require('lazy').setup {
 		{ import = 'lazyvim.plugins.extras.util.dot' },
 
 		{ import = 'plugins' },
+		{ import = 'plugins.xtra' },
 
 		-- Disable LazyVim's plugins
 		{ 'folke/persistence.nvim', enabled = false },

@@ -32,7 +32,7 @@ return {
 				settings = {
 					save_on_toggle = true,
 					sync_on_ui_close = true,
-					key = function() return vim.loop.cwd() or '' end,
+					key = function() return vim.uv.cwd() or '' end,
 				},
 			}
 			harpoon:extend {
@@ -66,13 +66,11 @@ return {
 				mode = 'fuzzy',
 			},
 		},
-		keys = function()
-			return {
-				{ 'f', function() require('flash').jump { forward = true, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash' },
-				{ 'F', function() require('flash').jump { forward = false, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash' },
-				{ '<c-s>', function() require('flash').toggle() end, mode = { 'c' }, desc = 'Toggle Flash Search' },
-			}
-		end,
+		keys = {
+			{ 'f', function() require('flash').jump { forward = true, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Forward 󱞣' },
+			{ 'F', function() require('flash').jump { forward = false, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Backward 󱞽' },
+			{ '<c-e>', function() require('flash').toggle(false) end, mode = { 'c' }, desc = 'Quit Flash Mode' },
+		},
 	},
 
 	{ -- Easy location list
@@ -85,50 +83,6 @@ return {
 				close = '<c-q>',
 				close_folds = 'zC',
 				open_folds = 'zO',
-			},
-		},
-		keys = function()
-			return {
-				{ '<leader>xx', '<cmd>Trouble diagnostics toggle filter.buf=0 <cr>', desc = 'Diagnostics (buffer)' },
-				{ '<leader>xX', '<cmd>Trouble diagnostics toggle <cr>', desc = 'Diagnostics' },
-				{ '<leader>xl', '<cmd>Trouble loclist toggle <cr>', desc = 'Locations' },
-				{ '<leader>xq', '<cmd>Trouble quickfix toggle <cr>', desc = 'Quickfixes' },
-				{
-					'[q',
-					function()
-						if require('trouble').is_open() then
-							require('trouble').prev { skip_groups = true, jump = true }
-						else
-							local ok, err = pcall(vim.cmd.cprev)
-							if not ok then vim.notify(err, vim.log.levels.ERROR) end
-						end
-					end,
-					desc = 'Previous Trouble/Quickfix Item',
-				},
-				{
-					']q',
-					function()
-						if require('trouble').is_open() then
-							require('trouble').next { skip_groups = true, jump = true }
-						else
-							local ok, err = pcall(vim.cmd.cnext)
-							if not ok then vim.notify(err, vim.log.levels.ERROR) end
-						end
-					end,
-					desc = 'Next Trouble/Quickfix Item',
-				},
-			}
-		end,
-	},
-
-	{ -- better ts error ui
-		'OlegGulevskyy/better-ts-errors.nvim',
-		event = 'VeryLazy',
-		ft = { 'typescript', 'typescriptreact' },
-		opts = {
-			keymaps = {
-				toggle = '<leader>dd', -- default '<leader>dd'
-				go_to_definition = '<leader>dx', -- default '<leader>dx'
 			},
 		},
 	},

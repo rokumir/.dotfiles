@@ -123,6 +123,9 @@ return {
 					},
 				},
 
+				css_variables = {
+					root_dir = util.root_pattern('package.json', 'node_modules'),
+				},
 				cssls = {
 					settings = {
 						css = { validate = true, lint = { unknownAtRules = 'ignore' } },

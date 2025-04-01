@@ -49,6 +49,9 @@ _.breakindent = true
 _.breakindentopt = { 'shift:4', 'min:40', 'sbr' }
 _.backspace = { 'start', 'eol', 'indent' }
 
+_.complete = ''
+_.completeopt = ''
+
 -- global statusline
 _.laststatus = 3
 vim.go.laststatus = 3

@@ -7,6 +7,11 @@ local default_keymaps = { -- default keymaps
 	['<a-q>'] = { 'qflist', mode = { 'i', 'n' } },
 	['<a-i>'] = { 'toggle_ignored', mode = { 'i', 'n' } },
 	['<a-h>'] = { 'toggle_hidden_all', mode = { 'i', 'n' } }, --NOTE: custom action
+	['<c-a-l>'] = { { 'pick_win', 'jump' }, mode = { 'i', 'n' } },
+	['<c-u>'] = { 'preview_scroll_up', mode = { 'i', 'n' } },
+	['<c-d>'] = { 'preview_scroll_down', mode = { 'i', 'n' } },
+	['<c-f>'] = { 'preview_scroll_left', mode = { 'i', 'n' } },
+	['<c-b>'] = { 'preview_scroll_right', mode = { 'i', 'n' } },
 }
 
 ---@module 'snacks'
@@ -14,6 +19,7 @@ local default_keymaps = { -- default keymaps
 ---@type LazyPluginSpec
 return {
 	'folke/snacks.nvim',
+
 	---@type snacks.Config
 	opts = {
 		scroll = { enabled = false },
@@ -122,13 +128,26 @@ return {
 						severity = { pos = 'right' },
 					},
 
+					actions = {
+						explorer_safe_del = function(picker)
+							local selected = picker:selected { fallback = true }
+							local has_root = vim.iter(selected):any(function(s) return not s.parent end)
+							if has_root then
+								LazyVim.error 'VERY BAD!! YOU HAVE ROOT DIR INCLUDED!\n\nPlease select again!'
+								return
+							end
+							picker:action 'explorer_del'
+						end,
+					},
+
 					win = {
 						list = {
 							keys = {
 								['<bs>'] = 'explorer_up',
 								['h'] = 'explorer_close', -- close directory
 								['<a-n>'] = 'explorer_add',
-								['<a-d>'] = 'explorer_del',
+								['<a-d>'] = 'explorer_safe_del',
+								['d'] = 'explorer_safe_del',
 								['<a-r>'] = 'explorer_rename',
 								['<a-c>'] = 'explorer_copy',
 								['<a-m>'] = 'explorer_move',
@@ -162,14 +181,19 @@ return {
 					multi = { 'recent', 'files' },
 					format = 'file', -- use `file` format for all sources
 
-					---@type snacks.picker.sort.Config
 					sort = {
-						fields = { 'recent', 'score:desc', 'idx', 'sort' },
+						fields = { 'recent', 'sort', 'score:desc', 'idx' },
 					},
 					filter = { cwd = true },
+
 					matcher = {
+						fuzzy = true,
+						filename_bonus = true,
+						history_bonus = true,
+						ignorecas = true,
+						smartcase = true,
 						cwd_bonus = true, -- boost cwd matches
-						frecency = true, -- use frecency boosting
+						frecency = false, -- use frecency boosting
 						sort_empty = true, -- sort even when the filter is empty
 					},
 					win = {
@@ -215,8 +239,8 @@ return {
 		{ ';/', function() Snacks.picker.grep() end, desc = 'Grep' },
 		{ ';:', function() Snacks.picker.command_history() end, desc = 'Command History' },
 		{ ';n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
-		{ 'ss', function() Snacks.explorer.open { focus = true } end, desc = 'File Explorer' },
-		{ 'sf', function() Snacks.explorer.open { focus = false } end, desc = 'File Explorer' },
+		{ 'sf', function() Snacks.explorer.open { focus = true } end, desc = 'File Explorer' },
+		{ 'ss', function() Snacks.explorer.open { focus = false } end, desc = 'File Explorer' },
 
 		-- Find
 		{ ';f', '', desc = 'find' },

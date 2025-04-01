@@ -16,7 +16,11 @@ map { '<c-a>', 'ggVG' }
 map { 'H', '^', mode = { 'n', 'v', 'o' } }
 map { 'L', '$', mode = { 'n', 'v', 'o' } }
 
+-- Better "Goto Bottom"
 map { 'G', 'Gzz', mode = { 'n', 'v' }, nowait = true }
+
+-- new file
+map { '<leader>fn', '<cmd>enew<cr>', desc = 'New File' }
 
 -- shell stuffs
 map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File Executable' }
@@ -133,6 +137,7 @@ map { '<c-a-right>', ':vertical resize +1 <cr>', desc = 'Increase Window Width' 
 -- tabs
 map { '<c-s-right>', ':tabnext <cr>', desc = 'Next Tab' }
 map { '<c-s-left>', ':tabprev <cr>', desc = 'Prev Tab' }
+map { '<leader><tab><tab>', '<cmd>tabnew<cr>', desc = 'New Tab' }
 -- map { '<leader><tab>d', ':tabclose <cr>', desc = 'Close Tab' }
 -- map { '<c-s-right>', ':tabm +1 <cr>', desc = 'Move Tab Right' }
 -- map { '<c-s-left>', ':tabm -1 <cr>', desc = 'Move Tab Left' }
@@ -169,5 +174,12 @@ map { '[d', diag_go 'prev', desc = 'Prev diagnostic' }
 map { ']e', diag_go('next', 'ERROR'), desc = 'Next error diagnostic' }
 map { '[e', diag_go('prev', 'ERROR'), desc = 'Prev error diagnostic' }
 map { ']w', diag_go('next', 'WARN'), desc = 'Next warning diagnostic' }
-map { '[w', diag_go('prev', 'WARN'), desc = 'Prev warning diagnostic' }
 --#endregion LSP
+
+local pattern = '%f[%w]%.([%w%-]+)%f[%W]'
+local test = 'bg-background'
+
+map {
+	'<leader><leader><leader>',
+	function() LazyVim.info(string.match(test, pattern)) end,
+}
