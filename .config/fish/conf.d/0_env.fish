@@ -37,4 +37,3 @@ fish_add_path -g ~/.dotnet/tools/
 
 set -gx QT_QPA_PLATFORM wayland
 set -gx XDG_SESSION_TYPE wayland
-set -gx DISPLAY 172.20.32.1:0

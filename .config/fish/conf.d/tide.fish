@@ -3,8 +3,9 @@ set -U tide_prompt_add_newline_before false
 set -U tide_prompt_color_frame_and_connection 6C6C6C
 set -U tide_prompt_color_separator_same_color 949494
 set -U tide_prompt_icon_connection ' '
-set -U tide_prompt_min_cols 50
+set -U tide_prompt_min_cols 2
 set -U tide_prompt_pad_items true # space between items
+set -U tide_pwd_truncate_margin 100
 
 # prompt left
 set -U tide_left_prompt_items pwd git newline character

@@ -27,8 +27,8 @@ alias g git
 alias gd 'git --git-dir $HOME/.dotfiles -C $HOME --work-tree $HOME'
 
 function mkcd
-    mkdir $argv
-    cd $argv
+    mkdir $argv[1]
+    cd $argv[1]
 end
 
 ## keymaps
