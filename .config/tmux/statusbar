@@ -82,13 +82,13 @@ end
 ## Window Status Formatting
 ## -----------------------------------------------------------------------------
 function configure_window_status -d "Configure window status display"
-    set pane_cmd "#[fg=$(_color FG_MUTED)]#{?#{==:#{pane_current_command},fish},, 󰅁#{pane_current_command}󰅂}"
-    set pane_title '#(fish -c \'basename "#{pane_current_path}"\')'
+    set pane_cmd "#[fg=$(_color FG_MUTED)]#{?#{==:#{pane_current_command},fish},,󰅁#{pane_current_command}󰅂}"
+    set pane_title '#{b:pane_current_path}#{?#{>:#{window_panes},1},:#{pane_index},}'
 
-    #NOTE: ACTIVE
-    t-set -w window-status-current-format (build_active_window_format " $pane_title$pane_cmd ")
-    #NOTE: IDLE
-    t-set -w window-status-format "  #[default fg=$(_color FG1)]$pane_title$pane_cmd #[fg=$(_color GRAY2)]$(_const SEP_LEFT)"
+    # NOTE: ACTIVE
+    t-set -w window-status-current-format (build_active_window_format " $pane_title $pane_cmd ")
+    # NOTE: IDLE
+    t-set -w window-status-format "  #[default fg=$(_color FG1)]$pane_title $pane_cmd #[fg=$(_color GRAY2)]$(_const SEP_LEFT)"
 end
 
 function build_active_window_format -a pane_title -d "Build active window status format"
