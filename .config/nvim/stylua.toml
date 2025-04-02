@@ -1,4 +1,4 @@
-column_width = 160
+column_width = 120
 indent_width = 4
 indent_type = 'Tabs'                 # Tabs, Spaces 
 quote_style = 'AutoPreferSingle'     # AutoPreferDouble, AutoPreferSingle, ForceDouble, ForceSingle
@@ -7,4 +7,3 @@ call_parentheses = 'None'            # Always, NoSingleString, NoSingleTable, No
 
 [sort_requires]
 enabled = true
-

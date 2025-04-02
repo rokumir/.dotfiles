@@ -1,0 +1,4 @@
+.ignore
+lazy*.json
+news.md
+stylua.toml

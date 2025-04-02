@@ -5,8 +5,8 @@ local default_keymaps = { -- default keymaps
 	['<esc>'] = { 'close', mode = { 'n', 'i' } },
 	['<c-q>'] = { 'close', mode = { 'n', 'i' } },
 	['<a-q>'] = { 'qflist', mode = { 'i', 'n' } },
-	['<a-i>'] = { 'toggle_ignored', mode = { 'i', 'n' } },
-	['<a-h>'] = { 'toggle_hidden_all', mode = { 'i', 'n' } }, --NOTE: custom action
+	['<a-i>'] = { 'toggle_ignored_persist', mode = { 'i', 'n' } },
+	['<a-h>'] = { 'toggle_hidden_persist', mode = { 'i', 'n' } }, --NOTE: custom action
 	['<c-a-l>'] = { { 'pick_win', 'jump' }, mode = { 'i', 'n' } },
 	['<c-u>'] = { 'preview_scroll_up', mode = { 'i', 'n' } },
 	['<c-d>'] = { 'preview_scroll_down', mode = { 'i', 'n' } },
@@ -14,220 +14,32 @@ local default_keymaps = { -- default keymaps
 	['<c-b>'] = { 'preview_scroll_right', mode = { 'i', 'n' } },
 }
 
+---@param format string?
+local function formatted_path(format)
+	if type(format) == 'string' then
+		---@param path string
+		return function(path) return vim.fn.fnamemodify(path, format) end
+	else
+		---@param path string
+		return function(path) return path end
+	end
+end
+
+-- Custom path copy action
+local path_copy_options_map = {
+	['Extensions'] = formatted_path ':e',
+	['Fullpaths'] = formatted_path(),
+	['Filenames (no ext.)'] = formatted_path ':t:r',
+	['Filenames'] = formatted_path ':t',
+	['Relative paths'] = formatted_path ':.',
+}
+local path_copy_options = vim.tbl_keys(path_copy_options_map)
+
 ---@module 'snacks'
 ---@module 'lazy'
 ---@type LazyPluginSpec
 return {
 	'folke/snacks.nvim',
-
-	---@type snacks.Config
-	opts = {
-		scroll = { enabled = false },
-		dashboard = { enabled = false },
-		terminal = { enabled = false },
-		image = { enabled = false },
-		input = { enabled = true },
-		scope = { enabled = true },
-
-		indent = {
-			priority = 200,
-			indent = { enabled = true, hl = 'IndentChar' },
-			animate = { enabled = true, style = 'out' },
-			scope = { enabled = false },
-			chunk = {
-				enabled = true,
-				hl = 'IndentCharActive',
-				char = {
-					corner_top = '╭',
-					corner_bottom = '╰',
-					horizontal = '─',
-					vertical = '│',
-					arrow = '',
-				},
-			},
-		},
-
-		---@type snacks.notifier.Config|{}
-		notifier = {
-			---@type snacks.notifier.style
-			style = 'compact',
-			top_down = false,
-		},
-
-		zen = {
-			-- You can add any `Snacks.toggle` id here.
-			-- Toggle state is restored when the window is closed.
-			-- Toggle config options are NOT merged.
-			---@type table<string, boolean>
-			toggles = {
-				dim = true,
-				git_signs = false,
-				mini_diff_signs = false,
-				diagnostics = true,
-				inlay_hints = false,
-			},
-			show = {
-				statusline = false,
-				tabline = false,
-			},
-		},
-
-		explorer = {
-			replace_netrw = true,
-		},
-
-		picker = {
-			ignore = true,
-			exclude = {
-				'**/.git/*',
-				'**/node_modules/*',
-				'**/.yarn/cache/*',
-				'**/.yarn/install*',
-				'**/.yarn/releases/*',
-				'**/.pnpm-store/*',
-				'**/.venv/*',
-				'**/venv/*',
-				'**/__pycache__/*',
-			},
-
-			matcher = {
-				fuzzy = true, -- use fuzzy matching
-				smartcase = true, -- use smartcase
-				ignorecase = true, -- use ignorecase
-				sort_empty = false, -- sort results when the search string is empty
-				filename_bonus = true, -- give bonus for matching file names (last part of the path)
-				file_pos = true, -- e.g.: file:line:col, file:line
-				cwd_bonus = false, -- give bonus for matching files in the cwd
-				frecency = true, -- frecency bonus
-				history_bonus = true, -- give more weight to chronological order
-			},
-
-			win = {
-				list = { keys = default_keymaps },
-				preview = { keys = default_keymaps },
-				input = { keys = default_keymaps },
-			},
-
-			---@diagnostic disable-next-line: inject-field
-			config = function(opts) opts.hidden = vim.g.snacks_show_hidden == true end,
-			actions = {
-				toggle_hidden_all = function(picker)
-					vim.g.snacks_show_hidden = not vim.g.snacks_show_hidden
-					picker:action 'toggle_hidden'
-				end,
-			},
-
-			sources = {
-				explorer = {
-					layout = {
-						preset = 'sidebar',
-						hidden = { 'input' },
-						layout = { position = 'right', border = 'left' },
-					},
-					formatters = {
-						severity = { pos = 'right' },
-					},
-
-					actions = {
-						explorer_safe_del = function(picker)
-							local selected = picker:selected { fallback = true }
-							local has_root = vim.iter(selected):any(function(s) return not s.parent end)
-							if has_root then
-								LazyVim.error 'VERY BAD!! YOU HAVE ROOT DIR INCLUDED!\n\nPlease select again!'
-								return
-							end
-							picker:action 'explorer_del'
-						end,
-					},
-
-					win = {
-						list = {
-							keys = {
-								['<bs>'] = 'explorer_up',
-								['h'] = 'explorer_close', -- close directory
-								['<a-n>'] = 'explorer_add',
-								['<a-d>'] = 'explorer_safe_del',
-								['d'] = 'explorer_safe_del',
-								['<a-r>'] = 'explorer_rename',
-								['<a-c>'] = 'explorer_copy',
-								['<a-m>'] = 'explorer_move',
-								['<a-o>'] = 'explorer_open', -- open with system application
-								['<a-y>'] = { 'explorer_yank', mode = { 'n', 'x' } },
-								['<a-p>'] = 'explorer_paste',
-								['<a-u>'] = 'explorer_update',
-								['<a-.>'] = 'explorer_focus',
-
-								['<c-p>'] = 'toggle_preview',
-								['<c-c>'] = 'tcd',
-								['<c-f>'] = 'picker_grep',
-
-								['zC'] = 'explorer_close_all',
-								['zO'] = 'explorer_open_all',
-								[']g'] = 'explorer_git_next',
-								['[g'] = 'explorer_git_prev',
-								[']d'] = 'explorer_diagnostic_next',
-								['[d'] = 'explorer_diagnostic_prev',
-								[']w'] = 'explorer_warn_next',
-								['[w'] = 'explorer_warn_prev',
-								[']e'] = 'explorer_error_next',
-								['[e'] = 'explorer_error_prev',
-							},
-						},
-					},
-				},
-
-				smart = {
-					ignore = true,
-					multi = { 'recent', 'files' },
-					format = 'file', -- use `file` format for all sources
-
-					sort = {
-						fields = { 'recent', 'sort', 'score:desc', 'idx' },
-					},
-					filter = { cwd = true },
-
-					matcher = {
-						fuzzy = true,
-						filename_bonus = true,
-						history_bonus = true,
-						ignorecas = true,
-						smartcase = true,
-						cwd_bonus = true, -- boost cwd matches
-						frecency = false, -- use frecency boosting
-						sort_empty = true, -- sort even when the filter is empty
-					},
-					win = {
-						input = {
-							keys = {
-								['dd'] = 'bufdelete',
-								['<c-x>'] = { 'bufdelete', mode = { 'n', 'i' } },
-							},
-						},
-						list = { keys = { ['dd'] = 'bufdelete' } },
-					},
-					transform = 'unique_file',
-				},
-			},
-
-			formatters = {
-				file = {
-					filename_first = true,
-					git_status_hl = true,
-					icon_width = 3,
-				},
-				selected = {
-					show_always = false,
-					unselected = true,
-				},
-				severity = {
-					icons = true,
-					level = false,
-					pos = 'left',
-				},
-				text = {},
-			},
-		},
-	},
 
 	keys = {
 		{ '\\\\', function() Snacks.picker.resume() end, desc = 'Resume' },
@@ -292,5 +104,226 @@ return {
 		-- lsp
 		{ ';ss', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
 		{ ';sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
+	},
+
+	---@type snacks.Config
+	opts = {
+		scroll = { enabled = false },
+		dashboard = { enabled = false },
+		terminal = { enabled = false },
+		image = { enabled = false },
+		input = { enabled = true },
+		scope = { enabled = true },
+
+		indent = {
+			priority = 200,
+			indent = { enabled = true, hl = 'IndentChar' },
+			animate = { enabled = true, style = 'out' },
+			scope = { enabled = false },
+			chunk = {
+				enabled = true,
+				hl = 'IndentCharActive',
+				char = {
+					corner_top = '╭',
+					corner_bottom = '╰',
+					horizontal = '─',
+					vertical = '│',
+					arrow = '',
+				},
+			},
+		},
+
+		---@type snacks.notifier.Config|{}
+		notifier = {
+			---@type snacks.notifier.style
+			style = 'compact',
+			top_down = false,
+		},
+
+		zen = {
+			-- You can add any `Snacks.toggle` id here.
+			-- Toggle state is restored when the window is closed.
+			-- Toggle config options are NOT merged.
+			---@type table<string, boolean>
+			toggles = {
+				dim = true,
+				git_signs = false,
+				mini_diff_signs = false,
+				diagnostics = true,
+				inlay_hints = false,
+			},
+			show = {
+				statusline = false,
+				tabline = false,
+			},
+		},
+
+		explorer = {
+			replace_netrw = true,
+		},
+
+		picker = {
+			ignore = true,
+			exclude = {
+				'**/.git/*',
+				'**/node_modules/*',
+				'**/.yarn/*',
+				'**/.pnpm-store/*',
+				'**/.venv/*',
+				'**/venv/*',
+				'**/__pycache__/*',
+			},
+
+			matcher = {
+				fuzzy = true, -- use fuzzy matching
+				smartcase = true, -- use smartcase
+				ignorecase = true, -- use ignorecase
+				sort_empty = false, -- sort results when the search string is empty
+				filename_bonus = true, -- give bonus for matching file names (last part of the path)
+				file_pos = true, -- e.g.: file:line:col, file:line
+				cwd_bonus = false, -- give bonus for matching files in the cwd
+				frecency = true, -- frecency bonus
+				history_bonus = true, -- give more weight to chronological order
+			},
+
+			win = {
+				list = { keys = default_keymaps },
+				preview = { keys = default_keymaps },
+				input = { keys = default_keymaps },
+			},
+
+			---@diagnostic disable-next-line: inject-field
+			config = function(opts) opts.hidden = vim.g.snacks_show_hidden == true end,
+			actions = {
+				toggle_hidden_persist = function(picker)
+					vim.g.snacks_show_hidden = not vim.g.snacks_show_hidden
+					picker:action 'toggle_hidden'
+				end,
+				toggle_ignored_persist = function(picker)
+					vim.g.snacks_show_ignored = not vim.g.snacks_show_ignored
+					picker:action 'toggle_ignored'
+				end,
+			},
+
+			sources = {
+				explorer = {
+					layout = {
+						preset = 'sidebar',
+						hidden = { 'input' },
+						layout = { position = 'right', border = 'left' },
+					},
+					formatters = {
+						severity = { pos = 'right' },
+					},
+
+					actions = {
+						explorer_safe_del = function(picker)
+							local selected = picker:selected { fallback = true }
+							local has_root = vim.iter(selected):any(function(s) return not s.parent end)
+							if has_root then return LazyVim.error 'ERROR: Root included!' end
+							picker:action 'explorer_del'
+						end,
+						explorer_yank_selector = function(picker)
+							local selected_paths =
+								vim.tbl_map(Snacks.picker.util.path, picker:selected { fallback = true })
+							if #selected_paths == 0 then return end
+
+							Snacks.picker.select(path_copy_options, {
+								prompt = 'Choose to copy to clipboard:',
+							}, function(choice)
+								if not choice then return end
+								local format_path = path_copy_options_map[choice]
+								local formatted_paths = vim.tbl_map(format_path, selected_paths)
+
+								-- Add to the clipboards
+								local text = table.concat(formatted_paths, '\n')
+								vim.fn.setreg('+', text)
+								vim.fn.setreg('"', text)
+
+								-- clear selection
+								picker.list:set_selected()
+							end)
+						end,
+					},
+
+					win = {
+						list = {
+							keys = {
+								['<a-y>'] = { 'explorer_yank_selector', mode = { 'n', 'x' } },
+								['y'] = { 'explorer_yank_selector', mode = { 'n', 'x' } },
+								['<bs>'] = 'explorer_up',
+								['h'] = 'explorer_close', -- close directory
+								['<a-n>'] = 'explorer_add',
+								['<a-d>'] = 'explorer_safe_del',
+								['d'] = 'explorer_safe_del',
+								['<a-r>'] = 'explorer_rename',
+								['<a-c>'] = 'explorer_copy',
+								['<a-m>'] = 'explorer_move',
+								['<a-o>'] = 'explorer_open', -- open with system application
+								-- ['<a-y>'] = { 'explorer_yank', mode = { 'n', 'x' } },
+								['<a-p>'] = 'explorer_paste',
+								['<a-u>'] = 'explorer_update',
+								['<a-.>'] = 'explorer_focus',
+
+								['<c-p>'] = 'toggle_preview',
+								['<c-c>'] = 'tcd',
+								['<c-f>'] = 'picker_grep',
+
+								['zC'] = 'explorer_close_all',
+								['zO'] = 'explorer_open_all',
+								[']g'] = 'explorer_git_next',
+								['[g'] = 'explorer_git_prev',
+								[']d'] = 'explorer_diagnostic_next',
+								['[d'] = 'explorer_diagnostic_prev',
+								[']w'] = 'explorer_warn_next',
+								['[w'] = 'explorer_warn_prev',
+								[']e'] = 'explorer_error_next',
+								['[e'] = 'explorer_error_prev',
+							},
+						},
+					},
+				},
+
+				smart = {
+					multi = { 'recent', 'files' },
+					format = 'file', -- use `file` format for all sources
+
+					sort = {
+						fields = { 'recent', 'sort', 'score:desc', 'idx' },
+					},
+					filter = { cwd = true },
+
+					matcher = {
+						fuzzy = true,
+						filename_bonus = true,
+						history_bonus = true,
+						ignorecas = true,
+						smartcase = true,
+						cwd_bonus = true, -- boost cwd matches
+						frecency = false, -- use frecency boosting
+						sort_empty = true, -- sort even when the filter is empty
+					},
+					transform = 'unique_file',
+				},
+			},
+
+			formatters = {
+				file = {
+					filename_first = true,
+					git_status_hl = true,
+					icon_width = 3,
+				},
+				selected = {
+					show_always = false,
+					unselected = true,
+				},
+				severity = {
+					icons = true,
+					level = false,
+					pos = 'left',
+				},
+				text = {},
+			},
+		},
 	},
 }
