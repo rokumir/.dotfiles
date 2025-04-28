@@ -26,7 +26,7 @@ return {
 			highlight_groups = {
 				IndentChar = { fg = 'highlight_low' },
 				IndentCharActive = { fg = 'highlight_high' },
-				ColorColumn = { fg = 'highlight_low', bg = 'none' },
+				ColorColumn = { bg = 'base' },
 				CursorLineNr = { fg = 'foam', bold = true, italic = true },
 				FloatBorder = { fg = 'overlay' },
 
@@ -47,7 +47,7 @@ return {
 				LspReferenceWrite = { bg = 'highlight_low', fg = 'none' },
 
 				TroubleNormal = { bg = 'none' },
-				VirtColumn = { fg = 'base' },
+				-- VirtColumn = { fg = 'base' },
 				IlluminatedWordText = { bg = 'highlight_low' },
 				IlluminatedWordRead = { bg = 'highlight_low' },
 				IlluminatedWordWrite = { bg = 'highlight_low' },

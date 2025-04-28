@@ -9,7 +9,7 @@ L.initialized = false
 
 L.config = {
 	char = '│',
-	virtcolumn = '',
+	virtcolumn = 'VirtColumn',
 	highlight = 'ColorColumn',
 	exclude = {
 		filetypes = {

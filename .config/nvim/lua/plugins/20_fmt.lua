@@ -40,11 +40,6 @@ return {
 				opts.formatters_by_ft[ft] = extract_first_formatter { 'biome', 'prettier', 'prettierd' }
 			end
 
-			-- not widely supported
-			-- for _, ft in ipairs { 'markdown', 'svelte', 'angular', 'vue', } do
-			-- 	opts.formatters_by_ft[ft] = { 'prettier' }
-			-- end
-
 			opts.formatters.biome = {
 				cwd = conform_utils.root_file { 'biome.json', 'biome.jsonc' },
 				require_cwd = true,
@@ -69,12 +64,14 @@ return {
 			--#endregion Web Dev formatters config
 		end,
 	},
+
+	{
+		'stevearc/conform.nvim',
+		---@type conform.setupOpts
+		opts = {
+			formatters_by_ft = {
+				dataviewjs = { 'prettier' },
+			},
+		},
+	},
 }
-
---[[
-Use primary `biome` in web dev projects (has package.json or biome.json in the project)
-Except when there is prettier configured in the project
-
-]]
-
----@module 'conform'

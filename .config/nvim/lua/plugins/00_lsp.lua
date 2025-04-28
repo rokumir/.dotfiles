@@ -240,8 +240,8 @@ return {
 				{ '<c-u>', function() require('noice.lsp').scroll(-4) end, has = 'documentHighlight', mode = { 'n', 'i' }, desc = 'Scroll Up LSP Docs' },
 				{ '<c-d>', function() require('noice.lsp').scroll(4) end, has = 'documentHighlight', mode = { 'n', 'i' }, desc = 'Scroll Down LSP Docs' },
 				{ '<c-k>', false, mode = 'i' },
-				{ '<c-a-k>', require('noice.lsp').signature, mode = 'i', desc = 'Signature Help', has = 'signatureHelp' },
-				{ 'gK', require('noice.lsp').signature, desc = 'Signature Help', has = 'signatureHelp' },
+				{ '<c-k>', require('noice.lsp').signature, mode = 'i', desc = 'Signature Help', has = 'signatureHelp' },
+				{ 'g<c-k>', require('noice.lsp').signature, desc = 'Signature Help', has = 'signatureHelp' },
 				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, desc = 'Rename', has = 'rename' },
 				{
 					'<a-s-o>',
@@ -266,6 +266,18 @@ return {
 	{
 		'pmizio/typescript-tools.nvim',
 
+		ft = {
+			'javascript',
+			'typescript',
+			'javascriptreact',
+			'typescriptreact',
+		},
+		-- cond = require('utils.root_dir').root_validation {
+		-- 	'package.json',
+		-- 	'node_modules',
+		-- 	'*.lock',
+		-- },
+
 		opts = {
 			handlers = {},
 			settings = {
@@ -274,7 +286,11 @@ return {
 				expose_as_code_action = 'all',
 
 				tsserver_file_preferences = {
-					disableSuggestions = false,
+					disableSuggestions = not require('utils.root_dir').root_validation {
+						'package.json',
+						'node_modules',
+						'*.lock',
+					}(),
 					quotePreference = 'single', -- Optional string: "auto", "double", or "single"
 					includeCompletionsForModuleExports = true,
 					includeCompletionsForImportStatements = true,
@@ -329,14 +345,17 @@ return {
 					{ '<leader>cD', '<cmd>TSToolsFixAll<cr>', desc = 'Fix all diagnostics' },
 					{ '<leader>cR', '<cmd>TSToolsRenameFile<cr>', desc = 'Rename file' },
 				}
-
-				client.server_capabilities.documentFormattingProvider = false
-				client.server_capabilities.documentRangeFormattingProvider = false
-
 				for _, keymap_args in ipairs(keymaps) do
 					keymap_args.buffer = bufnr
 					map_key(keymap_args)
 				end
+
+				-- plugins
+				require('twoslash-queries').attach(client, bufnr)
+
+				-- extra settings
+				client.server_capabilities.documentFormattingProvider = false
+				client.server_capabilities.documentRangeFormattingProvider = false
 			end,
 		},
 	},

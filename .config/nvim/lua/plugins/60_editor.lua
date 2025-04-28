@@ -51,7 +51,6 @@ return {
 	{ -- Flash
 		'folke/flash.nvim',
 		event = 'VeryLazy',
-		vscode = true,
 		---@type Flash.Config
 		opts = {
 			modes = {
@@ -69,7 +68,7 @@ return {
 		keys = {
 			{ 'f', function() require('flash').jump { forward = true, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Forward 󱞣' },
 			{ 'F', function() require('flash').jump { forward = false, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Backward 󱞽' },
-			{ '<c-e>', function() require('flash').toggle(false) end, mode = { 'c' }, desc = 'Quit Flash Mode' },
+			{ '<c-f>', function() require('flash').toggle(false) end, mode = { 'c' }, desc = 'Quit Flash Mode' },
 		},
 	},
 

@@ -35,7 +35,7 @@ _.cursorline = true
 _.cursorlineopt = 'number'
 _.wrap = false
 _.colorcolumn = '80,120'
-_.conceallevel = 0
+-- _.conceallevel = 3
 
 _.smarttab = true
 _.expandtab = false

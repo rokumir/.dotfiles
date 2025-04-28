@@ -1,8 +1,9 @@
+---@module 'lazy'
+---@type LazyPluginSpec[]
 return {
 	{ -- NOTE: highligh OKLCH colors only
 		'eero-lehtinen/oklch-color-picker.nvim',
 		event = 'BufReadPre',
-
 		cmd = { 'ColorPickOklch' },
 		keys = {
 			{

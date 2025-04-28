@@ -60,6 +60,25 @@ vim.api.nvim_create_autocmd('LspProgress', {
 	end,
 })
 
+local DISABLE_AUTOFORMAT_PATTERN = 'nvim: disable autoformat'
+vim.api.nvim_create_autocmd('BufReadPost', {
+	group = augroup 'modeline_disable_autoformat',
+	pattern = { '*' },
+	callback = function(ev)
+		local buf = ev.buf
+		local lines_to_read = vim.o.modelines or 5 -- Use vim.o.modelines, default to 5
+
+		for i = 1, math.min(lines_to_read, vim.api.nvim_buf_line_count(buf)) do
+			local line = vim.api.nvim_buf_get_lines(buf, i - 1, i, false)[1]
+			if line and string.find(line, DISABLE_AUTOFORMAT_PATTERN, 1, true) then
+				-- Found the pattern (case-insensitive search)
+				vim.api.nvim_buf_set_var(buf, 'autoformat', false)
+				break
+			end
+		end
+	end,
+})
+
 -- -- Function to check and disable diagnostics based on modeline in the first 3 lines
 -- -- Create an autocommand to run the function when a buffer is read or entered
 -- vim.api.nvim_create_autocmd({ 'FileType', 'BufRead', 'BufEnter' }, {
