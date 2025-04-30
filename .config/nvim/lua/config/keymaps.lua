@@ -9,12 +9,19 @@ map { '<c-f>', '<nop>', mode = { 'n', 's', 'x' } }
 --#endregion UNMAP
 
 --#region --- MISC
+-- Movement
 map { 'jj', '<esc>', mode = 'i' }
 map { 'jk', '<esc>', mode = 'i' }
 map { '<c-q>', '<c-c>', mode = 'c' }
 map { '<c-a>', 'ggVG' }
 map { 'H', '^', mode = { 'n', 'v', 'o' } }
 map { 'L', '$', mode = { 'n', 'v', 'o' } }
+
+-- FIX: for wezterm (when in tmux)
+map { '<c-s-v>', '"+p', mode = { 'i', 'n', 'x' }, desc = 'Paste from System Clipboard (overide)' }
+
+-- new file
+map { '<a-n>', '<cmd>enew<cr>', desc = 'New File' }
 
 -- Better "Goto Bottom"
 map { 'G', 'Gzz', mode = { 'n', 'v' }, nowait = true }
@@ -61,7 +68,7 @@ map { 'n', [['Nn'[v:searchforward].'zzzv']], expr = true, desc = 'Next Search Re
 map { 'N', [['nN'[v:searchforward].'zzzv']], expr = true, desc = 'Prev Search Result' }
 map { 'n', [['Nn'[v:searchforward].'zz']], mode = { 'x', 'o' }, expr = true, desc = 'Next Search Result' }
 map { 'N', [['nN'[v:searchforward].'zz']], mode = { 'x', 'o' }, expr = true, desc = 'Prev Search Result' }
---#endregion MISC
+--#endregion
 
 --#region --- EDITOR
 map { '<c-q>', ui_utils.bufremove, desc = 'Close buffer' }
@@ -79,22 +86,26 @@ map { '<', '<gv', mode = 'v', desc = 'Indent' }
 map { '>', '>gv', mode = 'v', desc = 'Unindent' }
 
 -- map { '<leader>sr', [[:%s/\<<c-r><c-w>\>/<c-r><c-w> /gc<c-left><bs>]], desc = 'Replace Word Under Cursor', silent = false }
---#endregion EDITOR
+--#endregion
 
 --#region --- UI
 map { '<leader>u', '', desc = '+ui' }
 map { '<leader>ui', vim.show_pos, desc = 'Inspect highlight under cursor' }
-map { '<leader>um', ':delm! | delm a-zA-Z <cr>', desc = 'Clear Marks in Active Buffer' }
-local function clear_ui_noises()
-	vim.cmd.nohlsearch() -- Clear the search highlighting
-	vim.cmd.diffupdate() -- Redraw the screen
-	vim.cmd.redraw() -- Update the diff highlighting and folds.
-	vim.cmd.NoiceDismiss() -- Clear noice mini view
-	Snacks.words.clear()
-end
-map { '<leader>uc', clear_ui_noises, desc = 'Clear Visual Noises', nowait = true }
-map { '<c-l>', clear_ui_noises, desc = 'Clear Visual Noises', mode = { 'n', 'i' }, nowait = true }
---#endregion UI
+map { '<leader>um', ':delm! | delm a-zA-Z | redraw <cr>', desc = 'Clear Marks in Active Buffer' }
+map {
+	'<c-l>',
+	function()
+		vim.cmd.nohlsearch() -- Clear the search highlighting
+		vim.cmd.diffupdate() -- Redraw the screen
+		vim.cmd.redraw() -- Update the diff highlighting and folds.
+		vim.cmd.NoiceDismiss() -- Clear noice mini view
+		Snacks.words.clear()
+	end,
+	desc = 'Clear Visual Noises',
+	mode = { 'n', 'i' },
+	nowait = true,
+}
+--#endregion
 
 --#region --- TOGGLES
 LazyVim.format.snacks_toggle():map '<leader><leader>f'
@@ -125,7 +136,7 @@ Snacks.toggle
 		set = function(new_state) vim.opt.colorcolumn = new_state and colorcolumn or '' end,
 	})
 	:map '<leader><leader>R'
---#endregion TOGGLES
+--#endregion
 
 --#region --- WINDOWS
 -- split
@@ -135,21 +146,19 @@ map { '<c-a-left>', ':vertical resize -1 <cr>', desc = 'Decrease Window Width' }
 map { '<c-a-right>', ':vertical resize +1 <cr>', desc = 'Increase Window Width' }
 
 -- tabs
-map { '<c-s-right>', ':tabnext <cr>', desc = 'Next Tab' }
-map { '<c-s-left>', ':tabprev <cr>', desc = 'Prev Tab' }
-map { '<leader><tab><tab>', '<cmd>tabnew<cr>', desc = 'New Tab' }
+map { '<leader><tab>]', '<cmd>tabnext<cr>', desc = 'Next Tab' }
+map { '<leader><tab>[', '<cmd>tabprevious<cr>', desc = 'Previous Tab' }
+map { '<leader><tab>d', '<cmd>tabclose<cr>', desc = 'Close Tab' }
+-- map { '<leader><tab><tab>', '<cmd>tabnew<cr>', desc = 'New Tab' }
 -- map { '<leader><tab>d', ':tabclose <cr>', desc = 'Close Tab' }
 -- map { '<c-s-right>', ':tabm +1 <cr>', desc = 'Move Tab Right' }
 -- map { '<c-s-left>', ':tabm -1 <cr>', desc = 'Move Tab Left' }
 
 -- buffers (use like tab)
-map { '<tab>', ':bnext <cr>', desc = 'Next Buffer' }
-map { '<s-tab>', ':bprevious <cr>', desc = 'Prev Buffer' }
+-- map { '<tab>', ':bnext <cr>', desc = 'Next Buffer' }
+-- map { '<s-tab>', ':bprevious <cr>', desc = 'Prev Buffer' }
 map { '<leader>`', ':b# <cr>', desc = 'Alternate buffer' }
-map { '<leader>bd', ':bwipeout <cr>', desc = 'Delete Buffer' }
-map { '<c-q>', ':bwipeout <cr>', desc = 'Delete Buffer' }
-map { '<leader>bD', ':%bd | e# <cr>', desc = 'Delete all buffers except active buffer.' }
---#endregion WINDOWS
+--#endregion
 
 --#region --- SYSTEM
 map { '<leader>ll', '<cmd>Lazy <cr>', desc = 'Lazy' }
@@ -157,10 +166,9 @@ map { '<leader>lL', '<cmd>LspInfo <cr>', desc = 'Lsp: Project info' }
 map { '<leader>lR', '<cmd>LspRestart <cr>', desc = 'Lsp: Restart' }
 map { '<leader>lm', '<cmd>Mason <cr>', desc = 'Mason' }
 map { '<leader>lf', '<cmd>ConformInfo <cr>', desc = 'Conform' }
---#endregion SYSTEM
+--#endregion
 
 --#region --- LSP
--- formatting
 map { '<a-F>', function() LazyVim.format { force = true } end, mode = { 'n', 'v' }, desc = 'Format' }
 
 -- diagnostics
@@ -174,12 +182,4 @@ map { '[d', diag_go 'prev', desc = 'Prev diagnostic' }
 map { ']e', diag_go('next', 'ERROR'), desc = 'Next error diagnostic' }
 map { '[e', diag_go('prev', 'ERROR'), desc = 'Prev error diagnostic' }
 map { ']w', diag_go('next', 'WARN'), desc = 'Next warning diagnostic' }
---#endregion LSP
-
-local pattern = '%f[%w]%.([%w%-]+)%f[%W]'
-local test = 'bg-background'
-
-map {
-	'<leader><leader><leader>',
-	function() LazyVim.info(string.match(test, pattern)) end,
-}
+--#endregion

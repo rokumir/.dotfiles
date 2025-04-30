@@ -3,17 +3,27 @@ local M = {}
 
 local lsp_util = require 'lspconfig.util'
 
----@param ... string
-function M.is_root_dir(...)
-	local root_dir_matcher = lsp_util.root_pattern(...)
-	local is_matched = root_dir_matcher(vim.uv.cwd()) ~= nil
-	return is_matched
+---@param path string
+function M.exact_match(path)
+	local fullpath = vim.uv.fs_realpath(path)
+	if fullpath then
+		local current_path = vim.uv.cwd()
+		return current_path == fullpath
+	end
+	return false
 end
 
 ---@param patterns string[]
-function M.root_validation(patterns)
+function M.validate_func(patterns)
 	if type(patterns) ~= 'table' then return end
-	return function() return M.is_root_dir(unpack(patterns)) end
+	return function() return M.match_pattern(unpack(patterns)) end
+end
+
+---@param ... string
+function M.match_pattern(...)
+	local root_dir_matcher = lsp_util.root_pattern(...)
+	local is_matched = root_dir_matcher(vim.uv.cwd()) ~= nil
+	return is_matched
 end
 
 --- Get ignored list from the root dir (.ignore)

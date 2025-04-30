@@ -1,4 +1,3 @@
----@diagnostic disable: inject-field
 ---@module 'snacks'
 ---@module 'lazy'
 
@@ -156,7 +155,7 @@ return {
 						layout = {
 							preset = 'sidebar',
 							hidden = { 'input' },
-							layout = { position = 'right', border = 'left' },
+							layout = { position = 'right', border = 'left', width = 0.26 },
 						},
 						formatters = {
 							severity = { pos = 'right' },
@@ -181,6 +180,8 @@ return {
 									['<c-c>'] = 'tcd',
 									['<c-f>'] = 'picker_grep',
 
+									['zc'] = 'explorer_close',
+									['zo'] = 'confirm',
 									['zC'] = 'explorer_close_all',
 									['zO'] = 'explorer_open_all',
 									[']g'] = 'explorer_git_next',
@@ -276,9 +277,11 @@ return {
 			}
 
 			-- actions
-			local trouble_actions = require('trouble.sources.snacks').actions
 			opts.picker.actions = {
-				trouble_open_selected = trouble_actions.trouble_open_selected,
+				trouble_open_selected = function(picker)
+					local trouble_actions = require('trouble.sources.snacks').actions
+					trouble_actions.trouble_open_selected(picker)
+				end,
 				toggle_hidden_persist = function(picker)
 					vim.g.snacks_show_hidden = not vim.g.snacks_show_hidden
 					picker:action 'toggle_hidden'
@@ -297,55 +300,80 @@ return {
 			explorer_keys['<a-d>'] = 'explorer_safe_del'
 			explorer_keys['d'] = 'explorer_safe_del'
 
-			-- actions
-			opts.picker.sources.explorer.actions = {}
-			local explorer_actions = opts.picker.sources.explorer.actions
-			explorer_actions.explorer_safe_del = function(picker)
-				local selected = picker:selected { fallback = true }
-				local has_root = vim.iter(selected):any(function(s) return not s.parent end)
-				if has_root then return LazyVim.error 'ERROR: Root included!' end
-				picker:action 'explorer_del'
-			end
+			opts.picker.sources.explorer.actions = {
+				--- Explorer safe delete
+				explorer_safe_del = function(picker)
+					local selected = picker:selected { fallback = true }
+					local has_root = vim.iter(selected):any(function(s) return not s.parent end)
+					if has_root then return LazyVim.error 'ERROR: Root included!' end
+					picker:action 'explorer_del'
+				end,
 
-			---@param format string?
-			local function formatted_path(format)
-				if type(format) == 'string' then
-					---@param path string
-					return function(path) return vim.fn.fnamemodify(path, format) end
-				else
-					---@param path string
-					return function(path) return path end
-				end
-			end
-			-- Custom path copy action
-			local path_copy_options_map = {
-				['Extensions'] = formatted_path ':e',
-				['Fullpaths'] = formatted_path(),
-				['Filenames (no ext.)'] = formatted_path ':t:r',
-				['Filenames'] = formatted_path ':t',
-				['Relative paths'] = formatted_path ':.',
+				--- Explorer yank selector
+				explorer_yank_selector = function(picker)
+					local selected_paths = vim.tbl_map(Snacks.picker.util.path, picker:selected { fallback = true })
+					if #selected_paths == 0 then return end
+
+					local path_copy_options_map = {
+						['Extensions'] = ':e',
+						['Fullpaths'] = '',
+						['Filenames (no ext.)'] = ':t:r',
+						['Filenames'] = ':t',
+						['Relative paths'] = ':.',
+					}
+					local path_copy_options = vim.tbl_keys(path_copy_options_map)
+
+					Snacks.picker.select(path_copy_options, { prompt = 'Choose to copy to clipboard:' }, function(choice)
+						if not choice then return end
+
+						local template = path_copy_options_map[choice]
+						local formatted_paths ---@type string[]
+						if template ~= '' then
+							local format_path = function(path) return vim.fn.fnamemodify(path, template) end
+							formatted_paths = vim.tbl_map(format_path, selected_paths)
+						else
+							formatted_paths = selected_paths
+						end
+
+						-- Add to the clipboards
+						local text = table.concat(formatted_paths, '\n')
+						vim.fn.setreg('+', text)
+
+						-- clear selection
+						picker.list:set_selected()
+					end)
+				end,
+
+				--- Explorer open all (recursive toggle)
+				explorer_open_all = function(picker, item)
+					local Actions = require 'snacks.explorer.actions'
+					local Tree = require 'snacks.explorer.tree'
+
+					-- stop if it's not a dir
+					local curr_node = Tree:node(item.file)
+					if not (curr_node and curr_node.dir) then return end
+
+					local get_children = function(node) ---@param node snacks.picker.explorer.Node
+						local children = {} ---@type snacks.picker.explorer.Node[]
+						for _, child in pairs(node.children) do
+							table.insert(children, child)
+						end
+						return children
+					end
+					local function toggle_recursive(node) ---@param node snacks.picker.explorer.Node
+						Tree:open(node.path)
+						Actions.update(picker, { refresh = false })
+
+						vim.schedule(function()
+							for _, child in ipairs(get_children(node)) do
+								if child.dir then vim.schedule(function() toggle_recursive(child) end) end
+							end
+						end)
+					end
+
+					toggle_recursive(curr_node)
+				end,
 			}
-			local path_copy_options = vim.tbl_keys(path_copy_options_map)
-			explorer_actions.explorer_yank_selector = function(picker)
-				local selected_paths = vim.tbl_map(Snacks.picker.util.path, picker:selected { fallback = true })
-				if #selected_paths == 0 then return end
-
-				Snacks.picker.select(path_copy_options, {
-					prompt = 'Choose to copy to clipboard:',
-				}, function(choice)
-					if not choice then return end
-					local format_path = path_copy_options_map[choice]
-					local formatted_paths = vim.tbl_map(format_path, selected_paths)
-
-					-- Add to the clipboards
-					local text = table.concat(formatted_paths, '\n')
-					vim.fn.setreg('+', text)
-					vim.fn.setreg('"', text)
-
-					-- clear selection
-					picker.list:set_selected()
-				end)
-			end
 			--#endregion
 		end,
 	},

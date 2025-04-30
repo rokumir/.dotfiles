@@ -28,7 +28,7 @@ return {
 				IndentCharActive = { fg = 'highlight_high' },
 				ColorColumn = { bg = 'base' },
 				CursorLineNr = { fg = 'foam', bold = true, italic = true },
-				FloatBorder = { fg = 'overlay' },
+				FloatBorder = { fg = 'highlight_med' },
 
 				Comment = { fg = 'muted' },
 				Folded = { bg = 'base' },

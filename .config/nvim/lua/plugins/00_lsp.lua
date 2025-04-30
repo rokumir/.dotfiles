@@ -237,28 +237,28 @@ return {
 				{ 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Goto Implementation' },
 				{ 'gy', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
 				{ 'K', require('noice.lsp').hover, desc = 'Hover' },
-				{ '<c-u>', function() require('noice.lsp').scroll(-4) end, has = 'documentHighlight', mode = { 'n', 'i' }, desc = 'Scroll Up LSP Docs' },
-				{ '<c-d>', function() require('noice.lsp').scroll(4) end, has = 'documentHighlight', mode = { 'n', 'i' }, desc = 'Scroll Down LSP Docs' },
+				{
+					'<c-u>',
+					function() require('noice.lsp').scroll(-4) end,
+					has = 'documentHighlight',
+					mode = { 'n', 'i' },
+					desc = 'Scroll Up LSP Docs',
+				},
+				{
+					'<c-d>',
+					function() require('noice.lsp').scroll(4) end,
+					has = 'documentHighlight',
+					mode = { 'n', 'i' },
+					desc = 'Scroll Down LSP Docs',
+				},
 				{ '<c-k>', false, mode = 'i' },
 				{ '<c-k>', require('noice.lsp').signature, mode = 'i', desc = 'Signature Help', has = 'signatureHelp' },
 				{ 'g<c-k>', require('noice.lsp').signature, desc = 'Signature Help', has = 'signatureHelp' },
 				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, desc = 'Rename', has = 'rename' },
-				{
-					'<a-s-o>',
-					function()
-						pcall(LazyVim.lsp.action['source.organizeImports'])
-						pcall(vim.cmd.TSToolsOrganizeImports)
-					end,
-					desc = 'Organize Imports',
-					has = 'organizeImports',
-				},
-				{
-					'🔥', -- map unicode to ctrl+period
-					vim.lsp.buf.code_action,
-					mode = { 'n', 'v', 'i' },
-					desc = 'Code actions',
-					has = 'codeAction',
-				},
+				{ '<a-r>', function() require('live-rename').rename { insert = true } end, desc = 'Rename', has = 'rename' },
+				-- pcall(vim.cmd.TSToolsOrganizeImports)
+				{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], desc = 'Organize Imports', has = 'organizeImports' },
+				{ '🔥', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, desc = 'Code actions', has = 'codeAction' },
 			})
 		end,
 	},
@@ -272,11 +272,7 @@ return {
 			'javascriptreact',
 			'typescriptreact',
 		},
-		-- cond = require('utils.root_dir').root_validation {
-		-- 	'package.json',
-		-- 	'node_modules',
-		-- 	'*.lock',
-		-- },
+		-- cond = require('utils.root_dir').validation{'package.json','node_modules','*.lock'},
 
 		opts = {
 			handlers = {},
@@ -286,12 +282,12 @@ return {
 				expose_as_code_action = 'all',
 
 				tsserver_file_preferences = {
-					disableSuggestions = not require('utils.root_dir').root_validation {
+					disableSuggestions = not require('utils.root_dir').validate_func {
 						'package.json',
 						'node_modules',
 						'*.lock',
 					}(),
-					quotePreference = 'single', -- Optional string: "auto", "double", or "single"
+					quotePreference = 'single', --= auto, double, or single
 					includeCompletionsForModuleExports = true,
 					includeCompletionsForImportStatements = true,
 					includeCompletionsWithSnippetText = false,
@@ -301,18 +297,18 @@ return {
 					includeCompletionsWithObjectLiteralMethodSnippets = false,
 					useLabelDetailsInCompletionEntries = true,
 					allowIncompleteCompletions = false,
-					importModuleSpecifierPreference = 'project-relative', -- Optional string: "shortest", "project-relative", "relative", "non-relative"
-					importModuleSpecifierEnding = 'auto', -- Optional string: "auto", "minimal", "index", "js"
+					importModuleSpecifierPreference = 'project-relative', --= shortest, project-relative, relative, non-relative
+					importModuleSpecifierEnding = 'auto', --= auto, minimal, index, js
 					allowTextChangesInNewFiles = true,
 					lazyConfiguredProjectsFromExternalProject = false,
 					providePrefixAndSuffixTextForRename = true,
 					provideRefactorNotApplicableReason = false,
 					allowRenameOfImportPath = true,
-					includePackageJsonAutoImports = 'auto', -- Optional string: "auto", "on", "off"
-					jsxAttributeCompletionStyle = 'auto', -- Optional string: "auto", "braces", "none"
+					includePackageJsonAutoImports = 'auto', --= auto, on, off
+					jsxAttributeCompletionStyle = 'auto', --= auto, braces, none
 					displayPartsForJSDoc = true,
 					generateReturnInDocTemplate = false,
-					includeInlayParameterNameHints = 'all', -- Optional string: "none", "literals", "all"
+					includeInlayParameterNameHints = 'all', --= none, literals, all
 					includeInlayParameterNameHintsWhenArgumentMatchesName = true,
 					includeInlayFunctionParameterTypeHints = false,
 					includeInlayVariableTypeHints = true,
@@ -321,12 +317,12 @@ return {
 					includeInlayFunctionLikeReturnTypeHints = false,
 					includeInlayEnumMemberValueHints = true,
 
-					organizeImportsIgnoreCase = 'auto', -- Optional string or boolean
-					organizeImportsCollation = 'ordinal', -- Optional string: "ordinal" or "unicode"
-					organizeImportsCollationLocale = 'en', -- Optional string
+					organizeImportsIgnoreCase = 'auto', -- {string} or {boolean}
+					organizeImportsCollation = 'ordinal', --= ordinal or unicode
+					organizeImportsCollationLocale = 'en',
 					organizeImportsNumericCollation = false,
 					organizeImportsAccentCollation = true,
-					organizeImportsCaseFirst = 'lower', -- Optional string: "upper", "lower", or false
+					organizeImportsCaseFirst = 'lower', -- upper, "lower", or false
 					disableLineTextInReferences = true,
 				},
 

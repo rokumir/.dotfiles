@@ -14,7 +14,7 @@ _.wildignore:append { '*/node_modules/*' }
 _.formatoptions:append { 'r' } -- Add asterisks in block comments
 _.backup = false
 _.backupskip = { '/tmp/*', '/private/tmp/*' }
-_.relativenumber = false
+_.relativenumber = true
 _.ignorecase = true -- case insensitive searching UNLESS /C or capital in search
 _.hlsearch = true
 _.timeoutlen = 500
@@ -34,7 +34,7 @@ _.cursorline = false
 _.cursorline = true
 _.cursorlineopt = 'number'
 _.wrap = false
-_.colorcolumn = '80,120'
+-- _.colorcolumn = '80,120'
 -- _.conceallevel = 3
 
 _.smarttab = true
@@ -51,6 +51,11 @@ _.backspace = { 'start', 'eol', 'indent' }
 
 _.complete = ''
 _.completeopt = ''
+
+-- FIX: Wezterm tmux break https://github.com/wezterm/wezterm/issues/4607#issuecomment-1831628722
+-- _.termsync = false
+
+_.spell = false
 
 -- global statusline
 _.laststatus = 3

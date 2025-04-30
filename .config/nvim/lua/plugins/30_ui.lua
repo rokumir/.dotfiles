@@ -75,6 +75,42 @@ return {
 		end,
 	},
 
+	{ -- Tabs
+		'akinsho/bufferline.nvim',
+
+		keys = {
+			{ '<tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Next Buffer' },
+			{ '<s-tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
+			{ '<c-s-right>', '<cmd>BufferLineMoveNext<cr>', desc = 'Move buffer next' },
+			{ '<c-s-left>', '<cmd>BufferLineMovePrev<cr>', desc = 'Move buffer prev' },
+		},
+
+		---@module 'bufferline'
+		---@param opts bufferline.UserConfig
+		opts = function(_, opts)
+			opts.options.mode = 'buffers'
+			opts.options.indicator = { style = 'underline' }
+
+			-- opts.options.show_tab_indicators = true
+			opts.options.show_close_icon = false
+			opts.options.show_buffer_close_icons = false
+			opts.options.always_show_bufferline = false
+
+			opts.options.separator_style = { '', '' }
+			opts.options.modified_icon = ' '
+			-- opts.options.left_trunc_marker = ' '
+			-- opts.options.right_trunc_marker = ' '
+
+			opts.options.enforce_regular_tabs = true
+			-- opts.options.hover = { enabled = true, delay = 200 }
+
+			local palette = require 'rose-pine.palette'
+			opts.highlights = opts.highlights or {}
+			opts.highlights.indicator_selected = { sp = palette.pine }
+			opts.highlights.buffer_selected = { sp = palette.pine }
+		end,
+	},
+
 	{ -- Git status in line number
 		'lewis6991/gitsigns.nvim',
 		opts = function(_, opts)

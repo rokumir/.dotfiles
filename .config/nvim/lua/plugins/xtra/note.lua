@@ -1,10 +1,7 @@
 ---@diagnostic disable: no-unknown
 
-local function is_note_root_dir()
-	local note_dir = vim.uv.fs_realpath(vim.env.MY_NOTE_HOME)
-	if note_dir then return vim.uv.cwd() == note_dir end
-	return false
-end
+local root_dir_utils = require 'utils.root_dir'
+local function is_note_root_dir() return root_dir_utils.exact_match(vim.env.MY_NOTE_HOME) end
 
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
