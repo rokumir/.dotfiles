@@ -29,6 +29,9 @@ return {
 		config = function()
 			local harpoon = require 'harpoon'
 			harpoon:setup {
+				menu = {
+					width = vim.api.nvim_win_get_width(0) - 4,
+				},
 				settings = {
 					save_on_toggle = true,
 					sync_on_ui_close = true,
@@ -37,12 +40,38 @@ return {
 			}
 			harpoon:extend {
 				UI_CREATE = function(cx)
-					local opts = { buffer = cx.bufnr }
-					vim.keymap.set({ 'n', 'i' }, '<c-q>', function() harpoon.ui:close_menu() end, opts)
-					vim.keymap.set('n', '<c-l>', function() harpoon.ui:select_menu_item {} end, opts)
-					vim.keymap.set('n', 'v', function() harpoon.ui:select_menu_item { vsplit = true } end, opts)
-					vim.keymap.set('n', 's', function() harpoon.ui:select_menu_item { split = true } end, opts)
-					vim.keymap.set('n', 't', function() harpoon.ui:select_menu_item { tabedit = true } end, opts)
+					local map = require('utils.keymap').map
+					map {
+						'<c-q>',
+						function() harpoon.ui:close_menu() end,
+						mode = { 'n', 'i' },
+						buffer = cx.bufnr,
+						desc = 'Harpoon Buffer: Quit',
+					}
+					map {
+						'<c-l>',
+						function() harpoon.ui:select_menu_item {} end,
+						buffer = cx.bufnr,
+						desc = 'Harpoon Buffer: Open',
+					}
+					map {
+						's',
+						function() harpoon.ui:select_menu_item { split = true } end,
+						buffer = cx.bufnr,
+						desc = 'Harpoon Buffer: Split',
+					}
+					map {
+						'v',
+						function() harpoon.ui:select_menu_item { vsplit = true } end,
+						buffer = cx.bufnr,
+						desc = 'Harpoon Buffer: V Split',
+					}
+					map {
+						't',
+						function() harpoon.ui:select_menu_item { tabedit = true } end,
+						buffer = cx.bufnr,
+						desc = 'Harpoon Buffer: Open New Tab',
+					}
 				end,
 			}
 		end,
@@ -66,8 +95,18 @@ return {
 			},
 		},
 		keys = {
-			{ 'f', function() require('flash').jump { forward = true, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Forward 󱞣' },
-			{ 'F', function() require('flash').jump { forward = false, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Backward 󱞽' },
+			{
+				'f',
+				function() require('flash').jump { forward = true, continue = true } end,
+				mode = { 'n', 'x', 'o' },
+				desc = 'Flash Forward 󱞣',
+			},
+			{
+				'F',
+				function() require('flash').jump { forward = false, continue = true } end,
+				mode = { 'n', 'x', 'o' },
+				desc = 'Flash Backward 󱞽',
+			},
 			{ '<c-f>', function() require('flash').toggle(false) end, mode = { 'c' }, desc = 'Quit Flash Mode' },
 		},
 	},

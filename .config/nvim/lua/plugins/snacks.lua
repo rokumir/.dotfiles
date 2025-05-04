@@ -9,7 +9,7 @@ return {
 			{ '\\\\', function() Snacks.picker.resume() end, desc = 'Resume' },
 
 			-- Top Pickers & Explorer
-			{ '<c-e>', function() Snacks.picker.smart() end, desc = 'Smart Find Files' },
+			{ '<c-e>', function() Snacks.picker.files() end, desc = 'Find Files' },
 			{ ';e', function() Snacks.picker.recent { filter = { cwd = true } } end, desc = 'Recent' },
 			{ ';b', function() Snacks.picker.buffers() end, desc = 'Buffers' },
 			{ ';/', function() Snacks.picker.grep() end, desc = 'Grep' },
@@ -218,6 +218,14 @@ return {
 						},
 						transform = 'unique_file',
 					},
+
+					files = {
+						cmd = 'rg',
+						args = { '--sortr', 'modified' },
+
+						filter = { cwd = true },
+						transform = 'unique_file',
+					},
 				},
 
 				formatters = {
@@ -225,6 +233,7 @@ return {
 						filename_first = true,
 						git_status_hl = true,
 						icon_width = 3,
+						truncate = 30,
 					},
 					selected = {
 						show_always = false,
@@ -247,10 +256,12 @@ return {
 		---@param opts snacks.Config
 		opts = function(_, opts)
 			--#region Global
-			opts.picker.config = function(o)
-				-- initiate persistences
-				o.hidden = vim.g.snacks_show_hidden == true
-				o.ignored = vim.g.snacks_show_ignored == true
+			opts.picker.config = function(config)
+				return vim.tbl_deep_extend('force', config, {
+					-- initiate persistences
+					hidden = vim.g.snacks_show_hidden == true,
+					ignored = vim.g.snacks_show_ignored == true,
+				})
 			end
 
 			-- keymaps
@@ -277,11 +288,9 @@ return {
 			}
 
 			-- actions
+			local trouble_actions = require('trouble.sources.snacks').actions
 			opts.picker.actions = {
-				trouble_open_selected = function(picker)
-					local trouble_actions = require('trouble.sources.snacks').actions
-					trouble_actions.trouble_open_selected(picker)
-				end,
+				trouble_open_selected = trouble_actions.trouble_open_selected,
 				toggle_hidden_persist = function(picker)
 					vim.g.snacks_show_hidden = not vim.g.snacks_show_hidden
 					picker:action 'toggle_hidden'

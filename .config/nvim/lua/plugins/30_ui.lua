@@ -88,13 +88,16 @@ return {
 		---@module 'bufferline'
 		---@param opts bufferline.UserConfig
 		opts = function(_, opts)
+			opts.options = opts.options or {}
+
 			opts.options.mode = 'buffers'
 			opts.options.indicator = { style = 'underline' }
 
-			-- opts.options.show_tab_indicators = true
+			opts.options.show_tab_indicators = true
+			opts.options.always_show_bufferline = false
 			opts.options.show_close_icon = false
 			opts.options.show_buffer_close_icons = false
-			opts.options.always_show_bufferline = false
+			opts.options.show_buffer_icons = true
 
 			opts.options.separator_style = { '', '' }
 			opts.options.modified_icon = ' '
@@ -106,8 +109,29 @@ return {
 
 			local palette = require 'rose-pine.palette'
 			opts.highlights = opts.highlights or {}
-			opts.highlights.indicator_selected = { sp = palette.pine }
-			opts.highlights.buffer_selected = { sp = palette.pine }
+			for _, hl in ipairs {
+				'indicator_selected',
+				'buffer_selected',
+				'separator_selected',
+				'tab_separator_selected',
+				'tab_selected',
+				'modified_selected',
+				'close_button_selected',
+				'duplicate_selected',
+				'hint_selected',
+				'info_selected',
+				'pick_selected',
+				'error_selected',
+				'numbers_selected',
+				'warning_selected',
+				'diagnostic_selected',
+				'hint_diagnostic_selected',
+				'info_diagnostic_selected',
+				'error_diagnostic_selected',
+				'warning_diagnostic_selected',
+			} do
+				opts.highlights[hl] = { sp = palette.love }
+			end
 		end,
 	},
 

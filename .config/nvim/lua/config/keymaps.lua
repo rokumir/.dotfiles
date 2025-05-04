@@ -63,6 +63,9 @@ map { '<c-j>', '5jzz', mode = { 'n', 'v' }, nowait = true }
 map { 'zO', '<cmd>set foldlevel=99 <cr>', nowait = true }
 map { 'zC', '<cmd>set foldlevel=0 <cr>', nowait = true }
 
+-- search
+map { '<c-f>', '/', mode = { 'n', 'i', 's' }, remap = true }
+
 -- Better Next/Prev (https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n)
 map { 'n', [['Nn'[v:searchforward].'zzzv']], expr = true, desc = 'Next Search Result' }
 map { 'N', [['nN'[v:searchforward].'zzzv']], expr = true, desc = 'Prev Search Result' }
@@ -114,7 +117,9 @@ Snacks.toggle.option('spell'):map '<leader><leader>s'
 Snacks.toggle.option('wrap'):map '<a-z>'
 Snacks.toggle.line_number():map '<leader><leader>n'
 Snacks.toggle.option('relativenumber'):map '<leader><leader>r'
-Snacks.toggle.option('conceallevel', { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 3, name = 'Conceal' }):map '<leader><leader>c'
+Snacks.toggle
+	.option('conceallevel', { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 3, name = 'Conceal' })
+	:map '<leader><leader>c'
 Snacks.toggle.treesitter():map '<leader><leader>T'
 Snacks.toggle.option('background', { off = 'light', on = 'dark', name = 'Dark Background' }):map '<leader><leader>b'
 Snacks.toggle.dim():map '<leader><leader>D'
@@ -128,11 +133,11 @@ Snacks.toggle.zoom():map '<leader><leader>w'
 Snacks.toggle.zen():map '<leader><leader>z'
 if vim.lsp.inlay_hint then Snacks.toggle.inlay_hints():map '<leader><leader>H' end
 
-local colorcolumn = vim.o.colorcolumn or '80,120'
+local colorcolumn = #vim.o.colorcolumn == 0 and '80,120' or ''
 Snacks.toggle
 	.new({
 		name = 'Rulers',
-		get = function() return #(vim.o.colorcolumn or '') > 0 end,
+		get = function() return #vim.o.colorcolumn > 0 end,
 		set = function(new_state) vim.opt.colorcolumn = new_state and colorcolumn or '' end,
 	})
 	:map '<leader><leader>R'
