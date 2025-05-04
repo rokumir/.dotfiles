@@ -25,6 +25,11 @@
     # show last modified branch
     b = "!refs=$1; git for-each-ref --sort=-committerdate refs/${refs:-heads} --format='%(HEAD) %(color:yellow)%(refname:short)|%(color:dim white)%(objectname:short)|%(color:bold green)%(committerdate:short) %(color:white)- %(color:bold green)%(committerdate:relative)|%(color:reset)%(color:italic dim white)%(authorname)|%(color:reset)%(color:blue)%(subject)%(color:reset)' --color=always | column -ts'|'"
 
+    # visit (browser)
+	  o = 'open'
+    open = "!xdg-open $(git remote -v | cut -d @ -f 2 | cut -d ' ' -f 1 | head -1 | sed 's/:/\\//' | sed 's/.git$//' | sed s'/^/https:\\/\\//') >& /dev/null &"
+
+
     lg = log --all --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(italic dim white)- %an%C(reset)%C(auto)%d%C(reset)'
 
     # list aliases
