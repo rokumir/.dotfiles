@@ -34,7 +34,11 @@ end
 ## keymaps
 function fish_user_key_bindings
     fish_vi_key_bindings
-    for key in \cd \cs # unbind keys (run in fish_user_key_bindings to ensure it works)
+
+    # unbind keys (run in fish_user_key_bindings to ensure it works)
+    for key in \
+        \cd \
+        \cs
         bind --erase --preset $key
         bind --erase --preset -M insert $key
         bind --erase --preset -M visual $key
