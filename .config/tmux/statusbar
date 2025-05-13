@@ -4,7 +4,7 @@
 ## -----------------------------------------------------------------------------
 ## Configuration Variables
 ## -----------------------------------------------------------------------------
-# Theme Configuration
+# Theme Configuration      
 set constants \
     LEFT_CONTENT Rokumir \
     RIGHT_CONTENT '%a %d %b %H:%M' \
