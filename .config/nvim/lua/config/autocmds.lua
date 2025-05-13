@@ -6,6 +6,7 @@ local ignored_filetypes = {
 	noice = true, -- Noice UI
 	mason = true,
 	lazy = true,
+	help = true,
 	TelescopePrompt = true,
 	NvimTree = true,
 	['neo-tree'] = true,
@@ -40,9 +41,11 @@ vim.api.nvim_create_autocmd('InsertLeave', {
 })
 
 vim.api.nvim_create_autocmd('FileType', {
-	group = augroup 'concealment',
 	pattern = { 'json', 'jsonc', 'markdown' },
-	callback = function() vim.opt.wrap = false end,
+	callback = function()
+		vim.opt.wrap = false
+		vim.opt.spell = false
+	end,
 })
 
 -- Advanced LSP progress
@@ -54,7 +57,8 @@ vim.api.nvim_create_autocmd('LspProgress', {
 			id = 'lsp_progress',
 			title = 'LSP Progress',
 			opts = function(notif)
-				notif.icon = ev.data.params.value.kind == 'end' and ' ' or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+				notif.icon = ev.data.params.value.kind == 'end' and ' '
+					or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
 			end,
 		})
 	end,

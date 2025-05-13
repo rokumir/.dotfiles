@@ -130,12 +130,6 @@ return {
 				ignore = true,
 				exclude = {
 					'**/.git/*',
-					'**/node_modules/*',
-					'**/.yarn/*',
-					'**/.pnpm-store/*',
-					'**/.venv/*',
-					'**/venv/*',
-					'**/__pycache__/*',
 				},
 
 				matcher = {
@@ -324,11 +318,11 @@ return {
 					if #selected_paths == 0 then return end
 
 					local path_copy_options_map = {
-						['Extensions'] = ':e',
-						['Fullpaths'] = '',
-						['Filenames (no ext.)'] = ':t:r',
-						['Filenames'] = ':t',
 						['Relative paths'] = ':.',
+						['Fullpaths'] = '',
+						['Filenames'] = ':t',
+						['Filenames (no ext.)'] = ':t:r',
+						['Extensions'] = ':e',
 					}
 					local path_copy_options = vim.tbl_keys(path_copy_options_map)
 

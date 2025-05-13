@@ -137,6 +137,7 @@ return {
 
 	{ -- Fugit2
 		'SuperBo/fugit2.nvim',
+		build = false,
 		opts = {
 			width = 100,
 		},
