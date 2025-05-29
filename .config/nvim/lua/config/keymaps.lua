@@ -187,4 +187,5 @@ map { '[d', diag_go 'prev', desc = 'Prev diagnostic' }
 map { ']e', diag_go('next', 'ERROR'), desc = 'Next error diagnostic' }
 map { '[e', diag_go('prev', 'ERROR'), desc = 'Prev error diagnostic' }
 map { ']w', diag_go('next', 'WARN'), desc = 'Next warning diagnostic' }
+map { '[w', diag_go('prev', 'WARN'), desc = 'Next warning diagnostic' }
 --#endregion

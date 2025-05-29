@@ -1,3 +1,4 @@
+---@module 'lazy'
 ---@type table<number, LazyPluginSpec>
 return {
 	{

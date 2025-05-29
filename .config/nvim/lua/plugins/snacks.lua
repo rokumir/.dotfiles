@@ -1,3 +1,4 @@
+---@diagnostic disable: inject-field
 ---@module 'snacks'
 ---@module 'lazy'
 
@@ -20,11 +21,11 @@ return {
 
 			-- Find
 			{ ';f', '', desc = 'find' },
-			{ ';fb', function() Snacks.picker.buffers() end, desc = 'Buffers' },
+			-- { ';fb', function() Snacks.picker.buffers() end, desc = 'Buffers' },
 			{ ';ff', function() Snacks.picker.files() end, desc = 'Find Files' },
 			{ ';fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
 			{ ';fp', function() Snacks.picker.projects() end, desc = 'Projects' },
-			{ ';fr', function() Snacks.picker.recent() end, desc = 'Recent' },
+			-- { ';fr', function() Snacks.picker.recent() end, desc = 'Recent' },
 			{ ';fc', function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end, desc = 'Find Config File' },
 
 			-- Git
@@ -42,15 +43,15 @@ return {
 			-- grep
 			{ '<a-/>', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
 			{ ';sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
+			-- { ';sg', function() Snacks.picker.grep() end, desc = 'Grep' },
 			{ ';sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
-			{ ';sg', function() Snacks.picker.grep() end, desc = 'Grep' },
 			{ ';sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
 			-- others
 			{ ';s"', function() Snacks.picker.registers() end, desc = 'Registers' },
 			{ ';s/', function() Snacks.picker.search_history() end, desc = 'Search History' },
 			{ ';sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
-			{ ';sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
-			{ ';sC', function() Snacks.picker.commands() end, desc = 'Commands' },
+			-- { ';sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
+			{ ';sc', function() Snacks.picker.commands() end, desc = 'Commands' },
 			{ ';sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
 			{ ';sD', function() Snacks.picker.diagnostics_buffer() end, desc = 'Buffer Diagnostics' },
 			{ ';sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
@@ -127,9 +128,9 @@ return {
 			},
 
 			picker = {
-				ignore = true,
 				exclude = {
 					'**/.git/*',
+					'**/node_modules/*',
 				},
 
 				matcher = {
@@ -147,12 +148,23 @@ return {
 				sources = {
 					explorer = {
 						layout = {
-							preset = 'sidebar',
+							preset = 'default',
 							hidden = { 'input' },
-							layout = { position = 'right', border = 'left', width = 0.26 },
-						},
-						formatters = {
-							severity = { pos = 'right' },
+							layout = { -- variant of 'ivy'
+								position = 'right',
+								width = 0.26,
+								box = 'vertical',
+								row = -1,
+								border = 'top',
+								title = '{title} {live} {flags}',
+								title_pos = 'left',
+								{ win = 'input', height = 1, border = 'bottom' },
+								{
+									box = 'horizontal',
+									{ win = 'list', border = 'none' },
+									{ win = 'preview', title = '{preview}', width = 0.6, border = 'left' },
+								},
+							},
 						},
 
 						win = {
@@ -191,6 +203,18 @@ return {
 						},
 					},
 
+					files = {
+						cmd = 'rg',
+						args = { '--sortr', 'modified' },
+
+						filter = { cwd = true },
+						transform = 'unique_file',
+
+						layout = {
+							preset = 'vscode',
+						},
+					},
+
 					smart = {
 						multi = { 'recent', 'files' },
 						format = 'file', -- use `file` format for all sources
@@ -210,14 +234,6 @@ return {
 							frecency = false, -- use frecency boosting
 							sort_empty = true, -- sort even when the filter is empty
 						},
-						transform = 'unique_file',
-					},
-
-					files = {
-						cmd = 'rg',
-						args = { '--sortr', 'modified' },
-
-						filter = { cwd = true },
 						transform = 'unique_file',
 					},
 				},
@@ -247,15 +263,26 @@ return {
 	{
 		'folke/snacks.nvim',
 
+		init = function()
+			vim.g.snacks_excluded = vim.g.snacks_excluded ~= false
+			vim.g.snacks_hidden = vim.g.snacks_hidden == true
+			vim.g.snacks_ignored = vim.g.snacks_ignored == true
+		end,
+
 		---@param opts snacks.Config
 		opts = function(_, opts)
 			--#region Global
+			local function get_exclude()
+				local root_exclude = require('utils.root_dir').ignored_list()
+				local exclude = vim.list_extend(root_exclude, opts.picker.exclude or {})
+				return vim.g.snacks_excluded and exclude or opts.picker.exclude
+			end
+
 			opts.picker.config = function(config)
-				return vim.tbl_deep_extend('force', config, {
-					-- initiate persistences
-					hidden = vim.g.snacks_show_hidden == true,
-					ignored = vim.g.snacks_show_ignored == true,
-				})
+				-- persistences
+				config.hidden = vim.g.snacks_hidden
+				config.ignored = vim.g.snacks_ignored
+				config.exclude = get_exclude()
 			end
 
 			-- keymaps
@@ -265,8 +292,6 @@ return {
 				['<c-l>'] = { 'confirm', mode = { 'n', 'i' } },
 				['<esc>'] = { 'close', mode = { 'n', 'i' } },
 				['<c-q>'] = { 'close', mode = { 'n', 'i' } },
-				['<a-i>'] = { 'toggle_ignored_persist', mode = { 'i', 'n' } },
-				['<a-h>'] = { 'toggle_hidden_persist', mode = { 'i', 'n' } },
 				['<c-a-l>'] = { { 'pick_win', 'jump' }, mode = { 'i', 'n' } },
 				['<c-u>'] = { 'preview_scroll_up', mode = { 'i', 'n' } },
 				['<c-d>'] = { 'preview_scroll_down', mode = { 'i', 'n' } },
@@ -274,6 +299,9 @@ return {
 				['<c-b>'] = { 'preview_scroll_right', mode = { 'i', 'n' } },
 				['<q-q>'] = { 'qflist', mode = { 'i', 'n' } },
 				['<a-t>'] = { 'trouble_open_selected', mode = { 'i', 'n' } },
+				['<a-i>'] = { 'toggle_ignored_persist', mode = { 'i', 'n' } },
+				['<a-h>'] = { 'toggle_hidden_persist', mode = { 'i', 'n' } },
+				['<a-e>'] = { 'toggle_excluded', mode = { 'i', 'n' } },
 			}
 			opts.picker.win = {
 				list = { keys = default_keymaps },
@@ -285,13 +313,34 @@ return {
 			local trouble_actions = require('trouble.sources.snacks').actions
 			opts.picker.actions = {
 				trouble_open_selected = trouble_actions.trouble_open_selected,
+
 				toggle_hidden_persist = function(picker)
-					vim.g.snacks_show_hidden = not vim.g.snacks_show_hidden
+					vim.g.snacks_hidden = not vim.g.snacks_hidden
 					picker:action 'toggle_hidden'
 				end,
 				toggle_ignored_persist = function(picker)
-					vim.g.snacks_show_ignored = not vim.g.snacks_show_ignored
+					vim.g.snacks_ignored = not vim.g.snacks_ignored
 					picker:action 'toggle_ignored'
+				end,
+				toggle_excluded = function(picker)
+					vim.g.snacks_excluded = not vim.g.snacks_excluded
+					if vim.g.snacks_excluded then
+						vim.g.snacks_hidden = vim.g.snacks_hidden_cache
+						vim.g.snacks_ignored = vim.g.snacks_ignored_cache
+					else
+						vim.g.snacks_hidden_cache = vim.g.snacks_hidden
+						vim.g.snacks_ignored_cache = vim.g.snacks_ignored
+						vim.g.snacks_hidden = true
+						vim.g.snacks_ignored = true
+					end
+
+					-- Apply current values to picker options
+					picker.opts.exclude = get_exclude()
+					picker.opts.hidden = vim.g.snacks_hidden
+					picker.opts.ignored = vim.g.snacks_ignored
+
+					-- Reset shown items
+					picker:find { refresh = true }
 				end,
 			}
 			--#endregion
@@ -381,3 +430,9 @@ return {
 		end,
 	},
 }
+
+-----------------------------
+-- Overriding snacks types
+--
+---@class snacks.picker.Config
+---@field exclude? string[]

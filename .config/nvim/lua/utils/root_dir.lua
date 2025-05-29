@@ -27,17 +27,21 @@ function M.match_pattern(...)
 end
 
 --- Get ignored list from the root dir (.ignore)
+---@return string[]
 function M.ignored_list()
 	local root_dir = vim.fn.getcwd()
-	local ignore_filepath = vim.fn.findfile('.ignore', root_dir .. ';') ---@type string
-	if not ignore_filepath or ignore_filepath == '' then
-		return {} -- Return empty table instead of nil
+	local ignore_filepath = vim.fn.findfile('.ignore', root_dir .. ';')
+	if not ignore_filepath or ignore_filepath == '' or #ignore_filepath == 0 then return {} end
+
+	if type(ignore_filepath) == 'table' then
+		LazyVim.error { '[DEBUG]:', 'Weird type', '(type:', type(ignore_filepath) .. ')!' }
+		return {}
 	end
 
 	local ignore_list = {}
 	for _, line in ipairs(vim.fn.readfile(ignore_filepath) or {}) do
 		local trimmed_line = vim.trim(line)
-		if trimmed_line:len() > 0 and not trimmed_line:match '^#' then table.insert(ignore_list, trimmed_line) end
+		if #trimmed_line > 0 and not trimmed_line:match '^#' then table.insert(ignore_list, trimmed_line) end
 	end
 
 	return ignore_list
