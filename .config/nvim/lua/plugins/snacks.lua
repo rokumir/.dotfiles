@@ -270,11 +270,20 @@ return {
 
 		---@param opts snacks.Config
 		opts = function(_, opts)
+			-- NOTE: Explorer doesn't use the `.ignore` file.
+			-- So have to manually add it to the explorer exclude
+			local function get_exclude()
+				local root_exclude = require('utils.root_dir').ignored_list()
+				local exclude = vim.list_extend(root_exclude, opts.picker.exclude or {})
+				return vim.g.snacks_ignored and opts.picker.exclude or exclude
+			end
+
 			--#region Global
 			opts.picker.config = function(config)
 				-- persistences
 				config.hidden = vim.g.snacks_hidden
 				config.ignored = vim.g.snacks_ignored
+				if config.source == 'explorer' then config.sources.explorer.exclude = get_exclude() end
 			end
 
 			-- keymaps
@@ -322,17 +331,11 @@ return {
 			explorer_keys['<a-d>'] = 'explorer_safe_del'
 			explorer_keys['d'] = 'explorer_safe_del'
 
-			opts.picker.sources.explorer.config = function(config)
-				local root_exclude = require('utils.root_dir').ignored_list()
-				local exclude = vim.list_extend(root_exclude, opts.picker.exclude or {})
-				config.exclude = vim.g.snacks_ignored and opts.picker.exclude or exclude
-			end
-
 			opts.picker.sources.explorer.actions = {
 				-- Override "builtin" ignored toggle
 				toggle_ignored_persist = function(picker)
 					vim.g.snacks_ignored = not vim.g.snacks_ignored
-					opts.picker.sources.explorer.config(picker.opts)
+					picker.opts.exclude = get_exclude()
 					picker:action 'toggle_ignored'
 				end,
 
