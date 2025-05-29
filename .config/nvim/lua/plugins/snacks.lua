@@ -152,7 +152,7 @@ return {
 							hidden = { 'input' },
 							layout = { -- variant of 'ivy'
 								position = 'right',
-								width = 0.26,
+								width = 0.22,
 								box = 'vertical',
 								row = -1,
 								border = 'top',
@@ -264,7 +264,6 @@ return {
 		'folke/snacks.nvim',
 
 		init = function()
-			vim.g.snacks_excluded = vim.g.snacks_excluded ~= false
 			vim.g.snacks_hidden = vim.g.snacks_hidden == true
 			vim.g.snacks_ignored = vim.g.snacks_ignored == true
 		end,
@@ -272,17 +271,10 @@ return {
 		---@param opts snacks.Config
 		opts = function(_, opts)
 			--#region Global
-			local function get_exclude()
-				local root_exclude = require('utils.root_dir').ignored_list()
-				local exclude = vim.list_extend(root_exclude, opts.picker.exclude or {})
-				return vim.g.snacks_excluded and exclude or opts.picker.exclude
-			end
-
 			opts.picker.config = function(config)
 				-- persistences
 				config.hidden = vim.g.snacks_hidden
 				config.ignored = vim.g.snacks_ignored
-				config.exclude = get_exclude()
 			end
 
 			-- keymaps
@@ -301,7 +293,6 @@ return {
 				['<a-t>'] = { 'trouble_open_selected', mode = { 'i', 'n' } },
 				['<a-i>'] = { 'toggle_ignored_persist', mode = { 'i', 'n' } },
 				['<a-h>'] = { 'toggle_hidden_persist', mode = { 'i', 'n' } },
-				['<a-e>'] = { 'toggle_excluded', mode = { 'i', 'n' } },
 			}
 			opts.picker.win = {
 				list = { keys = default_keymaps },
@@ -313,7 +304,6 @@ return {
 			local trouble_actions = require('trouble.sources.snacks').actions
 			opts.picker.actions = {
 				trouble_open_selected = trouble_actions.trouble_open_selected,
-
 				toggle_hidden_persist = function(picker)
 					vim.g.snacks_hidden = not vim.g.snacks_hidden
 					picker:action 'toggle_hidden'
@@ -321,26 +311,6 @@ return {
 				toggle_ignored_persist = function(picker)
 					vim.g.snacks_ignored = not vim.g.snacks_ignored
 					picker:action 'toggle_ignored'
-				end,
-				toggle_excluded = function(picker)
-					vim.g.snacks_excluded = not vim.g.snacks_excluded
-					if vim.g.snacks_excluded then
-						vim.g.snacks_hidden = vim.g.snacks_hidden_cache
-						vim.g.snacks_ignored = vim.g.snacks_ignored_cache
-					else
-						vim.g.snacks_hidden_cache = vim.g.snacks_hidden
-						vim.g.snacks_ignored_cache = vim.g.snacks_ignored
-						vim.g.snacks_hidden = true
-						vim.g.snacks_ignored = true
-					end
-
-					-- Apply current values to picker options
-					picker.opts.exclude = get_exclude()
-					picker.opts.hidden = vim.g.snacks_hidden
-					picker.opts.ignored = vim.g.snacks_ignored
-
-					-- Reset shown items
-					picker:find { refresh = true }
 				end,
 			}
 			--#endregion
@@ -352,7 +322,20 @@ return {
 			explorer_keys['<a-d>'] = 'explorer_safe_del'
 			explorer_keys['d'] = 'explorer_safe_del'
 
+			opts.picker.sources.explorer.config = function(config)
+				local root_exclude = require('utils.root_dir').ignored_list()
+				local exclude = vim.list_extend(root_exclude, opts.picker.exclude or {})
+				config.exclude = vim.g.snacks_ignored and opts.picker.exclude or exclude
+			end
+
 			opts.picker.sources.explorer.actions = {
+				-- Override "builtin" ignored toggle
+				toggle_ignored_persist = function(picker)
+					vim.g.snacks_ignored = not vim.g.snacks_ignored
+					opts.picker.sources.explorer.config(picker.opts)
+					picker:action 'toggle_ignored'
+				end,
+
 				--- Explorer safe delete
 				explorer_safe_del = function(picker)
 					local selected = picker:selected { fallback = true }
