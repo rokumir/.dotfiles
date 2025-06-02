@@ -14,4 +14,5 @@ function get-window-home
 end
 
 set -gx WIN_HOME (get-window-home)
-set -gx WEZTERM_CONFIG_DIR $WIN_HOME/.config/wezterm/wezterm.lua
+set -gx WEZTERM_CONFIG_DIR $WIN_HOME/.config/wezterm
+set -gx WEZTERM_CONFIG $WEZTERM_CONFIG_DIR/wezterm.lua
