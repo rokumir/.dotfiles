@@ -1,0 +1,60 @@
+#!/usr/bin/env fish
+
+# --- Top-level checks for required programs
+for cmd in gh jq basename cat
+    if not type -q $cmd
+        echo "Error: Required command '$cmd' not found. Please install it first."
+        exit 1
+    end
+end
+
+# --- Parse flags and arguments
+for arg in $argv
+    switch $arg
+        case -w --web
+            set open_web true
+        case '*' # assume first non-flag is the file
+            set file $arg
+    end
+end
+
+# --- Usage check
+if test -z "$file"
+    echo "Usage: gist-sync.fish [-w|--web] <local-file>"
+    exit 1
+end
+
+# --- File existence check
+if ! [ -f $file ]
+    echo "Error: File '$file' not found."
+    exit 1
+end
+
+# ----------------------------
+# --- Start
+set filename (basename $file)
+
+# --- Fetch your gists via the API and find the right one
+set gist_id (
+    gh api --method GET /gists --paginate \
+    | jq -r --arg name $filename '.[]
+        | select(.files[$name])
+        | .id'
+)
+if [ -z "$gist_id" ]
+    echo "Error: No gist found containing file '$filename'."
+    exit 1
+end
+
+# --- Update Gist
+if gh gist edit $gist_id -f $filename $file
+    # --- Notify
+    echo (set_color brgreen)"✅ Successfully synced '$filename' → gist '$gist_id'"
+
+    # --- Open in web if requested
+    if [ "$open_web" = true ]
+        gh gist view $gist_id --web
+    end
+else
+    echo (set_color brred)"❌ Unsuccessfully synced '$filename' → gist '$gist_id'"
+end
