@@ -204,7 +204,7 @@ return {
 				{ '<leader>p', '', desc = 'yanky' },
 				---@diagnostic disable-next-line: undefined-field
 				{ '<leader>pp', function() Snacks.picker.yanky() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
-				{ '<leader>pc', '<Plug>(YankyClearHistory)', desc = 'Clear Yank History' },
+				{ '<leader>pc', '<cmd>YankyClearHistory<cr>', desc = 'Clear Yank History' },
 
 				{ '<c-a-n>', '<Plug>(YankyNextEntry)', mode = { 'n', 'i' }, desc = 'Next Entry' },
 				{ '<c-a-b>', '<Plug>(YankyPreviousEntry)', mode = { 'n', 'i' }, desc = 'Prev Entry' },
