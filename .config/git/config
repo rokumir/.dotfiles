@@ -1,41 +1,79 @@
 [user]
-    name = lopt
+    name = Lopt
     email = lopt.loptr@proton.me
+    signingkey = 6F1A20A919C21712
 
 [core]
     autocrlf = false
     askpass = # disable credential manager
+    compression = 9
+    whitespace = error
+    preloadindex = true
     pager = delta
 
-[alias]
-    b = branch
-    a = add
-    ap = add --patch
-    c = commit
-    cm = commit --message
-    ca = commit --all --message
-    co = checkout
-    cob = checkout -b
-    s = status --short --branch
-    su = status --short --branch --untracked-files
+[include]
+    path = ~/.config/delta/themes/catppuccin.gitconfig
+    path = ~/.config/git/config.alias
 
-    d = diff
-    ds = diff --stat
-    dc = diff --cached
+[init]
+    defaultBranch = dev
 
-    # show last modified branch's commit
-    lb = "!refs=$1; git for-each-ref --sort=-committerdate refs/${refs:-heads} --format='%(HEAD) %(color:yellow)%(refname:short)|%(color:dim white)%(objectname:short)|%(color:bold green)%(committerdate:short) %(color:white)- %(color:bold green)%(committerdate:relative)|%(color:reset)%(color:italic dim white)%(authorname)|%(color:reset)%(color:blue)%(subject)%(color:reset)' --color=always | column -ts'|'"
+[commit]
+    gpgSign = true
+    template = ~/.config/git/template
 
-    # visit (browser)
-    o = 'open'
-    open = "!xdg-open $(git remote get-url origin | sed -e 's#^git@\\([^:]*\\):#https://\\1/#' -e 's#\\.git$##') >& /dev/null &"
+[push]
+    autoSetupRemote = true  # easier to push new branches
+    default = current  # push only current branch by default
+    followTags = true  # push also tags
+    gpgSign = false  # my remotes doesn't support sign pushes
 
+[pull]
+    rebase = true
 
-    lg = log --all --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(italic dim white)- %an%C(reset)%C(auto)%d%C(reset)'
+[submodule]
+    fetchJobs = 16
 
-    # list aliases
-    la = !git config -l | grep alias | cut -c 7-
+[rebase]
+    autoStash = true
 
+[branch] 
+    autosetuprebase = always # Avoid messy merge commits with autorebase
+    sort = -committerdate
+
+[tag]
+    sort = -taggerdate
+
+[status]
+    branch = true
+    showStash = true
+    showUntrackedFiles = all
+
+[pager]
+    branch = false
+    tag = false
+
+[diff]
+    context = 3
+    renames = copies
+    interHunkContext = 10
+
+[delta]
+    features = catppuccin-mocha
+    navigate = true  # use n and N to move between diff sections
+    dark = true
+    side-by-side = true
+    line-numbers = true
+
+[blame]
+    coloring = highlightRecent
+    date = relative
+
+[log]
+    abbrevCommit = true  # short commits
+    graphColors = blue,yellow,cyan,magenta,green,red
+
+# Colors
 [color]
     ui = true
     branch = auto
@@ -43,38 +81,46 @@
     interactive = auto
     status = auto
 
-[branch] # Avoid messy merge commits with autorebase
-    autosetuprebase = always
+[color "diff"]
+    meta = black bold
+    frag = magenta
+    context = white
+    whitespace = yellow reverse
+    old = red
 
-[init]
-    defaultBranch = main
+[color "blame"]
+    highlightRecent = black bold,1 year ago,white,1 month ago,default,7 days ago,blue
 
-[push] # Push the current branch by default
-    autoSetupRemote = true
-    default = current
-
-[help] # Guess what you really meant
-    autocorrect = 1
-
-[diff]
-    tool = nvimdiff
-    mnemonicprefix = true # instead of using a and b notation
+[color "branch"]
+    current  = magenta
+    local    = default
+    remote   = yellow
+    upstream = green
+    plain    = blue
 
 [interactive]
     diffFilter = delta --color-only
 
-[merge]
-    conflictstyle = zdiff3
-
-[pull]
-	ff = only
-
 [advice]
     statusHints = false # Remove usage hints
+    addEmptyPathspec = false
+    pushNonFastForward = false
 
+[help] # Guess what you really meant
+    autocorrect = 1
+
+# Urls
+[url "https://github.com/"]
+    insteadOf = gh:
+
+[url "https://gitlab.com/"]
+    insteadOf = gl:
+
+# Credentials
 [credential "https://github.com"]
 	helper =
 	helper = !/usr/bin/gh auth git-credential
+
 [credential "https://gist.github.com"]
 	helper =
 	helper = !/usr/bin/gh auth git-credential

@@ -41,6 +41,7 @@ return {
 				extension = {
 					mdx = 'mdx',
 					tmux = 'tmux',
+					gitconfig = 'gitconfig',
 				},
 			},
 

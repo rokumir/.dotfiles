@@ -1,0 +1,87 @@
+# vim:ft=gitconfig
+
+[alias]
+    i = init
+    cl = clone
+
+    a = add
+    ap = add --patch
+
+    b = branch
+    bl = branch-last-updated
+
+    c = commit
+    cm = commit --message
+    ca = commit --all --message
+    co = checkout
+    cob = checkout -b
+
+    d = diff --output-indicator-new=' ' --output-indicator-old=' '
+    ds = diff --stat
+    dc = diff --cached
+
+    s = status --short --branch
+    su = status --short --branch --untracked-files
+    sp = status-prettify
+
+    l = log-prettify
+
+    o = open-web
+
+    # -----------------------------------------------------------
+    # Syntax breaking aliases
+
+    open-web = "!xdg-open $(git remote get-url origin | sed -e 's#^git@\\([^:]*\\):#https://\\1/#' -e 's#\\.git$##') >& /dev/null &"
+
+    log-prettify = "!f() { \
+        git log --all --graph \
+            --abbrev-commit --decorate --color=always \
+            --format=format:'%C(bold blue)%h%C(reset)|\
+                %C(bold green)%ar%C(reset)|\
+                %C(italic dim white)%an%C(reset)|\
+                %C(bold default)%s%C(reset)\
+                %C(reset)%C(auto)%d' \
+        | tr -s '[:blank:]' ' ' \
+        | column -ts'|'; \
+    }; f"
+
+    # show last modified branch's commit
+    branch-last-updated = "!f() { \
+        git for-each-ref \
+            --color=always \
+            --sort=-committerdate \
+            --format='%(color:yellow)%(refname:short) %(color:dim white)%(objectname:short)| \
+                %(color:green)%(committerdate:relative) %(color:reset)%(color:dim white)%(committerdate:short)| \
+                %(color:reset)%(color:italic red)%(authorname)| \
+                %(color:bold default)%(subject)' \
+        refs/${1:-heads} \
+        | xargs \
+        | column -ts'|'; \
+    }; f"
+
+    # Show combined status and diff stat (Created by rokumir on 2025-06-02 21:03:44 UTC)
+    status-prettify = "!f() { \
+        awk -vOFS='' ' \
+            NR==FNR { \
+                all[i++] = $0; \
+                difffiles[$1] = $0; \
+                next; \
+            } \
+            !($2 in difffiles) { \
+                print; next; \
+            } \
+            { \
+                gsub($2, difffiles[$2]); \
+                print; \
+            } \
+            END { \
+                if (NR != FNR) { \
+                    exit; \
+                } \
+                for (i in all) { \
+                    print all[i]; \
+                } \
+            }' \
+            <(git diff --color --stat=$(tput cols) HEAD | sed '$d; s/^ //') \
+            <(git -c color.status=always status -sb); \
+    }; f"

@@ -4,6 +4,14 @@
 # Extracts user/repo/branch from link; downloads each file using curl.
 # Handles file paths as an array.
 
+# --- Top-level checks for required programs
+for cmd in jq curl
+    if not type -q $cmd
+        echo "Error: Required command '$cmd' not found. Please install it first."
+        exit 1
+    end
+end
+
 function download_file
     set file_path $argv[1]
     set filename (basename "$file_path")
@@ -15,7 +23,8 @@ function download_file
         set user "$repo_link_dest[2]"
         set repo "$repo_link_dest[3]"
     end
-    set url "https://raw.githubusercontent.com/$user/$repo/$branch/$file_path"
+
+    set url (printf "https://raw.githubusercontent.com/$user/$repo/refs/heads/$branch/$file_path" | sed 's/ /%20/g; s/&/%26/g')
 
     # Check if any of the required variables are empty
     if [ -z "$file_path" -o -z "$user" -o -z "$repo" -o -z "$branch" ]
@@ -45,6 +54,6 @@ set repo_link $argv[1]
 set branch $argv[2]
 set file_paths $argv[3..-1]
 
-for file_path in $file_paths
-    download_file $file_path
+for file in $file_paths
+    download_file $file
 end
