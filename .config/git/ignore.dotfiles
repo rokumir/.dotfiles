@@ -1,0 +1,15 @@
+# vim:ft=gitignore
+/*
+
+.config/*
+!.config/
+!.config/nvim
+!.config/tmux
+!.config/fish
+!.config/git
+!.config/gh
+!.config/fd
+!.config/terminfo
+!.config/bat
+
+!.scripts
