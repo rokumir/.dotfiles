@@ -16,8 +16,6 @@ set -gx FZF_DEFAULT_OPTS \
     --color pointer:#C4A7E7,marker:#EB6F92,prompt:#908CAA
 
 ## For other parties to use
-set -gx FD_DEFAULT_OPTS --follow --hidden
-
 set -gx FZF_HOME_PROJECTS \
     $MY_WORK_HOME/ $MY_PROJECT_HOME/ $MY_THROWAWAY_HOME/ $MY_SCRIPT_HOME/ \
     ~/.config/ ~/documents/
@@ -26,5 +24,8 @@ set -gx FZF_HOME_PROJECTS \
 set -gx fzf_cmd fzf
 [ -n "$TMUX" ]; and set -gxa fzf_cmd --tmux 70%,85% --border rounded
 
-set -gx find_cmd fd $FD_DEFAULT_OPTS \
+set -gx find_cmd fd \
+    --follow \
+    --no-hidden \
+    --ignore \
     --no-require-git

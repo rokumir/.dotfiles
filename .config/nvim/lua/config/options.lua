@@ -1,5 +1,7 @@
 vim.g.mapleader = ' '
+vim.g.lazyvim_prettier_needs_config = true
 vim.g.lazyvim_picker = 'auto'
+vim.g.lazyvim_cmp = 'blink.cmp'
 vim.g.lazyvim_blink_main = true
 
 vim.g.nihil_autocmd_tmux_pane_title_update = false

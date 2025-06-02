@@ -1,19 +1,15 @@
 #!/usr/env/bin fish
 
-alias __sc set_color
-
 set token (eval echo -- (commandline -t)) # expand vars & tidle
 set token (string unescape -- $token) # unescape to void compromise the path
 
-
-set header_msg (__sc brcyan)':: <'(__sc bryellow)'alt-i'(__sc brcyan)'> to' \
-    (__sc brred)'Exclude hidden files'
+alias sc set_color
+set header_msg (sc brcyan)':: <'(sc bryellow)'alt-i'(sc brcyan)'> to' (sc brred)'Exclude hidden files'
 
 set -a fzf_cmd \
-    --bind 'alt-i:reload:eval $find_cmd --no-ignore --no-ignore-vcs' \
+    --bind 'alt-i:reload:eval $find_cmd --unrestricted' \
     --bind 'alt-i:+change-header:' \
     --header "$header_msg"
-
 
 # If the current token is a directory and has a trailing slash,
 # then use it as fd's base directory.

@@ -102,7 +102,7 @@ return {
 				},
 
 				vtsls = {
-					enabled = false,
+					enabled = true,
 					init_options = {
 						preferences = {
 							importModuleSpecifierPreference = 'non-relative',
@@ -164,54 +164,6 @@ return {
 						},
 					},
 				},
-
-				lua_ls = {
-					single_file_support = true,
-					settings = {
-						Lua = {
-							runtime = { version = 'Lua 5.4' },
-							workspace = { checkThirdParty = false },
-							doc = { privateName = { '^_' } },
-							type = { castNumberToInteger = true },
-							completion = {
-								workspaceWord = true,
-								callSnippet = 'Both',
-							},
-							hint = {
-								enable = true,
-								setType = false,
-								paramType = true,
-								paramName = 'Disable',
-								semicolon = 'Disable',
-								arrayIndex = 'Disable',
-							},
-							diagnostics = {
-								disable = { 'incomplete-signature-doc', 'trailing-space' },
-								-- enable = false,
-								groupSeverity = {
-									strong = 'Warning',
-									strict = 'Warning',
-								},
-								groupFileStatus = {
-									ambiguity = 'Opened',
-									await = 'Opened',
-									codestyle = 'None',
-									duplicate = 'Opened',
-									global = 'Opened',
-									luadoc = 'Opened',
-									redefined = 'Opened',
-									strict = 'Opened',
-									strong = 'Opened',
-									unbalanced = 'Opened',
-									unused = 'Opened',
-									['type-check'] = 'Opened',
-								},
-								unusedLocalExclude = { '_*' },
-								globals = { 'vim', 'it', 'describe', 'before_each', 'after_each' },
-							},
-						},
-					},
-				},
 			},
 
 			---@type table<string, fun(server:string, opts:lspconfig.Config|{}):boolean?>
@@ -230,129 +182,25 @@ return {
 	{
 		'neovim/nvim-lspconfig',
 		opts = function()
-			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), {
-				{ 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Goto Definition' },
-				{ 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Goto Declaration' },
+			---@type LazyKeysLspSpec[]
+			local keys = {
+				{ 'gd', function() Snacks.picker.lsp_definitions() end, has = 'definition', desc = 'Definition' },
+				{ 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Declaration' },
 				{ 'gr', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
-				{ 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Goto Implementation' },
-				{ 'gy', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
-				{ 'K', require('noice.lsp').hover, desc = 'Hover' },
-				{
-					'<c-u>',
-					function() require('noice.lsp').scroll(-4) end,
-					has = 'documentHighlight',
-					mode = { 'n', 'i' },
-					desc = 'Scroll Up LSP Docs',
-				},
-				{
-					'<c-d>',
-					function() require('noice.lsp').scroll(4) end,
-					has = 'documentHighlight',
-					mode = { 'n', 'i' },
-					desc = 'Scroll Down LSP Docs',
-				},
-				{ '<c-k>', false, mode = 'i' },
-				{ '<c-k>', require('noice.lsp').signature, mode = 'i', desc = 'Signature Help', has = 'signatureHelp' },
-				{ 'g<c-k>', require('noice.lsp').signature, desc = 'Signature Help', has = 'signatureHelp' },
-				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, desc = 'Rename', has = 'rename' },
-				{ '<a-r>', function() require('live-rename').rename { insert = true } end, desc = 'Rename', has = 'rename' },
-				-- pcall(vim.cmd.TSToolsOrganizeImports)
-				{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], desc = 'Organize Imports', has = 'organizeImports' },
-				{ '🔥', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, desc = 'Code actions', has = 'codeAction' },
-			})
+				{ 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Implementation' },
+				{ 'gy', function() Snacks.picker.lsp_type_definitions() end, desc = 'T[y]pe Definition' },
+				{ 'K', function() vim.lsp.buf.hover() end, desc = 'Hover' },
+				{ '<c-u>', function() require('noice.lsp').scroll(-4) end, mode = { 'n', 'i' }, desc = 'Scroll Up LSP Docs' },
+				{ '<c-d>', function() require('noice.lsp').scroll(4) end, mode = { 'n', 'i' }, desc = 'Scroll Down LSP Docs' },
+				{ '<c-k>', function() vim.lsp.buf.signature_help() end, mode = 'i', has = 'signatureHelp', desc = 'Signature Help' },
+				{ 'g<c-k>', function() vim.lsp.buf.signature_help() end, has = 'signatureHelp', desc = 'Signature Help' },
+				{ '<leader>cR', function() Snacks.rename.rename_file() end, desc = 'Rename File', has = { 'workspace/didRenameFiles', 'workspace/willRenameFiles' } },
+				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, has = 'rename', desc = 'Rename Symbol' },
+				{ '<a-r>', function() require('live-rename').rename { insert = true } end, has = 'rename', desc = 'Rename Symbol' },
+				{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], has = 'organizeImports', desc = 'Organize Imports' },
+				{ '🔥', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
+			}
+			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), keys)
 		end,
-	},
-
-	{
-		'pmizio/typescript-tools.nvim',
-
-		ft = {
-			'javascript',
-			'typescript',
-			'javascriptreact',
-			'typescriptreact',
-		},
-		-- cond = require('utils.root_dir').validation{'package.json','node_modules','*.lock'},
-
-		opts = {
-			handlers = {},
-			settings = {
-				separate_diagnostic_server = true,
-				publish_diagnostic_on = 'insert_leave',
-				expose_as_code_action = 'all',
-
-				tsserver_file_preferences = {
-					disableSuggestions = not require('utils.root_dir').validate_func {
-						'package.json',
-						'node_modules',
-						'*.lock',
-					}(),
-					quotePreference = 'single', --= auto, double, or single
-					includeCompletionsForModuleExports = true,
-					includeCompletionsForImportStatements = true,
-					includeCompletionsWithSnippetText = false,
-					includeCompletionsWithInsertText = true,
-					includeAutomaticOptionalChainCompletions = false,
-					includeCompletionsWithClassMemberSnippets = true,
-					includeCompletionsWithObjectLiteralMethodSnippets = false,
-					useLabelDetailsInCompletionEntries = true,
-					allowIncompleteCompletions = false,
-					importModuleSpecifierPreference = 'project-relative', --= shortest, project-relative, relative, non-relative
-					importModuleSpecifierEnding = 'auto', --= auto, minimal, index, js
-					allowTextChangesInNewFiles = true,
-					lazyConfiguredProjectsFromExternalProject = false,
-					providePrefixAndSuffixTextForRename = true,
-					provideRefactorNotApplicableReason = false,
-					allowRenameOfImportPath = true,
-					includePackageJsonAutoImports = 'auto', --= auto, on, off
-					jsxAttributeCompletionStyle = 'auto', --= auto, braces, none
-					displayPartsForJSDoc = true,
-					generateReturnInDocTemplate = false,
-					includeInlayParameterNameHints = 'all', --= none, literals, all
-					includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-					includeInlayFunctionParameterTypeHints = false,
-					includeInlayVariableTypeHints = true,
-					includeInlayVariableTypeHintsWhenTypeMatchesName = false,
-					includeInlayPropertyDeclarationTypeHints = true,
-					includeInlayFunctionLikeReturnTypeHints = false,
-					includeInlayEnumMemberValueHints = true,
-
-					organizeImportsIgnoreCase = 'auto', -- {string} or {boolean}
-					organizeImportsCollation = 'ordinal', --= ordinal or unicode
-					organizeImportsCollationLocale = 'en',
-					organizeImportsNumericCollation = false,
-					organizeImportsAccentCollation = true,
-					organizeImportsCaseFirst = 'lower', -- upper, "lower", or false
-					disableLineTextInReferences = true,
-				},
-
-				tsserver_locale = 'en',
-				complete_function_calls = true,
-				include_completions_with_insert_text = true,
-				code_lens = 'off',
-				disable_member_code_lens = true,
-				jsx_close_tag = { enable = false },
-			},
-
-			on_attach = function(client, bufnr)
-				---@type table<number, KeymapingFunArgs>
-				local keymaps = {
-					{ '<leader>cM', '<cmd>TSToolsAddMissingImports<cr>', desc = 'Add missing imports' },
-					{ '<leader>cD', '<cmd>TSToolsFixAll<cr>', desc = 'Fix all diagnostics' },
-					{ '<leader>cR', '<cmd>TSToolsRenameFile<cr>', desc = 'Rename file' },
-				}
-				for _, keymap_args in ipairs(keymaps) do
-					keymap_args.buffer = bufnr
-					map_key(keymap_args)
-				end
-
-				-- plugins
-				require('twoslash-queries').attach(client, bufnr)
-
-				-- extra settings
-				client.server_capabilities.documentFormattingProvider = false
-				client.server_capabilities.documentRangeFormattingProvider = false
-			end,
-		},
 	},
 }

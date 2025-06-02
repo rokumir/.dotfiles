@@ -20,14 +20,8 @@ map { 'L', '$', mode = { 'n', 'v', 'o' } }
 -- FIX: for wezterm (when in tmux)
 map { '<c-s-v>', '"+p', mode = { 'i', 'n', 'x' }, desc = 'Paste from System Clipboard (overide)' }
 
--- new file
-map { '<a-n>', '<cmd>enew<cr>', desc = 'New File' }
-
 -- Better "Goto Bottom"
 map { 'G', 'Gzz', mode = { 'n', 'v' }, nowait = true }
-
--- new file
-map { '<leader>fn', '<cmd>enew<cr>', desc = 'New File' }
 
 -- shell stuffs
 map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File Executable' }
@@ -71,6 +65,13 @@ map { 'n', [['Nn'[v:searchforward].'zzzv']], expr = true, desc = 'Next Search Re
 map { 'N', [['nN'[v:searchforward].'zzzv']], expr = true, desc = 'Prev Search Result' }
 map { 'n', [['Nn'[v:searchforward].'zz']], mode = { 'x', 'o' }, expr = true, desc = 'Next Search Result' }
 map { 'N', [['nN'[v:searchforward].'zz']], mode = { 'x', 'o' }, expr = true, desc = 'Prev Search Result' }
+--#endregion
+
+--#region --- FILE
+map { '<leader>f', '', desc = 'file' }
+
+-- new file
+map { '<leader>fn', '<cmd>enew<cr>', desc = 'New File' }
 --#endregion
 
 --#region --- EDITOR
@@ -166,11 +167,12 @@ map { '<leader>`', ':b# <cr>', desc = 'Alternate buffer' }
 --#endregion
 
 --#region --- SYSTEM
-map { '<leader>ll', '<cmd>Lazy <cr>', desc = 'Lazy' }
-map { '<leader>lL', '<cmd>LspInfo <cr>', desc = 'Lsp: Project info' }
-map { '<leader>lR', '<cmd>LspRestart <cr>', desc = 'Lsp: Restart' }
-map { '<leader>lm', '<cmd>Mason <cr>', desc = 'Mason' }
-map { '<leader>lf', '<cmd>ConformInfo <cr>', desc = 'Conform' }
+map { '<leader><leader><leader>', '', desc = 'system' }
+map { '<leader><leader><leader>l', '<cmd>Lazy <cr>', desc = 'Lazy' }
+map { '<leader><leader><leader>i', '<cmd>LspInfo <cr>', desc = 'LSP info' }
+map { '<leader><leader><leader>r', '<cmd>LspRestart <cr>', desc = 'Restart LSP' }
+map { '<leader><leader><leader>m', '<cmd>Mason <cr>', desc = 'Mason' }
+map { '<leader><leader><leader>f', '<cmd>ConformInfo <cr>', desc = 'Conform' }
 --#endregion
 
 --#region --- LSP

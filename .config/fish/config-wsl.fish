@@ -13,6 +13,5 @@ function get-window-home
     wslpath -u $path
 end
 
-function open-wezterm-config
-    $EDITOR (get-window-home)/.config/wezterm/wezterm.lua
-end
+set -gx WIN_HOME (get-window-home)
+set -gx WEZTERM_CONFIG_DIR $WIN_HOME/.config/wezterm/wezterm.lua

@@ -55,6 +55,9 @@ return {
 
 				WhichKeyBorder = { fg = 'highlight_med' },
 				LazyGitBorder = { fg = 'highlight_med' },
+
+				YankyPut = { bg = 'pine', blend = 25 },
+				YankyYanked = { bg = 'pine', blend = 25 },
 			},
 		},
 	},

@@ -152,7 +152,7 @@ return {
 							hidden = { 'input' },
 							layout = { -- variant of 'ivy'
 								position = 'right',
-								width = 0.22,
+								width = 0.26,
 								box = 'vertical',
 								row = -1,
 								border = 'top',

@@ -185,12 +185,29 @@ return {
 
 	{
 		'gbprod/yanky.nvim',
+		dependencies = { 'kkharji/sqlite.lua' },
+		opts = {
+			ring = {
+				storage = 'sqlite',
+				history_length = 50,
+				sync_with_numbered_registers = true,
+			},
+			highlight = {
+				on_put = true,
+				on_yank = true,
+				timer = 500,
+			},
+			textobj = { enabled = false },
+		},
 		keys = function()
 			return {
-				{ '<leader>p', '<cmd>YankyRingHistory<cr>', mode = { 'n', 'x' }, desc = 'Open Yank History' },
+				{ '<leader>p', '', desc = 'yanky' },
+				---@diagnostic disable-next-line: undefined-field
+				{ '<leader>pp', function() Snacks.picker.yanky() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
+				{ '<leader>pc', '<Plug>(YankyClearHistory)', desc = 'Clear Yank History' },
 
-				{ '<c-a-n>', '<Plug>(YankyNextEntry)', desc = 'Next Entry' },
-				{ '<c-a-b>', '<Plug>(YankyPreviousEntry)', desc = 'Prev Entry' },
+				{ '<c-a-n>', '<Plug>(YankyNextEntry)', mode = { 'n', 'i' }, desc = 'Next Entry' },
+				{ '<c-a-b>', '<Plug>(YankyPreviousEntry)', mode = { 'n', 'i' }, desc = 'Prev Entry' },
 
 				{ 'y', '<Plug>(YankyYank)', mode = { 'n', 'x' }, desc = 'Yank Text' },
 				{ 'p', '<Plug>(YankyPutAfter)', desc = 'Put Text After Cursor' },
@@ -212,16 +229,5 @@ return {
 				{ '=P', '<Plug>(YankyPutBeforeFilter)', desc = 'Put Before Applying a Filter' },
 			}
 		end,
-		opts = {
-			ring = {
-				history_length = 30,
-				sync_with_numbered_registers = true,
-			},
-			highlight = {
-				on_put = true,
-				on_yank = true,
-				timer = 700,
-			},
-		},
 	},
 }
