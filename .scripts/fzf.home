@@ -1,13 +1,32 @@
-#!/usr/env/bin fish
+#!/usr/bin/env fish
+
+argparse l/label= H/hidden=? print=? absolute=? -- $argv
+or return 1
+
+set label ' Home '
+if set -q _flag_label
+    set label $_flag_label
+end
+
+set fd_opts --color never -a -d1 -td
+if set -q _flag_hidden
+    set -a fd_opts -H
+end
 
 begin
-    string unescape $FZF_HOME_DIRS
-    $find_cmd -a -d 1 -t d -- . $FZF_HOME_DIRS
+    printf '%s\n' $FZF_HOME_DIRS
+    $find_cmd $fd_opts -- . $FZF_HOME_DIRS
 end \
+    | sed "s:^$HOME/::; s:/\$::" \
     | sort -ur \
-    | string replace "$HOME/" '' \
-    | $fzf_cmd --border-label ' Home ' \
+    | $fzf_cmd --border-label "$label" \
     | read -l result
-or return
+or return 1
 
-source (type --path fzf.open-path) ~/$result
+set result (set -q _flag_absolute; and echo $HOME; or echo '~')/$result
+
+if set -q _flag_print
+    echo $result
+else
+    source (type --path fzf.open-path) $result
+end

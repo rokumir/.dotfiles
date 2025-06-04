@@ -4,10 +4,7 @@ set MIN_PADDING 20
 set SEP_CHAR '─'
 
 # Get the diff statistics using git diff
-set diff_stats (
-    git diff --color --stat=(tput cols) HEAD | 
-    sed -r 's/.+\|\s//g'
-)
+set diff_stats (git diff --color --stat=(tput cols) HEAD | sed -r 's:.+\|\s::')
 set stats $diff_stats[..(math (count $diff_stats) - 1)]
 set summary_line $diff_stats[-1]
 
@@ -21,7 +18,7 @@ set padding_width (
         set -l max_len 0
         for line in $status_lines
             set stripped_line (string replace -ra '\e\[[^m]*m' '' $line)
-            set len (string length "$stripped_line  ")
+            set len (string length $stripped_line'   ')
             test $len -gt $max_len; and set max_len $len
         end
         echo $max_len
@@ -30,7 +27,7 @@ set padding_width (
 )
 
 set output
-set stat_index 1
+set stat_index 0
 for status_line in $status_lines
     set stat_index (math $stat_index + 1)
 

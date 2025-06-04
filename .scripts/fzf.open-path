@@ -1,12 +1,15 @@
 #!/usr/bin/env fish
 
+# NOTE: To use this script with its best ability.
+# Run:  source (type --path fzf.open-path) path/to/result
+
 # Avoid possible multiple results (avoid fzf print action).
-if [ (count $argv) -gt 1 ]
-    echo (set_color red)'fish fzf: too many arguments:'
+if test -n "$argv[2]"
+    echo (set_color bryellow)'Warning: Too many arguments'
     return 1
 end
 
-set path $argv[1]
+set path (eval "realpath --canonicalize-existing --no-symlinks --relative-to . $argv")
 set token
 
 ## Handlers
