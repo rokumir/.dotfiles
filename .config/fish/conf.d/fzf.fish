@@ -25,8 +25,7 @@ set -gx FZF_HOME_DIRS \
     $MY_SCRIPT_HOME
 
 ## For only scripts use
-set -gx fzf_cmd fzf
-[ -n "$TMUX" ]; and set -gxa fzf_cmd --tmux 70%,85% --border rounded
+set -gx fzf_cmd fzf --tmux --border rounded
 
 set -gx find_cmd fd \
     --follow \
