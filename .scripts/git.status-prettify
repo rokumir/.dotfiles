@@ -5,7 +5,10 @@ set SEP_CHAR '─'
 
 # Get the diff statistics using git diff
 set diff_stats (git diff --color --stat=(tput cols) HEAD | sed -r 's:.+\|\s::')
-test -z "$diff_stats"; and return 1
+if test -z "$diff_stats"
+    echo (set_color -o brred)There are no changes!
+    return 1
+end
 
 set stats $diff_stats[..(math (count $diff_stats) - 1)]
 set summary_line $diff_stats[-1]
