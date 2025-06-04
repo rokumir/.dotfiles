@@ -125,14 +125,16 @@ return {
 		},
 	},
 
-	-- Automatically set indent settings base on the content of the file
-	{
-		'tpope/vim-sleuth',
-		event = 'VeryLazy',
-		init = function()
-			vim.g.sleuth_heuristics = 1
-			vim.g.sleuth_ps1_heuristics = 0
-		end,
+	{ -- Automatically set indent settings base on the content of the file
+		'Darazaki/indent-o-matic',
+		opts = {
+			standard_widths = { 2, 4 },
+			-- filetype_lisp = { max_lines = 0, }, -- Disable indent-o-matic for LISP files
+
+			filetype_rust = { standard_widths = { 4 } },
+			filetype_fish = { standard_widths = { 4 } },
+			filetype_ = { standard_widths = { 2, 4 } },
+		},
 	},
 
 	{ -- Fugit2

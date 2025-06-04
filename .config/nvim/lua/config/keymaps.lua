@@ -118,9 +118,7 @@ Snacks.toggle.option('spell'):map '<leader><leader>s'
 Snacks.toggle.option('wrap'):map '<a-z>'
 Snacks.toggle.line_number():map '<leader><leader>n'
 Snacks.toggle.option('relativenumber'):map '<leader><leader>r'
-Snacks.toggle
-	.option('conceallevel', { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 3, name = 'Conceal' })
-	:map '<leader><leader>c'
+Snacks.toggle.option('conceallevel', { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 3, name = 'Conceal' }):map '<leader><leader>c'
 Snacks.toggle.treesitter():map '<leader><leader>T'
 Snacks.toggle.option('background', { off = 'light', on = 'dark', name = 'Dark Background' }):map '<leader><leader>b'
 Snacks.toggle.dim():map '<leader><leader>D'
@@ -167,12 +165,12 @@ map { '<leader>`', ':b# <cr>', desc = 'Alternate buffer' }
 --#endregion
 
 --#region --- SYSTEM
-map { '<leader><leader><leader>', '', desc = 'system' }
-map { '<leader><leader><leader>l', '<cmd>Lazy <cr>', desc = 'Lazy' }
-map { '<leader><leader><leader>i', '<cmd>LspInfo <cr>', desc = 'LSP info' }
-map { '<leader><leader><leader>r', '<cmd>LspRestart <cr>', desc = 'Restart LSP' }
-map { '<leader><leader><leader>m', '<cmd>Mason <cr>', desc = 'Mason' }
-map { '<leader><leader><leader>f', '<cmd>ConformInfo <cr>', desc = 'Conform' }
+-- map { '<f2>', '', desc = 'system' }
+map { '<f2>l', '<cmd>Lazy <cr>', desc = 'Lazy' }
+map { '<f2>i', '<cmd>LspInfo <cr>', desc = 'LSP info' }
+map { '<f2>r', '<cmd>LspRestart <cr>', desc = 'Restart LSP' }
+map { '<f2>m', '<cmd>Mason <cr>', desc = 'Mason' }
+map { '<f2>f', '<cmd>ConformInfo <cr>', desc = 'Conform' }
 --#endregion
 
 --#region --- LSP
