@@ -2,10 +2,9 @@
 
 set path (fzf.home --print --absolute --label ' Open new session ')
 or return 1
-echo $path
 
 # Set variables
-set name (basename $path)
+set name (basename $path | tr . _)
 
 # Tmux session handling
 set sessions (pgrep tmux &>/dev/null && tmux list-sessions -F '#{session_name}')
@@ -14,6 +13,6 @@ if not string match -qe -- "$name" "$sessions"
 end
 
 # Attach or switch to session
-test -n "$TMUX"; and set action switch-client; or set action attach-session
+set action ([ -n "$TMUX" ] && echo switch-client && echo attach-session)
 
 tmux $action -t "$name"
