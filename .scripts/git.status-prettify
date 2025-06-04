@@ -1,18 +1,18 @@
 #!/usr/bin/env fish
 
-set MIN_PADDING 40
+set MIN_PADDING 20
 set SEP_CHAR '─'
 
 # Get the diff statistics using git diff
 set diff_stats (
-    gd diff --color --stat=(tput cols) HEAD | 
+    git diff --color --stat=(tput cols) HEAD | 
     sed -r 's/.+\|\s//g'
 )
 set stats $diff_stats[..(math (count $diff_stats) - 1)]
 set summary_line $diff_stats[-1]
 
 # Get git status in short format, excluding the branch line
-set status_lines (gd -c color.status=always status -sb)[2..]
+set status_lines (git -c color.status=always status -sb)[2..]
 
 # Calculate padding width by finding the longest status line
 # but ensure it's at least MIN_PADDING characters wide
@@ -20,7 +20,8 @@ set padding_width (
     begin
         set -l max_len 0
         for line in $status_lines
-            set -l len (string length "$line   ")
+            set stripped_line (string replace -ra '\e\[[^m]*m' '' $line)
+            set len (string length "$stripped_line  ")
             test $len -gt $max_len; and set max_len $len
         end
         echo $max_len
@@ -40,6 +41,11 @@ for status_line in $status_lines
         set -l padded_line (string pad -r -w$padding_width -c$SEP_CHAR $colored_line)
         set -l diff_info (set_color normal)" $stats[$stat_index]"
         set status_line $padded_line$diff_info
+
+        # shorten them if they pass terminal width
+        if test (string length $status_line) -ge $COLUMNS
+            set status_line (string shorten -c' ' -m$COLUMNS $status_line)
+        end
     end
 
     set -a output $status_line
