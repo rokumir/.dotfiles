@@ -26,4 +26,4 @@ else
     or return 1
 end
 
-source (type --path __fzf_open_path) $result
+source (type --path fzf.open-path) $result

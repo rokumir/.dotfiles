@@ -1,0 +1,68 @@
+#!/usr/bin/env fish
+
+function print_usage
+    echo "DISCLAIMER: It ONLY downloads FILEs and it won't create any folders."
+    echo 'Usage: git.curl <user>/<repo>:<branch> <file_1> <file_2>...'
+    echo '  user/repo             "Path" to the GitHub repository'
+    echo '  branch                The branch to download from (default: main)'
+    echo '  file_1, file_2, ... List of file paths within the repository'
+    echo
+    echo 'Example:'
+    echo '  git.curl im-lorem/a-repo manifest.json foo/bar.ts'
+    echo '  git.curl im-lorem/an-old-repo:master manifest.json foo/bar.ts'
+end
+
+# Check if we have minimum required arguments (repo and at least one file)
+if test (count $argv) -lt 2
+    print_usage
+    exit 1
+end
+
+# Parse the first argument (user/repo:branch or user/repo)
+set repo_args (string split : $argv[1])
+# Extract user, repo, and branch using string split
+set repo_path $repo_args[1]
+set branch $repo_args[2]
+
+# Set default branch to "main" if not specified
+if test -z "$branch"
+    set branch main
+end
+
+# Split user/repo
+set repo_path_parts (string split / $repo_path)
+if test (count $repo_path_parts) -ne 2
+    echo 'Error: Invalid repository format. Expected format: user/repo or user/repo:branch' >&2
+    exit 1
+end
+
+set user_name $repo_path_parts[1]
+set repo_name $repo_path_parts[2]
+
+# Remove the first argument (repo info) to get file list
+set -e argv[1]
+
+echo
+echo -e " Downloading files from ($branch) https://github.com/$user_name/$repo_name ..."
+echo
+
+for file_path in $argv
+    set filename (basename $file_path)
+    set url (
+        echo "https://raw.githubusercontent.com/$user_name/$repo_name/refs/heads/$branch/$file_path" \
+        | sed 's/ /%20/g; s/&/%26/g'
+    )
+
+    set download_result (curl -fsSL "$url" -o "$filename" 2>&1)
+
+    if test $status -eq 0
+        echo (set_color brgreen) Downloaded to \"./$filename\"
+    else
+        echo
+        echo (set_color red) [Error] downloading \"$file_path\" >&2
+        echo ' '$download_result >&2
+        echo
+    end
+
+    set_color normal
+end

@@ -6,8 +6,8 @@ if [ (count $argv) -gt 1 ]
     return 1
 end
 
-set -f path $argv[1]
-set -f token
+set path $argv[1]
+set token
 
 ## Handlers
 [ -f "$path" -a -w "$path" ]; and set token $EDITOR # file
