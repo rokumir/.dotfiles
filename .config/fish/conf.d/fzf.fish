@@ -16,7 +16,7 @@ set -gx FZF_DEFAULT_OPTS \
     --color pointer:#C4A7E7,marker:#EB6F92,prompt:#908CAA
 
 ## For other parties to use
-set -gx FZF_HOME_PROJECTS \
+set -gx FZF_HOME_DIRS \
     $MY_WORK_HOME/ $MY_PROJECT_HOME/ $MY_THROWAWAY_HOME/ $MY_SCRIPT_HOME/ \
     ~/.config/ ~/documents/
 

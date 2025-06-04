@@ -30,3 +30,5 @@ set -gx MY_THROWAWAY_HOME ~/documents/throwaways
 set -gx MY_SCRIPT_HOME ~/.scripts
 
 fish_add_path -g $MY_SCRIPT_HOME
+
+set -gx PG_TTY (tty)
