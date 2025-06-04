@@ -2,6 +2,8 @@
     name = Lopt
     email = lopt.loptr@proton.me
     signingkey = 6F1A20A919C21712
+[gpg]
+	program = gpg
 
 [core]
     autocrlf = false
