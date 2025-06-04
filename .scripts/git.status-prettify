@@ -5,6 +5,8 @@ set SEP_CHAR '─'
 
 # Get the diff statistics using git diff
 set diff_stats (git diff --color --stat=(tput cols) HEAD | sed -r 's:.+\|\s::')
+test -z "$diff_stats"; and return 1
+
 set stats $diff_stats[..(math (count $diff_stats) - 1)]
 set summary_line $diff_stats[-1]
 
@@ -33,7 +35,7 @@ for status_line in $status_lines
 
     # If we have diff stats for this line, add them
     if test -n "$stats[$stat_index]"
-        # Format: <status_line><padding><diff_stats>
+        # Format: <status_line><padding><diff_info>
         set -l colored_line "$status_line "(set_color brblack)
         set -l padded_line (string pad -r -w$padding_width -c$SEP_CHAR $colored_line)
         set -l diff_info (set_color normal)" $stats[$stat_index]"
