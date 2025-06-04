@@ -17,8 +17,12 @@ set -gx FZF_DEFAULT_OPTS \
 
 ## For other parties to use
 set -gx FZF_HOME_DIRS \
-    $MY_WORK_HOME/ $MY_PROJECT_HOME/ $MY_THROWAWAY_HOME/ $MY_SCRIPT_HOME/ \
-    ~/.config/ ~/documents/
+    ~/.config \
+    ~/documents \
+    $MY_WORK_HOME \
+    $MY_PROJECT_HOME \
+    $MY_THROWAWAY_HOME \
+    $MY_SCRIPT_HOME
 
 ## For only scripts use
 set -gx fzf_cmd fzf
