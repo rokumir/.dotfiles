@@ -66,8 +66,8 @@ function fish_user_key_bindings
     end
 
     # extenal scripts needed to be sourced, otherwise it won't work as expected
-    bind --preset -M insert \ce "source $(type -p fzf.find)"
-    bind --preset -M insert \cd "source $(type -p fzf.home)"
+    bind --preset -M insert \ce 'source (type -p fuzzy.find)'
+    bind --preset -M insert \cd 'source (type -p fuzzy.vault)'
 end
 
 ## os

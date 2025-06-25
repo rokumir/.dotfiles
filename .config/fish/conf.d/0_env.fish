@@ -14,21 +14,27 @@ fish_add_path -g $XDG_DATA_HOME/bob/nvim-bin
 fish_add_path -g $XDG_DATA_HOME/fnm
 type -q fnm && fnm env --use-on-cd --shell=fish --version-file-strategy=recursive | source
 
-# Configs
 set -gx TERMINFO $XDG_CONFIG_HOME/terminfo
-set -gx TERM wezterm # enable undercurl ~/.terminfo/w/wezterm
-set -gx GIT_EDITOR nvim # nvim cus git uses sh internally
+set -gx TERM wezterm # enable undercurl .terminfo/w/wezterm
+set -gx GIT_EDITOR nvim
 set -gx EDITOR vi
 set -gx PAGER bat
 
 ## ---------------------------------------
 
-set -gx MY_NOTE_HOME ~/documents/notes
-set -gx MY_PROJECT_HOME ~/documents/projects
-set -gx MY_WORK_HOME ~/documents/works
-set -gx MY_THROWAWAY_HOME ~/documents/throwaways
-set -gx MY_SCRIPT_HOME ~/.scripts
+# Rokumir Home
+set -gx RH_NOTE ~/documents/notes
+set -gx RH_PROJECT ~/documents/projects
+set -gx RH_WORK ~/documents/works
+set -gx RH_THROWAWAY ~/documents/throwaways
+set -gx RH_SCRIPT ~/.scripts
 
-fish_add_path -g $MY_SCRIPT_HOME
+fish_add_path -g $RH_SCRIPT
 
-set -gx PG_TTY (tty)
+set -gx RH_VAULT \
+    $RH_WORK \
+    $RH_PROJECT \
+    $RH_THROWAWAY \
+    $RH_SCRIPT \
+    $XDG_CONFIG_HOME \
+    ~/documents
