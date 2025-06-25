@@ -1,6 +1,6 @@
 #!/usr/bin/env fish
 
-set path (fzf.home --print --absolute --label ' Open new session ')
+set path (fuzzy.vault --print --absolute --label ' Open new session ')
 or return 1
 
 # Set variables
@@ -13,6 +13,5 @@ if not string match -qe -- "$name" "$sessions"
 end
 
 # Attach or switch to session
-set action ([ -n "$TMUX" ] && echo switch-client && echo attach-session)
-
+set action ([ -n "$TMUX" ] && echo switch-client || echo attach-session)
 tmux $action -t "$name"

@@ -1,7 +1,8 @@
 #!/usr/bin/env fish
 
-# NOTE: To use this script with its best ability.
-# Run:  source (type --path fzf.open-path) path/to/result
+# NOTE:
+# To use this script with its best ability.
+# > source (type --path {this-script-name}) $path_to_result
 
 # Avoid possible multiple results (avoid fzf print action).
 if test -n "$argv[2]"

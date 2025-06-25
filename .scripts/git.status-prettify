@@ -3,10 +3,11 @@
 set MIN_PADDING 20
 set SEP_CHAR '─'
 
+# ----------------------------------------------
 # Get the diff statistics using git diff
 set diff_stats (git diff --color --stat=(tput cols) HEAD | sed -r 's:.+\|\s::')
 if test -z "$diff_stats"
-    echo (set_color -o brred)There are no changes!
+    echo (set_color -o brred) There are no changes!
     return 1
 end
 
@@ -31,28 +32,30 @@ set padding_width (
     math max $MIN_PADDING,$max_len
 )
 
+# ----------------------------------------------
 set output
 set stat_index 0
 for status_line in $status_lines
     set stat_index (math $stat_index + 1)
 
     # If we have diff stats for this line, add them
-    if test -n "$stats[$stat_index]"
-        # Format: <status_line><padding><diff_info>
-        set -l colored_line "$status_line "(set_color brblack)
-        set -l padded_line (string pad -r -w$padding_width -c$SEP_CHAR $colored_line)
-        set -l diff_info (set_color normal)" $stats[$stat_index]"
-        set status_line $padded_line$diff_info
+    test -z "$stats[$stat_index]"; and continue
 
-        # shorten them if they pass terminal width
-        if test (string length $status_line) -ge $COLUMNS
-            set status_line (string shorten -c' ' -m$COLUMNS $status_line)
-        end
+    # Format: <status_line><padding><diff_info>
+    set -l colored_line "$status_line "(set_color brblack)
+    set -l padded_line (string pad -r -w$padding_width -c$SEP_CHAR $colored_line)
+    set -l diff_info (set_color normal)" $stats[$stat_index]"
+    set status_line $padded_line$diff_info
+
+    # shorten them if they pass terminal width
+    if test (string length $status_line) -ge $COLUMNS
+        set status_line (string shorten -c' ' -m$COLUMNS $status_line)
     end
 
     set -a output $status_line
 end
 
+# ----------------------------------------------
 # Output results
-echo (set_color bryellow)$summary_line
+echo (set_color -o bryellow)$summary_line
 printf '%s\n' $output
