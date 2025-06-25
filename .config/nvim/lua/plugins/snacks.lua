@@ -6,6 +6,7 @@
 return {
 	{
 		'folke/snacks.nvim',
+		cond = vim.g.vscode ~= 1,
 		keys = {
 			{ '\\\\', function() Snacks.picker.resume() end, desc = 'Resume' },
 
@@ -262,12 +263,11 @@ return {
 
 	{
 		'folke/snacks.nvim',
-
+		cond = vim.g.vscode ~= 1,
 		init = function()
 			vim.g.snacks_hidden = vim.g.snacks_hidden == true
 			vim.g.snacks_ignored = vim.g.snacks_ignored == true
 		end,
-
 		---@param opts snacks.Config
 		opts = function(_, opts)
 			-- NOTE: Explorer doesn't use the `.ignore` file.

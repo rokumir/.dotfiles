@@ -22,6 +22,7 @@ return {
 			},
 
 			capabilities = {}, -- add any global capabilities here
+			autoformat = vim.g.autoformat ~= false, -- format on save
 
 			---@type table<string, lspconfig.Config | {}>
 			servers = {
@@ -192,7 +193,8 @@ return {
 				{ 'K', function() vim.lsp.buf.hover() end, desc = 'Hover' },
 				-- { '<c-u>', function() require('noice.lsp').scroll(-4) end, mode = { 'n', 'i' }, desc = 'Scroll Up LSP Docs' },
 				-- { '<c-d>', function() require('noice.lsp').scroll(4) end, mode = { 'n', 'i' }, desc = 'Scroll Down LSP Docs' },
-				{ '<c-k>', function() vim.lsp.buf.signature_help() end, mode = 'i', has = 'signatureHelp', desc = 'Signature Help' },
+				{ '<c-k>', false, mode = 'n', has = 'signatureHelp' },
+				{ '<c-a-k>', function() vim.lsp.buf.signature_help() end, mode = 'i', has = 'signatureHelp', desc = 'Signature Help' },
 				{ 'g<c-k>', function() vim.lsp.buf.signature_help() end, has = 'signatureHelp', desc = 'Signature Help' },
 				{ '<leader>cR', function() Snacks.rename.rename_file() end, desc = 'Rename File', has = { 'workspace/didRenameFiles', 'workspace/willRenameFiles' } },
 				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, has = 'rename', desc = 'Rename Symbol' },
@@ -200,6 +202,7 @@ return {
 				{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], has = 'organizeImports', desc = 'Organize Imports' },
 				{ '🔥', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
 			}
+
 			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), keys)
 		end,
 	},

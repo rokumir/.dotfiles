@@ -113,6 +113,7 @@ return {
 
 	{ -- Easy location list
 		'folke/trouble.nvim',
+		cond = vim.g.vscode ~= 1,
 		opts = {
 			use_diagnostic_signs = true,
 			height = 6,
@@ -187,10 +188,8 @@ return {
 
 	{
 		'gbprod/yanky.nvim',
-		dependencies = { 'kkharji/sqlite.lua' },
 		opts = {
 			ring = {
-				storage = 'sqlite',
 				history_length = 50,
 				sync_with_numbered_registers = true,
 			},

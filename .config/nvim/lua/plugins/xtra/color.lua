@@ -7,7 +7,7 @@ return {
 		cmd = { 'ColorPickOklch' },
 		keys = {
 			{
-				'<a-c><a-o>',
+				'<leader>cp',
 				function()
 					require('oklch-color-picker').pick_under_cursor {
 						fallback_open = {

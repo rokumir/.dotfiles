@@ -1,4 +1,4 @@
----@diagnostic disable: no-unknown
+---@diagnostic disable: no-unknown, missing-fields
 ---@type table<number, LazyPluginSpec>
 return {
 	{ -- Delimiter pairs
@@ -94,8 +94,6 @@ return {
 				{ open = '`', close = '`' },
 				{ open = '<', close = '>' },
 				{ open = '/', close = '/' },
-				{ open = ',', close = ',' },
-				{ open = ';', close = ';' },
 			},
 		},
 	},
@@ -132,6 +130,95 @@ return {
 			hl = {
 				current = 'CurSearch',
 				others = 'Search',
+			},
+		},
+	},
+
+	{ -- AI suggestion/completion (A.I, copilot, chatgpt)
+		'zbirenbaum/copilot.lua',
+		keys = {
+			{
+				'<leader><leader>C',
+				function() require('copilot.suggestion').toggle_auto_trigger() end,
+				desc = '  Copilot: Suggestion Toggle',
+			},
+		},
+		dependencies = {
+			'saghen/blink.cmp',
+			optional = true,
+			dependencies = {
+				{ 'giuxtaposition/blink-cmp-copilot', enabled = false }, -- diable
+				{ 'fang2hou/blink-copilot', opts = { max_completions = 2, max_attempts = 3 } },
+			},
+			priority = 1000,
+			opts = {
+				sources = {
+					default = { 'copilot' },
+					providers = {
+						copilot = {
+							name = 'copilot',
+							module = 'blink-copilot',
+							score_offset = 100,
+							max_items = 4,
+							min_keyword_length = 4,
+							async = true,
+							-- enabled = function() return vim.g. end,
+						},
+					},
+				},
+			},
+		},
+		opts = {},
+	},
+
+	{ -- AI Chat
+		'olimorris/codecompanion.nvim',
+		enabled = false,
+		keys = {
+			{ '<c-P>', '<cmd>CodeCompanionActions<cr>', desc = 'CodeCompanion: Actions' },
+			{ '<leader>CC', '<cmd>CodeCompanionChat Toggle<cr>', desc = 'CodeCompanion: Chat Toggle' },
+		},
+		---@module 'codecompanion'
+		opts = {
+			---@type CodeCompanion.Strategies
+			strategies = {
+				chat = { adapter = 'copilot' },
+				inline = { adapter = 'copilot' },
+				cmd = { adapter = 'copilot' },
+			},
+
+			---@type CodeCompanion
+			adapters = {
+				opts = {
+					show_model_choices = true,
+				},
+			},
+
+			display = {
+				action_palette = {
+					width = 95,
+					height = 10,
+					opts = {
+						show_default_actions = true, -- Show the default actions in the action palette?
+						show_default_prompt_library = true, -- Show the default prompt library in the action palette?
+					},
+				},
+			},
+
+			opts = {
+				-- Set debug logging.
+				-- NOTE: By default, logs are stored at ~/.local/state/nvim/codecompanion.log
+				log_level = 'DEBUG', ---@type 'DEBUG'|'INFO'|'WARN'|'ERROR'
+
+				-- language = 'English',
+
+				-- Prevent any code from being sent to the LLM.
+				-- NOTE: Whilst the plugin makes every attempt to prevent code
+				-- from being sent to the LLM, use this option at your own risk.
+				send_code = false,
+
+				------@param opts CodeCompanion.Command.Opts
+				---system_prompt = function(opts) return 'My new system prompt' end,
 			},
 		},
 	},

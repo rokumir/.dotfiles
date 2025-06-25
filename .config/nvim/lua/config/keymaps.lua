@@ -2,6 +2,8 @@
 local map = require('utils.keymap').map
 local ui_utils = require 'utils.ui'
 
+if vim.g.vscode == 1 then return end
+
 --#region --- UNMAP
 map { 'K', '<nop>', mode = { 'n', 's', 'x' } }
 map { '<c-e>', '<nop>', mode = { 'i' } }
@@ -102,8 +104,8 @@ map {
 		vim.cmd.nohlsearch() -- Clear the search highlighting
 		vim.cmd.diffupdate() -- Redraw the screen
 		vim.cmd.redraw() -- Update the diff highlighting and folds.
-		vim.cmd.NoiceDismiss() -- Clear noice mini view
-		Snacks.words.clear()
+		pcall(vim.cmd.NoiceDismiss) -- Clear noice mini view
+		pcall(Snacks.words.clear)
 	end,
 	desc = 'Clear Visual Noises',
 	mode = { 'n', 'i' },

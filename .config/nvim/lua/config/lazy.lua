@@ -1,14 +1,12 @@
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-	vim.fn.system {
-		'git',
-		'clone',
-		'--filter=blob:none',
-		'https://github.com/folke/lazy.nvim.git',
-		'--branch=stable',
-		lazypath,
-	}
-end
+if not (vim.uv or vim.loop).fs_stat(lazypath) then vim.fn.system {
+	'git',
+	'clone',
+	'--filter=blob:none',
+	'https://github.com/folke/lazy.nvim.git',
+	'--branch=stable',
+	lazypath,
+} end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup {
@@ -31,6 +29,7 @@ require('lazy').setup {
 				},
 				defaults = {
 					keymaps = false,
+					autocmds = false,
 				},
 			},
 		},
@@ -50,19 +49,22 @@ require('lazy').setup {
 		-- { import = 'lazyvim.plugins.extras.lang.typescript' },
 		{ import = 'lazyvim.plugins.extras.lang.json' },
 		{ import = 'lazyvim.plugins.extras.lang.tailwind' },
+		{ import = 'lazyvim.plugins.extras.lang.markdown' },
 		-- { import = 'lazyvim.plugins.extras.lang.astro' },
 		-- { import = 'lazyvim.plugins.extras.lang.omnisharp' },
 		-- { import = 'lazyvim.plugins.extras.lang.svelte' },
 
+		{ import = 'lazyvim.plugins.extras.ai.copilot' },
 		{ import = 'lazyvim.plugins.extras.util.dot' },
 
 		{ import = 'plugins' },
 		{ import = 'plugins.xtra' },
 
+		-------------------------------
 		-- Disable LazyVim's plugins
 		{ 'folke/persistence.nvim', enabled = false },
 		{ 'echasnovski/mini.pairs', enabled = false },
-		{ 'echasnovski/mini.ai', enabled = false },
+		-- { 'echasnovski/mini.ai', enabled = false },
 		{ 'folke/tokyonight.nvim', enabled = false },
 		{ 'nvim-neo-tree/neo-tree.nvim', enabled = false },
 		{ 'ibhagwan/fzf-lua', enabled = false },

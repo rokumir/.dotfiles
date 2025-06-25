@@ -1,21 +1,36 @@
 ---@diagnostic disable: duplicate-doc-field
 local M = {}
 
-local skip = { mode = true, id = true, ft = true, rhs = true, lhs = true }
+---@generic K: string
+---@type table<K, true>
+local takes = {
+	callback = true,
+	buffer = true,
+	desc = true,
+	expr = true,
+	noremap = true,
+	nowait = true,
+	remap = true,
+	replace_keycodes = true,
+	script = true,
+	silent = true,
+	unique = true,
+}
 
----@param keys table<string, string|function|table>
+---@param keys table<string, unknown>
 local function get_opts(keys)
-	---@diagnostic disable-next-line: missing-fields
+	vim.validate('keys', keys, 'table', true)
 	local opts = {} ---@type vim.keymap.set.Opts
 	for k, v in pairs(keys) do
-		---@diagnostic disable-next-line: no-unknown
-		if type(k) ~= 'number' and not skip[k] then opts[k] = v end
+		if type(k) == 'string' and takes[k] then opts[k] = v end
 	end
 	return opts
 end
 
 ---@param args KeymapingFunArgs
 function M.map(args)
+	vim.validate('args', args, 'table', true)
+	if args.disabled then return end
 	local opts = get_opts(args)
 	opts.silent = opts.silent ~= false
 	opts.noremap = opts.noremap ~= false
@@ -39,3 +54,4 @@ return M
 ---@field script? boolean
 ---@field silent? boolean
 ---@field unique? boolean
+---@field disabled? boolean

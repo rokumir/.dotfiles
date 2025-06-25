@@ -4,13 +4,16 @@ local M = {}
 local lsp_util = require 'lspconfig.util'
 
 ---@param path string
-function M.exact_match(path)
-	local fullpath = vim.uv.fs_realpath(path)
-	if fullpath then
-		local current_path = vim.uv.cwd()
-		return current_path == fullpath
-	end
-	return false
+---@param options? { not_realpath?:true }
+function M.is_match(path, options)
+	path = path or ''
+	options = options or {}
+
+	local fullpath = options.not_realpath and vim.uv.fs_realpath(path) or path
+	if not fullpath then return false end
+
+	local current_path = vim.uv.cwd()
+	return current_path == fullpath
 end
 
 ---@param patterns string[]

@@ -1,7 +1,7 @@
 ---@diagnostic disable: no-unknown
 
-local root_dir_utils = require 'utils.root_dir'
-local function is_note_root_dir() return root_dir_utils.exact_match(vim.env.MY_NOTE_HOME) end
+local note_env = vim.env.RH_NOTE
+local function is_note_root_dir() return require('utils.root_dir').is_match(note_env) end
 
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
@@ -29,7 +29,7 @@ return {
 
 		opts = {
 			workspaces = {
-				{ name = 'note', path = vim.uv.fs_realpath(vim.env.MY_NOTE_HOME) },
+				{ name = 'note', path = vim.uv.fs_realpath(note_env) },
 			},
 			open_app_foreground = true,
 			disable_frontmatter = true,

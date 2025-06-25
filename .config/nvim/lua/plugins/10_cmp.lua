@@ -3,12 +3,25 @@ local sourceIcons = {
 	emmet = '',
 	cmdline = '󰘳',
 }
+local source_priority = {
+	lsp = 3,
+	path = 2,
+	buffer = 1,
+	snippets = -1,
+	lazydev = -1,
+	copilot = -10,
+}
 
 ---@module 'lazy'
 ---@type table<number, LazyPluginSpec>
 return {
 	{ -- Blink.cmp
 		'saghen/blink.cmp',
+
+		dependencies = {
+			-- Colorize completion menu
+			{ 'xzbdmw/colorful-menu.nvim', lazy = true, priority = 1000 },
+		},
 
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config | {}
@@ -33,24 +46,13 @@ return {
 
 			sources = {
 				default = { 'lsp', 'snippets', 'path', 'buffer' },
+				providers = {
+					buffer = { max_items = 4, min_keyword_length = 4 },
+				},
 
 				per_filetype = {
 					['rip-substitute'] = { 'buffer' },
 					gitcommit = {},
-				},
-				providers = {
-					snippets = {
-						-- don't show when triggered manually (= length 0),
-						-- useful when manually showing completions to see available fields
-						min_keyword_length = 1,
-						score_offset = -1000,
-					},
-
-					buffer = {
-						max_items = 4,
-						min_keyword_length = 4,
-						score_offset = -7,
-					},
 				},
 			},
 
@@ -61,9 +63,7 @@ return {
 				},
 				accept = {
 					create_undo_point = true,
-					auto_brackets = {
-						enabled = false,
-					},
+					auto_brackets = { enabled = false },
 				},
 				list = {
 					selection = { preselect = true, auto_insert = false },
@@ -81,8 +81,8 @@ return {
 						components = {
 							label = {
 								width = { max = 35 },
-								-- text = function(ctx) return require('colorful-menu').blink_components_text(ctx) end,
-								-- highlight = function(ctx) return require('colorful-menu').blink_components_highlight(ctx) end,
+								text = function(ctx) return require('colorful-menu').blink_components_text(ctx) end,
+								highlight = function(ctx) return require('colorful-menu').blink_components_highlight(ctx) end,
 							},
 							kind_icon = {
 								text = function(ctx)
@@ -98,7 +98,10 @@ return {
 						},
 					},
 				},
-				ghost_text = { enabled = false },
+				ghost_text = {
+					enabled = true,
+					show_without_menu = true,
+				},
 				documentation = {
 					treesitter_highlighting = true,
 					update_delay_ms = 300,
@@ -154,6 +157,11 @@ return {
 				use_frecency = true,
 				use_proximity = true,
 				sorts = {
+					function(a, b)
+						local a_priority = source_priority[a.source_id]
+						local b_priority = source_priority[b.source_id]
+						if a_priority ~= b_priority then return a_priority > b_priority end
+					end,
 					'exact',
 					'score',
 					'kind',
@@ -163,7 +171,4 @@ return {
 			},
 		},
 	},
-
-	-- Colorize completion menu
-	-- { 'xzbdmw/colorful-menu.nvim', lazy = true },
 }

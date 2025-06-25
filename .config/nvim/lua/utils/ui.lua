@@ -43,6 +43,7 @@ function M.bufremove(buf)
 			vim.api.nvim_win_set_buf(win, new_buf)
 		end)
 	end
+
 	if vim.api.nvim_buf_is_valid(buf) then pcall(vim.cmd, 'bdelete! ' .. buf) end
 end
 
