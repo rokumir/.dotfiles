@@ -42,19 +42,19 @@ require('lazy').setup {
 		{ import = 'lazyvim.plugins.extras.coding.yanky' },
 
 		{ import = 'lazyvim.plugins.extras.linting.eslint' },
-		-- { import = 'lazyvim.plugins.extras.formatting.biome' },
+		{ import = 'lazyvim.plugins.extras.formatting.biome' },
 		{ import = 'lazyvim.plugins.extras.formatting.prettier' },
 
 		-- { import = 'lazyvim.plugins.extras.dap.core' },
 		-- { import = 'lazyvim.plugins.extras.lang.typescript' },
 		{ import = 'lazyvim.plugins.extras.lang.json' },
 		{ import = 'lazyvim.plugins.extras.lang.tailwind' },
-		{ import = 'lazyvim.plugins.extras.lang.markdown' },
+		-- { import = 'lazyvim.plugins.extras.lang.markdown' },
 		-- { import = 'lazyvim.plugins.extras.lang.astro' },
 		-- { import = 'lazyvim.plugins.extras.lang.omnisharp' },
 		-- { import = 'lazyvim.plugins.extras.lang.svelte' },
 
-		{ import = 'lazyvim.plugins.extras.ai.copilot' },
+		-- { import = 'lazyvim.plugins.extras.ai.copilot' },
 		{ import = 'lazyvim.plugins.extras.util.dot' },
 
 		{ import = 'plugins' },

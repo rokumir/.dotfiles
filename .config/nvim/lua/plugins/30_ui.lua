@@ -37,6 +37,15 @@ return {
 	{ -- Statusline
 		'nvim-lualine/lualine.nvim',
 
+		init = function()
+			-- recording cmp: init refresh to avoid delay
+			local refresh_statusline = function() require('lualine').refresh { place = { 'statusline' } } end
+			vim.api.nvim_create_autocmd('RecordingEnter', { callback = refresh_statusline })
+			vim.api.nvim_create_autocmd('RecordingLeave', {
+				callback = function() vim.loop.new_timer():start(50, 0, vim.schedule_wrap(refresh_statusline)) end,
+			})
+		end,
+
 		opts = function(_, opts)
 			opts.options.component_separators = { left = '', right = '' }
 			opts.options.section_separators = { left = '', right = '' }

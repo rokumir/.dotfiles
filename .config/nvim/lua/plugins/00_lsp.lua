@@ -28,7 +28,7 @@ return {
 			servers = {
 				rust_analyzer = {},
 				html = {},
-				gopls = {},
+				-- gopls = {},
 				pyright = {},
 				markdown_oxide = {},
 

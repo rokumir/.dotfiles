@@ -1,20 +1,20 @@
 local const = require 'utils.const'
-local map = require('utils.keymap').map
+local map = vim.keymap.set
 local function augroup(name, opts) return vim.api.nvim_create_augroup('nihil_' .. name, opts or { clear = true }) end
 
 -- Settings for the greatest script of all time
 vim.api.nvim_create_autocmd('FileType', {
 	group = augroup 'simple_window',
 	pattern = 'tmux-harpoon', -- in config.filetype
-	callback = function(e)
+	callback = function(ev)
 		vim.opt_local.showmode = false
 		vim.opt_local.ruler = false
 		vim.opt_local.laststatus = 0
 		vim.opt_local.showcmd = false
 		vim.opt_local.wrap = false
 
-		map { 'n', '<c-q>', '<cmd>quit <cr>', buffer = e.buf }
-		map { 'n', '<c-s>', '<cmd>write | quit <cr>', buffer = e.buf }
+		map('n', '<c-q>', '<cmd>quit <cr>', { buffer = ev.buf })
+		map('n', '<c-s>', '<cmd>write | quit <cr>', { buffer = ev.buf })
 	end,
 })
 
@@ -122,8 +122,9 @@ vim.api.nvim_create_autocmd('FileType', {
 				vim.cmd 'close'
 				pcall(vim.api.nvim_buf_delete, event.buf, { force = true })
 			end
-			map { 'q', func, opts }
-			map { '<c-q>', func, opts }
+
+			map('n', 'q', func, opts)
+			map('n', '<c-q>', func, opts)
 		end)
 	end,
 })
@@ -145,11 +146,14 @@ vim.api.nvim_create_autocmd('FileType', {
 	end,
 })
 
--- Fix conceallevel for json files
 vim.api.nvim_create_autocmd({ 'FileType' }, {
-	group = augroup 'json_conceal',
+	group = augroup 'lang_json',
 	pattern = { 'json', 'jsonc', 'json5' },
-	callback = function() vim.opt_local.conceallevel = 0 end,
+	callback = function()
+		vim.opt_local.conceallevel = 0
+		vim.opt_local.wrap = false
+		vim.opt_local.spell = false
+	end,
 })
 
 -- Auto create dir when saving a file, in case some intermediate directory does not exist

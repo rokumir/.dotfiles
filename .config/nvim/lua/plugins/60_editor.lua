@@ -186,7 +186,7 @@ return {
 		},
 	},
 
-	{
+	{ -- better yanking
 		'gbprod/yanky.nvim',
 		opts = {
 			ring = {
@@ -230,5 +230,30 @@ return {
 				{ '=P', '<Plug>(YankyPutBeforeFilter)', desc = 'Put Before Applying a Filter' },
 			}
 		end,
+	},
+
+	{
+		'jiaoshijie/undotree',
+		priority = 1000,
+		keys = { -- load the plugin only when using it's keybinding:
+			{ '<leader>U', "<cmd>lua require('undotree').toggle()<cr>" },
+		},
+		opts = {
+			float_diff = false, -- using float window previews diff, set this `true` will disable layout option
+			layout = 'left_left_bottom', -- "left_bottom", "left_left_bottom"
+			position = 'left', -- "right", "bottom"
+			ignore_filetype = require 'utils.const'.ignored_filetypes,
+			window = { winblend = 100, },
+			keymaps = {
+				['j'] = 'move_next',
+				['k'] = 'move_prev',
+				['gj'] = 'move2parent',
+				['J'] = 'move_change_next',
+				['K'] = 'move_change_prev',
+				['<cr>'] = 'action_enter',
+				['p'] = 'enter_diffbuf',
+				['q'] = 'quit',
+			},
+		},
 	},
 }

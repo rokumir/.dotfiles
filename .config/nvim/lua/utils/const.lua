@@ -29,6 +29,8 @@ M.ignored_filetype_map = {
 	['neotest-output-panel'] = true,
 	['neotest-summary'] = true,
 	['copilot-chat'] = true,
+	undotree = true,
+	undotreeDiff = true,
 }
 
 ---@type string[]
