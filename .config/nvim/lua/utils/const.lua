@@ -31,9 +31,24 @@ M.ignored_filetype_map = {
 	['copilot-chat'] = true,
 	undotree = true,
 	undotreeDiff = true,
+	netrw = true,
+	tutor = true,
+	Undotree = true,
+	UndotreeDiff = true,
 }
 
 ---@type string[]
 M.ignored_filetypes = vim.tbl_keys(M.ignored_filetype_map)
+
+M.ignored_buftype_map = {
+	[''] = true,
+	nofile = true,
+	terminal = true,
+	help = true,
+	prompt = true,
+}
+
+---@type string[]
+M.ignored_buftypes = vim.tbl_keys(M.ignored_buftype_map)
 
 return M

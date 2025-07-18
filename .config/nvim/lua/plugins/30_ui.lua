@@ -31,6 +31,14 @@ return {
 					['cmp.entry.get_documentation'] = true,
 				},
 			},
+
+			signature = {
+				enabled = true,
+				---@type NoiceViewOptions
+				opts = {
+					max_size = 80,
+				},
+			},
 		},
 	},
 
@@ -81,6 +89,20 @@ return {
 			opts.sections.lualine_z = {
 				'location',
 			}
+
+			if vim.g.colors_name == 'rose-pine' then
+				local t = require 'lualine.themes.rose-pine'
+				local bg = require('rose-pine.palette').base
+				t.normal.c.bg = bg
+				t.insert.c.bg = bg
+				t.visual.c.bg = bg
+				t.replace.c.bg = bg
+				t.command.c.bg = bg
+				t.inactive.a.bg = bg
+				t.inactive.b.bg = bg
+				t.inactive.c.bg = bg
+				opts.options.theme = t
+			end
 		end,
 	},
 
@@ -116,9 +138,12 @@ return {
 			opts.options.enforce_regular_tabs = true
 			-- opts.options.hover = { enabled = true, delay = 200 }
 
-			local palette = require 'rose-pine.palette'
+			----------------------------------------
+			-- Themes based stuffs -------------
 			opts.highlights = opts.highlights or {}
-			for _, hl in ipairs {
+
+			--#region Styling indicators
+			local indicator_highlight_list = {
 				'indicator_selected',
 				'buffer_selected',
 				'separator_selected',
@@ -138,8 +163,21 @@ return {
 				'info_diagnostic_selected',
 				'error_diagnostic_selected',
 				'warning_diagnostic_selected',
-			} do
-				opts.highlights[hl] = { sp = palette.love }
+			}
+			local scheme_to_color = {
+				['rose-pine'] = function() return require('rose-pine.palette').love end,
+			}
+			local incicator_color = scheme_to_color[vim.g.colors_name]
+			if incicator_color then
+				for _, hl in ipairs(indicator_highlight_list) do
+					opts.highlights[hl] = { sp = incicator_color() }
+				end
+			end
+			--#endregion
+
+			if vim.g.colors_name == 'rose-pine' then
+				local rosepine = require 'rose-pine.palette'
+				opts.highlights.fill = { bg = rosepine.base }
 			end
 		end,
 	},

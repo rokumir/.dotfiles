@@ -1,12 +1,10 @@
----@type table<number, LazyPluginSpec>
+---@module 'lazy'
+---@type LazyPluginSpec[]
 return {
 	{ -- Rose Pine
 		'rose-pine/neovim',
 		name = 'rose-pine',
 		priority = 1000,
-		cond = vim.g.vscode ~= 1,
-
-		---@type Options
 		opts = {
 			variant = 'auto', -- auto, main, moon, or dawn
 			dark_variant = 'main', -- main, moon, or dawn
@@ -15,20 +13,39 @@ return {
 
 			enable = { terminal = true, migrations = true },
 
-			styles = {
-				bold = true,
-				italic = true,
-				transparency = true,
+			styles = { transparency = false, bold = true, italic = true },
+
+			palette = {
+				main = {
+					base = '#0f0f0f',
+					surface = '#0d0d0d',
+					overlay = '#262626',
+					muted = '#687074',
+					subtle = '#8d9195',
+					text = '#d9e2eb',
+					love = '#f66390',
+					gold = '#f1c383',
+					rose = '#f1b9b7',
+					pine = '#209081',
+					foam = '#88ccd8',
+					iris = '#b1aef0',
+					highlight_low = '#252727',
+					highlight_med = '#45484c',
+					highlight_high = '#565b60',
+				},
 			},
 
 			---@type table<string, vim.api.keyset.highlight>
 			highlight_groups = {
-				IndentChar = { fg = 'highlight_low' },
-				IndentCharActive = { fg = 'highlight_high' },
+				-- Normal = { bg = 'none' },
+				-- NormalFloat = { bg = 'none' },
+
 				ColorColumn = { bg = 'base' },
 				CursorLineNr = { fg = 'foam', bold = true, italic = true },
-				FloatBorder = { fg = 'highlight_med' },
+				FloatBorder = { fg = 'surface', bg = 'surface' },
+				WinSeparator = { fg = 'overlay' },
 
+				MsgArea = { fg = 'subtle' },
 				Comment = { fg = 'muted' },
 				Folded = { bg = 'base' },
 				VertSplit = { fg = 'overlay', bg = 'muted' },
@@ -36,39 +53,32 @@ return {
 				IncSearch = { bg = 'gold', fg = 'black' },
 				CurSearch = { bg = 'highlight_low', fg = 'none', underline = true },
 				Visual = { bg = 'subtle' },
-				Normal = { bg = 'none' },
-				NormalFloat = { bg = 'none' },
-				PmenuSel = { bg = 'highlight_low', fg = 'none' },
-				Pmenu = { fg = 'highlight_med' },
+				PmenuThumb = { bg = 'subtle', blend = 20 },
 
 				LspReferenceText = { bg = 'highlight_low', fg = 'none' },
 				LspReferenceRead = { bg = 'highlight_low', fg = 'none' },
 				LspReferenceWrite = { bg = 'highlight_low', fg = 'none' },
 
 				TroubleNormal = { bg = 'none' },
-				-- VirtColumn = { fg = 'base' },
 				IlluminatedWordText = { bg = 'highlight_low' },
 				IlluminatedWordRead = { bg = 'highlight_low' },
 				IlluminatedWordWrite = { bg = 'highlight_low' },
 				NeoTreeCursorLine = { bg = 'base', bold = true },
 
-				WhichKeyBorder = { fg = 'highlight_med' },
-				LazyGitBorder = { fg = 'highlight_med' },
+				WhichKeyBorder = { link = 'FloatBorder' },
+				LazyGitBorder = { link = 'FloatBorder' },
+
+				SnacksIndent = { fg = 'highlight_low' },
+				SnacksIndentScope = { fg = 'highlight_high' },
+				SnacksIndentChunk = { fg = 'highlight_high' },
+
+				BlinkCmpMenuBorder = { fg = 'overlay' },
+				BlinkCmpDoc = { bg = 'surface' },
+				BlinkCmpDocBorder = { fg = 'overlay' },
+				BlinkCmpDocSeparator = { bg = 'surface', fg = 'overlay' },
 
 				YankyPut = { bg = 'pine', blend = 25 },
-				YankyYanked = { bg = 'pine', blend = 25 },
-
-				-- CodeCompanionChatInfo = {}, -- Information messages in the chat buffer
-				-- CodeCompanionChatError = {}, -- Error messages in the chat buffer
-				-- CodeCompanionChatWarn = {}, -- Warning messages in the chat buffer
-				-- CodeCompanionChatSubtext = {}, -- Messages that appear under the information, error or warning messages in the chat buffer
-				-- CodeCompanionChatHeader = {}, -- The headers in the chat buffer
-				-- CodeCompanionChatSeparator = {}, -- Separator between headings in the chat buffer
-				-- CodeCompanionChatTokens = {}, -- Virtual text in the chat buffer showing the token count
-				-- CodeCompanionChatTool = {}, -- Tools in the chat buffer
-				-- CodeCompanionChatToolGroups = {}, -- Tool groups in the chat buffer
-				-- CodeCompanionChatVariable = {}, -- Variables in the chat buffer
-				-- CodeCompanionVirtualText = {}, -- All other virtual text in the plugin
+				YankyYanked = { bg = 'love', blend = 25 },
 			},
 		},
 	},
@@ -76,8 +86,6 @@ return {
 	{ -- Catppuccin
 		'catppuccin/nvim',
 		name = 'catppuccin',
-		cond = false,
-		lazy = false,
 		priority = 1000,
 		opts = {
 			flavour = 'mocha', -- latte, frappe, macchiato, mocha

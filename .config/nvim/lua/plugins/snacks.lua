@@ -83,12 +83,11 @@ return {
 
 			indent = {
 				priority = 200,
-				indent = { enabled = true, hl = 'IndentChar' },
+				indent = { enabled = true },
 				animate = { enabled = true, style = 'out' },
 				scope = { enabled = false },
 				chunk = {
 					enabled = true,
-					hl = 'IndentCharActive',
 					char = {
 						corner_top = '╭',
 						corner_bottom = '╰',
@@ -103,7 +102,7 @@ return {
 			notifier = {
 				---@type snacks.notifier.style
 				style = 'compact',
-				top_down = false,
+				top_down = true,
 			},
 
 			zen = {
@@ -296,8 +295,8 @@ return {
 				['<c-a-l>'] = { { 'pick_win', 'jump' }, mode = { 'i', 'n' } },
 				['<c-u>'] = { 'preview_scroll_up', mode = { 'i', 'n' } },
 				['<c-d>'] = { 'preview_scroll_down', mode = { 'i', 'n' } },
-				['<c-f>'] = { 'preview_scroll_left', mode = { 'i', 'n' } },
-				['<c-b>'] = { 'preview_scroll_right', mode = { 'i', 'n' } },
+				['<c-f>'] = { 'preview_scroll_right', mode = { 'i', 'n' } },
+				['<c-b>'] = { 'preview_scroll_left', mode = { 'i', 'n' } },
 				['<q-q>'] = { 'qflist', mode = { 'i', 'n' } },
 				['<a-t>'] = { 'trouble_open_selected', mode = { 'i', 'n' } },
 				['<a-i>'] = { 'toggle_ignored_persist', mode = { 'i', 'n' } },
@@ -353,11 +352,11 @@ return {
 					if #selected_paths == 0 then return end
 
 					local path_copy_options_map = {
-						['Relative paths'] = ':.',
-						['Fullpaths'] = '',
-						['Filenames'] = ':t',
-						['Filenames (no ext.)'] = ':t:r',
-						['Extensions'] = ':e',
+						['Relative path'] = ':.',
+						['Fullpath'] = '',
+						['Name'] = ':t',
+						['Name (ext. for files)'] = ':t:r',
+						['Extension'] = ':e',
 					}
 					local path_copy_options = vim.tbl_keys(path_copy_options_map)
 

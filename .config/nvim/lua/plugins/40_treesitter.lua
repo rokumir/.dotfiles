@@ -1,6 +1,8 @@
 ---@module 'lazy'
----@type table<number, LazyPluginSpec>
+---@type LazyPluginSpec[]
 return {
+	{ 'nvim-treesitter/playground', cmd = 'TSPlaygroundToggle' },
+
 	{ -- Treesitter
 		'nvim-treesitter/nvim-treesitter',
 		opts = {

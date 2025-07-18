@@ -47,14 +47,16 @@ require('lazy').setup {
 
 		-- { import = 'lazyvim.plugins.extras.dap.core' },
 		-- { import = 'lazyvim.plugins.extras.lang.typescript' },
-		{ import = 'lazyvim.plugins.extras.lang.json' },
 		{ import = 'lazyvim.plugins.extras.lang.tailwind' },
+		{ import = 'lazyvim.plugins.extras.lang.json' },
+		{ import = 'lazyvim.plugins.extras.lang.rust' },
+		{ import = 'lazyvim.plugins.extras.lang.go' },
 		-- { import = 'lazyvim.plugins.extras.lang.markdown' },
-		-- { import = 'lazyvim.plugins.extras.lang.astro' },
+		{ import = 'lazyvim.plugins.extras.lang.astro' },
 		-- { import = 'lazyvim.plugins.extras.lang.omnisharp' },
 		-- { import = 'lazyvim.plugins.extras.lang.svelte' },
 
-		-- { import = 'lazyvim.plugins.extras.ai.copilot' },
+		{ import = 'lazyvim.plugins.extras.ai.copilot' },
 		{ import = 'lazyvim.plugins.extras.util.dot' },
 
 		{ import = 'plugins' },
@@ -65,7 +67,6 @@ require('lazy').setup {
 		{ 'folke/persistence.nvim', enabled = false },
 		{ 'echasnovski/mini.pairs', enabled = false },
 		-- { 'echasnovski/mini.ai', enabled = false },
-		{ 'folke/tokyonight.nvim', enabled = false },
 		{ 'nvim-neo-tree/neo-tree.nvim', enabled = false },
 		{ 'ibhagwan/fzf-lua', enabled = false },
 	},

@@ -23,6 +23,12 @@ return {
 			{ 'xzbdmw/colorful-menu.nvim', lazy = true, priority = 1000 },
 		},
 
+		opts_extend = {
+			'sources.completion.enabled_providers',
+			'sources.compat',
+			'sources.default',
+		},
+
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config | {}
 		opts = {
@@ -32,6 +38,7 @@ return {
 				['<cr>'] = { 'select_accept_and_enter' },
 				['<c-y>'] = { 'select_and_accept' },
 				['<c-l>'] = { 'select_and_accept' },
+				['<tab>'] = { 'select_and_accept' },
 				['<c-e>'] = { 'hide', 'fallback' },
 				['<c-q>'] = { 'hide', 'fallback' },
 
@@ -72,6 +79,7 @@ return {
 				menu = {
 					auto_show = true,
 					border = 'rounded',
+					direction_priority = { 'n', 's' },
 					draw = {
 						gap = 2,
 						padding = 2,
@@ -160,6 +168,7 @@ return {
 					function(a, b)
 						local a_priority = source_priority[a.source_id]
 						local b_priority = source_priority[b.source_id]
+						if a_priority == nil or b_priority == nil then return false end
 						if a_priority ~= b_priority then return a_priority > b_priority end
 					end,
 					'exact',

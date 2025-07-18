@@ -126,24 +126,21 @@ return {
 		},
 	},
 
-	{ -- Automatically set indent settings base on the content of the file
-		'Darazaki/indent-o-matic',
-		opts = {
-			standard_widths = { 2, 4 },
-			-- filetype_lisp = { max_lines = 0, }, -- Disable indent-o-matic for LISP files
-
-			filetype_rust = { standard_widths = { 4 } },
-			filetype_fish = { standard_widths = { 4 } },
-			filetype_ = { standard_widths = { 2, 4 } },
-		},
+	{
+		'tpope/vim-sleuth',
+		config = function()
+			-- 1: true, 0: false
+			local excluded_filetypes = require('utils.const').ignored_filetypes
+			for _, ft in ipairs(excluded_filetypes) do
+				vim.g['sleuth_' .. ft .. '_heuristics'] = 0
+			end
+		end,
 	},
 
 	{ -- Fugit2
 		'SuperBo/fugit2.nvim',
 		build = false,
-		opts = {
-			width = 100,
-		},
+		opts = { width = 100 },
 		cmd = { 'Fugit2', 'Fugit2Diff', 'Fugit2Graph' },
 		keys = {
 			{ ';gF', '<cmd>Fugit2<cr>', desc = 'Open Fugit2' },
@@ -236,14 +233,14 @@ return {
 		'jiaoshijie/undotree',
 		priority = 1000,
 		keys = { -- load the plugin only when using it's keybinding:
-			{ '<leader>U', "<cmd>lua require('undotree').toggle()<cr>" },
+			{ '<leader>U', function() require('undotree').toggle() end, desc = 'Undotree' },
 		},
 		opts = {
 			float_diff = false, -- using float window previews diff, set this `true` will disable layout option
 			layout = 'left_left_bottom', -- "left_bottom", "left_left_bottom"
 			position = 'left', -- "right", "bottom"
-			ignore_filetype = require 'utils.const'.ignored_filetypes,
-			window = { winblend = 100, },
+			ignore_filetype = require('utils.const').ignored_filetypes,
+			window = { winblend = 100 },
 			keymaps = {
 				['j'] = 'move_next',
 				['k'] = 'move_prev',

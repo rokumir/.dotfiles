@@ -71,10 +71,9 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 vim.api.nvim_create_autocmd({ 'BufEnter', 'FileType' }, {
 	group = augroup 'disable_completion',
 	callback = function(ev)
-		if const.ignored_filetype_map[vim.b.filetype] or vim.bo.buftype == 'nofile' then
-			-- disable blink
-			vim.b.completion = false
-		end
+		local filetype = vim.bo[ev.buf].filetype
+		local is_ignored_filetype = const.ignored_filetype_map[filetype]
+		if is_ignored_filetype then vim.b.completion = false end
 	end,
 })
 

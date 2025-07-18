@@ -26,46 +26,12 @@ return {
 
 			---@type table<string, lspconfig.Config | {}>
 			servers = {
-				rust_analyzer = {},
 				html = {},
-				-- gopls = {},
-				pyright = {},
 				markdown_oxide = {},
-
 				biome = {},
 
 				emmet_language_server = {
 					filetypes = { 'html', 'javascriptreact', 'typescriptreact', 'htmlangular', 'vue' },
-				},
-
-				denols = {
-					enabled = false,
-					root_dir = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock', 'package.json', 'node_modules'),
-					single_file_support = false,
-					cmd_env = {
-						DENO_DIR = vim.fn.getenv 'XDG_CACHE_HOME' .. '/deno',
-						DENO_INSTALL_ROOT = vim.fn.getenv 'XDG_CACHE_HOME' .. '/deno',
-					},
-					init_options = {
-						enable = true,
-						lint = true,
-						unstable = true,
-						importMap = './deno.json',
-					},
-					settings = {
-						deno = {
-							enable = true,
-							suggest = {
-								imports = {
-									hosts = {
-										['https://deno.land'] = true,
-										['https://cdn.nest.land'] = true,
-										['https://crux.land'] = true,
-									},
-								},
-							},
-						},
-					},
 				},
 
 				tailwindcss = {
@@ -95,35 +61,6 @@ return {
 					},
 				},
 
-				eslint = {
-					settings = {
-						-- helps eslint find the eslintrc when it's placed in a subfolder instead of the cwd root
-						workingDirectories = { mode = 'auto' },
-					},
-				},
-
-				vtsls = {
-					enabled = true,
-					init_options = {
-						preferences = {
-							importModuleSpecifierPreference = 'non-relative',
-						},
-					},
-
-					on_attach = function(client, bufnr) require('twoslash-queries').attach(client, bufnr) end,
-
-					settings = {
-						typescript = {
-							inlayHints = {
-								parameterNames = { enabled = 'literal' },
-								propertyDeclarationTypes = { enabled = true },
-								functionLikeReturnTypes = { enabled = false },
-								enumMemberValues = { enabled = true },
-							},
-						},
-					},
-				},
-
 				css_variables = {
 					root_dir = util.root_pattern('package.json', 'node_modules'),
 				},
@@ -132,6 +69,40 @@ return {
 						css = { validate = true, lint = { unknownAtRules = 'ignore' } },
 						scss = { validate = true, lint = { unknownAtRules = 'ignore' } },
 						less = { validate = true, lint = { unknownAtRules = 'ignore' } },
+					},
+				},
+
+				vtsls = {
+					on_attach = function(client, bufnr) require('twoslash-queries').attach(client, bufnr) end,
+				},
+
+				denols = {
+					enabled = false,
+					root_dir = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock', 'package.json', 'node_modules'),
+					single_file_support = false,
+					cmd_env = {
+						DENO_DIR = vim.fn.getenv 'XDG_CACHE_HOME' .. '/deno',
+						DENO_INSTALL_ROOT = vim.fn.getenv 'XDG_CACHE_HOME' .. '/deno',
+					},
+					init_options = {
+						enable = true,
+						lint = true,
+						unstable = true,
+						importMap = './deno.json',
+					},
+					settings = {
+						deno = {
+							enable = true,
+							suggest = {
+								imports = {
+									hosts = {
+										['https://deno.land'] = true,
+										['https://cdn.nest.land'] = true,
+										['https://crux.land'] = true,
+									},
+								},
+							},
+						},
 					},
 				},
 
@@ -193,9 +164,9 @@ return {
 				{ 'K', function() vim.lsp.buf.hover() end, desc = 'Hover' },
 				-- { '<c-u>', function() require('noice.lsp').scroll(-4) end, mode = { 'n', 'i' }, desc = 'Scroll Up LSP Docs' },
 				-- { '<c-d>', function() require('noice.lsp').scroll(4) end, mode = { 'n', 'i' }, desc = 'Scroll Down LSP Docs' },
-				{ '<c-k>', false, mode = 'n', has = 'signatureHelp' },
+				{ '<c-k>', false, mode = 'i', has = 'signatureHelp' },
 				{ '<c-a-k>', function() vim.lsp.buf.signature_help() end, mode = 'i', has = 'signatureHelp', desc = 'Signature Help' },
-				{ 'g<c-k>', function() vim.lsp.buf.signature_help() end, has = 'signatureHelp', desc = 'Signature Help' },
+				{ '<c-a-k>', function() vim.lsp.buf.signature_help() end, has = 'signatureHelp', desc = 'Signature Help' },
 				{ '<leader>cR', function() Snacks.rename.rename_file() end, desc = 'Rename File', has = { 'workspace/didRenameFiles', 'workspace/willRenameFiles' } },
 				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, has = 'rename', desc = 'Rename Symbol' },
 				{ '<a-r>', function() require('live-rename').rename { insert = true } end, has = 'rename', desc = 'Rename Symbol' },

@@ -136,7 +136,7 @@ return {
 
 	{ -- AI suggestion/completion (A.I, copilot, chatgpt)
 		'zbirenbaum/copilot.lua',
-		enabled = false,
+		optional = true,
 		keys = {
 			{
 				'<leader><leader>C',
@@ -179,68 +179,68 @@ return {
 		},
 	},
 
-	{ -- AI Chat
-		'olimorris/codecompanion.nvim',
-
-		keys = {
-			{ '<c-P>', '<cmd>CodeCompanionActions<cr>', desc = 'CodeCompanion: Actions' },
-			{ '<leader>C', '<cmd>CodeCompanionChat Toggle<cr>', desc = 'CodeCompanion: Chat Toggle' },
-		},
-
-		---@module 'codecompanion'
-		opts = {
-			---@type CodeCompanion.Strategies
-			strategies = {
-				chat = {
-					adapter = 'copilot',
-					opts = { completion_provider = 'default' },
-				},
-				inline = { adapter = 'copilot' },
-				cmd = { adapter = 'copilot' },
-			},
-
-			---@type CodeCompanion
-			adapters = {
-				opts = {
-					show_model_choices = true,
-				},
-			},
-
-			display = {
-				action_palette = {
-					width = 95,
-					height = 10,
-					opts = {
-						show_default_actions = true, -- Show the default actions in the action palette?
-						show_default_prompt_library = true, -- Show the default prompt library in the action palette?
-					},
-				},
-
-				chat = {
-					show_header_separator = false, -- Show header separators in the chat buffer? Set this to false if you're using an external markdown formatting plugin
-					separator = '─', -- The separator between the different messages in the chat buffer
-					show_references = true, -- Show references (from slash commands and variables) in the chat buffer?
-					show_settings = false, -- Show LLM settings at the top of the chat buffer?
-					show_token_count = true, -- Show the token count for each response?
-					start_in_insert_mode = true, -- Open the chat buffer in insert mode?
-				},
-			},
-
-			opts = {
-				-- Set debug logging.
-				-- NOTE: By default, logs are stored at ~/.local/state/nvim/codecompanion.log
-				log_level = 'DEBUG', ---@type 'DEBUG'|'INFO'|'WARN'|'ERROR'
-
-				-- language = 'English',
-
-				-- Prevent any code from being sent to the LLM.
-				-- NOTE: Whilst the plugin makes every attempt to prevent code
-				-- from being sent to the LLM, use this option at your own risk.
-				send_code = false,
-
-				------@param opts CodeCompanion.Command.Opts
-				---system_prompt = function(opts) return 'My new system prompt' end,
-			},
-		},
-	},
+	-- { -- AI Chat
+	-- 	'olimorris/codecompanion.nvim',
+	--
+	-- 	keys = {
+	-- 		{ '<c-P>', '<cmd>CodeCompanionActions<cr>', desc = 'CodeCompanion: Actions' },
+	-- 		{ '<leader>C', '<cmd>CodeCompanionChat Toggle<cr>', desc = 'CodeCompanion: Chat Toggle' },
+	-- 	},
+	--
+	-- 	---@module 'codecompanion'
+	-- 	opts = {
+	-- 		---@type CodeCompanion.Strategies
+	-- 		strategies = {
+	-- 			chat = {
+	-- 				adapter = 'copilot',
+	-- 				opts = { completion_provider = 'default' },
+	-- 			},
+	-- 			inline = { adapter = 'copilot' },
+	-- 			cmd = { adapter = 'copilot' },
+	-- 		},
+	--
+	-- 		---@type CodeCompanion
+	-- 		adapters = {
+	-- 			opts = {
+	-- 				show_model_choices = true,
+	-- 			},
+	-- 		},
+	--
+	-- 		display = {
+	-- 			action_palette = {
+	-- 				width = 95,
+	-- 				height = 10,
+	-- 				opts = {
+	-- 					show_default_actions = true, -- Show the default actions in the action palette?
+	-- 					show_default_prompt_library = true, -- Show the default prompt library in the action palette?
+	-- 				},
+	-- 			},
+	--
+	-- 			chat = {
+	-- 				show_header_separator = false, -- Show header separators in the chat buffer? Set this to false if you're using an external markdown formatting plugin
+	-- 				separator = '─', -- The separator between the different messages in the chat buffer
+	-- 				show_references = true, -- Show references (from slash commands and variables) in the chat buffer?
+	-- 				show_settings = false, -- Show LLM settings at the top of the chat buffer?
+	-- 				show_token_count = true, -- Show the token count for each response?
+	-- 				start_in_insert_mode = true, -- Open the chat buffer in insert mode?
+	-- 			},
+	-- 		},
+	--
+	-- 		opts = {
+	-- 			-- Set debug logging.
+	-- 			-- NOTE: By default, logs are stored at ~/.local/state/nvim/codecompanion.log
+	-- 			log_level = 'DEBUG', ---@type 'DEBUG'|'INFO'|'WARN'|'ERROR'
+	--
+	-- 			-- language = 'English',
+	--
+	-- 			-- Prevent any code from being sent to the LLM.
+	-- 			-- NOTE: Whilst the plugin makes every attempt to prevent code
+	-- 			-- from being sent to the LLM, use this option at your own risk.
+	-- 			send_code = false,
+	--
+	-- 			------@param opts CodeCompanion.Command.Opts
+	-- 			---system_prompt = function(opts) return 'My new system prompt' end,
+	-- 		},
+	-- 	},
+	-- },
 }

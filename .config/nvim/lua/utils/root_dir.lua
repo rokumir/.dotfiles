@@ -4,12 +4,12 @@ local M = {}
 local lsp_util = require 'lspconfig.util'
 
 ---@param path string
----@param options? { not_realpath?:true }
+---@param options? { realpath?:boolean }
 function M.is_match(path, options)
 	path = path or ''
 	options = options or {}
 
-	local fullpath = options.not_realpath and vim.uv.fs_realpath(path) or path
+	local fullpath = (options.realpath or true) and vim.uv.fs_realpath(path) or path
 	if not fullpath then return false end
 
 	local current_path = vim.uv.cwd()

@@ -1,4 +1,4 @@
-local map_key = require('utils.keymap').map
+local key_set = require('utils.keymap').map
 
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
@@ -106,7 +106,7 @@ return {
 				}
 				for _, keymap_args in ipairs(keymaps) do
 					keymap_args.buffer = bufnr
-					map_key(keymap_args)
+					key_set(keymap_args)
 				end
 
 				-- plugins
