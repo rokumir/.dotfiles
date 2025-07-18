@@ -4,7 +4,13 @@
 # TODO: Add more/better logic.
 
 # System builtin package manager
-sudo pacman -Syu; or return
+begin
+    if type -q yay
+        yay
+    else
+        sudo pacman -Syu
+    end
+end; or return
 
 # Rust package manager
 rustup update; or return
