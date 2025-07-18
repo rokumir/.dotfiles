@@ -1,18 +1,17 @@
-alias pwsh 'pwsh.exe -WorkingDirectory "~"'
-
-function get-window-home
-    # flag_u: unix  |  flag_m: windows
-    argparse -n get-window-home u m -- $argv; or return
-    set path (cmd.exe /c '<nul set /p=%UserProfile%' 2>/dev/null) # still in Windows path (forward slashes)
-
-    if set -q _flag_m
-        echo $path
-        return
+function win-home
+    if not set -q WIN_HOME
+        set path (cmd.exe /c '<nul set /p=%UserProfile%' 2>/dev/null) # still in Windows path format (forward slashes)
+        set -gx WIN_HOME (wslpath -u $path)
     end
 
-    wslpath -u $path
+    printf $WIN_HOME
+end
+function wezterm-config
+    set -l win_path (win-home)
+    set -gx WEZTERM_CONFIG_DIR $win_path/.config/wezterm
+    set -gx WEZTERM_CONFIG $WEZTERM_CONFIG_DIR/wezterm.lua
+    printf $WEZTERM_CONFIG
 end
 
-set -gx WIN_HOME (get-window-home)
-set -gx WEZTERM_CONFIG_DIR $WIN_HOME/.config/wezterm
-set -gx WEZTERM_CONFIG $WEZTERM_CONFIG_DIR/wezterm.lua
+alias pwsh 'pwsh.exe -WorkingDirectory "~"'
+alias obsidian-cli 'obsidian-cli.exe'
