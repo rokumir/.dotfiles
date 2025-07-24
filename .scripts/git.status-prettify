@@ -15,20 +15,18 @@ set stats $diff_stats[..(math (count $diff_stats) - 1)]
 set summary_line $diff_stats[-1]
 
 # Get git status in short format, excluding the branch line
-set status_lines (git -c color.status=always status -sb)[2..]
+# NOTE: doesn't count in untracked files
+set status_lines (git -c color.status=always status -sbuno)[2..]
 
 # Calculate padding width by finding the longest status line
 # but ensure it's at least MIN_PADDING characters wide
 set padding_width (
-    begin
-        set -l max_len 0
-        for line in $status_lines
-            set stripped_line (string replace -ra '\e\[[^m]*m' '' $line)
-            set len (string length $stripped_line'   ')
-            test $len -gt $max_len; and set max_len $len
-        end
-        echo $max_len
-    end | read -l max_len
+    set -l max_len 0
+    for line in $status_lines
+        set stripped_line (string replace -ra '\e\[[^m]*m' '' $line)
+        set len (string length $stripped_line'   ')
+        if [ $len -gt $max_len ]; set max_len $len; end
+    end
     math max $MIN_PADDING,$max_len
 )
 
@@ -38,17 +36,21 @@ set stat_index 0
 for status_line in $status_lines
     set stat_index (math $stat_index + 1)
 
-    # If we have diff stats for this line, add them
-    test -z "$stats[$stat_index]"; and continue
+    set colored_line "$status_line "(set_color brblack)
 
-    # Format: <status_line><padding><diff_info>
-    set -l colored_line "$status_line "(set_color brblack)
-    set -l padded_line (string pad -r -w$padding_width -c$SEP_CHAR $colored_line)
-    set -l diff_info (set_color normal)" $stats[$stat_index]"
+    # If we have diff stats for this line, add them
+    if [ -z "$stats[$stat_index]" ]
+        set -a output $colored_line
+        continue
+    end
+
+    # template: <status_line><padding><diff_info>
+    set padded_line (string pad -r -w$padding_width -c$SEP_CHAR $colored_line)
+    set diff_info (set_color normal)" $stats[$stat_index]"
     set status_line $padded_line$diff_info
 
     # shorten them if they pass terminal width
-    if test (string length $status_line) -ge $COLUMNS
+    if [ (string length "$status_line") -ge $COLUMNS ]
         set status_line (string shorten -c' ' -m$COLUMNS $status_line)
     end
 
@@ -59,3 +61,4 @@ end
 # Output results
 echo (set_color -o bryellow)$summary_line
 printf '%s\n' $output
+git -c color.status=always status -sbu | rg '\?\?' # untracked files status
