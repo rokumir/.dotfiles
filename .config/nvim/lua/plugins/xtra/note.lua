@@ -32,7 +32,7 @@ return {
 		config = function(_, opts)
 			require('obsidian').setup(opts)
 
-			keymap { '<c-O>', '<cmd>ObsidianOpen<cr>', mode = { 'i', 'n' } }
+			keymap { '<a-o>', '<cmd>ObsidianOpen<cr>', mode = { 'i', 'n' } }
 			keymap { ';sT', '<cmd>ObsidianTags<cr>', mode = { 'i', 'n' } }
 			keymap {
 				'gd',

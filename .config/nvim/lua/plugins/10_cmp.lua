@@ -38,7 +38,6 @@ return {
 				['<cr>'] = { 'select_accept_and_enter' },
 				['<c-y>'] = { 'select_and_accept' },
 				['<c-l>'] = { 'select_and_accept' },
-				['<tab>'] = { 'select_and_accept' },
 				['<c-e>'] = { 'hide', 'fallback' },
 				['<c-q>'] = { 'hide', 'fallback' },
 

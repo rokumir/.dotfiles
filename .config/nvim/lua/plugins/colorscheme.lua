@@ -10,18 +10,15 @@ return {
 			dark_variant = 'main', -- main, moon, or dawn
 			dim_inactive_windows = false,
 			extend_background_behind_borders = true,
-
 			enable = { terminal = true, migrations = true },
-
 			styles = { transparency = false, bold = true, italic = true },
-
 			palette = {
 				main = {
 					base = '#0f0f0f',
-					surface = '#0d0d0d',
-					overlay = '#262626',
-					muted = '#687074',
-					subtle = '#8d9195',
+					surface = '#0c0c0c',
+					overlay = '#1f1f1f',
+					muted = '#687077',
+					subtle = '#88929c',
 					text = '#d9e2eb',
 					love = '#f66390',
 					gold = '#f1c383',
@@ -34,12 +31,8 @@ return {
 					highlight_high = '#565b60',
 				},
 			},
-
 			---@type table<string, vim.api.keyset.highlight>
 			highlight_groups = {
-				-- Normal = { bg = 'none' },
-				-- NormalFloat = { bg = 'none' },
-
 				ColorColumn = { bg = 'base' },
 				CursorLineNr = { fg = 'foam', bold = true, italic = true },
 				FloatBorder = { fg = 'surface', bg = 'surface' },
@@ -54,6 +47,7 @@ return {
 				CurSearch = { bg = 'highlight_low', fg = 'none', underline = true },
 				Visual = { bg = 'subtle' },
 				PmenuThumb = { bg = 'subtle', blend = 20 },
+				PmenuSel = { bg = 'muted', fg = 'none', blend = 15 },
 
 				LspReferenceText = { bg = 'highlight_low', fg = 'none' },
 				LspReferenceRead = { bg = 'highlight_low', fg = 'none' },
@@ -67,6 +61,7 @@ return {
 
 				WhichKeyBorder = { link = 'FloatBorder' },
 				LazyGitBorder = { link = 'FloatBorder' },
+				-- LazyBackdrop = { bg = 'love' },
 
 				SnacksIndent = { fg = 'highlight_low' },
 				SnacksIndentScope = { fg = 'highlight_high' },

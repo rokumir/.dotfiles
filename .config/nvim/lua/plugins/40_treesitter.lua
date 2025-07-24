@@ -41,7 +41,7 @@ return {
 					['Podfile'] = 'ruby',
 				},
 				extension = {
-					mdx = 'mdx',
+					-- mdx = 'mdx',
 					tmux = 'tmux',
 					gitconfig = 'gitconfig',
 				},
@@ -51,7 +51,7 @@ return {
 			-- {exist_lang} = [registered_filetypes]
 			---@type table<string, string|string[]>
 			treesitter = {
-				markdown = 'mdx',
+				-- markdown = 'mdx',
 				bash = { 'tmux-harpoon', 'dotenv' },
 				javascript = 'dataviewjs',
 				json = 'jsonl',

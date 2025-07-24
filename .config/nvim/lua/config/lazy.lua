@@ -34,41 +34,43 @@ require('lazy').setup {
 			},
 		},
 
-		-- import any extras modules here
-		{ import = 'lazyvim.plugins.extras.editor.refactoring' },
-		{ import = 'lazyvim.plugins.extras.editor.dial' },
-		{ import = 'lazyvim.plugins.extras.coding.neogen' },
-		{ import = 'lazyvim.plugins.extras.coding.blink' },
-		{ import = 'lazyvim.plugins.extras.coding.yanky' },
-
-		{ import = 'lazyvim.plugins.extras.linting.eslint' },
-		{ import = 'lazyvim.plugins.extras.formatting.biome' },
-		{ import = 'lazyvim.plugins.extras.formatting.prettier' },
-
-		-- { import = 'lazyvim.plugins.extras.dap.core' },
-		-- { import = 'lazyvim.plugins.extras.lang.typescript' },
-		{ import = 'lazyvim.plugins.extras.lang.tailwind' },
-		{ import = 'lazyvim.plugins.extras.lang.json' },
-		{ import = 'lazyvim.plugins.extras.lang.rust' },
-		{ import = 'lazyvim.plugins.extras.lang.go' },
-		-- { import = 'lazyvim.plugins.extras.lang.markdown' },
-		{ import = 'lazyvim.plugins.extras.lang.astro' },
-		-- { import = 'lazyvim.plugins.extras.lang.omnisharp' },
-		-- { import = 'lazyvim.plugins.extras.lang.svelte' },
-
-		{ import = 'lazyvim.plugins.extras.ai.copilot' },
-		{ import = 'lazyvim.plugins.extras.util.dot' },
-
-		{ import = 'plugins' },
-		{ import = 'plugins.xtra' },
-
-		-------------------------------
-		-- Disable LazyVim's plugins
+		--#region Disable default plugins
 		{ 'folke/persistence.nvim', enabled = false },
 		{ 'echasnovski/mini.pairs', enabled = false },
 		-- { 'echasnovski/mini.ai', enabled = false },
 		{ 'nvim-neo-tree/neo-tree.nvim', enabled = false },
 		{ 'ibhagwan/fzf-lua', enabled = false },
+		--#endregion
+
+		--#region Extras modules
+		{ import = 'lazyvim.plugins.extras.ui.edgy' },
+
+		{ import = 'lazyvim.plugins.extras.editor.refactoring' },
+		{ import = 'lazyvim.plugins.extras.editor.dial' },
+
+		{ import = 'lazyvim.plugins.extras.util.dot' },
+
+		-- { import = 'lazyvim.plugins.extras.lang.typescript' },
+		{ import = 'lazyvim.plugins.extras.lang.tailwind' },
+		{ import = 'lazyvim.plugins.extras.lang.json' },
+		{ import = 'lazyvim.plugins.extras.lang.rust' },
+		{ import = 'lazyvim.plugins.extras.lang.go' },
+		{ import = 'lazyvim.plugins.extras.lang.astro' },
+		-- { import = 'lazyvim.plugins.extras.lang.omnisharp' },
+		-- { import = 'lazyvim.plugins.extras.lang.svelte' },
+
+		{ import = 'lazyvim.plugins.extras.coding.neogen' },
+		{ import = 'lazyvim.plugins.extras.coding.blink' },
+		{ import = 'lazyvim.plugins.extras.coding.yanky' },
+		{ import = 'lazyvim.plugins.extras.linting.eslint' },
+		{ import = 'lazyvim.plugins.extras.formatting.biome' },
+		{ import = 'lazyvim.plugins.extras.formatting.prettier' },
+		-- { import = 'lazyvim.plugins.extras.dap.core' },
+
+		{ import = 'lazyvim.plugins.extras.ai.copilot-chat' },
+		--#endregion
+
+		{ import = 'plugins' },
 	},
 	checker = { enabled = false }, -- automatically check for plugin updates
 	performance = {

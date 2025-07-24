@@ -30,40 +30,24 @@ return {
 				markdown_oxide = {},
 				biome = {},
 
+				mdx_analyzer = {},
+
 				emmet_language_server = {
 					filetypes = { 'html', 'javascriptreact', 'typescriptreact', 'htmlangular', 'vue' },
 				},
 
 				tailwindcss = {
-					root_dir = util.root_pattern(
-						'tailwind.config.js',
-						'tailwind.config.cjs',
-						'tailwind.config.mjs',
-						'tailwind.config.ts',
-						'postcss.config.js',
-						'postcss.config.cjs',
-						'postcss.config.mjs',
-						'postcss.config.ts',
-						'package.json',
-						'node_modules'
-					),
-					settings = {
-						tailwindCSS = {
-							experimental = {
-								classRegex = {
-									{ 'cva\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' },
-									{ 'cx\\(([^)]*)\\)', "(?:'|\"|`)([^']*)(?:'|\"|`)" },
-									{ 'cn\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' },
-									{ '([a-zA-Z_]+classNames)\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' },
-								},
-							},
-						},
-					},
+					-- root_dir = util.root_pattern( 'tailwind.config.js', 'tailwind.config.cjs', 'tailwind.config.mjs', 'tailwind.config.ts', 'postcss.config.js', 'postcss.config.cjs', 'postcss.config.mjs', 'postcss.config.ts', 'package.json', 'node_modules'),
+					-- settings = {
+					-- 	tailwindCSS = {
+					-- 		experimental = {
+					-- 			classRegex = { { 'cva\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' }, { 'cx\\(([^)]*)\\)', "(?:'|\"|`)([^']*)(?:'|\"|`)" }, { 'cn\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' }, { '([a-zA-Z_]+classNames)\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' } },
+					-- 		},
+					-- 	},
+					-- },
 				},
 
-				css_variables = {
-					root_dir = util.root_pattern('package.json', 'node_modules'),
-				},
+				css_variables = {},
 				cssls = {
 					settings = {
 						css = { validate = true, lint = { unknownAtRules = 'ignore' } },
