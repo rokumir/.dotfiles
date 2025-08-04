@@ -4,3 +4,4 @@ fundle/
 fish_variables
 fish_plugins
 fishd.tmp*
+conf.d/*.local*

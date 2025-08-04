@@ -14,4 +14,4 @@ function wezterm-config
 end
 
 alias pwsh 'pwsh.exe -WorkingDirectory "~"'
-alias obsidian-cli 'obsidian-cli.exe'
+type -q neovide.exe && alias nvi 'neovide.exe'
