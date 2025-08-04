@@ -35,10 +35,11 @@ M.ignored_filetype_map = {
 	tutor = true,
 	Undotree = true,
 	UndotreeDiff = true,
+	codecompanion = true,
+	oil = true,
+	snacks_picker_input = true,
 }
-
----@type string[]
-M.ignored_filetypes = vim.tbl_keys(M.ignored_filetype_map)
+M.ignored_filetypes = vim.tbl_keys(M.ignored_filetype_map) ---@type string[]
 
 M.ignored_buftype_map = {
 	[''] = true,
@@ -47,8 +48,15 @@ M.ignored_buftype_map = {
 	help = true,
 	prompt = true,
 }
+M.ignored_buftypes = vim.tbl_keys(M.ignored_buftype_map) ---@type string[]
 
----@type string[]
-M.ignored_buftypes = vim.tbl_keys(M.ignored_buftype_map)
+M.document_filetype_map = {
+	markdown = true,
+	vimwiki = true,
+	latex = true,
+	help = true,
+	text = true,
+	tex = true,
+}
 
 return M

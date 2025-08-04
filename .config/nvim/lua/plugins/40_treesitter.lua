@@ -68,4 +68,17 @@ return {
 			end
 		end,
 	},
+
+	{ -- cool treesitter
+		'nvim-treesitter/nvim-treesitter-context',
+		priority = 1000,
+		keys = {
+			{ '<leader>ut', function() require('treesitter-context').toggle() end, desc = 'Toggle Treesitter Context' },
+		},
+		opts = {
+			enable = false,
+			mode = 'cursor',
+			max_lines = 3,
+		},
+	},
 }

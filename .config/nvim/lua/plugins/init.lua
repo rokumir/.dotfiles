@@ -1,7 +1,8 @@
 ---@module 'lazy'
----@type table<number, LazyPluginSpec>
+---@type LazyPluginSpec[]
 return {
-	{ import = 'plugins.xtra' },
+	{ import = 'plugins.colorscheme' },
+	{ import = 'plugins.lang' },
 
 	{
 		'williamboman/mason.nvim',

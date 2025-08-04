@@ -2,12 +2,9 @@
 local map = require('utils.keymap').map
 local ui_utils = require 'utils.ui'
 
-if vim.g.vscode == 1 then return end
-
 --#region --- UNMAP
 map { 'K', '<nop>', mode = { 'n', 's', 'x' } }
 map { '<c-e>', '<nop>', mode = { 'i' } }
-map { '<c-f>', '<nop>', mode = { 'n', 's', 'x' } }
 --#endregion UNMAP
 
 --#region --- MISC
@@ -19,8 +16,9 @@ map { '<c-a>', 'ggVG' }
 map { 'H', '^', mode = { 'n', 'v', 'o' } }
 map { 'L', '$', mode = { 'n', 'v', 'o' } }
 
--- FIX: for wezterm (when in tmux)
-map { '<c-s-v>', '"+p', mode = { 'i', 'n', 'x' }, desc = 'Paste from System Clipboard (overide)' }
+-- NOTE: for tmux, neovide
+map { '<c-s-v>', '"+P', mode = { 'n', 'v' }, nowait = true, desc = 'Paste from System Clipboard' }
+map { '<c-s-v>', '<c-r>+', mode = { 'i', 'c' }, nowait = true, desc = 'Paste from System Clipboard' }
 
 -- Better "Goto Bottom"
 map { 'G', 'Gzz', mode = { 'n', 'v' }, nowait = true }
@@ -52,15 +50,15 @@ map { '<a-K>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate Li
 -- better up/down
 map { 'j', [[v:count == 0 ? 'gj' : 'j']], mode = { 'n', 'x' }, expr = true }
 map { 'k', [[v:count == 0 ? 'gk' : 'k']], mode = { 'n', 'x' }, expr = true }
-map { '<c-k>', '5kzz', mode = { 'n', 'v' }, nowait = true }
-map { '<c-j>', '5jzz', mode = { 'n', 'v' }, nowait = true }
+map { '<c-k>', '5k', mode = { 'n', 'v' }, nowait = true }
+map { '<c-j>', '5j', mode = { 'n', 'v' }, nowait = true }
 
 -- foldings
 map { 'zO', '<cmd>set foldlevel=99 <cr>', nowait = true }
 map { 'zC', '<cmd>set foldlevel=0 <cr>', nowait = true }
 
 -- search
-map { '<c-f>', '/', mode = { 'n', 'i', 's' }, remap = true }
+-- map { '<c-f>', '/', mode = { 'n', 'i', 's' }, remap = true }
 
 -- Better Next/Prev (https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n)
 map { 'n', [['Nn'[v:searchforward].'zzzv']], expr = true, desc = 'Next Search Result' }
@@ -97,20 +95,16 @@ map { '>', '>gv', mode = 'v', desc = 'Unindent' }
 --#region --- UI
 map { '<leader>u', '', desc = '+ui' }
 map { '<leader>ui', vim.show_pos, desc = 'Inspect highlight under cursor' }
-map { '<leader>um', ':delm! | delm a-zA-Z | redraw <cr>', desc = 'Clear Marks in Active Buffer' }
-map {
-	'<c-l>',
-	function()
-		vim.cmd.nohlsearch() -- Clear the search highlighting
-		vim.cmd.diffupdate() -- Redraw the screen
-		vim.cmd.redraw() -- Update the diff highlighting and folds.
-		pcall(vim.cmd.NoiceDismiss) -- Clear noice mini view
-		pcall(Snacks.words.clear)
-	end,
-	desc = 'Clear Visual Noises',
-	mode = { 'n', 'i' },
-	nowait = true,
-}
+local function clearVisualNoises()
+	vim.cmd.nohlsearch() -- Clear the search highlighting
+	vim.cmd.diffupdate() -- Redraw the screen
+	vim.cmd.redraw() -- Update the diff highlighting and folds.
+	pcall(vim.cmd.NoiceDismiss) -- Clear noice mini view
+	pcall(Snacks.words.clear)
+end
+map { '<c-l>', clearVisualNoises, desc = 'Clear Visual Noises', mode = { 'n', 'i', 'x' }, nowait = true }
+map { '<leader>uc', clearVisualNoises, desc = 'Clear Visual Noises', mode = { 'n', 'x' }, nowait = true }
+map { '<leader>um', '<cmd>delm! | delm A-Z0-9<cr>', desc = 'Clear Marks' }
 --#endregion
 
 --#region --- TOGGLES
@@ -139,9 +133,16 @@ Snacks.toggle
 	.new({
 		name = 'Rulers',
 		get = function() return #vim.o.colorcolumn > 0 end,
-		set = function(new_state) vim.opt.colorcolumn = new_state and colorcolumn or '' end,
+		set = function(state) vim.opt.colorcolumn = state and colorcolumn or '' end,
 	})
 	:map '<leader><leader>R'
+--#endregion
+
+--#region --- TERMINAL
+map { '<leader>fT', function() Snacks.terminal() end, desc = 'Terminal (cwd)' }
+map { '<leader>ft', function() Snacks.terminal(nil, { cwd = LazyVim.root() }) end, desc = 'Terminal (Root Dir)' }
+map { '<c-/>', function() Snacks.terminal() end, desc = 'Terminal (cwd)' }
+map { '<c-alt-/>', function() Snacks.terminal(nil, { cwd = LazyVim.root() }) end, desc = 'Terminal (Root Dir)' }
 --#endregion
 
 --#region --- WINDOWS
@@ -173,6 +174,7 @@ map { '<f2>i', '<cmd>LspInfo <cr>', desc = 'LSP info' }
 map { '<f2>r', '<cmd>LspRestart <cr>', desc = 'Restart LSP' }
 map { '<f2>m', '<cmd>Mason <cr>', desc = 'Mason' }
 map { '<f2>f', '<cmd>ConformInfo <cr>', desc = 'Conform' }
+map { '<f2>L', function() LazyVim.news.changelog() end, desc = 'LazyVim Changelog' }
 --#endregion
 
 --#region --- LSP

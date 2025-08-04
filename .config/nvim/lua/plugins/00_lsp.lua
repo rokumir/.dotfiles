@@ -1,8 +1,6 @@
-local map_key = require('utils.keymap').map
 local util = require 'lspconfig.util'
 
----@diagnostic disable: inject-field
----@type table<number, LazyPluginSpec>
+---@type LazyPluginSpec[]
 return {
 	{
 		'neovim/nvim-lspconfig',
@@ -36,16 +34,7 @@ return {
 					filetypes = { 'html', 'javascriptreact', 'typescriptreact', 'htmlangular', 'vue' },
 				},
 
-				tailwindcss = {
-					-- root_dir = util.root_pattern( 'tailwind.config.js', 'tailwind.config.cjs', 'tailwind.config.mjs', 'tailwind.config.ts', 'postcss.config.js', 'postcss.config.cjs', 'postcss.config.mjs', 'postcss.config.ts', 'package.json', 'node_modules'),
-					-- settings = {
-					-- 	tailwindCSS = {
-					-- 		experimental = {
-					-- 			classRegex = { { 'cva\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' }, { 'cx\\(([^)]*)\\)', "(?:'|\"|`)([^']*)(?:'|\"|`)" }, { 'cn\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' }, { '([a-zA-Z_]+classNames)\\(([^)]*)\\)', '["\'`]([^"\'`]*).*?["\'`]' } },
-					-- 		},
-					-- 	},
-					-- },
-				},
+				tailwindcss = {},
 
 				css_variables = {},
 				cssls = {
@@ -65,8 +54,8 @@ return {
 					root_dir = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock', 'package.json', 'node_modules'),
 					single_file_support = false,
 					cmd_env = {
-						DENO_DIR = vim.fn.getenv 'XDG_CACHE_HOME' .. '/deno',
-						DENO_INSTALL_ROOT = vim.fn.getenv 'XDG_CACHE_HOME' .. '/deno',
+						DENO_DIR = vim.env.XDG_CACHE_HOME .. '/deno',
+						DENO_INSTALL_ROOT = vim.env.XDG_CACHE_HOME .. '/deno',
 					},
 					init_options = {
 						enable = true,
@@ -138,16 +127,15 @@ return {
 	{
 		'neovim/nvim-lspconfig',
 		opts = function()
-			---@type LazyKeysLspSpec[]
-			local keys = {
+			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), {
 				{ 'gd', function() Snacks.picker.lsp_definitions() end, has = 'definition', desc = 'Definition' },
 				{ 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Declaration' },
 				{ 'gr', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
 				{ 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Implementation' },
 				{ 'gy', function() Snacks.picker.lsp_type_definitions() end, desc = 'T[y]pe Definition' },
-				{ 'K', function() vim.lsp.buf.hover() end, desc = 'Hover' },
-				-- { '<c-u>', function() require('noice.lsp').scroll(-4) end, mode = { 'n', 'i' }, desc = 'Scroll Up LSP Docs' },
-				-- { '<c-d>', function() require('noice.lsp').scroll(4) end, mode = { 'n', 'i' }, desc = 'Scroll Down LSP Docs' },
+				{ 'K', function() vim.lsp.buf.hover { max_width = 50, border = 'rounded' } end, has = 'hover', desc = 'Hover' },
+				{ '<c-u>', function() require('noice.lsp').scroll(-4) end, has = 'hover', desc = 'Scroll Up LSP Docs' },
+				{ '<c-d>', function() require('noice.lsp').scroll(4) end, has = 'hover', desc = 'Scroll Down LSP Docs' },
 				{ '<c-k>', false, mode = 'i', has = 'signatureHelp' },
 				{ '<c-a-k>', function() vim.lsp.buf.signature_help() end, mode = 'i', has = 'signatureHelp', desc = 'Signature Help' },
 				{ '<c-a-k>', function() vim.lsp.buf.signature_help() end, has = 'signatureHelp', desc = 'Signature Help' },
@@ -156,9 +144,8 @@ return {
 				{ '<a-r>', function() require('live-rename').rename { insert = true } end, has = 'rename', desc = 'Rename Symbol' },
 				{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], has = 'organizeImports', desc = 'Organize Imports' },
 				{ '🔥', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
-			}
-
-			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), keys)
+				{ '<c-.>', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
+			})
 		end,
 	},
 }

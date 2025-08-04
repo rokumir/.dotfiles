@@ -13,10 +13,11 @@ local source_priority = {
 }
 
 ---@module 'lazy'
----@type table<number, LazyPluginSpec>
+---@type LazyPluginSpec[]
 return {
 	{ -- Blink.cmp
 		'saghen/blink.cmp',
+		build = 'cargo build --release',
 
 		dependencies = {
 			-- Colorize completion menu

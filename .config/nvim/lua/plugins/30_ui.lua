@@ -1,18 +1,10 @@
----@diagnostic disable: no-unknown
+---@diagnostic disable: no-unknown, assign-type-mismatch
 ---@module 'lazy'
----@type table<number, LazyPluginSpec>
+---@type LazyPluginSpec[]
 return {
-	{ -- Better general UI (should be deprecated soon)
+	{ ---@module 'noice' Better general UI (should be deprecated soon)
 		'folke/noice.nvim',
 		opts = {
-			commands = {
-				all = { -- options for the message history that you get with `:Noice`
-					view = 'split',
-					opts = { enter = true, format = 'details' },
-					filter = {},
-				},
-			},
-
 			presets = {
 				bottom_search = true,
 				command_palette = true,
@@ -22,9 +14,24 @@ return {
 				long_message_to_split = true,
 			},
 
+			commands = {
+				all = { -- options for the message history that you get with `:Noice`
+					view = 'split',
+					opts = { enter = true, format = 'details' },
+					filter = {},
+				},
+			},
+
 			lsp = {
 				progress = { enabled = false },
-				hover = { enabled = true, silent = true },
+				hover = {
+					enabled = true,
+					silent = true,
+					---@type NoiceViewOptions
+					opts = {
+						size = { max_width = 80 },
+					},
+				},
 				override = {
 					['vim.lsp.util.convert_input_to_markdown_lines'] = true,
 					['vim.lsp.util.stylize_markdown'] = true,
@@ -44,67 +51,108 @@ return {
 
 	{ -- Statusline
 		'nvim-lualine/lualine.nvim',
+		opts = {
+			options = {
+				globalstatus = true,
+				component_separators = { left = '', right = '' },
+				section_separators = { left = '', right = '' },
+			},
+			sections = {
+				lualine_c = {
+					LazyVim.lualine.root_dir(),
+					{ 'filetype', icon_only = true, separator = '', padding = { left = 1, right = 0 } },
+					{
+						LazyVim.lualine.pretty_path {
+							length = 3,
+							relative = 'cwd',
+							modified_hl = 'Error',
+							directory_hl = 'Comment',
+							filename_hl = 'Conditional',
+							modified_sign = ' ✨ ',
+							readonly_icon = ' 🔒 ',
+						},
+					},
+					{
+						'diagnostics',
+						symbols = {
+							error = LazyVim.config.icons.diagnostics.Error,
+							warn = LazyVim.config.icons.diagnostics.Warn,
+							info = LazyVim.config.icons.diagnostics.Info,
+							hint = LazyVim.config.icons.diagnostics.Hint,
+						},
+					},
+				},
 
-		init = function()
-			-- recording cmp: init refresh to avoid delay
+				lualine_y = {
+					'location',
+					{ require('utils.time').pretty_date },
+				},
+				lualine_z = {
+					{ require('utils.time').pretty_time },
+				},
+			},
+		},
+	},
+	{ -- Statusline
+		'nvim-lualine/lualine.nvim',
+		opts = function(_, opts)
+			local get_hl_color = require('utils.highlight').get_color
+			local hl_color = { -- precall color
+				muted = get_hl_color('Comment', 'fg'),
+				special = get_hl_color('PreCondit', 'fg'),
+			}
+
+			local theme = opts.options.theme
+			if type(theme) ~= 'table' then opts.options.theme = require('lualine.themes.' .. (theme or 'auto')) end
+
+			for _, s in ipairs {
+				{ path = { 'c', 'bg' }, color = 'none' },
+				{ path = { 'c', 'fg' }, color = hl_color.muted },
+			} do
+				for _, mode in ipairs { 'normal', 'insert', 'visual', 'replace', 'command' } do
+					opts.options.theme[mode][s.path[1]][s.path[2]] = 'none'
+				end
+			end
+
+			vim.list_extend(opts.sections.lualine_x, {
+				{ -- word count
+					function()
+						local wc = vim.fn.wordcount()
+						return wc.words .. 'w ' .. wc.chars .. 'c'
+					end,
+					color = { gui = 'italic', fg = hl_color.special },
+					separator = '',
+					cond = function() return require('utils.const').document_filetype_map[vim.bo.ft] end,
+				},
+				{
+					'encoding',
+					color = { gui = 'italic', fg = hl_color.special },
+					separator = '',
+					cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-8' end,
+				},
+				{
+					'fileformat',
+					symbols = { unix = 'lf', dos = 'crlf', mac = 'cr' },
+					color = { gui = 'italic', fg = hl_color.special },
+					separator = '',
+					cond = function() return vim.bo.ff ~= 'unix' end,
+				},
+			})
+
+			--#region FIX: better macros' status updating
 			local refresh_statusline = function() require('lualine').refresh { place = { 'statusline' } } end
 			vim.api.nvim_create_autocmd('RecordingEnter', { callback = refresh_statusline })
 			vim.api.nvim_create_autocmd('RecordingLeave', {
-				callback = function() vim.loop.new_timer():start(50, 0, vim.schedule_wrap(refresh_statusline)) end,
-			})
-		end,
-
-		opts = function(_, opts)
-			opts.options.component_separators = { left = '', right = '' }
-			opts.options.section_separators = { left = '', right = '' }
-
-			opts.sections.lualine_c[4] = {
-				LazyVim.lualine.pretty_path {
-					length = 3,
-					relative = 'cwd',
-					modified_hl = '@variable.builtin',
-					directory_hl = '@comment',
-					filename_hl = '@attribute',
-					modified_sign = ' ✨ ',
-					readonly_icon = ' 󰌾 ',
-				},
-			}
-
-			-- word count
-			table.insert(opts.sections.lualine_x, {
-				function()
-					local wc = vim.fn.wordcount()
-					return wc.words .. 'w ' .. wc.chars .. 'c'
+				callback = function()
+					local callback = vim.schedule_wrap(refresh_statusline)
+					vim.loop.new_timer():start(50, 0, callback)
 				end,
-				cond = function() return vim.tbl_contains({ 'markdown', 'vimwiki', 'latex', 'text', 'tex' }, vim.bo.ft) end,
-				color = { fg = '#9E6E80', gui = 'italic' },
 			})
-
-			opts.sections.lualine_y = {
-				{ 'encoding', cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-8' end },
-				{ 'fileformat', symbols = { unix = 'lf', dos = 'crlf', mac = 'cr' }, cond = function() return vim.bo.ff == 'dos' end },
-				'progress',
-			}
-
-			opts.sections.lualine_z = {
-				'location',
-			}
-
-			if vim.g.colors_name == 'rose-pine' then
-				local t = require 'lualine.themes.rose-pine'
-				local bg = require('rose-pine.palette').base
-				t.normal.c.bg = bg
-				t.insert.c.bg = bg
-				t.visual.c.bg = bg
-				t.replace.c.bg = bg
-				t.command.c.bg = bg
-				t.inactive.a.bg = bg
-				t.inactive.b.bg = bg
-				t.inactive.c.bg = bg
-				opts.options.theme = t
-			end
+			--#endregion
 		end,
 	},
+	-- disable navic in lualine
+	{ 'SmiteshP/nvim-navic', optional = true, opts = function(_, opts) opts = { lazy_update_context = true } end },
 
 	{ -- Tabs
 		'akinsho/bufferline.nvim',
@@ -119,65 +167,53 @@ return {
 		---@module 'bufferline'
 		---@param opts bufferline.UserConfig
 		opts = function(_, opts)
-			opts.options = opts.options or {}
+			opts.options = vim.tbl_extend('force', opts.options, {
+				mode = 'buffers',
+				indicator = { style = 'underline' },
+				show_tab_indicators = true,
+				always_show_bufferline = false,
+				show_close_icon = false,
+				show_buffer_close_icons = false,
+				show_buffer_icons = true,
+				separator_style = { '', '' },
+				modified_icon = '✨ ',
+				enforce_regular_tabs = true,
+				hover = { enabled = true, delay = 200 },
+			})
 
-			opts.options.mode = 'buffers'
-			opts.options.indicator = { style = 'underline' }
-
-			opts.options.show_tab_indicators = true
-			opts.options.always_show_bufferline = false
-			opts.options.show_close_icon = false
-			opts.options.show_buffer_close_icons = false
-			opts.options.show_buffer_icons = true
-
-			opts.options.separator_style = { '', '' }
-			opts.options.modified_icon = ' '
-			-- opts.options.left_trunc_marker = ' '
-			-- opts.options.right_trunc_marker = ' '
-
-			opts.options.enforce_regular_tabs = true
-			-- opts.options.hover = { enabled = true, delay = 200 }
-
-			----------------------------------------
-			-- Themes based stuffs -------------
-			opts.highlights = opts.highlights or {}
-
-			--#region Styling indicators
-			local indicator_highlight_list = {
-				'indicator_selected',
-				'buffer_selected',
-				'separator_selected',
-				'tab_separator_selected',
-				'tab_selected',
-				'modified_selected',
-				'close_button_selected',
-				'duplicate_selected',
-				'hint_selected',
-				'info_selected',
-				'pick_selected',
-				'error_selected',
-				'numbers_selected',
-				'warning_selected',
-				'diagnostic_selected',
-				'hint_diagnostic_selected',
-				'info_diagnostic_selected',
-				'error_diagnostic_selected',
-				'warning_diagnostic_selected',
+			opts.highlights = {
+				fill = { bg = 'none' },
 			}
-			local scheme_to_color = {
+
+			local indicator_color = ({
 				['rose-pine'] = function() return require('rose-pine.palette').love end,
-			}
-			local incicator_color = scheme_to_color[vim.g.colors_name]
-			if incicator_color then
-				for _, hl in ipairs(indicator_highlight_list) do
-					opts.highlights[hl] = { sp = incicator_color() }
-				end
-			end
-			--#endregion
+			})[vim.g.colors_name]
 
-			if vim.g.colors_name == 'rose-pine' then
-				local rosepine = require 'rose-pine.palette'
-				opts.highlights.fill = { bg = rosepine.base }
+			if indicator_color then
+				local color = indicator_color()
+				for _, hl in ipairs {
+					'indicator',
+					'buffer',
+					'separator',
+					'tab_separator',
+					'tab',
+					'modified',
+					'close_button',
+					'duplicate',
+					'hint',
+					'info',
+					'pick',
+					'error',
+					'numbers',
+					'warning',
+					'diagnostic',
+					'hint_diagnostic',
+					'info_diagnostic',
+					'error_diagnostic',
+					'warning_diagnostic',
+				} do
+					opts.highlights[hl .. '_selected'] = { sp = color }
+				end
 			end
 		end,
 	},
@@ -185,32 +221,77 @@ return {
 	{ -- Git status in line number
 		'lewis6991/gitsigns.nvim',
 		opts = function(_, opts)
-			opts.signs = {
-				add = { text = '│' },
-				change = { text = '│' },
-				delete = { text = '' },
-				topdelete = { text = '' },
-				changedelete = { text = '│' },
-				untracked = { text = '│' },
-			}
+			local char_bar = '│'
+			local char_chev = ''
+			opts.signs.add.text = char_bar
+			opts.signs.change.text = char_bar
+			opts.signs.delete.text = char_chev
+			opts.signs.topdelete.text = char_chev
+			opts.signs.changedelete.text = char_bar
+			opts.signs.untracked.text = char_bar
 
 			opts.on_attach = function(buffer)
-				local gs = package.loaded.gitsigns
+				local map = require('utils.keymap').map_factory { buffer = buffer }
 
-				local function map(mode, l, r, desc) vim.keymap.set(mode, l, r, { buffer = buffer, desc = desc }) end
+				map { ']h', '<cmd>Gitsigns nav_hunk next<cr>', desc = 'Next Hunk' }
+				map { '[h', '<cmd>Gitsigns nav_hunk prev<cr>', desc = 'Prev Hunk' }
 
-				map('n', ']h', gs.next_hunk, 'Next Hunk')
-				map('n', '[h', gs.prev_hunk, 'Prev Hunk')
+				map { '<leader>ghu', '<cmd>Gitsigns undo_stage_hunk<cr>', desc = 'Undo Stage Hunk' }
+				map { '<leader>ghp', '<cmd>Gitsigns preview_hunk_inline<cr>', desc = 'Preview Hunk Inline' }
+				map { '<leader>ghb', '<cmd>Gitsigns toggle_current_line_blame<cr>', desc = 'Toggle line blame' }
 
-				map('n', '<leader>ghu', gs.undo_stage_hunk, 'Undo Stage Hunk')
-				map('n', '<leader>ghp', gs.preview_hunk_inline, 'Preview Hunk Inline')
-				map('n', '<leader>ghb', gs.toggle_current_line_blame, 'Toggle line blame')
-
-				map({ 'n', 'v' }, '<leader>ghs', '<cmd>Gitsigns stage_hunk<cr>', 'Stage Hunk')
-				map('n', '<leader>gh<s-s>', gs.stage_buffer, 'Stage Buffer')
-				map({ 'n', 'v' }, '<leader>ghr', '<cmd>Gitsigns reset_hunk<cr>', 'Reset Hunk')
-				map('n', '<leader>gh<s-r>', gs.reset_buffer, 'Reset Buffer')
+				map { '<leader>ghs', '<cmd>Gitsigns stage_hunk<cr>', mode = { 'n', 'v' }, desc = 'Stage Hunk' }
+				map { '<leader>gh<s-s>', '<cmd>Gitsigns stage_buffer<cr>', desc = 'Stage Buffer' }
+				map { '<leader>ghr', '<cmd>Gitsigns reset_hunk<cr>', mode = { 'n', 'v' }, desc = 'Reset Hunk' }
+				map { '<leader>gh<s-r>', '<cmd>Gitsigns reset_buffer<cr>', desc = 'Reset Buffer' }
 			end
+		end,
+	},
+
+	{ -- breadcrumb
+		'Bekaboo/dropbar.nvim',
+		lazy = false,
+		keys = {
+			{ '<leader>;', function() require('dropbar.api').pick() end, desc = 'Pick symbols in winbar' },
+			{ '[;', function() require('dropbar.api').goto_context_start() end, desc = 'Go to start of current c }ontext' },
+			{ '];', function() require('dropbar.api').select_next_context() end, desc = 'Select next context' },
+		},
+		---@type dropbar_configs_t
+		opts = {
+			-- TODO: add ft exclude snacks_picker_input
+			sources = {
+				-- path = { max_depth = 1, modified = function(sym) return sym:merge { name = sym.name .. ' ✨', name_hl = 'Error' } end, },
+			},
+			bar = {
+				padding = { left = 2, right = 2 },
+				sources = function(buf, _) -- disable path
+					local sources = require 'dropbar.sources'
+					local utils = require 'dropbar.utils'
+					if vim.bo[buf].ft == 'markdown' then return { sources.path, sources.markdown } end
+					if vim.bo[buf].buftype == 'terminal' then return { sources.terminal } end
+					return { utils.source.fallback { sources.lsp, sources.treesitter } }
+				end,
+			},
+		},
+	},
+
+	{ -- A Neovim plugin to easily create and manage predefined window layouts, bringing a new edge to your workflow.
+		'folke/edgy.nvim',
+		---@module 'edgy'
+		---@param opts Edgy.Config
+		opts = function(_, opts)
+			table.insert(opts.right, {
+				ft = 'copilot-chat',
+				title = 'Copilot Chat',
+				size = { width = 40 },
+				pinned = true,
+				open = 'CopilotChatToggle',
+			})
+
+			opts.keys['<c-a-left>'] = function(win) win:resize('width', 2) end
+			opts.keys['<c-a-right>'] = function(win) win:resize('width', -2) end
+			opts.keys['<c-a-up>'] = function(win) win:resize('height', 2) end
+			opts.keys['<c-a-down>'] = function(win) win:resize('height', -2) end
 		end,
 	},
 }

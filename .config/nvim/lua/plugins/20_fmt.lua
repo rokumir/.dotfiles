@@ -1,3 +1,16 @@
+---@module 'conform'
+
+local function formater_fallbacks(formatters)
+	return function(bufnr)
+		local conform = require 'conform'
+		for _, formatter in ipairs(formatters) do
+			local info = conform.get_formatter_info(formatter, bufnr)
+			if info.available then return { formatter } end
+		end
+		return { formatters[1] }
+	end
+end
+
 return {
 	{
 		'stevearc/conform.nvim',
@@ -14,17 +27,6 @@ return {
 		'stevearc/conform.nvim',
 		---@param opts conform.setupOpts
 		opts = function(_, opts)
-			local function formater_fallbacks(formatters)
-				return function(bufnr)
-					local conform = require 'conform'
-					for _, formatter in ipairs(formatters) do
-						local info = conform.get_formatter_info(formatter, bufnr)
-						if info.available then return { formatter } end
-					end
-					return { formatters[1] }
-				end
-			end
-
 			for _, ft in ipairs {
 				'typescript',
 				'typescriptreact',

@@ -1,3 +1,4 @@
+--- Lua type annotation helper
 local M = {}
 
 ---@return VSCode?

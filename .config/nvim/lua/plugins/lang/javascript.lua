@@ -9,8 +9,8 @@ return {
 		ft = { 'typescript', 'typescriptreact' },
 		opts = {
 			keymaps = {
-				toggle = '<leader>dd', -- default '<leader>dd'
-				go_to_definition = '<leader>dx', -- default '<leader>dx'
+				toggle = '<leader>cT',
+				go_to_definition = '<leader>ct',
 			},
 		},
 	},

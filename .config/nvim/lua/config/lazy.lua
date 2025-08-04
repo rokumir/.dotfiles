@@ -10,14 +10,8 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then vim.fn.system {
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup {
-	---@diagnostic disable-next-line: assign-type-mismatch
-	dev = {
-		path = vim.fn.stdpath 'config' .. '/nihil',
-		-- path = '~/.config/nvim/nihil',
-		patterns = { 'nihil' },
-		fallback = false,
-	},
 	spec = {
+		--#region lazyvim
 		{
 			'LazyVim/LazyVim',
 			import = 'lazyvim.plugins',
@@ -33,20 +27,16 @@ require('lazy').setup {
 				},
 			},
 		},
-
-		--#region Disable default plugins
-		{ 'folke/persistence.nvim', enabled = false },
-		{ 'echasnovski/mini.pairs', enabled = false },
-		-- { 'echasnovski/mini.ai', enabled = false },
-		{ 'nvim-neo-tree/neo-tree.nvim', enabled = false },
-		{ 'ibhagwan/fzf-lua', enabled = false },
 		--#endregion
 
 		--#region Extras modules
 		{ import = 'lazyvim.plugins.extras.ui.edgy' },
 
+		{ import = 'lazyvim.plugins.extras.editor.snacks_explorer' },
+		{ import = 'lazyvim.plugins.extras.editor.snacks_picker' },
 		{ import = 'lazyvim.plugins.extras.editor.refactoring' },
 		{ import = 'lazyvim.plugins.extras.editor.dial' },
+		{ import = 'lazyvim.plugins.extras.editor.navic' },
 
 		{ import = 'lazyvim.plugins.extras.util.dot' },
 
@@ -59,9 +49,10 @@ require('lazy').setup {
 		-- { import = 'lazyvim.plugins.extras.lang.omnisharp' },
 		-- { import = 'lazyvim.plugins.extras.lang.svelte' },
 
-		{ import = 'lazyvim.plugins.extras.coding.neogen' },
+		{ import = 'lazyvim.plugins.extras.coding.mini-surround' },
 		{ import = 'lazyvim.plugins.extras.coding.blink' },
 		{ import = 'lazyvim.plugins.extras.coding.yanky' },
+		{ import = 'lazyvim.plugins.extras.coding.neogen' },
 		{ import = 'lazyvim.plugins.extras.linting.eslint' },
 		{ import = 'lazyvim.plugins.extras.formatting.biome' },
 		{ import = 'lazyvim.plugins.extras.formatting.prettier' },

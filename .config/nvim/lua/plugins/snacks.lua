@@ -6,80 +6,93 @@
 return {
 	{
 		'folke/snacks.nvim',
-		cond = vim.g.vscode ~= 1,
-		keys = {
-			{ '\\\\', function() Snacks.picker.resume() end, desc = 'Resume' },
+		keys = function()
+			return {
+				{ ';;', function() Snacks.picker.resume() end, desc = 'Resume' },
+				{ ';S', function() Snacks.picker() end, desc = 'Search Pickers' },
 
-			-- Top Pickers & Explorer
-			{ '<c-e>', function() Snacks.picker.files() end, desc = 'Find Files' },
-			{ ';e', function() Snacks.picker.recent { filter = { cwd = true } } end, desc = 'Recent' },
-			{ ';b', function() Snacks.picker.buffers() end, desc = 'Buffers' },
-			{ ';/', function() Snacks.picker.grep() end, desc = 'Grep' },
-			{ ';:', function() Snacks.picker.command_history() end, desc = 'Command History' },
-			{ ';n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
-			{ 'sf', function() Snacks.explorer.open { focus = true } end, desc = 'File Explorer' },
-			{ 'ss', function() Snacks.explorer.open { focus = false } end, desc = 'File Explorer' },
+				-- Top Pickers & Explorer
+				{ '<c-e>', function() Snacks.picker.files() end, desc = 'Find Files' },
+				{ ';r', function() Snacks.picker.recent { filter = { cwd = true } } end, desc = 'Recent' },
+				{ ';b', function() Snacks.picker.buffers() end, desc = 'Buffers' },
+				{ ';/', function() Snacks.picker.grep() end, desc = 'Grep' },
+				{ ';:', function() Snacks.picker.command_history() end, desc = 'Command History' },
+				{ ';n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
+				{ 'zx', function() Snacks.explorer() end, desc = 'File Explorer' },
+				{ 'zX', function() Snacks.explorer.open { focus = false } end, desc = 'File Explorer' },
 
-			-- Find
-			{ ';f', '', desc = 'find' },
-			-- { ';fb', function() Snacks.picker.buffers() end, desc = 'Buffers' },
-			{ ';ff', function() Snacks.picker.files() end, desc = 'Find Files' },
-			{ ';fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
-			{ ';fp', function() Snacks.picker.projects() end, desc = 'Projects' },
-			-- { ';fr', function() Snacks.picker.recent() end, desc = 'Recent' },
-			{ ';fc', function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end, desc = 'Find Config File' },
+				-- Find
+				{ ';f', '', desc = 'find' },
+				{ ';ff', function() Snacks.picker.files() end, desc = 'Find Files' },
+				{ ';fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
+				{ ';fc', function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end, desc = 'Find Config File' },
+				{ ';D', function() Snacks.picker.projects() end, desc = 'Projects' },
+				{ ';d', function() Snacks.picker.projects { patterns = { '*' } } end, desc = 'Vaults' },
 
-			-- Git
-			{ ';g', '', desc = 'git' },
-			{ ';gb', function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
-			{ ';gl', function() Snacks.picker.git_log() end, desc = 'Git Log' },
-			{ ';gL', function() Snacks.picker.git_log_line() end, desc = 'Git Log Line' },
-			{ ';gs', function() Snacks.picker.git_status() end, desc = 'Git Status' },
-			{ ';gS', function() Snacks.picker.git_stash() end, desc = 'Git Stash' },
-			{ ';gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
-			{ ';gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
+				-- Git
+				{ ';g', '', desc = 'git' },
+				{ ';gb', function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
+				{ ';gl', function() Snacks.picker.git_log() end, desc = 'Git Log' },
+				{ ';gL', function() Snacks.picker.git_log_line() end, desc = 'Git Log Line' },
+				{ ';gs', function() Snacks.picker.git_status() end, desc = 'Git Status' },
+				{ ';gS', function() Snacks.picker.git_stash() end, desc = 'Git Stash' },
+				{ ';gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
+				{ ';gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
 
-			-- Search
-			{ ';s', '', desc = 'search' },
-			-- grep
-			{ '<a-/>', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
-			{ ';sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
-			-- { ';sg', function() Snacks.picker.grep() end, desc = 'Grep' },
-			{ ';sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
-			{ ';sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
-			-- others
-			{ ';s"', function() Snacks.picker.registers() end, desc = 'Registers' },
-			{ ';s/', function() Snacks.picker.search_history() end, desc = 'Search History' },
-			{ ';sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
-			-- { ';sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
-			{ ';sc', function() Snacks.picker.commands() end, desc = 'Commands' },
-			{ ';sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
-			{ ';sD', function() Snacks.picker.diagnostics_buffer() end, desc = 'Buffer Diagnostics' },
-			{ ';sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
-			{ ';sH', function() Snacks.picker.highlights() end, desc = 'Highlights' },
-			{ ';si', function() Snacks.picker.icons() end, desc = 'Icons' },
-			{ ';sj', function() Snacks.picker.jumps() end, desc = 'Jumps' },
-			{ ';sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
-			{ ';sl', function() Snacks.picker.loclist() end, desc = 'Location List' },
-			{ ';sm', function() Snacks.picker.marks() end, desc = 'Marks' },
-			{ ';sM', function() Snacks.picker.man() end, desc = 'Man Pages' },
-			{ ';sp', function() Snacks.picker.lazy() end, desc = 'Search for Plugin Spec' },
-			{ ';sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
-			{ ';su', function() Snacks.picker.undo() end, desc = 'Undo History' },
-			{ ';st', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
-			-- lsp
-			{ ';ss', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
-			{ ';sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
-		},
+				-- Search
+				{ ';s', '', desc = 'search' },
+				-- grep
+				{ '<a-/>', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
+				{ ';sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
+				-- { ';sg', function() Snacks.picker.grep() end, desc = 'Grep' },
+				{ ';sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
+				{ ';sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
+				-- others
+				{ ';s"', function() Snacks.picker.registers() end, desc = 'Registers' },
+				{ ';s/', function() Snacks.picker.search_history() end, desc = 'Search History' },
+				{ ';sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
+				-- { ';sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
+				{ ';sc', function() Snacks.picker.commands() end, desc = 'Commands' },
+				{ ';sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
+				{ ';sD', function() Snacks.picker.diagnostics_buffer() end, desc = 'Buffer Diagnostics' },
+				{ ';sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
+				{ ';sH', function() Snacks.picker.highlights() end, desc = 'Highlights' },
+				{ ';si', function() Snacks.picker.icons() end, desc = 'Icons' },
+				{ ';sj', function() Snacks.picker.jumps() end, desc = 'Jumps' },
+				{ ';sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
+				{ ';sl', function() Snacks.picker.loclist() end, desc = 'Location List' },
+				{ ';sm', function() Snacks.picker.marks() end, desc = 'Marks' },
+				{ ';sM', function() Snacks.picker.man() end, desc = 'Man Pages' },
+				{ ';sp', function() Snacks.picker.lazy() end, desc = 'Search for Plugin Spec' },
+				{ ';sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
+				{ ';su', function() Snacks.picker.undo() end, desc = 'Undo History' },
+				{ ';st', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+				-- lsp
+				{ ';ss', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
+				{ ';sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
+
+				-- scratch
+				{ '<leader>.', function() Snacks.scratch() end, desc = 'Toggle Scratch Buffer' },
+				{ '<leader>S', function() Snacks.scratch.select() end, desc = 'Select Scratch Buffer' },
+				{ '<leader>dps', function() Snacks.profiler.scratch() end, desc = 'Profiler Scratch Buffer' },
+			}
+		end,
 
 		---@type snacks.Config
 		opts = {
+			bigfile = { enabled = false },
 			scroll = { enabled = false },
-			dashboard = { enabled = false },
-			terminal = { enabled = false },
-			image = { enabled = false },
+			dashboard = { enabled = true },
+			image = { enabled = true },
 			input = { enabled = true },
 			scope = { enabled = true },
+
+			terminal = {
+				enabled = true,
+				win = {
+					style = 'terminal',
+				},
+			},
 
 			indent = {
 				priority = 200,
@@ -102,7 +115,7 @@ return {
 			notifier = {
 				---@type snacks.notifier.style
 				style = 'compact',
-				top_down = true,
+				top_down = false,
 			},
 
 			zen = {
@@ -211,7 +224,18 @@ return {
 						transform = 'unique_file',
 
 						layout = {
-							preset = 'vscode',
+							preset = 'default',
+							layout = {
+								backdrop = { transparent = true, blend = 60 },
+								row = 1,
+								width = 0.4,
+								min_width = 80,
+								height = 0.6,
+								border = 'none',
+								box = 'vertical',
+								{ win = 'input', height = 1, border = 'rounded', title = '{title} {live} {flags}', title_pos = 'center' },
+								{ win = 'list', border = 'hpad' },
+							},
 						},
 					},
 
@@ -235,6 +259,19 @@ return {
 							sort_empty = true, -- sort even when the filter is empty
 						},
 						transform = 'unique_file',
+					},
+
+					highlights = {},
+
+					projects = {
+						dev = {
+							vim.fs.normalize '~/documents',
+							vim.env.RH_THROWAWAY,
+							vim.env.RH_PROJECT,
+							vim.env.RH_WORK,
+							vim.env.RH_SCRIPT,
+							vim.env.XDG_CONFIG_HOME,
+						},
 					},
 				},
 
@@ -289,6 +326,7 @@ return {
 			local default_keymaps = { -- default keymaps
 				['l'] = 'confirm',
 				['🔥'] = { 'confirm', mode = { 'n', 'i' } },
+				['<c-.>'] = { 'confirm', mode = { 'n', 'i' } },
 				['<c-l>'] = { 'confirm', mode = { 'n', 'i' } },
 				['<esc>'] = { 'close', mode = { 'n', 'i' } },
 				['<c-q>'] = { 'close', mode = { 'n', 'i' } },
@@ -301,11 +339,12 @@ return {
 				['<a-t>'] = { 'trouble_open_selected', mode = { 'i', 'n' } },
 				['<a-i>'] = { 'toggle_ignored_persist', mode = { 'i', 'n' } },
 				['<a-h>'] = { 'toggle_hidden_persist', mode = { 'i', 'n' } },
+				['<a-y>'] = { 'yank_to_clipboard', mode = { 'i', 'n', 'x' } },
+				['y'] = 'yank_to_clipboard',
 			}
 			opts.picker.win = {
-				list = { keys = default_keymaps },
-				preview = { keys = default_keymaps },
 				input = { keys = default_keymaps },
+				list = { keys = default_keymaps },
 			}
 
 			-- actions
@@ -325,13 +364,10 @@ return {
 
 			--#region Explorer
 			local explorer_keys = opts.picker.sources.explorer.win.list.keys
-			explorer_keys['<a-y>'] = { 'explorer_yank_selector', mode = { 'n', 'x' } }
-			explorer_keys['y'] = { 'explorer_yank_selector', mode = { 'n', 'x' } }
 			explorer_keys['<a-d>'] = 'explorer_safe_del'
 			explorer_keys['d'] = 'explorer_safe_del'
 
-			opts.picker.sources.explorer.actions = {
-				-- Override "builtin" ignored toggle
+			opts.picker.sources.explorer.actions = { -- Override "builtin" ignored toggle
 				toggle_ignored_persist = function(picker)
 					vim.g.snacks_ignored = not vim.g.snacks_ignored
 					picker.opts.exclude = get_exclude()
@@ -347,21 +383,23 @@ return {
 				end,
 
 				--- Explorer yank selector
-				explorer_yank_selector = function(picker)
+				yank_to_clipboard = function(picker)
 					local selected_paths = vim.tbl_map(Snacks.picker.util.path, picker:selected { fallback = true })
 					if #selected_paths == 0 then return end
 
 					local path_copy_options_map = {
-						['Relative path'] = ':.',
-						['Fullpath'] = '',
-						['Name'] = ':t',
-						['Name (ext. for files)'] = ':t:r',
+						['Relative Path'] = ':.',
+						['Full Path'] = '',
+						['File Name'] = ':t',
+						['Base Name'] = ':t:r',
 						['Extension'] = ':e',
 					}
 					local path_copy_options = vim.tbl_keys(path_copy_options_map)
 
 					Snacks.picker.select(path_copy_options, { prompt = 'Choose to copy to clipboard:' }, function(choice)
 						if not choice then return end
+
+						picker.list:set_selected() -- clear selection, update UI on "client-side" (better for UX)
 
 						local template = path_copy_options_map[choice]
 						local formatted_paths ---@type string[]
@@ -375,9 +413,6 @@ return {
 						-- Add to the clipboards
 						local text = table.concat(formatted_paths, '\n')
 						vim.fn.setreg('+', text)
-
-						-- clear selection
-						picker.list:set_selected()
 					end)
 				end,
 
@@ -410,6 +445,70 @@ return {
 
 					toggle_recursive(curr_node)
 				end,
+			}
+			--#endregion
+
+			--#region Highlight
+			opts.picker.sources.highlights.actions = {
+				yank_to_clipboard = function(picker)
+					local selected_items = vim.tbl_map(function(item) ---@param item snacks.picker.Item
+						return item.hl_group
+					end, picker:selected { fallback = true })
+
+					picker.list:set_selected() -- clear selection, update UI on "client-side" (better for UX)
+
+					if #selected_items == 0 then return end
+
+					local text = table.concat(selected_items, '\n')
+					vim.fn.setreg('+', text)
+				end,
+			}
+			--#endregion
+
+			--#region Terminal
+			opts.terminal.win.keys.nav_h[1] = '<a-h>'
+			opts.terminal.win.keys.nav_j[1] = '<a-j>'
+			opts.terminal.win.keys.nav_k[1] = '<a-k>'
+			opts.terminal.win.keys.nav_l[1] = '<a-l>'
+			--#endregion
+
+			--#region Projects
+			opts.picker.sources.projects.actions = {
+				delete_projects = function(picker)
+					local selections = picker:selected { fallback = true }
+
+					-- Build a set of absolute paths to remove
+					local to_remove = {}
+					for _, item in ipairs(selections) do
+						local abs = vim.fn.fnamemodify(item.file, ':p')
+						to_remove[abs] = true
+					end
+
+					vim.defer_fn(function()
+						-- Remove uppercase file-marks ('A'..'Z') pointing at those paths
+						for code = 65, 90 do -- ASCII 'A' to 'Z'
+							local mark = string.char(code)
+							local bufnr = vim.fn.getpos("'" .. mark)[1] -- bufnr, lnum, col, off
+							if bufnr > 0 then
+								local path = vim.fn.fnamemodify(vim.fn.bufname(bufnr), ':p')
+								if to_remove[path] then vim.cmd('delmarks ' .. mark) end
+							end
+						end
+
+						-- Filter out matching entries from v:oldfiles
+						vim.v.oldfiles = vim.tbl_filter(function(path) return not to_remove[vim.fn.fnamemodify(path, ':p')] end, vim.v.oldfiles)
+
+						vim.cmd 'wshada! | rshada!' -- Persist the cleaned state and reload ShaDa
+						Snacks.picker.projects()
+					end, 100)
+				end,
+			}
+			opts.picker.sources.projects.win = {}
+			opts.picker.sources.projects.win.input = {
+				keys = {
+					['<c-w>'] = { '<cmd>normal! diw<cr><right>', mode = 'i', expr = true, desc = 'delete word' },
+					['<c-x>'] = { 'delete_projects', mode = { 'i', 'n' } },
+				},
 			}
 			--#endregion
 		end,

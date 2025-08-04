@@ -37,11 +37,19 @@ function M.map(args)
 	vim.keymap.set(args.mode or 'n', args[1], args[2], opts)
 end
 
+---@param base_opts KeymapingFunOptions
+function M.map_factory(base_opts)
+	---@param args KeymapingFunArgs
+	return function(args) return M.map(vim.tbl_extend('force', base_opts, args)) end
+end
+
 return M
 
----@class KeymapingFunArgs
+---@class KeymapingFunArgs : KeymapingFunOptions
 ---@field [1] string
 ---@field [2] function|string
+
+---@class KeymapingFunOptions
 ---@field mode? table|string
 ---@field buffer? boolean|integer
 ---@field callback? function

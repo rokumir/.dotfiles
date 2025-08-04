@@ -164,3 +164,9 @@ vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
 		vim.fn.mkdir(vim.fn.fnamemodify(file, ':p:h'), 'p')
 	end,
 })
+
+vim.api.nvim_create_autocmd('FileType', {
+	group = augroup 'oil_win_options',
+	pattern = 'oil',
+	callback = function() vim.opt.signcolumn = 'yes:2' end,
+})

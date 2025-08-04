@@ -1,12 +1,8 @@
 vim.g.mapleader = ' '
-
-vim.g.lazyvim_prettier_needs_config = false
-vim.g.lazyvim_picker = 'auto' -- auto|telescope|fzf
-vim.g.lazyvim_cmp = 'blink.cmp' -- auto|nvim-cmp|blink.cmp
 vim.g.autoformat = false
-vim.g.copilot_enabled = false
+vim.g.lazyvim_picker = 'snacks'
+vim.g.trouble_lualine = true -- disable navic in lualine
 
----------------------------------------------------------------------------
 vim.opt.background = 'dark'
 vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'
@@ -23,6 +19,7 @@ vim.opt.timeoutlen = 500
 vim.opt.showtabline = 1
 vim.opt.scrolloff = 6
 vim.opt.inccommand = 'split'
+vim.opt.splitkeep = 'screen'
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.splitkeep = 'cursor'

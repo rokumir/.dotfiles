@@ -1,5 +1,5 @@
 ---@diagnostic disable: no-unknown, missing-fields, missing-parameter
----@type table<number, LazyPluginSpec>
+---@type LazyPluginSpec[]
 return {
 	{ -- Harpoon: maneuvering throught files like the flash
 		'ThePrimeagen/harpoon',
@@ -95,18 +95,8 @@ return {
 			},
 		},
 		keys = {
-			{
-				'f',
-				function() require('flash').jump { forward = true, continue = true } end,
-				mode = { 'n', 'x', 'o' },
-				desc = 'Flash Forward 󱞣',
-			},
-			{
-				'F',
-				function() require('flash').jump { forward = false, continue = true } end,
-				mode = { 'n', 'x', 'o' },
-				desc = 'Flash Backward 󱞽',
-			},
+			{ 'f', function() require('flash').jump { forward = true, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Forward 󱞣' },
+			{ 'F', function() require('flash').jump { forward = false, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Backward 󱞽' },
 			{ '<c-f>', function() require('flash').toggle(false) end, mode = { 'c' }, desc = 'Quit Flash Mode' },
 		},
 	},
@@ -183,52 +173,6 @@ return {
 		},
 	},
 
-	{ -- better yanking
-		'gbprod/yanky.nvim',
-		opts = {
-			ring = {
-				history_length = 50,
-				sync_with_numbered_registers = true,
-			},
-			highlight = {
-				on_put = true,
-				on_yank = true,
-				timer = 500,
-			},
-			textobj = { enabled = false },
-		},
-		keys = function()
-			return {
-				{ '<leader>p', '', desc = 'yanky' },
-				---@diagnostic disable-next-line: undefined-field
-				{ '<leader>pp', function() Snacks.picker.yanky() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
-				{ '<leader>pc', '<cmd>YankyClearHistory<cr>', desc = 'Clear Yank History' },
-
-				{ '<c-a-n>', '<Plug>(YankyNextEntry)', mode = { 'n', 'i' }, desc = 'Next Entry' },
-				{ '<c-a-b>', '<Plug>(YankyPreviousEntry)', mode = { 'n', 'i' }, desc = 'Prev Entry' },
-
-				{ 'y', '<Plug>(YankyYank)', mode = { 'n', 'x' }, desc = 'Yank Text' },
-				{ 'p', '<Plug>(YankyPutAfter)', desc = 'Put Text After Cursor' },
-				{ 'p', '<Plug>(YankyPutBefore)', mode = { 'x' }, desc = 'Put Text After Cursor' },
-				{ 'P', '<Plug>(YankyPutBefore)', mode = { 'n', 'x' }, desc = 'Put Text Before Cursor' },
-				{ 'gp', '<Plug>(YankyGPutAfter)', mode = { 'n', 'x' }, desc = 'Put Text After Selection' },
-				{ 'gP', '<Plug>(YankyGPutBefore)', mode = { 'n', 'x' }, desc = 'Put Text Before Selection' },
-				{ '[y', '<Plug>(YankyCycleForward)', desc = 'Cycle Forward Through Yank History' },
-				{ ']y', '<Plug>(YankyCycleBackward)', desc = 'Cycle Backward Through Yank History' },
-				{ ']p', '<Plug>(YankyPutIndentAfterLinewise)', desc = 'Put Indented After Cursor (Linewise)' },
-				{ '[p', '<Plug>(YankyPutIndentBeforeLinewise)', desc = 'Put Indented Before Cursor (Linewise)' },
-				{ ']P', '<Plug>(YankyPutIndentAfterLinewise)', desc = 'Put Indented After Cursor (Linewise)' },
-				{ '[P', '<Plug>(YankyPutIndentBeforeLinewise)', desc = 'Put Indented Before Cursor (Linewise)' },
-				{ '>p', '<Plug>(YankyPutIndentAfterShiftRight)', desc = 'Put and Indent Right' },
-				{ '<p', '<Plug>(YankyPutIndentAfterShiftLeft)', desc = 'Put and Indent Left' },
-				{ '>P', '<Plug>(YankyPutIndentBeforeShiftRight)', desc = 'Put Before and Indent Right' },
-				{ '<P', '<Plug>(YankyPutIndentBeforeShiftLeft)', desc = 'Put Before and Indent Left' },
-				{ '=p', '<Plug>(YankyPutAfterFilter)', desc = 'Put After Applying a Filter' },
-				{ '=P', '<Plug>(YankyPutBeforeFilter)', desc = 'Put Before Applying a Filter' },
-			}
-		end,
-	},
-
 	{
 		'jiaoshijie/undotree',
 		priority = 1000,
@@ -250,6 +194,105 @@ return {
 				['<cr>'] = 'action_enter',
 				['p'] = 'enter_diffbuf',
 				['q'] = 'quit',
+			},
+		},
+	},
+
+	{ -- best color picker (including oklch)
+		'eero-lehtinen/oklch-color-picker.nvim',
+		event = 'BufReadPre',
+		cmd = { 'ColorPickOklch' },
+		keys = {
+			{
+				'<leader>cp',
+				function() require('oklch-color-picker').pick_under_cursor { fallback_open = { initial_color = '#000' } } end,
+				desc = 'Open color picker under cursor',
+			},
+		},
+		---@type oklch.Opts
+		opts = {
+			register_cmds = false,
+			auto_download = false,
+			wsl_use_windows_app = true,
+
+			highlight = {
+				enabled = true,
+				edit_delay = 100,
+				scroll_delay = 10,
+				virtual_text = '  ',
+				style = 'virtual_left',
+				bold = true,
+				italic = true,
+				ignore_ft = require('utils.const').ignored_filetypes,
+				disable_builtin_lsp_colors = vim.version().minor == 12,
+			},
+
+			---@type table<string, oklch.PatternList | false>?
+			patterns = {
+				hex = { priority = -1, '()#%x%x%x+%f[%W]()' },
+				hex_literal = { priority = -1, '()0x%x%x%x%x%x%x+%f[%W]()' },
+
+				-- Rgb and Hsl support modern and legacy formats:
+				-- rgb(10 10 10 / 50%) and rgba(10, 10, 10, 0.5)
+				css_rgb = { priority = -1, '()rgba?%(.-%)()' },
+				css_hsl = { priority = -1, '()hsla?%(.-%)()' },
+				css_oklch = { priority = -1, '()oklch%([^,]-%)()' },
+
+				tailwind = {
+					priority = -2,
+					custom_parse = function(m) return require('oklch-color-picker.tailwind').custom_parse(m) end,
+					'%f[%w][%l%-]-%-()%l-%-%d%d%d?%f[%W]()',
+				},
+
+				-- Allows any digits, dots, commas or whitespace within brackets.
+				numbers_in_brackets = { priority = -10, '%(()[%d.,%s]+()%)' },
+			},
+		},
+	},
+
+	{ -- A vim-vinegar like file explorer that lets you edit your filesystem like a normal Neovim buffer.
+		'stevearc/oil.nvim',
+		cmd = 'Oil',
+		keys = {
+			{ ';e', function() require('oil').toggle_float() end, desc = 'Oil' },
+		},
+		---@module 'oil'
+		---@type oil.SetupOpts
+		opts = {
+			win_options = {
+				winblend = 0,
+				number = false,
+				relativenumber = false,
+				signcolumn = 'auto:2',
+			},
+			view_options = {
+				show_hidden = false,
+				case_insensitive = false,
+				natural_order = 'fast',
+			},
+			float = {
+				padding = 2,
+				max_width = 0.4,
+				max_height = 0.6,
+				border = 'rounded',
+			},
+			keymaps = {
+				['?'] = { 'actions.show_help', mode = 'n' },
+				['<c-l>'] = 'actions.select',
+				['<c-v>'] = { 'actions.select', opts = { vertical = true } },
+				['<c-s>'] = { 'actions.select', opts = { horizontal = true } },
+				['<c-q>'] = { 'actions.close', mode = { 'n', 'i' } },
+				['<c-c>'] = { 'actions.close', mode = { 'n', 'i' } },
+				['<a-p>'] = 'actions.preview',
+				['<a-r>'] = 'actions.refresh',
+				['-'] = { 'actions.parent', mode = 'n' },
+				['_'] = { 'actions.open_cwd', mode = 'n' },
+				['`'] = { 'actions.cd', mode = 'n' },
+				['~'] = { 'actions.cd', opts = { scope = 'tab' }, mode = 'n' },
+				['<a-s>'] = { 'actions.change_sort', mode = 'n' },
+				['<a-h>'] = { 'actions.toggle_hidden', mode = 'n' },
+				['<a-T>'] = { 'actions.toggle_trash', mode = 'n' },
+				['gx'] = { 'actions.open_external', mode = { 'n', 'v' } },
 			},
 		},
 	},
