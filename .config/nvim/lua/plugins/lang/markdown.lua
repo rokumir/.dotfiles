@@ -1,5 +1,7 @@
-return {
+---@diagnostic disable: missing-fields
+local document_fts = require('utils.const').filetype.document_list
 
+return {
 	-- MDX highlighting
 	{ 'davidmh/mdx.nvim', ft = 'mdx' },
 
@@ -10,7 +12,7 @@ return {
 			require('lazy').load { plugins = { 'markdown-preview.nvim' } }
 			vim.fn['mkdp#util#install']()
 		end,
-		ft = { 'markdown', 'mdx' },
+		ft = document_fts,
 		keys = {
 			{ '<leader>uM', '<cmd>MarkdownPreviewToggle<cr>', ft = 'markdown', desc = 'Markdown Preview' },
 		},

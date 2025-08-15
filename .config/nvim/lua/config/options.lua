@@ -2,7 +2,9 @@ vim.g.mapleader = ' '
 vim.g.autoformat = false
 vim.g.lazyvim_picker = 'snacks'
 vim.g.trouble_lualine = true -- disable navic in lualine
+vim.g.lsp_doc_max_size = 50
 
+vim.opt.clipboard = 'unnamed'
 vim.opt.background = 'dark'
 vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'

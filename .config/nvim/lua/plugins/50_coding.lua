@@ -11,6 +11,7 @@ return {
 			ring = {
 				history_length = 50,
 				sync_with_numbered_registers = true,
+				permanent_wrapper = function(...) return require('yanky.wrappers').remove_carriage_return(...) end,
 			},
 			highlight = {
 				on_put = true,
@@ -22,12 +23,11 @@ return {
 		keys = function()
 			return {
 				{ '<leader>p', '', desc = 'yanky' },
-				---@diagnostic disable-next-line: undefined-field
-				{ '<leader>pp', function() Snacks.picker.yanky() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
+				{ '<leader>pp', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
 				{ '<leader>pc', function() require('yanky').history.clear() end, desc = 'Clear Yank History' },
 
-				{ '<c-a-n>', '<Plug>(YankyNextEntry)', mode = { 'n', 'i' }, desc = 'Next Entry' },
-				{ '<c-a-b>', '<Plug>(YankyPreviousEntry)', mode = { 'n', 'i' }, desc = 'Prev Entry' },
+				{ '<a-N>', '<Plug>(YankyNextEntry)', mode = { 'n', 'i' }, desc = 'Next Entry' },
+				{ '<a-B>', '<Plug>(YankyPreviousEntry)', mode = { 'n', 'i' }, desc = 'Prev Entry' },
 
 				{ 'y', '<Plug>(YankyYank)', mode = { 'n', 'x' }, desc = 'Yank Text' },
 				{ 'p', '<Plug>(YankyPutAfter)', desc = 'Put Text After Cursor' },
@@ -137,7 +137,7 @@ return {
 		},
 	},
 
-	{ -- better rename
+	{ -- better UX than inc-rename
 		'saecki/live-rename.nvim',
 		priority = 1000,
 		event = 'VeryLazy',

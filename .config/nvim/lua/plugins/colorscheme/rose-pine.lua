@@ -50,7 +50,7 @@ return {
 				Conceal = { bg = 'base', blend = 15, force = true },
 				MsgArea = { fg = 'subtle' },
 				Comment = { fg = 'muted' },
-				Folded = { bg = 'base' },
+				Folded = { fg = 'pine', bg = 'highlight_med', blend = 20 },
 				VertSplit = { fg = 'overlay', bg = 'muted' },
 				Search = { bg = 'highlight_med', fg = 'none' },
 				IncSearch = { bg = 'gold', fg = 'black' },
@@ -71,6 +71,8 @@ return {
 				YankyPut = { bg = 'pine', blend = 25 },
 				YankyYanked = { bg = 'love', blend = 25 },
 				LazyBackdrop = { bg = 'base', blend = 25 },
+				UfoFoldVirtText = { fg = 'pine', bold = true },
+				UfoFoldVirtFillerText = { fg = 'pine', bold = true },
 				--#endregion
 
 				--#region lsp

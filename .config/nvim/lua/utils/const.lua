@@ -1,6 +1,9 @@
 local M = {}
 
-M.ignored_filetype_map = {
+M.filetype = {}
+
+M.filetype.ignored_map = {
+	[''] = true,
 	notify = true, -- LazyVim notifications
 	noice = true, -- Noice UI
 	mason = true,
@@ -38,25 +41,54 @@ M.ignored_filetype_map = {
 	codecompanion = true,
 	oil = true,
 	snacks_picker_input = true,
+	ministarter = true,
+	snacks_dashboard = true,
 }
-M.ignored_filetypes = vim.tbl_keys(M.ignored_filetype_map) ---@type string[]
+M.filetype.ignored_list = vim.tbl_keys(M.filetype.ignored_map) ---@type string[]
 
-M.ignored_buftype_map = {
+M.filetype.document_map = {
+	markdown = true,
+	mdx = true,
+	vimwiki = true,
+	latex = true,
+	help = true,
+	text = true,
+	tex = true,
+}
+M.filetype.document_list = vim.tbl_keys(M.filetype.document_map)
+
+M.buftype = {}
+
+M.buftype.ignored_map = {
 	[''] = true,
 	nofile = true,
 	terminal = true,
 	help = true,
 	prompt = true,
 }
-M.ignored_buftypes = vim.tbl_keys(M.ignored_buftype_map) ---@type string[]
+M.buftype.ignored_list = vim.tbl_keys(M.buftype.ignored_map) ---@type string[]
 
-M.document_filetype_map = {
-	markdown = true,
-	vimwiki = true,
-	latex = true,
-	help = true,
-	text = true,
-	tex = true,
+M.snacks = {}
+
+M.snacks.disabled_default_action_keys = {
+	a = false,
+	d = false,
+	r = false,
+	c = false,
+	m = false,
+	o = false,
+	P = false,
+	y = false,
+	p = false,
+	u = false,
+	I = false,
+	H = false,
+	Z = false,
+}
+
+M.snacks.excludes = {
+	'**/.git/*',
+	'**/node_modules/*',
 }
 
 return M

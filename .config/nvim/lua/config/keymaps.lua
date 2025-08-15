@@ -138,13 +138,6 @@ Snacks.toggle
 	:map '<leader><leader>R'
 --#endregion
 
---#region --- TERMINAL
-map { '<leader>fT', function() Snacks.terminal() end, desc = 'Terminal (cwd)' }
-map { '<leader>ft', function() Snacks.terminal(nil, { cwd = LazyVim.root() }) end, desc = 'Terminal (Root Dir)' }
-map { '<c-/>', function() Snacks.terminal() end, desc = 'Terminal (cwd)' }
-map { '<c-alt-/>', function() Snacks.terminal(nil, { cwd = LazyVim.root() }) end, desc = 'Terminal (Root Dir)' }
---#endregion
-
 --#region --- WINDOWS
 -- split
 map { '<c-a-up>', ':resize +1 <cr>', desc = 'Increase Window Height' }

@@ -4,12 +4,13 @@
 return {
 	{ ---@module 'noice' Better general UI (should be deprecated soon)
 		'folke/noice.nvim',
+		keys = function() return {} end,
 		opts = {
 			presets = {
 				bottom_search = true,
 				command_palette = true,
 				lsp_doc_border = true,
-				inc_rename = true,
+				inc_rename = false,
 				cmdline_output_to_split = true,
 				long_message_to_split = true,
 			},
@@ -85,10 +86,10 @@ return {
 
 				lualine_y = {
 					'location',
-					{ require('utils.time').pretty_date },
+					{ function() return require('utils.datetime').format.pretty_date() end },
 				},
 				lualine_z = {
-					{ require('utils.time').pretty_time },
+					{ function() return require('utils.datetime').format.pretty_time() end },
 				},
 			},
 		},
@@ -96,10 +97,10 @@ return {
 	{ -- Statusline
 		'nvim-lualine/lualine.nvim',
 		opts = function(_, opts)
-			local get_hl_color = require('utils.highlight').get_color
+			local get_hl_color = require('utils.highlight').get
 			local hl_color = { -- precall color
-				muted = get_hl_color('Comment', 'fg'),
-				special = get_hl_color('PreCondit', 'fg'),
+				muted = get_hl_color('Comment').fg,
+				special = get_hl_color('PreCondit').fg,
 			}
 
 			local theme = opts.options.theme
@@ -122,7 +123,7 @@ return {
 					end,
 					color = { gui = 'italic', fg = hl_color.special },
 					separator = '',
-					cond = function() return require('utils.const').document_filetype_map[vim.bo.ft] end,
+					cond = function() return require('utils.const').filetype.document_map[vim.bo.ft] end,
 				},
 				{
 					'encoding',
@@ -152,18 +153,16 @@ return {
 		end,
 	},
 	-- disable navic in lualine
-	{ 'SmiteshP/nvim-navic', optional = true, opts = function(_, opts) opts = { lazy_update_context = true } end },
+	{ 'SmiteshP/nvim-navic', optional = true, opts = function() return { lazy_update_context = true } end },
 
 	{ -- Tabs
 		'akinsho/bufferline.nvim',
-
 		keys = {
 			{ '<tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Next Buffer' },
 			{ '<s-tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
 			{ '<c-s-right>', '<cmd>BufferLineMoveNext<cr>', desc = 'Move buffer next' },
 			{ '<c-s-left>', '<cmd>BufferLineMovePrev<cr>', desc = 'Move buffer prev' },
 		},
-
 		---@module 'bufferline'
 		---@param opts bufferline.UserConfig
 		opts = function(_, opts)
@@ -260,16 +259,21 @@ return {
 		opts = {
 			-- TODO: add ft exclude snacks_picker_input
 			sources = {
-				-- path = { max_depth = 1, modified = function(sym) return sym:merge { name = sym.name .. ' ✨', name_hl = 'Error' } end, },
+				path = { max_depth = 1, modified = function(sym) return sym:merge { name = sym.name .. ' ✨', name_hl = 'Error' } end },
 			},
 			bar = {
 				padding = { left = 2, right = 2 },
-				sources = function(buf, _) -- disable path
+				sources = function(buf)
 					local sources = require 'dropbar.sources'
-					local utils = require 'dropbar.utils'
+					local fallback = require('dropbar.utils').source.fallback
+
 					if vim.bo[buf].ft == 'markdown' then return { sources.path, sources.markdown } end
 					if vim.bo[buf].buftype == 'terminal' then return { sources.terminal } end
-					return { utils.source.fallback { sources.lsp, sources.treesitter } }
+
+					return {
+						-- dropbar_sources.path,
+						fallback { sources.lsp, sources.treesitter },
+					}
 				end,
 			},
 		},
@@ -288,10 +292,35 @@ return {
 				open = 'CopilotChatToggle',
 			})
 
-			opts.keys['<c-a-left>'] = function(win) win:resize('width', 2) end
-			opts.keys['<c-a-right>'] = function(win) win:resize('width', -2) end
-			opts.keys['<c-a-up>'] = function(win) win:resize('height', 2) end
-			opts.keys['<c-a-down>'] = function(win) win:resize('height', -2) end
+			opts.keys['<c-a-left>'] = function(win) win:resize('width', 1) end
+			opts.keys['<c-a-right>'] = function(win) win:resize('width', -1) end
+			opts.keys['<c-a-up>'] = function(win) win:resize('height', 1) end
+			opts.keys['<c-a-down>'] = function(win) win:resize('height', -1) end
 		end,
+	},
+
+	{ -- better folding treesitter
+		'kevinhwang91/nvim-ufo',
+		dependencies = 'kevinhwang91/promise-async',
+		event = 'VimEnter',
+		init = function()
+			vim.o.foldcolumn = '1' -- '0' is not bad
+			vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+			vim.o.foldlevelstart = 99
+			vim.o.foldenable = true
+		end,
+
+		opts = {
+			open_fold_hl_timeout = 150,
+			close_fold_kinds_for_ft = {
+				default = { 'imports', 'comment' },
+				json = { 'array' },
+				c = { 'comment', 'region' },
+			},
+			enable_get_fold_virt_text = true,
+			fold_virt_text_handler = require('utils.ufo').make_fold_handler {
+				icon = '',
+			},
+		},
 	},
 }

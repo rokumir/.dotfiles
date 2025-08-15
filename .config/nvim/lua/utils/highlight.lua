@@ -1,3 +1,4 @@
+---@diagnostic disable: assign-type-mismatch
 local M = {}
 
 ---Apply a set of highlight overrides.
@@ -13,7 +14,7 @@ end
 --- Merge highlight
 ---@param group string
 ---@param override_opts vim.api.keyset.set_hl_info
-function M.merge(group, override_opts)
+function M.set_group(group, override_opts)
 	local ok, hl = pcall(vim.api.nvim_get_hl, 0, {
 		id = vim.api.nvim_get_hl_id_by_name(group),
 		create = false,
@@ -24,21 +25,18 @@ function M.merge(group, override_opts)
 	vim.api.nvim_set_hl(0, group, vim.tbl_deep_extend('force', hl, override_opts))
 end
 
---- Get highlight color/style from highlight group name
+local COLOR_KEY_MAP = { bg = true, fg = true, sp = true }
+
+--- Get highlight color/style object from highlight group name
 ---@param group string
----@param color 'fg'|'bg'|'sp'
-function M.get_color(group, color)
-	local id_ok, hl_id = pcall(vim.api.nvim_get_hl_id_by_name, group)
-	local hl_ok, hl = pcall(vim.api.nvim_get_hl, 0, { id = hl_id, create = false, link = true })
-	if not hl_ok or not id_ok then return nil end
-
-	if hl[color] then
-		return string.format('#%06x', hl[color])
-	elseif hl.link then
-		return M.get_color(hl.link, color)
-	end
-
-	return error('Couldn\'t find "' .. group .. '"')
+function M.get(group)
+	local hl_ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = group, create = false, link = true })
+	if not hl_ok then return end
+	if hl.link then return M.get(hl.link) end
+	if hl.bg then hl.bg = string.format('#%06x', hl.bg) end
+	if hl.fg then hl.fg = string.format('#%06x', hl.fg) end
+	if hl.sp then hl.sp = string.format('#%06x', hl.sp) end
+	return hl
 end
 
 return M

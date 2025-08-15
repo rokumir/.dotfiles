@@ -37,7 +37,7 @@ vim.api.nvim_create_autocmd('FileType', {
 
 -- Advanced LSP progress
 vim.api.nvim_create_autocmd('LspProgress', {
-	callback = function(ev) ---@param ev {data: {client_id: integer, params: lsp.ProgressParams}}
+	callback = function(ev) ---@param ev {data: {client_id: number, params: lsp.ProgressParams}}
 		local spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
 		vim.notify(vim.lsp.status(), 'info', {
 			id = 'lsp_progress',
@@ -72,8 +72,8 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'FileType' }, {
 	group = augroup 'disable_completion',
 	callback = function(ev)
 		local filetype = vim.bo[ev.buf].filetype
-		local is_ignored_filetype = const.ignored_filetype_map[filetype]
-		if is_ignored_filetype then vim.b.completion = false end
+		---@diagnostic disable-next-line: inject-field
+		if const.filetype.ignored_map[filetype] then vim.b.completion = false end
 	end,
 })
 
@@ -112,7 +112,7 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 -- close some filetypes with <q>
 vim.api.nvim_create_autocmd('FileType', {
 	group = augroup 'close_with_q',
-	pattern = const.ignored_filetypes,
+	pattern = const.filetype.ignored_list,
 	callback = function(event)
 		vim.bo[event.buf].buflisted = false
 		vim.schedule(function()

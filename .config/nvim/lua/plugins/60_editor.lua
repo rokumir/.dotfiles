@@ -1,3 +1,5 @@
+local excluded_filetypes = require('utils.const').filetype.ignored_list
+
 ---@diagnostic disable: no-unknown, missing-fields, missing-parameter
 ---@type LazyPluginSpec[]
 return {
@@ -17,13 +19,13 @@ return {
 				{ ';hh', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, desc = 'Harpoon list' },
 				{ ';hp', function() harpoon:list():prepend() end, desc = 'Harpoon prepend' },
 				{ ';ha', function() harpoon:list():add() end, desc = 'Harpoon add' },
-				{ '<c-a-]>', function() harpoon:list():next() end, desc = 'Harpoon next' },
-				{ '<c-a-[>', function() harpoon:list():prev() end, desc = 'Harpoon prev' },
+				{ '<a-}>', function() harpoon:list():next() end, desc = 'Harpoon next' },
+				{ '<a-{>', function() harpoon:list():prev() end, desc = 'Harpoon prev' },
 
-				{ '<c-a-u>', harpoon_goto(1), desc = 'Harpoon 1st entry' },
-				{ '<c-a-i>', harpoon_goto(2), desc = 'Harpoon 2nd entry' },
-				{ '<c-a-o>', harpoon_goto(3), desc = 'Harpoon 3rd entry' },
-				{ '<c-a-p>', harpoon_goto(4), desc = 'Harpoon 4th entry' },
+				{ '<a-U>', harpoon_goto(1), desc = 'Harpoon 1st entry' },
+				{ '<a-I>', harpoon_goto(2), desc = 'Harpoon 2nd entry' },
+				{ '<a-O>', harpoon_goto(3), desc = 'Harpoon 3rd entry' },
+				{ '<a-P>', harpoon_goto(4), desc = 'Harpoon 4th entry' },
 			}
 		end,
 		config = function()
@@ -116,11 +118,10 @@ return {
 		},
 	},
 
-	{
+	{ -- better indent guessing
 		'tpope/vim-sleuth',
-		config = function()
+		init = function()
 			-- 1: true, 0: false
-			local excluded_filetypes = require('utils.const').ignored_filetypes
 			for _, ft in ipairs(excluded_filetypes) do
 				vim.g['sleuth_' .. ft .. '_heuristics'] = 0
 			end
@@ -153,27 +154,7 @@ return {
 		},
 	},
 
-	{
-		'kevinhwang91/nvim-ufo',
-		dependencies = 'kevinhwang91/promise-async',
-		event = 'VimEnter',
-		init = function()
-			vim.o.foldcolumn = '1' -- '0' is not bad
-			vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-			vim.o.foldlevelstart = 99
-			vim.o.foldenable = true
-		end,
-		opts = {
-			open_fold_hl_timeout = 150,
-			close_fold_kinds_for_ft = {
-				default = { 'imports', 'comment' },
-				json = { 'array' },
-				c = { 'comment', 'region' },
-			},
-		},
-	},
-
-	{
+	{ -- Undo tree
 		'jiaoshijie/undotree',
 		priority = 1000,
 		keys = { -- load the plugin only when using it's keybinding:
@@ -183,7 +164,7 @@ return {
 			float_diff = false, -- using float window previews diff, set this `true` will disable layout option
 			layout = 'left_left_bottom', -- "left_bottom", "left_left_bottom"
 			position = 'left', -- "right", "bottom"
-			ignore_filetype = require('utils.const').ignored_filetypes,
+			ignore_filetype = excluded_filetypes,
 			window = { winblend = 100 },
 			keymaps = {
 				['j'] = 'move_next',
@@ -223,7 +204,7 @@ return {
 				style = 'virtual_left',
 				bold = true,
 				italic = true,
-				ignore_ft = require('utils.const').ignored_filetypes,
+				ignore_ft = excluded_filetypes,
 				disable_builtin_lsp_colors = vim.version().minor == 12,
 			},
 
