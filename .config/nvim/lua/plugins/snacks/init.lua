@@ -145,7 +145,3 @@ return {
 	{ import = 'plugins.snacks' },
 	{ import = 'plugins.snacks.pickers' },
 }
-
--- Overriding snacks types
----@class snacks.picker.Config
----@field exclude? string[]

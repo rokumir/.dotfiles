@@ -1,5 +1,7 @@
 local snacks_const = require('utils.const').snacks
 
+_G.nihil = {}
+
 ---@type snacks.win.Keys
 local default_keys = vim.tbl_extend('force', {}, snacks_const.disabled_default_action_keys, {
 	['l'] = 'confirm',
@@ -8,6 +10,7 @@ local default_keys = vim.tbl_extend('force', {}, snacks_const.disabled_default_a
 	['<c-l>'] = { 'confirm', mode = { 'n', 'i' } },
 	['<esc>'] = { 'close', mode = { 'n', 'i' } },
 	['<c-q>'] = { 'close', mode = { 'n', 'i' } },
+	['<c-space>'] = { 'select', mode = { 'n', 'i' } },
 
 	['<a-K>'] = { 'preview_scroll_up', mode = { 'i', 'n' } },
 	['<a-J>'] = { 'preview_scroll_down', mode = { 'i', 'n' } },
@@ -48,7 +51,12 @@ local yank_picker_utils_map = {
 			end)
 		end,
 	},
-	notifications = { predicate = function(item) return item.msg end },
+	notifications = {
+		predicate = function(item)
+			table.insert(nihil, item)
+			return item.msg
+		end,
+	},
 }
 
 return {
@@ -117,30 +125,32 @@ return {
 				-- better yank (supports multiple selections)
 				yank = function(picker)
 					local selected_items = picker:selected { fallback = true }
-					picker.list:set_selected() -- clear selection, update UI on "client-side" (better for UX)
+					picker.list:set_selected() -- clear selection, update early for better UX
 					if #selected_items == 0 then return end
 
-					local utils_map = yank_picker_utils_map
-					local yank_utils = utils_map[picker.opts.source]
-					local predicate = yank_utils.predicate or function(item) return item.text end
-					local processed_items = vim.tbl_map(predicate, selected_items)
+					local utils = vim.deepcopy(yank_picker_utils_map[picker.opts.source] or {})
+					local action --[[@type YankPickerUtil]] = vim.tbl_extend('force', utils, {
+						predicate = function(item) return item.text end,
+						callback = function(items, copy) copy(items) end,
+					})
 
-					local copy = function(text_to_copy)
-						local text = table.concat(text_to_copy, '\n')
-						vim.fn.setreg('+', text)
+					local mapped_items = vim.tbl_map(action.predicate, selected_items)
+					action.callback(mapped_items, function(items)
+						vim.fn.setreg('+', table.concat(items, '\n'))
 						Snacks.notify 'Copied to the system (+) register!'
-					end
-
-					if yank_utils.callback then
-						yank_utils.callback(processed_items, copy)
-					else
-						copy(processed_items)
-					end
+					end)
 				end,
+
+				select = function(picker, item) picker.list:select(item) end,
 			},
 		},
 	},
 }
+
+---@class snacks.picker.Config
+---@field exclude? string[]
+---@field hidden? boolean
+---@field ignored? boolean
 
 ---@alias YankPickerUtilsMap table<string, YankPickerUtil>
 
