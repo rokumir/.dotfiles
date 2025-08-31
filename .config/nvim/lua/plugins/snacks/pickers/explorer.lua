@@ -17,13 +17,13 @@ return {
 					layout = {
 						preset = 'default',
 						hidden = { 'input' },
-						layout = { -- variant of 'ivy'
+						layout = {
 							position = 'right',
 							width = 0.26,
 							box = 'vertical',
 							row = -1,
 							border = 'top',
-							title = '{title} {live} {flags}',
+							title = '{title} {live} {flags}',
 							title_pos = 'left',
 							{ win = 'input', height = 1, border = 'bottom' },
 							{
@@ -38,14 +38,12 @@ return {
 
 					win = {
 						list = {
-							keys = vim.tbl_extend('force', {}, require('utils.const').snacks.disabled_default_action_keys, {
+							keys = vim.tbl_extend('force', {}, require('utils.const').snacks.disabled_default_keys, {
 								['<bs>'] = 'explorer_up',
 								['h'] = 'explorer_close', -- close directory
 								['<c-s-u>'] = 'explorer_update',
 								['U'] = 'explorer_update',
 								['<c-.>'] = 'explorer_focus',
-								['l'] = 'explorer_toggle_confirm',
-								['<c-l>'] = { 'explorer_toggle_confirm', mode = { 'n', 'i' } },
 
 								['zc'] = 'explorer_close',
 								['zo'] = 'confirm',
@@ -117,8 +115,8 @@ return {
 							toggle_recursive(curr_node)
 						end,
 
-						-- FIX: confirm close the explorer
-						explorer_toggle_confirm = function(picker, item)
+						-- Better confirm action
+						confirm = function(picker, item)
 							local Tree = require 'snacks.explorer.tree'
 							local Actions = require 'snacks.explorer.actions'
 
@@ -129,7 +127,7 @@ return {
 								Tree:open(selected_node.path)
 								Actions.update(picker, { refresh = false })
 							else
-								picker:action 'confirm'
+								picker:action 'jump'
 							end
 						end,
 					},

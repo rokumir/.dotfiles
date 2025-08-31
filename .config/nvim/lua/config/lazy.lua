@@ -30,7 +30,7 @@ require('lazy').setup {
 		--#endregion
 
 		--#region Extras modules
-		{ import = 'lazyvim.plugins.extras.ui.edgy' },
+		-- { import = 'lazyvim.plugins.extras.ui.edgy' },
 
 		{ import = 'lazyvim.plugins.extras.editor.snacks_explorer' },
 		{ import = 'lazyvim.plugins.extras.editor.snacks_picker' },

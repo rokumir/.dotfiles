@@ -12,7 +12,7 @@ map { '<c-e>', '<nop>', mode = { 'i' } }
 map { 'jj', '<esc>', mode = 'i' }
 map { 'jk', '<esc>', mode = 'i' }
 map { '<c-q>', '<c-c>', mode = 'c' }
-map { '<c-a>', 'ggVG' }
+-- map { '<c-a>', 'ggVG' }
 map { 'H', '^', mode = { 'n', 'v', 'o' } }
 map { 'L', '$', mode = { 'n', 'v', 'o' } }
 
@@ -83,8 +83,8 @@ map { 'o', 'o<esc>', remap = true, desc = 'Open Line' }
 map { 'O', 'O<esc>', remap = true, desc = 'Open Line Above' }
 map { 'p', 'P', remap = true, mode = 'v', desc = 'Paste Line' }
 
-map { '+', '<c-a>', mode = { 'n', 'v' }, desc = 'Increase Number' }
-map { '-', '<c-x>', mode = { 'n', 'v' }, desc = 'Decrease Number' }
+-- map { '+', '<c-a>', mode = { 'n', 'v' }, desc = 'Increase Number' }
+-- map { '-', '<c-x>', mode = { 'n', 'v' }, desc = 'Decrease Number' }
 
 map { '<', '<gv', mode = 'v', desc = 'Indent' }
 map { '>', '>gv', mode = 'v', desc = 'Unindent' }
@@ -106,6 +106,30 @@ map { '<c-l>', clearVisualNoises, desc = 'Clear Visual Noises', mode = { 'n', 'i
 map { '<leader>uc', clearVisualNoises, desc = 'Clear Visual Noises', mode = { 'n', 'x' }, nowait = true }
 map { '<leader>um', '<cmd>delm! | delm A-Z0-9<cr>', desc = 'Clear Marks' }
 --#endregion
+
+--#region --- WINDOWS
+-- split
+map { '<c-a-up>', ':resize +1 <cr>', desc = 'Increase Window Height' }
+map { '<c-a-down>', ':resize -1 <cr>', desc = 'Decrease Window Height' }
+map { '<c-a-left>', ':vertical resize -1 <cr>', desc = 'Decrease Window Width' }
+map { '<c-a-right>', ':vertical resize +1 <cr>', desc = 'Increase Window Width' }
+
+-- tabs
+-- map { '<leader>t', '', desc = 'tab' }
+map { '<leader>td', '<cmd>tabclose<cr>', desc = 'Tab: Close' }
+map { '<leader>tn', '<cmd>tabnew<cr>', desc = 'Tab: New' }
+map { '<leader><tab>', '<cmd>tabnext<cr>', desc = 'Tab: Next' }
+map { '<leader><s-tab>', '<cmd>tabprevious<cr>', desc = 'Tab: Previous' }
+-- map { '<leader>t<', ':tabm +1 <cr>', desc = 'Move Tab Right' }
+-- map { '<leader>t>', ':tabm -1 <cr>', desc = 'Move Tab Left' }
+
+-- buffers (use like tab)
+-- map { '<tab>', ':bnext <cr>', desc = 'Next Buffer' }
+-- map { '<s-tab>', ':bprevious <cr>', desc = 'Prev Buffer' }
+map { '<leader>`', ':b# <cr>', desc = 'Alternate buffer' }
+--#endregion
+
+if LazyVim == nil then return end
 
 --#region --- TOGGLES
 LazyVim.format.snacks_toggle():map '<leader><leader>f'
@@ -138,35 +162,13 @@ Snacks.toggle
 	:map '<leader><leader>R'
 --#endregion
 
---#region --- WINDOWS
--- split
-map { '<c-a-up>', ':resize +1 <cr>', desc = 'Increase Window Height' }
-map { '<c-a-down>', ':resize -1 <cr>', desc = 'Decrease Window Height' }
-map { '<c-a-left>', ':vertical resize -1 <cr>', desc = 'Decrease Window Width' }
-map { '<c-a-right>', ':vertical resize +1 <cr>', desc = 'Increase Window Width' }
-
--- tabs
-map { '<leader><tab>]', '<cmd>tabnext<cr>', desc = 'Next Tab' }
-map { '<leader><tab>[', '<cmd>tabprevious<cr>', desc = 'Previous Tab' }
-map { '<leader><tab>d', '<cmd>tabclose<cr>', desc = 'Close Tab' }
--- map { '<leader><tab><tab>', '<cmd>tabnew<cr>', desc = 'New Tab' }
--- map { '<leader><tab>d', ':tabclose <cr>', desc = 'Close Tab' }
--- map { '<c-s-right>', ':tabm +1 <cr>', desc = 'Move Tab Right' }
--- map { '<c-s-left>', ':tabm -1 <cr>', desc = 'Move Tab Left' }
-
--- buffers (use like tab)
--- map { '<tab>', ':bnext <cr>', desc = 'Next Buffer' }
--- map { '<s-tab>', ':bprevious <cr>', desc = 'Prev Buffer' }
-map { '<leader>`', ':b# <cr>', desc = 'Alternate buffer' }
---#endregion
-
 --#region --- SYSTEM
--- map { '<f2>', '', desc = 'system' }
-map { '<f2>l', '<cmd>Lazy <cr>', desc = 'Lazy' }
-map { '<f2>i', '<cmd>LspInfo <cr>', desc = 'LSP info' }
-map { '<f2>r', '<cmd>LspRestart <cr>', desc = 'Restart LSP' }
-map { '<f2>m', '<cmd>Mason <cr>', desc = 'Mason' }
-map { '<f2>f', '<cmd>ConformInfo <cr>', desc = 'Conform' }
+map { '<f2>l', function() vim.cmd.Lazy() end, desc = 'Lazy' }
+map { '<f2>E', function() vim.cmd.LazyExtra() end, desc = 'Lazy' }
+map { '<f2>i', function() vim.cmd.LspInfo() end, desc = 'LSP info' }
+map { '<f2>r', function() vim.cmd.LspRestart() end, desc = 'Restart LSP' }
+map { '<f2>m', function() vim.cmd.Mason() end, desc = 'Mason' }
+map { '<f2>f', function() vim.cmd.ConformInfo() end, desc = 'Conform' }
 map { '<f2>L', function() LazyVim.news.changelog() end, desc = 'LazyVim Changelog' }
 --#endregion
 
@@ -174,15 +176,16 @@ map { '<f2>L', function() LazyVim.news.changelog() end, desc = 'LazyVim Changelo
 map { '<a-F>', function() LazyVim.format { force = true } end, mode = { 'n', 'v' }, desc = 'Format' }
 
 -- diagnostics
----@param severity? vim.diagnostic.Severity
-local function diag_go(dir, severity)
-	severity = severity and vim.diagnostic.severity[severity] or nil
-	return function() vim.diagnostic['goto_' .. dir] { severity = severity } end
+---@param count number
+---@param severity? vim.diagnostic.SeverityName|vim.diagnostic.Severity
+local function diag_jump(count, severity)
+	if severity then severity = vim.diagnostic.severity[severity] end
+	return function() vim.diagnostic.jump { float = true, count = count, severity = severity } end
 end
-map { ']d', diag_go 'next', desc = 'Next diagnostic' }
-map { '[d', diag_go 'prev', desc = 'Prev diagnostic' }
-map { ']e', diag_go('next', 'ERROR'), desc = 'Next error diagnostic' }
-map { '[e', diag_go('prev', 'ERROR'), desc = 'Prev error diagnostic' }
-map { ']w', diag_go('next', 'WARN'), desc = 'Next warning diagnostic' }
-map { '[w', diag_go('prev', 'WARN'), desc = 'Next warning diagnostic' }
+map { ']d', diag_jump(1), desc = 'Diagnostic: Next' }
+map { '[d', diag_jump(-1), desc = 'Diagnostic: Prev' }
+map { ']w', diag_jump(1, 'WARN'), desc = 'Diagnostic: Next warning' }
+map { '[w', diag_jump(-1, 'WARN'), desc = 'Diagnostic: Prev warning' }
+map { ']e', diag_jump(1, 'ERROR'), desc = 'Diagnostic: Next error' }
+map { '[e', diag_jump(-1, 'ERROR'), desc = 'Diagnostic: Prev error' }
 --#endregion

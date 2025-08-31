@@ -1,5 +1,9 @@
 return {
 	'folke/snacks.nvim',
+	keys = {
+		{ ';d', function() Snacks.picker.projects { patterns = { '*' } } end, desc = 'Vaults' },
+		{ ';D', function() Snacks.picker.projects() end, desc = 'Projects' },
+	},
 	---@type snacks.Config
 	opts = {
 		picker = {
@@ -7,23 +11,24 @@ return {
 				projects = {
 					dev = {
 						vim.fs.normalize '~/documents',
+						vim.env.XDG_CONFIG_HOME,
 						vim.env.RH_THROWAWAY,
 						vim.env.RH_PROJECT,
 						vim.env.RH_WORK,
 						vim.env.RH_SCRIPT,
-						vim.env.XDG_CONFIG_HOME,
 					},
+
+					layout = 'vscode_unfocus',
 
 					win = {
 						input = {
 							keys = {
 								['<c-.>'] = { 'tcd', mode = { 'n', 'i' } },
+								['<c-l>'] = { 'confirm', mode = { 'n', 'i' } },
 								['<c-w>'] = { '<cmd>normal! diw<cr><right>', mode = 'i', expr = true, desc = 'delete word' },
-								['<a-X>'] = { 'delete_projects', mode = { 'i', 'n' } },
 							},
 						},
 					},
-
 					actions = {
 						tab = function(picker)
 							vim.cmd 'tabnew'
@@ -31,35 +36,22 @@ return {
 							picker:close()
 							Snacks.picker.projects()
 						end,
-
-						delete_projects = function(picker)
-							local selections = picker:selected { fallback = true }
-
-							-- Build a set of absolute paths to remove
-							local to_remove = {}
-							for _, item in ipairs(selections) do
-								local abs = vim.fn.fnamemodify(item.file, ':p')
-								to_remove[abs] = true
-							end
-
-							vim.defer_fn(function()
-								-- Remove uppercase file-marks ('A'..'Z') pointing at those paths
-								for code = 65, 90 do -- ASCII 'A' to 'Z'
-									local mark = string.char(code)
-									local bufnr = vim.fn.getpos("'" .. mark)[1] -- bufnr, lnum, col, off
-									if bufnr > 0 then
-										local path = vim.fn.fnamemodify(vim.fn.bufname(bufnr), ':p')
-										if to_remove[path] then vim.cmd('delmarks ' .. mark) end
-									end
-								end
-
-								-- Filter out matching entries from v:oldfiles
-								vim.v.oldfiles = vim.tbl_filter(function(path) return not to_remove[vim.fn.fnamemodify(path, ':p')] end, vim.v.oldfiles)
-
-								vim.cmd 'wshada! | rshada!' -- Persist the cleaned state and reload ShaDa
-								Snacks.picker.projects()
-							end, 100)
-						end,
+						-- load_new_session = function(picker, item)
+						-- 	picker:close()
+						-- 	if not item then return end
+						-- 	local dir = item.file
+						-- 	local session_loaded = false
+						-- 	vim.api.nvim_create_autocmd('SessionLoadPost', {
+						-- 		once = true,
+						-- 		callback = function() session_loaded = true end,
+						-- 	})
+						-- 	vim.defer_fn(function()
+						-- 		if not session_loaded then Snacks.picker.files() end
+						-- 	end, 100)
+						-- 	vim.fn.chdir(dir)
+						-- 	local session = Snacks.dashboard.sections.session()
+						-- 	if session then vim.cmd(session.action:sub(2)) end
+						-- end,
 					},
 				},
 			},

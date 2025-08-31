@@ -40,7 +40,7 @@ local function ordinal(n)
 	end
 end
 
---- Mon, Aug 4th (defaults); configurable via opts
+--- Example: Mon, Aug 4th
 ---@param t? table|number
 ---@param opts? PrettyDateOpts
 ---@return string
@@ -67,7 +67,7 @@ function M.format.pretty_date(t, opts)
 	end
 end
 
---- 3:35 PM (defaults); configurable via opts
+--- Example: 3:35 PM
 ---@param t? table|number
 ---@param opts? PrettyTimeOpts
 ---@return string

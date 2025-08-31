@@ -7,9 +7,8 @@ local source_priority = {
 	lsp = 3,
 	path = 2,
 	buffer = 1,
-	snippets = -1,
-	lazydev = -1,
-	copilot = -10,
+	lazydev = 1,
+	snippets = -10,
 }
 
 ---@module 'lazy'

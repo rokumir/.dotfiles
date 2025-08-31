@@ -99,9 +99,9 @@ vim.api.nvim_create_autocmd({ 'VimResized' }, {
 vim.api.nvim_create_autocmd('BufReadPost', {
 	group = augroup 'last_loc',
 	callback = function(ev)
-		local exclude = { 'gitcommit' }
 		local buf = ev.buf
-		if vim.tbl_contains(exclude, vim.bo[buf].filetype) or vim.b[buf].lazyvim_last_loc then return end
+		local filetype = vim.bo[ev.buf].filetype
+		if const.filetype.ignored_map[filetype] or vim.b[buf].lazyvim_last_loc then return end
 		vim.b[buf].lazyvim_last_loc = true
 		local mark = vim.api.nvim_buf_get_mark(buf, '"')
 		local lcount = vim.api.nvim_buf_line_count(buf)
@@ -131,7 +131,7 @@ vim.api.nvim_create_autocmd('FileType', {
 -- make it easier to close man-files when opened inline
 vim.api.nvim_create_autocmd('FileType', {
 	group = augroup 'man_unlisted',
-	pattern = { 'man' },
+	pattern = 'man',
 	callback = function(event) vim.bo[event.buf].buflisted = false end,
 })
 
@@ -145,7 +145,7 @@ vim.api.nvim_create_autocmd('FileType', {
 	end,
 })
 
-vim.api.nvim_create_autocmd({ 'FileType' }, {
+vim.api.nvim_create_autocmd('FileType', {
 	group = augroup 'lang_json',
 	pattern = { 'json', 'jsonc', 'json5' },
 	callback = function()

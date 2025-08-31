@@ -1,4 +1,9 @@
----@diagnostic disable: no-unknown, assign-type-mismatch
+---@diagnostic disable: missing-fields
+
+local icons = LazyVim.config.icons
+icons.misc.modified = '✨'
+icons.misc.readonly = '🔒'
+
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
@@ -55,8 +60,14 @@ return {
 		opts = {
 			options = {
 				globalstatus = true,
+				always_show_tabline = false,
+				always_divide_middle = true,
 				component_separators = { left = '', right = '' },
 				section_separators = { left = '', right = '' },
+				refresh = {
+					refresh_time = 16, -- ~60fps
+					statusline = 16,
+				},
 			},
 			sections = {
 				lualine_c = {
@@ -69,17 +80,17 @@ return {
 							modified_hl = 'Error',
 							directory_hl = 'Comment',
 							filename_hl = 'Conditional',
-							modified_sign = ' ✨ ',
-							readonly_icon = ' 🔒 ',
+							modified_sign = icons.misc.modified,
+							readonly_icon = icons.misc.readonly,
 						},
 					},
 					{
 						'diagnostics',
 						symbols = {
-							error = LazyVim.config.icons.diagnostics.Error,
-							warn = LazyVim.config.icons.diagnostics.Warn,
-							info = LazyVim.config.icons.diagnostics.Info,
-							hint = LazyVim.config.icons.diagnostics.Hint,
+							error = icons.diagnostics.Error,
+							warn = icons.diagnostics.Warn,
+							info = icons.diagnostics.Info,
+							hint = icons.diagnostics.Hint,
 						},
 					},
 				},
@@ -97,23 +108,16 @@ return {
 	{ -- Statusline
 		'nvim-lualine/lualine.nvim',
 		opts = function(_, opts)
-			local get_hl_color = require('utils.highlight').get
-			local hl_color = { -- precall color
-				muted = get_hl_color('Comment').fg,
-				special = get_hl_color('PreCondit').fg,
-			}
-
-			local theme = opts.options.theme
-			if type(theme) ~= 'table' then opts.options.theme = require('lualine.themes.' .. (theme or 'auto')) end
-
-			for _, s in ipairs {
-				{ path = { 'c', 'bg' }, color = 'none' },
-				{ path = { 'c', 'fg' }, color = hl_color.muted },
-			} do
-				for _, mode in ipairs { 'normal', 'insert', 'visual', 'replace', 'command' } do
-					opts.options.theme[mode][s.path[1]][s.path[2]] = 'none'
-				end
+			--#region
+			if type(opts.options.theme) == 'string' then
+				local theme = opts.options.theme or 'auto'
+				opts.options.theme = require('lualine.themes.' .. theme)
 			end
+
+			for _, mode in ipairs { 'normal', 'insert', 'visual', 'replace', 'command' } do
+				opts.options.theme[mode].c.bg = 'none'
+			end
+			--#endregion
 
 			vim.list_extend(opts.sections.lualine_x, {
 				{ -- word count
@@ -121,35 +125,24 @@ return {
 						local wc = vim.fn.wordcount()
 						return wc.words .. 'w ' .. wc.chars .. 'c'
 					end,
-					color = { gui = 'italic', fg = hl_color.special },
+					color = 'PreCondit',
 					separator = '',
 					cond = function() return require('utils.const').filetype.document_map[vim.bo.ft] end,
 				},
 				{
 					'encoding',
-					color = { gui = 'italic', fg = hl_color.special },
+					color = 'PreCondit',
 					separator = '',
 					cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-8' end,
 				},
 				{
 					'fileformat',
 					symbols = { unix = 'lf', dos = 'crlf', mac = 'cr' },
-					color = { gui = 'italic', fg = hl_color.special },
+					color = 'PreCondit',
 					separator = '',
 					cond = function() return vim.bo.ff ~= 'unix' end,
 				},
 			})
-
-			--#region FIX: better macros' status updating
-			local refresh_statusline = function() require('lualine').refresh { place = { 'statusline' } } end
-			vim.api.nvim_create_autocmd('RecordingEnter', { callback = refresh_statusline })
-			vim.api.nvim_create_autocmd('RecordingLeave', {
-				callback = function()
-					local callback = vim.schedule_wrap(refresh_statusline)
-					vim.loop.new_timer():start(50, 0, callback)
-				end,
-			})
-			--#endregion
 		end,
 	},
 	-- disable navic in lualine
@@ -158,63 +151,84 @@ return {
 	{ -- Tabs
 		'akinsho/bufferline.nvim',
 		keys = {
-			{ '<tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Next Buffer' },
-			{ '<s-tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Prev Buffer' },
-			{ '<c-s-right>', '<cmd>BufferLineMoveNext<cr>', desc = 'Move buffer next' },
-			{ '<c-s-left>', '<cmd>BufferLineMovePrev<cr>', desc = 'Move buffer prev' },
+			{ '<tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Tab: Next' },
+			{ '<s-tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Tab: Prev' },
+			{ '<c-s-right>', '<cmd>BufferLineMoveNext<cr>', desc = 'Tab: Move Right' },
+			{ '<c-s-left>', '<cmd>BufferLineMovePrev<cr>', desc = 'Tab: Move Left' },
+
+			{ '<a-1>', '<cmd>BufferLineGoToBuffer 1<cr>', desc = 'Tab: Go To 1' },
+			{ '<a-2>', '<cmd>BufferLineGoToBuffer 2<cr>', desc = 'Tab: Go To 2' },
+			{ '<a-3>', '<cmd>BufferLineGoToBuffer 3<cr>', desc = 'Tab: Go To 3' },
+			{ '<a-4>', '<cmd>BufferLineGoToBuffer 4<cr>', desc = 'Tab: Go To 4' },
+			{ '<a-5>', '<cmd>BufferLineGoToBuffer 5<cr>', desc = 'Tab: Go To 5' },
+			{ '<a-6>', '<cmd>BufferLineGoToBuffer 6<cr>', desc = 'Tab: Go To 6' },
+			{ '<a-7>', '<cmd>BufferLineGoToBuffer 7<cr>', desc = 'Tab: Go To 7' },
+			{ '<a-8>', '<cmd>BufferLineGoToBuffer 8<cr>', desc = 'Tab: Go To 8' },
+			{ '<a-9>', '<cmd>BufferLineGoToBuffer 9<cr>', desc = 'Tab: Go To 9' },
+			{ '<a-0>', '<cmd>BufferLineGoToBuffer -1<cr>', desc = 'Tab: Go To Last' },
+
+			{ '<leader>b', '', desc = 'buffer/tab' },
+			{ '<leader>bp', '<cmd>BufferLineTogglePin<cr>', desc = 'Pin/Unpin' },
+			{ '<leader>bb', '<cmd>BufferLinePick<cr>', desc = 'Pick' },
+			{ '<leader>bB', '<cmd>BufferLinePickClose<cr>', desc = 'Delete Pick' },
+
+			{
+				desc = 'Sort',
+				'<leader>bs',
+				function()
+					Snacks.picker.pick {
+						source = 'tabs_sort',
+						title = 'Sort tabs by',
+						layout = 'vscode_unfocus',
+						-- stylua: ignore
+						items = {
+							{ icon = '󰥨 ', text = 'Directory'          , cmd = 'BufferLineSortByDirectory'         , hl = 'DiagnosticInfo' },
+							{ icon = '󰥨 ', text = 'Relative Directory' , cmd = 'BufferLineSortByRelativeDirectory' , hl = '@namespace'     },
+							{ icon = ' ', text = 'Extension'          , cmd = 'BufferLineSortByExtension'         , hl = 'Error'     },
+							{ icon = '󱎅 ', text = 'Tabs'               , cmd = 'BufferLineSortByTabs'              , hl = 'DiagnosticHint' },
+						},
+						format = function(item)
+							return {
+								{ item.icon, item.hl },
+								{ ' ' },
+								{ item.text, item.hl },
+								{ ' ' },
+								{ item.cmd, 'Comment' },
+							}
+						end,
+						confirm = function(picker, item)
+							picker:close()
+							if not item then Snacks.notify.error('Picker "' .. picker.opts.source .. '":\nItem not found!') end
+							vim.cmd[item.cmd]()
+							Snacks.notify(item.text)
+						end,
+					}
+				end,
+			},
 		},
 		---@module 'bufferline'
-		---@param opts bufferline.UserConfig
-		opts = function(_, opts)
-			opts.options = vim.tbl_extend('force', opts.options, {
+		---@type bufferline.UserConfig
+		opts = {
+			options = {
 				mode = 'buffers',
 				indicator = { style = 'underline' },
-				show_tab_indicators = true,
 				always_show_bufferline = false,
+				show_tab_indicators = true,
 				show_close_icon = false,
 				show_buffer_close_icons = false,
 				show_buffer_icons = true,
-				separator_style = { '', '' },
-				modified_icon = '✨ ',
+				separator_style = 'thin', ---@type 'slant' | 'slope' | 'thick' | 'thin' | [string,string]?
+				modified_icon = icons.misc.modified,
 				enforce_regular_tabs = true,
+				sort_by = 'insert_at_end',
 				hover = { enabled = true, delay = 200 },
-			})
-
-			opts.highlights = {
+			},
+			highlights = {
 				fill = { bg = 'none' },
-			}
-
-			local indicator_color = ({
-				['rose-pine'] = function() return require('rose-pine.palette').love end,
-			})[vim.g.colors_name]
-
-			if indicator_color then
-				local color = indicator_color()
-				for _, hl in ipairs {
-					'indicator',
-					'buffer',
-					'separator',
-					'tab_separator',
-					'tab',
-					'modified',
-					'close_button',
-					'duplicate',
-					'hint',
-					'info',
-					'pick',
-					'error',
-					'numbers',
-					'warning',
-					'diagnostic',
-					'hint_diagnostic',
-					'info_diagnostic',
-					'error_diagnostic',
-					'warning_diagnostic',
-				} do
-					opts.highlights[hl .. '_selected'] = { sp = color }
-				end
-			end
-		end,
+				background = { bg = 'none' },
+				tab_separator = { bg = 'none' },
+			},
+		},
 	},
 
 	{ -- Git status in line number
@@ -257,9 +271,13 @@ return {
 		},
 		---@type dropbar_configs_t
 		opts = {
-			-- TODO: add ft exclude snacks_picker_input
 			sources = {
-				path = { max_depth = 1, modified = function(sym) return sym:merge { name = sym.name .. ' ✨', name_hl = 'Error' } end },
+				path = { max_depth = 1, modified = function(sym)
+					return sym:merge {
+						name = sym.name .. ' ' .. icons.misc.modified,
+						name_hl = 'Error',
+					}
+				end },
 			},
 			bar = {
 				padding = { left = 2, right = 2 },
@@ -281,21 +299,26 @@ return {
 
 	{ -- A Neovim plugin to easily create and manage predefined window layouts, bringing a new edge to your workflow.
 		'folke/edgy.nvim',
+		optional = true,
+		keys = {
+			{ '<c-\\><c-\\>', function() require('edgy').goto_main() end, mode = { 'n', 'i', 't' }, desc = 'Edgy Focus Main' },
+		},
 		---@module 'edgy'
 		---@param opts Edgy.Config
 		opts = function(_, opts)
-			table.insert(opts.right, {
-				ft = 'copilot-chat',
-				title = 'Copilot Chat',
-				size = { width = 40 },
-				pinned = true,
-				open = 'CopilotChatToggle',
-			})
-
 			opts.keys['<c-a-left>'] = function(win) win:resize('width', 1) end
 			opts.keys['<c-a-right>'] = function(win) win:resize('width', -1) end
 			opts.keys['<c-a-up>'] = function(win) win:resize('height', 1) end
 			opts.keys['<c-a-down>'] = function(win) win:resize('height', -1) end
+
+			vim.list_extend(opts.right, {
+				{
+					ft = 'copilot-chat',
+					size = { width = 0.35, height = 0.35 },
+					pinned = true,
+					open = 'CopilotChatToggle',
+				},
+			})
 		end,
 	},
 
@@ -303,19 +326,13 @@ return {
 		'kevinhwang91/nvim-ufo',
 		dependencies = 'kevinhwang91/promise-async',
 		event = 'VimEnter',
-		init = function()
-			vim.o.foldcolumn = '1' -- '0' is not bad
-			vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-			vim.o.foldlevelstart = 99
-			vim.o.foldenable = true
-		end,
-
 		opts = {
 			open_fold_hl_timeout = 150,
 			close_fold_kinds_for_ft = {
 				default = { 'imports', 'comment' },
 				json = { 'array' },
 				c = { 'comment', 'region' },
+				snacks_dashboard = '',
 			},
 			enable_get_fold_virt_text = true,
 			fold_virt_text_handler = require('utils.ufo').make_fold_handler {

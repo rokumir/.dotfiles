@@ -1,3 +1,4 @@
+---@diagnostic disable: assign-type-mismatch
 return {
 	{
 		'rose-pine/neovim',
@@ -59,18 +60,14 @@ return {
 				--#endregion
 
 				--#region misc
-				InclineNormal = { bg = 'overlay', fg = 'pine', blend = 10 },
-				InclineNormalNC = { bg = 'overlay', fg = 'muted', blend = 60 },
 				TreesitterContext = { bg = 'surface' },
 				TreesitterContextLineNumber = { bg = 'surface' },
 				TreesitterContextBottom = { bg = 'surface' },
 				TreesitterContextLineNumberBottom = { bg = 'surface' },
 				EdgyWinBar = { bg = 'surface' },
-				SnacksBackdrop = { bg = 'none', blend = 0 },
 				DropBarMenuHoverEntry = { bg = 'overlay' },
 				YankyPut = { bg = 'pine', blend = 25 },
 				YankyYanked = { bg = 'love', blend = 25 },
-				LazyBackdrop = { bg = 'base', blend = 25 },
 				UfoFoldVirtText = { fg = 'pine', bold = true },
 				UfoFoldVirtFillerText = { fg = 'pine', bold = true },
 				--#endregion
@@ -82,10 +79,12 @@ return {
 				--#endregion
 
 				--#region Lazy stuffs (Snacks, Noice, WhichKey)
-				WhichKeyBorder = { link = 'FloatBorder' },
 				LazyGitBorder = { link = 'FloatBorder' },
+				LazyBackdrop = { bg = 'base', blend = 25 },
+				WhichKeyBorder = { link = 'FloatBorder' },
 				TroubleNormal = { bg = 'none' },
 
+				SnacksBackdrop = { bg = 'none', blend = 0 },
 				SnacksIndent = { fg = 'highlight_low' },
 				SnacksIndentScope = { fg = 'highlight_high' },
 				SnacksIndentChunk = { fg = 'highlight_high' },
@@ -108,34 +107,33 @@ return {
 			},
 		},
 	},
-	{
-		'rose-pine',
-
-		---@param opts {[string]: any, highlight_groups: table<string, vim.api.keyset.set_hl_info>}
-		opts = function(_, opts)
-			opts.palette.moon = opts.palette.main
-
-			--#region oil
-			for status, link in pairs {
-				Added = '@keyword',
-				Copied = 'DiagnosticInfo',
-				Deleted = 'GitSignsDelete',
-				Ignored = 'DiagnosticOk',
-				Renamed = 'GitSignsChange',
-				Modified = 'GitSignsChange',
-				Unmerged = 'DiagnosticError',
-				Untracked = 'DiagnosticOk',
-				Unmodified = '@text',
-				TypeChanged = 'GitSignsChange',
-			} do
-				local idx = 'OilGitStatusIndex' .. status
-				local work = 'OilGitStatusWorkingTree' .. status
-				local short = 'OilGit' .. status
-				opts.highlight_groups[idx] = { link = link }
-				opts.highlight_groups[work] = { link = idx }
-				opts.highlight_groups[short] = { link = idx }
-			end
-			--#endregion
-		end,
-	},
+	-- {
+	-- 	'rose-pine',
+	-- 	---@param opts {[string]: any, highlight_groups: table<string, vim.api.keyset.set_hl_info>}
+	-- 	opts = function(_, opts)
+	-- 		opts.palette.moon = opts.palette.main
+	--
+	-- 		if pcall(require, 'oil') then
+	-- 			for status, link in pairs {
+	-- 				Added = '@keyword',
+	-- 				Copied = 'DiagnosticInfo',
+	-- 				Deleted = 'GitSignsDelete',
+	-- 				Ignored = 'DiagnosticOk',
+	-- 				Renamed = 'GitSignsChange',
+	-- 				Modified = 'GitSignsChange',
+	-- 				Unmerged = 'DiagnosticError',
+	-- 				Untracked = 'DiagnosticOk',
+	-- 				Unmodified = '@text',
+	-- 				TypeChanged = 'GitSignsChange',
+	-- 			} do
+	-- 				local hl_index = 'OilGitStatusIndex' .. status
+	-- 				local hl_work = 'OilGitStatusWorkingTree' .. status
+	-- 				local hl_short = 'OilGit' .. status
+	-- 				opts.highlight_groups[hl_index] = { link = link }
+	-- 				opts.highlight_groups[hl_work] = { link = hl_index }
+	-- 				opts.highlight_groups[hl_short] = { link = hl_index }
+	-- 			end
+	-- 		end
+	-- 	end,
+	-- },
 }

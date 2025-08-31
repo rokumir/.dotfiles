@@ -4,7 +4,7 @@ local function clear_winbar_bg()
 		if hl.bg or hl.ctermbg then
 			hl.bg = nil
 			hl.ctermbg = nil
-			vim.api.nvim_set_hl(0, name, hl)
+			vim.api.nvim_set_hl(0, name, hl) ---@diagnostic disable-line: param-type-mismatch
 		end
 	end
 

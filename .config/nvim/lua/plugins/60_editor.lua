@@ -1,82 +1,45 @@
+---@diagnostic disable: undefined-field
 local excluded_filetypes = require('utils.const').filetype.ignored_list
 
 ---@diagnostic disable: no-unknown, missing-fields, missing-parameter
 ---@type LazyPluginSpec[]
 return {
-	{ -- Harpoon: maneuvering throught files like the flash
+	{ -- Harpoon
 		'ThePrimeagen/harpoon',
 		branch = 'harpoon2',
 		---@type fun(): LazyKeysSpec[]
 		keys = function()
-			local harpoon = require 'harpoon'
-
 			local function harpoon_goto(index)
-				return function() harpoon:list():select(index) end
+				return function() require('harpoon'):list():select(index) end
 			end
-
 			return {
 				{ ';h', '', desc = 'harpoon' },
-				{ ';hh', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, desc = 'Harpoon list' },
-				{ ';hp', function() harpoon:list():prepend() end, desc = 'Harpoon prepend' },
-				{ ';ha', function() harpoon:list():add() end, desc = 'Harpoon add' },
-				{ '<a-}>', function() harpoon:list():next() end, desc = 'Harpoon next' },
-				{ '<a-{>', function() harpoon:list():prev() end, desc = 'Harpoon prev' },
+				{ ';hh', function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end, desc = 'List' },
+				{ ';hp', function() require('harpoon'):list():prepend() end, desc = 'Prepend' },
+				{ ';ha', function() require('harpoon'):list():add() end, desc = 'Add' },
+				{ '<a-}>', function() require('harpoon'):list():next() end, desc = 'Harpoon next' },
+				{ '<a-{>', function() require('harpoon'):list():prev() end, desc = 'Harpoon prev' },
 
 				{ '<a-U>', harpoon_goto(1), desc = 'Harpoon 1st entry' },
 				{ '<a-I>', harpoon_goto(2), desc = 'Harpoon 2nd entry' },
 				{ '<a-O>', harpoon_goto(3), desc = 'Harpoon 3rd entry' },
 				{ '<a-P>', harpoon_goto(4), desc = 'Harpoon 4th entry' },
+
+				{ '<c-q>', function() require('harpoon').ui:close_menu() end, mode = { 'n', 'i' }, ft = 'harpoon', desc = 'Harpoon Quit' },
+				{ '<c-l>', function() require('harpoon').ui:select_menu_item {} end, ft = 'harpoon', desc = 'Harpoon Open' },
+				{ 's', function() require('harpoon').ui:select_menu_item { split = true } end, ft = 'harpoon', desc = 'Harpoon Split' },
+				{ 'v', function() require('harpoon').ui:select_menu_item { vsplit = true } end, ft = 'harpoon', desc = 'Harpoon V Split' },
+				{ 't', function() require('harpoon').ui:select_menu_item { tabedit = true } end, ft = 'harpoon', desc = 'Harpoon New Tab' },
 			}
 		end,
-		config = function()
-			local harpoon = require 'harpoon'
-			harpoon:setup {
-				menu = {
-					width = vim.api.nvim_win_get_width(0) - 4,
-				},
-				settings = {
-					save_on_toggle = true,
-					sync_on_ui_close = true,
-					key = function() return vim.uv.cwd() or '' end,
-				},
-			}
-			harpoon:extend {
-				UI_CREATE = function(cx)
-					local map = require('utils.keymap').map
-					map {
-						'<c-q>',
-						function() harpoon.ui:close_menu() end,
-						mode = { 'n', 'i' },
-						buffer = cx.bufnr,
-						desc = 'Harpoon Buffer: Quit',
-					}
-					map {
-						'<c-l>',
-						function() harpoon.ui:select_menu_item {} end,
-						buffer = cx.bufnr,
-						desc = 'Harpoon Buffer: Open',
-					}
-					map {
-						's',
-						function() harpoon.ui:select_menu_item { split = true } end,
-						buffer = cx.bufnr,
-						desc = 'Harpoon Buffer: Split',
-					}
-					map {
-						'v',
-						function() harpoon.ui:select_menu_item { vsplit = true } end,
-						buffer = cx.bufnr,
-						desc = 'Harpoon Buffer: V Split',
-					}
-					map {
-						't',
-						function() harpoon.ui:select_menu_item { tabedit = true } end,
-						buffer = cx.bufnr,
-						desc = 'Harpoon Buffer: Open New Tab',
-					}
-				end,
-			}
-		end,
+		opts = {
+			menu = { width = vim.api.nvim_win_get_width(0) - 4 },
+			settings = {
+				save_on_toggle = true,
+				sync_on_ui_close = true,
+				key = function() return vim.uv.cwd() or '' end,
+			},
+		},
 	},
 
 	{ -- Flash
@@ -99,23 +62,57 @@ return {
 		keys = {
 			{ 'f', function() require('flash').jump { forward = true, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Forward 󱞣' },
 			{ 'F', function() require('flash').jump { forward = false, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Backward 󱞽' },
-			{ '<c-f>', function() require('flash').toggle(false) end, mode = { 'c' }, desc = 'Quit Flash Mode' },
 		},
 	},
 
 	{ -- Easy location list
 		'folke/trouble.nvim',
-		cond = vim.g.vscode ~= 1,
+		optional = true,
 		opts = {
 			use_diagnostic_signs = true,
 			height = 6,
 			padding = false,
-			action_keys = {
-				close = '<c-q>',
-				close_folds = 'zC',
-				open_folds = 'zO',
+			keys = {
+				['<c-q>'] = 'close',
 			},
 		},
+	},
+	{ -- Todo Comments
+		'folke/todo-comments.nvim',
+		version = false,
+		keys = function()
+			return {
+				{ '<leader>T', '', desc = 'todo-comments' },
+				{
+					'<leader>TT',
+					function()
+						local commentstring = vim.bo.commentstring or ''
+						local keywords = require('todo-comments.config').keywords
+						local todo_comments_map = require('utils.table').map(keywords, function(key, value) return { text = key, tag = value } end)
+						Snacks.picker.pick {
+							title = 'Todo comment',
+							layout = 'select',
+							items = todo_comments_map,
+							format = function(item)
+								local fg = 'TodoFg' .. item.tag
+								local bg = 'TodoBg' .. item.tag
+								return { { '  ', fg }, { item.tag, bg }, { ' ' .. item.text, fg } }
+							end,
+							confirm = function(picker, item)
+								picker:close()
+								local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+								vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { string.format(commentstring, item.value) .. ': ' })
+								vim.cmd.startinsert()
+							end,
+						}
+					end,
+					desc = 'Insert',
+				},
+				{ '<leader>xt', '<cmd>Trouble todo toggle<cr>', desc = 'Todo (Trouble)' },
+				{ '<leader>xT', '<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
+				{ ';sT', function() Snacks.picker.todo_comments() end, desc = 'Todo Trouble' },
+			}
+		end,
 	},
 
 	{ -- better indent guessing

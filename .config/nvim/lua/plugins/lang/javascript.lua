@@ -28,7 +28,7 @@ return {
 
 	{ -- lsp
 		'pmizio/typescript-tools.nvim',
-		enabled = false,
+		cond = false,
 		ft = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' },
 		opts = {
 			handlers = {},

@@ -1,10 +1,7 @@
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
-	{ import = 'plugins.colorscheme' },
-	{ import = 'plugins.lang' },
-
-	{
+	{ -- npm package management
 		'williamboman/mason.nvim',
 		opts = {
 			ui = { border = 'rounded' },
@@ -27,7 +24,6 @@ return {
 				{ '<leader><leader>', group = 'toggle' },
 				{ '<leader><leader>a', group = 'AI' },
 				{ '<leader><tab>', group = 'tab' },
-				{ '<leader>b', group = 'buffer' },
 				{ '<leader>c', group = 'code' },
 				{ '<leader>g', group = 'git' },
 				{ '<leader>gh', group = 'hunks' },
@@ -39,6 +35,14 @@ return {
 				{ ']', group = 'next' },
 				{ 'g', group = 'goto' },
 			},
+		},
+	},
+
+	{
+		'persistence.nvim',
+		opts = {
+			options = { 'globals' },
+			pre_save = function() vim.api.nvim_exec_autocmds('User', { pattern = 'SessionSavePre' }) end,
 		},
 	},
 }

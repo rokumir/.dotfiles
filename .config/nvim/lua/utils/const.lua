@@ -43,6 +43,7 @@ M.filetype.ignored_map = {
 	snacks_picker_input = true,
 	ministarter = true,
 	snacks_dashboard = true,
+	dropbar_menu = true,
 }
 M.filetype.ignored_list = vim.tbl_keys(M.filetype.ignored_map) ---@type string[]
 
@@ -70,7 +71,7 @@ M.buftype.ignored_list = vim.tbl_keys(M.buftype.ignored_map) ---@type string[]
 
 M.snacks = {}
 
-M.snacks.disabled_default_action_keys = {
+M.snacks.disabled_default_keys = {
 	a = false,
 	d = false,
 	r = false,

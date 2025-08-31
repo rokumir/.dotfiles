@@ -2,9 +2,9 @@ return {
 	{
 		'folke/snacks.nvim',
 		keys = {
-			{ '<c-/>', function() Snacks.terminal() end, desc = 'Terminal (cwd)' },
-			{ '<c-_>', function() Snacks.terminal() end, desc = 'Terminal (cwd)' },
-			{ '<c-`>', function() Snacks.terminal() end, desc = 'Terminal (cwd)' },
+			{ '<c-/>', function() Snacks.terminal.toggle() end, mode = { 'n', 'i' }, desc = 'Terminal: Toggle' },
+			{ '<c-_>', function() Snacks.terminal.toggle() end, mode = { 'n', 'i' }, desc = 'Terminal: Toggle' },
+			{ '<c-`>', function() Snacks.terminal.toggle() end, mode = { 'n', 'i' }, desc = 'Terminal: Toggle' },
 		},
 		---@type snacks.Config
 		opts = {
@@ -12,12 +12,14 @@ return {
 				win = {
 					style = 'terminal',
 					actions = {
-						term_toggle = function() Snacks.terminal.toggle() end,
+						term_toggle = function(self) self:hide() end,
+						term_normal = function() vim.cmd 'stopinsert' end,
 					},
 					keys = {
-						['<c-/>'] = { 'term_toggle', expr = true, mode = 't', desc = 'Toggle Terminal' },
-						['<c-_>'] = { 'term_toggle', expr = true, mode = 't', desc = 'Toggle Terminal' },
-						['<c-`>'] = { 'term_toggle', expr = true, mode = 't', desc = 'Toggle Terminal' },
+						['<c-/>'] = { 'term_toggle', expr = true, mode = 't', desc = 'Terminal: Toggle' },
+						['<c-_>'] = { 'term_toggle', expr = true, mode = 't', desc = 'Terminal: Toggle' },
+						['<c-`>'] = { 'term_toggle', expr = true, mode = 't', desc = 'Terminal: Toggle' },
+						['<c-s-s>'] = { 'term_normal', expr = true, mode = 't', desc = 'Terminal: Escape' },
 					},
 				},
 			},

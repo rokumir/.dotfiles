@@ -7,12 +7,14 @@ if not vim.g.neovide then return end
 -- ---------------------------
 -- Settings
 vim.g.neovide_working_dir = '~'
-vim.opt.linespace = 9
-vim.g.neovide_scale_factor = 1
+vim.g.neovide_no_custom_clipboard = false
+vim.opt.linespace = 10
+vim.g.neovide_scale_factor = 1.2
 vim.g.neovide_confirm_quit = true
-vim.g.neovide_hide_mouse_when_typing = true
+vim.g.neovide_hide_mouse_when_typing = false
 vim.g.neovide_underline_stroke_scale = 2
-vim.g.neovide_show_border = true
+vim.g.neovide_show_border = false
+vim.g.neovide_refresh_rate_idle = 3
 
 -- Animations
 vim.g.neovide_cursor_animate_command_line = false
@@ -40,10 +42,7 @@ map { '<c-s-n>', function() os.execute 'neovide.exe > /dev/null 2>&1 &' end, des
 if #vim.v.argv > 0 then
 	for i, arg in pairs(vim.v.argv) do
 		if not vim.tbl_contains({ '-c', '--cmd' }, arg) or not string.find(vim.v.argv[i + 1], '%f[%a]cd%f[%A]') then
-			vim.api.nvim_create_autocmd({ 'VimEnter' }, {
-				group = vim.api.nvim_create_augroup('nihil_vim_enter_group', { clear = true }),
-				command = 'cd ' .. (vim.g.neovide_working_dir or '~'),
-			})
+			vim.cmd('cd ' .. (vim.g.neovide_working_dir or '~'))
 			break
 		end
 	end

@@ -1,9 +1,9 @@
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
-	{ 'mini.pairs', opts = {
-		modes = { terminal = true },
-	} },
+	{ 'mini.pairs', opts = { modes = {
+		terminal = false,
+	} } },
 
 	{ -- better yanking
 		'gbprod/yanky.nvim',
@@ -11,7 +11,7 @@ return {
 			ring = {
 				history_length = 50,
 				sync_with_numbered_registers = true,
-				permanent_wrapper = function(...) return require('yanky.wrappers').remove_carriage_return(...) end,
+				ignore_registers = { '_' },
 			},
 			highlight = {
 				on_put = true,
@@ -19,6 +19,9 @@ return {
 				timer = 500,
 			},
 			textobj = { enabled = false },
+			preserve_cursor_position = {
+				enabled = true,
+			},
 		},
 		keys = function()
 			return {
@@ -33,20 +36,6 @@ return {
 				{ 'p', '<Plug>(YankyPutAfter)', desc = 'Put Text After Cursor' },
 				{ 'p', '<Plug>(YankyPutBefore)', mode = { 'x' }, desc = 'Put Text After Cursor' },
 				{ 'P', '<Plug>(YankyPutBefore)', mode = { 'n', 'x' }, desc = 'Put Text Before Cursor' },
-				{ 'gp', '<Plug>(YankyGPutAfter)', mode = { 'n', 'x' }, desc = 'Put Text After Selection' },
-				{ 'gP', '<Plug>(YankyGPutBefore)', mode = { 'n', 'x' }, desc = 'Put Text Before Selection' },
-				{ '[y', '<Plug>(YankyCycleForward)', desc = 'Cycle Forward Through Yank History' },
-				{ ']y', '<Plug>(YankyCycleBackward)', desc = 'Cycle Backward Through Yank History' },
-				{ ']p', '<Plug>(YankyPutIndentAfterLinewise)', desc = 'Put Indented After Cursor (Linewise)' },
-				{ '[p', '<Plug>(YankyPutIndentBeforeLinewise)', desc = 'Put Indented Before Cursor (Linewise)' },
-				{ ']P', '<Plug>(YankyPutIndentAfterLinewise)', desc = 'Put Indented After Cursor (Linewise)' },
-				{ '[P', '<Plug>(YankyPutIndentBeforeLinewise)', desc = 'Put Indented Before Cursor (Linewise)' },
-				{ '>p', '<Plug>(YankyPutIndentAfterShiftRight)', desc = 'Put and Indent Right' },
-				{ '<p', '<Plug>(YankyPutIndentAfterShiftLeft)', desc = 'Put and Indent Left' },
-				{ '>P', '<Plug>(YankyPutIndentBeforeShiftRight)', desc = 'Put Before and Indent Right' },
-				{ '<P', '<Plug>(YankyPutIndentBeforeShiftLeft)', desc = 'Put Before and Indent Left' },
-				{ '=p', '<Plug>(YankyPutAfterFilter)', desc = 'Put After Applying a Filter' },
-				{ '=P', '<Plug>(YankyPutBeforeFilter)', desc = 'Put Before Applying a Filter' },
 			}
 		end,
 	},
@@ -77,43 +66,10 @@ return {
 		keys = function()
 			return {
 				{ '<leader>r', '', desc = 'refactor' },
-				{
-					'<leader>rs',
-					function()
-						local fzf_lua = require 'fzf-lua'
-						local results = require('refactoring').get_refactors()
-						local refactoring = require 'refactoring'
-						fzf_lua.fzf_exec(results, {
-							fzf_opts = {},
-							fzf_colors = true,
-							actions = {
-								['default'] = function(selected) refactoring.refactor(selected[1]) end,
-							},
-						})
-					end,
-					mode = 'v',
-					desc = 'Refactor',
-				},
-				{
-					'<leader>ri',
-					function() require('refactoring').refactor 'Inline Variable' end,
-					mode = { 'n', 'v' },
-					desc = 'Inline Variable',
-				},
-				{ '<leader>rb', function() require('refactoring').refactor 'Extract Block' end, desc = 'Extract Block' },
-				{ '<leader>rf', function() require('refactoring').refactor 'Extract Block To File' end, desc = 'Extract Block To File' },
-				{ '<leader>rf', function() require('refactoring').refactor 'Extract Function' end, mode = 'v', desc = 'Extract Function' },
-				{
-					'<leader>rF',
-					function() require('refactoring').refactor 'Extract Function To File' end,
-					mode = 'v',
-					desc = 'Extract Function To File',
-				},
-				{ '<leader>rx', function() require('refactoring').refactor 'Extract Variable' end, mode = 'v', desc = 'Extract Variable' },
-				{ '<leader>rp', function() require('refactoring').debug.print_var { normal = true } end, desc = 'Debug Print Variable' },
-				{ '<leader>rp', function() require('refactoring').debug.print_var {} end, mode = 'v', desc = 'Debug Print Variable' },
-				{ '<leader>rP', function() require('refactoring').debug.printf { below = false } end, desc = 'Debug Print' },
-				{ '<leader>rc', function() require('refactoring').debug.cleanup {} end, desc = 'Debug Cleanup' },
+				{ '<leader>rr', function() require('refactoring').select_refactor() end, mode = { 'n', 'v' }, desc = 'Options' },
+				{ '<leader>rp', function() require('refactoring').debug.print_var { normal = true } end, desc = '[Debug] Print Variable' },
+				{ '<leader>rp', function() require('refactoring').debug.print_var {} end, mode = 'v', desc = '[Debug] Print Variable' },
+				{ '<leader>rc', function() require('refactoring').debug.cleanup {} end, desc = '[Debug] Cleanup' },
 			}
 		end,
 	},
@@ -175,6 +131,8 @@ return {
 
 	{
 		'CopilotC-Nvim/CopilotChat.nvim',
-		opts = function(_, opts) opts.auto_insert_mode = false end,
+		opts = {
+			auto_insert_mode = false,
+		},
 	},
 }

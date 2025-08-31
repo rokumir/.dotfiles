@@ -1,9 +1,14 @@
 local snacks_const = require('utils.const').snacks
 
-_G.nihil = {}
-
 ---@type snacks.win.Keys
-local default_keys = vim.tbl_extend('force', {}, snacks_const.disabled_default_action_keys, {
+local default_keys = vim.tbl_extend('force', {}, snacks_const.disabled_default_keys, {
+	k = false,
+	j = false,
+	['<c-k>'] = false,
+	['<c-j>'] = false,
+	['<c-u>'] = false,
+	['<c-d>'] = false,
+
 	['l'] = 'confirm',
 	['🔥'] = { 'confirm', mode = { 'n', 'i' } },
 	['<c-.>'] = { 'confirm', mode = { 'n', 'i' } },
@@ -11,6 +16,15 @@ local default_keys = vim.tbl_extend('force', {}, snacks_const.disabled_default_a
 	['<esc>'] = { 'close', mode = { 'n', 'i' } },
 	['<c-q>'] = { 'close', mode = { 'n', 'i' } },
 	['<c-space>'] = { 'select', mode = { 'n', 'i' } },
+
+	['n_list_'] = { 'k', 'list_up' },
+	['n_list_'] = { 'j', 'list_down' },
+	['i_list_'] = { '<c-k>', 'list_up', mode = 'i' },
+	['i_list_'] = { '<c-j>', 'list_down', mode = 'i' },
+	['n_list_page_'] = { '<c-k>', 'list_page_up' },
+	['n_list_page_'] = { '<c-j>', 'list_page_down' },
+	['i_list_page_'] = { '<c-s-k>', 'list_page_up', mode = 'i' },
+	['i_list_page_'] = { '<c-s-j>', 'list_page_down', mode = 'i' },
 
 	['<a-K>'] = { 'preview_scroll_up', mode = { 'i', 'n' } },
 	['<a-J>'] = { 'preview_scroll_down', mode = { 'i', 'n' } },
@@ -26,6 +40,8 @@ local default_keys = vim.tbl_extend('force', {}, snacks_const.disabled_default_a
 	['<c-w>l'] = 'focus_list',
 	['<c-w>p'] = 'focus_preview',
 })
+
+local INPUT_TITLE = '{title} {live} {flags}'
 
 ---@type YankPickerUtilsMap
 local yank_picker_utils_map = {
@@ -51,12 +67,7 @@ local yank_picker_utils_map = {
 			end)
 		end,
 	},
-	notifications = {
-		predicate = function(item)
-			table.insert(nihil, item)
-			return item.msg
-		end,
-	},
+	notifications = { predicate = function(item) return item.msg end },
 }
 
 return {
@@ -87,7 +98,7 @@ return {
 					filename_first = true,
 					git_status_hl = true,
 					icon_width = 3,
-					truncate = 30,
+					truncate = 50,
 				},
 				selected = {
 					show_always = false,
@@ -112,7 +123,7 @@ return {
 			},
 
 			actions = {
-				trouble_open_selected = function(...) return require('trouble.sources.snacks').actions.trouble_open_selected(...) end,
+				trouble_open_selected = function(...) return require('trouble.sources.snacks').actions.trouble_open_selected.action(...) end,
 				toggle_hidden_persist = function(picker)
 					vim.g.snacks_hidden = not vim.g.snacks_hidden
 					picker:action 'toggle_hidden'
@@ -128,8 +139,8 @@ return {
 					picker.list:set_selected() -- clear selection, update early for better UX
 					if #selected_items == 0 then return end
 
-					local utils = vim.deepcopy(yank_picker_utils_map[picker.opts.source] or {})
-					local action --[[@type YankPickerUtil]] = vim.tbl_extend('force', utils, {
+					local utils = (yank_picker_utils_map[picker.opts.source] or {})
+					local action --[[@type YankPickerUtil]] = vim.tbl_extend('keep', utils, {
 						predicate = function(item) return item.text end,
 						callback = function(items, copy) copy(items) end,
 					})
@@ -142,8 +153,108 @@ return {
 				end,
 
 				select = function(picker, item) picker.list:select(item) end,
+
+				list_page_down = function(picker) picker.list:move(5) end,
+				list_page_up = function(picker) picker.list:move(-5) end,
+			},
+
+			layouts = {
+				vscode_unfocus = {
+					preset = 'default',
+					hidden = { 'preview' },
+					layout = {
+						backdrop = { transparent = true, blend = 60 },
+						row = 1,
+						width = 0.4,
+						min_width = 80,
+						height = 0.7,
+						border = 'none',
+						box = 'vertical',
+						{ win = 'input', height = 1, border = 'rounded', title = INPUT_TITLE, title_pos = 'center' },
+						{ win = 'list', border = 'hpad' },
+						{ win = 'preview', border = 'top', title = '{preview}' },
+					},
+				},
+				vscode_unfocus_min = {
+					preset = 'default',
+					layout = {
+						backdrop = { transparent = true, blend = 60 },
+						row = 1,
+						width = 0.4,
+						min_width = 60,
+						height = 0.4,
+						border = 'none',
+						box = 'vertical',
+						{ win = 'input', height = 1, border = 'rounded', title = INPUT_TITLE, title_pos = 'center' },
+						{ win = 'list', border = 'hpad' },
+					},
+				},
+			},
+
+			sources = {
+				pickers = { layout = 'vscode_unfocus' },
+				pickers_actions = { layout = 'vscode_unfocus' },
 			},
 		},
+	},
+
+	keys = {
+		{ ';;', function() Snacks.picker.resume() end, desc = 'Resume' },
+		{ ';S', function() Snacks.picker() end, desc = 'Search Pickers' },
+
+		-- Top Pickers & Explorer
+		{ ';b', function() Snacks.picker.buffers() end, desc = 'Buffers' },
+		{ ';/', function() Snacks.picker.grep() end, desc = 'Grep' },
+		{ ';:', function() Snacks.picker.command_history() end, desc = 'Command History' },
+		{ ';n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
+		{ 'zx', function() Snacks.explorer() end, desc = 'File Explorer' },
+		{ 'zX', function() Snacks.explorer.open { focus = false } end, desc = 'File Explorer' },
+
+		-- Find
+		{ ';f', '', desc = 'find' },
+		{ ';fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
+
+		-- Git
+		{ ';g', '', desc = 'git' },
+		{ ';gb', function() Snacks.picker.git_branches() end, desc = 'Git Branches' },
+		{ ';gl', function() Snacks.picker.git_log() end, desc = 'Git Log' },
+		{ ';gL', function() Snacks.picker.git_log_line() end, desc = 'Git Log Line' },
+		{ ';gs', function() Snacks.picker.git_status() end, desc = 'Git Status' },
+		{ ';gS', function() Snacks.picker.git_stash() end, desc = 'Git Stash' },
+		{ ';gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
+		{ ';gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
+
+		-- Search
+		{ ';s', '', desc = 'search' },
+		-- grep
+		{ '<a-/>', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
+		{ ';sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
+		-- { ';sg', function() Snacks.picker.grep() end, desc = 'Grep' },
+		{ ';sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
+		{ ';sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
+		-- others
+		{ ';s"', function() Snacks.picker.registers() end, desc = 'Registers' },
+		{ ';s/', function() Snacks.picker.search_history() end, desc = 'Search History' },
+		{ ';sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
+		-- { ';sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
+		{ ';sc', function() Snacks.picker.commands() end, desc = 'Commands' },
+		{ ';sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
+		{ ';sD', function() Snacks.picker.diagnostics_buffer() end, desc = 'Buffer Diagnostics' },
+		{ ';sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
+		{ ';sH', function() Snacks.picker.highlights() end, desc = 'Highlights' },
+		{ ';si', function() Snacks.picker.icons() end, desc = 'Icons' },
+		{ ';sj', function() Snacks.picker.jumps() end, desc = 'Jumps' },
+		{ ';sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
+		{ ';sl', function() Snacks.picker.loclist() end, desc = 'Location List' },
+		{ ';sm', function() Snacks.picker.marks() end, desc = 'Marks' },
+		{ ';sM', function() Snacks.picker.man() end, desc = 'Man Pages' },
+		{ ';sp', function() Snacks.picker.lazy() end, desc = 'Search for Plugin Spec' },
+		{ ';sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
+		{ ';su', function() Snacks.picker.undo() end, desc = 'Undo History' },
+		{ ';st', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+		-- lsp
+		{ ';ss', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
+		{ ';sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
 	},
 }
 
