@@ -38,3 +38,5 @@ set -gx RH_VAULT \
     $RH_SCRIPT \
     $XDG_CONFIG_HOME \
     ~/documents
+
+set -gx GTRASH_HOME_TRASH_DIR "$XDG_DATA_HOME/trash"
