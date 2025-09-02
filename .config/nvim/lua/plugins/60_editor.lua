@@ -82,13 +82,13 @@ return {
 		version = false,
 		keys = function()
 			return {
-				{ '<leader>T', '', desc = 'todo-comments' },
+				{ ';T', '', desc = 'todo-comments' },
 				{
-					'<leader>TT',
+					';TT',
 					function()
 						local commentstring = vim.bo.commentstring or ''
 						local keywords = require('todo-comments.config').keywords
-						local todo_comments_map = require('utils.table').map(keywords, function(key, value) return { text = key, tag = value } end)
+						local todo_comments_map = require('utils.table').map(keywords, function(text, tag) return { text = text, tag = tag } end)
 						Snacks.picker.pick {
 							title = 'Todo comment',
 							layout = 'select',
@@ -101,7 +101,7 @@ return {
 							confirm = function(picker, item)
 								picker:close()
 								local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-								vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { string.format(commentstring, item.value) .. ': ' })
+								vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { string.format(commentstring, item.text) .. ': ' })
 								vim.cmd.startinsert()
 							end,
 						}

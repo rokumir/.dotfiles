@@ -190,9 +190,7 @@ return {
 						format = function(item)
 							return {
 								{ item.icon, item.hl },
-								{ ' ' },
-								{ item.text, item.hl },
-								{ ' ' },
+								{ ' ' .. item.text .. ' ', item.hl },
 								{ item.cmd, 'Comment' },
 							}
 						end,
@@ -200,7 +198,7 @@ return {
 							picker:close()
 							if not item then Snacks.notify.error('Picker "' .. picker.opts.source .. '":\nItem not found!') end
 							vim.cmd[item.cmd]()
-							Snacks.notify(item.text)
+							Snacks.notify('Bufferline sort by ' .. item.text)
 						end,
 					}
 				end,
@@ -226,7 +224,7 @@ return {
 			highlights = {
 				fill = { bg = 'none' },
 				background = { bg = 'none' },
-				tab_separator = { bg = 'none' },
+				separator = { bg = 'none' },
 			},
 		},
 	},

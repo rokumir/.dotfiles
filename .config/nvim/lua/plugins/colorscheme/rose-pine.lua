@@ -85,9 +85,9 @@ return {
 				TroubleNormal = { bg = 'none' },
 
 				SnacksBackdrop = { bg = 'none', blend = 0 },
-				SnacksIndent = { fg = 'highlight_low' },
-				SnacksIndentScope = { fg = 'highlight_high' },
-				SnacksIndentChunk = { fg = 'highlight_high' },
+				SnacksIndent = { fg = 'overlay' },
+				SnacksIndentScope = { fg = 'highlight_med' },
+				SnacksIndentChunk = { fg = 'highlight_med' },
 				SnacksInputNormal = { bg = 'none' },
 
 				NoicePopupBorder = { fg = 'overlay', bg = 'none', blend = 0 },

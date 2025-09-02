@@ -1,10 +1,17 @@
-local snacks_const = require('utils.const').snacks
+local Const = require('utils.const').snacks
+local Actions = require 'snacks.explorer.actions'
+local Tree = require 'snacks.explorer.tree'
 
 --- NOTE: Explorer doesn't use the `.ignore` file. So have to manually add it to the explorer exclude
 local function get_excludes()
 	local root_excludes = require('utils.root_dir').ignored_list()
-	local excludes = vim.list_extend(root_excludes, snacks_const.excludes)
-	return vim.g.snacks_ignored and snacks_const.excludes or excludes
+	local excludes = vim.list_extend(root_excludes, Const.excludes)
+	return vim.g.snacks_ignored and Const.excludes or excludes
+end
+
+local function unfold_dir(picker, path)
+	Tree:open(path)
+	Actions.update(picker, { refresh = false })
 end
 
 return {
@@ -48,7 +55,7 @@ return {
 								['zc'] = 'explorer_close',
 								['zo'] = 'confirm',
 								['zC'] = 'explorer_close_all',
-								['zO'] = 'explorer_open_all',
+								['zO'] = 'explorer_open_all_sub',
 								[']g'] = 'explorer_git_next',
 								['[g'] = 'explorer_git_prev',
 								[']d'] = 'explorer_diagnostic_next',
@@ -64,68 +71,87 @@ return {
 								['<a-M>'] = 'explorer_move',
 								['<a-O>'] = 'explorer_open', -- open with system application
 								['<a-P>'] = 'explorer_paste',
+								['<a-D>'] = 'explorer_del',
 								['<a-L>'] = 'cd',
-								['<a-D>'] = 'explorer_safe_del',
 							}),
 						},
 					},
 
-					actions = { -- Override "builtin" ignored toggle
+					actions = {
 						toggle_ignored_persist = function(picker)
 							vim.g.snacks_ignored = not vim.g.snacks_ignored
 							picker.opts.exclude = get_excludes()
 							picker:action 'toggle_ignored'
 						end,
 
-						--- Explorer safe delete
-						explorer_safe_del = function(picker)
-							local selected = picker:selected { fallback = true }
-							local has_root = vim.iter(selected):any(function(s) return not s.parent end)
-							if has_root then return LazyVim.error 'ERROR: Root included!' end
-							picker:action 'explorer_del'
+						explorer_del = function(picker)
+							-- Protect root folder
+							local selected_items = picker:selected { fallback = true }
+							local has_root = vim.iter(selected_items):any(function(s) return not s.parent end)
+							if has_root then
+								Snacks.notify.error 'ERROR: Root included!'
+								return
+							end
+
+							-- Deleting files
+							local paths = vim.tbl_map(Snacks.picker.util.path, selected_items)
+							local what = #paths == 1 and vim.fn.fnamemodify(paths[1], ':p:~:.') or #paths .. ' files'
+							Actions.confirm('Put to the trash ' .. what .. '?', function()
+								local after_job = function()
+									picker.list:set_selected()
+									Actions.update(picker, { refresh = false })
+								end
+
+								for _, path in ipairs(paths) do
+									local err_data = {}
+									local cmd = 'gtrash put ' .. path -- Actual command to run
+									local job_id = vim.fn.jobstart(cmd, {
+										detach = true,
+										on_stderr = function(_, data) err_data[#err_data + 1] = table.concat(data, '\n') end,
+										on_exit = function(_, code)
+											pcall(function()
+												if code == 0 then
+													Snacks.bufdelete { file = path, force = true }
+												else
+													local err_msg = vim.trim(table.concat(err_data, ''))
+													Snacks.notify.error('Failed to delete `' .. path .. '`:\n- ' .. err_msg)
+												end
+												Tree:refresh(vim.fs.dirname(path))
+											end)
+											after_job()
+										end,
+									})
+									if job_id == 0 then
+										after_job()
+										Snacks.notify.error('Failed to start the job for: ' .. path)
+									end
+								end
+							end)
 						end,
 
 						--- Explorer open all (recursive toggle)
-						explorer_open_all = function(picker, item)
-							local Actions = require 'snacks.explorer.actions'
-							local Tree = require 'snacks.explorer.tree'
-
-							-- stop if it's not a dir
+						explorer_open_all_sub = function(picker, item)
 							local curr_node = Tree:node(item.file)
 							if not (curr_node and curr_node.dir) then return end
-
-							local get_children = function(node) ---@param node snacks.picker.explorer.Node
-								local children = {} ---@type snacks.picker.explorer.Node[]
-								for _, child in pairs(node.children) do
-									table.insert(children, child)
-								end
-								return children
-							end
-							local function toggle_recursive(node) ---@param node snacks.picker.explorer.Node
-								Tree:open(node.path)
-								Actions.update(picker, { refresh = false })
+							local function unfold(node) ---@param node snacks.picker.explorer.Node
+								unfold_dir(picker, node.path)
 
 								vim.schedule(function()
-									for _, child in ipairs(get_children(node)) do
-										if child.dir then vim.schedule(function() toggle_recursive(child) end) end
+									for _, child in ipairs(vim.tbl_values(node.children)) do
+										if child.dir then vim.schedule(function() unfold(child) end) end
 									end
 								end)
 							end
-
-							toggle_recursive(curr_node)
+							unfold(curr_node)
 						end,
 
 						-- Better confirm action
 						confirm = function(picker, item)
-							local Tree = require 'snacks.explorer.tree'
-							local Actions = require 'snacks.explorer.actions'
-
 							local selected_node = Tree:node(item.file)
 							if not selected_node or (selected_node.dir and selected_node.open) then return end
 
 							if selected_node.dir then
-								Tree:open(selected_node.path)
-								Actions.update(picker, { refresh = false })
+								unfold_dir(picker, selected_node.path)
 							else
 								picker:action 'jump'
 							end

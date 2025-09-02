@@ -17,4 +17,11 @@ function M.map(tbl, callback)
 	return result
 end
 
+function M.join_to_tbl(tbl, sep)
+	for index, _ in pairs(tbl) do
+		if index % 2 == 0 then table.insert(tbl, index, sep) end
+	end
+	return tbl
+end
+
 return M

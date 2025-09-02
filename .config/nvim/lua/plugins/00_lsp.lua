@@ -25,10 +25,10 @@ return {
 			---@type table<string, lspconfig.Config | {}>
 			servers = {
 				html = {},
-				markdown_oxide = {},
 				biome = {},
 
 				mdx_analyzer = {},
+				markdown_oxide = {},
 
 				emmet_language_server = {
 					filetypes = { 'html', 'javascriptreact', 'typescriptreact', 'htmlangular', 'vue' },
