@@ -4,7 +4,7 @@ local Tree = require 'snacks.explorer.tree'
 
 --- NOTE: Explorer doesn't use the `.ignore` file. So have to manually add it to the explorer exclude
 local function get_excludes()
-	local root_excludes = require('utils.root_dir').ignored_list()
+	local root_excludes = require('utils.root-dir').ignored_list()
 	local excludes = vim.list_extend(root_excludes, Const.excludes)
 	return vim.g.snacks_ignored and Const.excludes or excludes
 end

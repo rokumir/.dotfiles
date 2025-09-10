@@ -67,7 +67,7 @@ local yank_picker_utils_map = {
 			end)
 		end,
 	},
-	notifications = { predicate = function(item) return item.msg end },
+	notifications = { predicate = function(item) return item.item.msg end },
 }
 
 return {
@@ -136,7 +136,7 @@ return {
 				-- better yank (supports multiple selections)
 				yank = function(picker)
 					local selected_items = picker:selected { fallback = true }
-					picker.list:set_selected() -- clear selection, update early for better UX
+					picker.list:set_selected()
 					if #selected_items == 0 then return end
 
 					local utils = (yank_picker_utils_map[picker.opts.source] or {})
@@ -147,7 +147,8 @@ return {
 
 					local mapped_items = vim.tbl_map(action.predicate, selected_items)
 					action.callback(mapped_items, function(items)
-						vim.fn.setreg('+', table.concat(items, '\n'))
+						local content = table.concat(items, '\n')
+						vim.fn.setreg('+', content)
 						Snacks.notify 'Copied to the system (+) register!'
 					end)
 				end,
@@ -159,41 +160,69 @@ return {
 			},
 
 			layouts = {
-				vscode_unfocus = {
-					preset = 'default',
+				vscode_focus = {
 					hidden = { 'preview' },
 					layout = {
-						backdrop = { transparent = true, blend = 60 },
+						backdrop = { transparent = true },
 						row = 1,
 						width = 0.4,
+						height = 0.6,
 						min_width = 80,
-						height = 0.7,
-						border = 'none',
+						min_height = 10,
 						box = 'vertical',
-						{ win = 'input', height = 1, border = 'rounded', title = INPUT_TITLE, title_pos = 'center' },
-						{ win = 'list', border = 'hpad' },
+						border = 'rounded',
+						{ win = 'input', height = 1, border = 'bottom', title = INPUT_TITLE, title_pos = 'center' },
+						{ win = 'list', border = 'none' },
 						{ win = 'preview', border = 'top', title = '{preview}' },
 					},
 				},
-				vscode_unfocus_min = {
-					preset = 'default',
+				vscode_focus_min = {
 					layout = {
-						backdrop = { transparent = true, blend = 60 },
+						backdrop = { transparent = true },
 						row = 1,
 						width = 0.4,
-						min_width = 60,
 						height = 0.4,
-						border = 'none',
+						min_width = 60,
+						min_height = 10,
 						box = 'vertical',
-						{ win = 'input', height = 1, border = 'rounded', title = INPUT_TITLE, title_pos = 'center' },
-						{ win = 'list', border = 'hpad' },
+						border = 'rounded',
+						{ win = 'input', height = 1, border = 'bottom', title = INPUT_TITLE, title_pos = 'center' },
+						{ win = 'list', border = 'none' },
+					},
+				},
+				vscode_min = {
+					layout = {
+						backdrop = false,
+						row = 1,
+						width = 0.4,
+						height = 0.4,
+						min_width = 60,
+						min_height = 10,
+						box = 'vertical',
+						border = 'rounded',
+						{ win = 'input', height = 1, border = 'bottom', title = INPUT_TITLE, title_pos = 'center' },
+						{ win = 'list', border = 'none' },
+					},
+				},
+				select_min = {
+					layout = {
+						backdrop = false,
+						width = 0.4,
+						min_width = 50,
+						height = 0.4,
+						min_height = 3,
+						box = 'vertical',
+						border = 'rounded',
+						{ win = 'input', height = 1, border = 'bottom' },
+						{ win = 'list', border = 'none' },
 					},
 				},
 			},
 
 			sources = {
-				pickers = { layout = 'vscode_unfocus' },
-				pickers_actions = { layout = 'vscode_unfocus' },
+				pickers = { layout = 'vscode_focus' },
+				pickers_actions = { layout = 'vscode_focus' },
+				noice = { confirm = { 'yank', 'close' } },
 			},
 		},
 	},
@@ -212,7 +241,8 @@ return {
 
 		-- Find
 		{ ';f', '', desc = 'find' },
-		{ ';fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
+		{ ';fg', function() Snacks.picker.git_files() end, desc = 'Git Files' },
+		{ ';fs', function() Snacks.picker.grep() end, desc = 'Grep' },
 
 		-- Git
 		{ ';g', '', desc = 'git' },
@@ -236,7 +266,6 @@ return {
 		{ ';s"', function() Snacks.picker.registers() end, desc = 'Registers' },
 		{ ';s/', function() Snacks.picker.search_history() end, desc = 'Search History' },
 		{ ';sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
-		-- { ';sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
 		{ ';sc', function() Snacks.picker.commands() end, desc = 'Commands' },
 		{ ';sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
 		{ ';sD', function() Snacks.picker.diagnostics_buffer() end, desc = 'Buffer Diagnostics' },
@@ -245,16 +274,15 @@ return {
 		{ ';si', function() Snacks.picker.icons() end, desc = 'Icons' },
 		{ ';sj', function() Snacks.picker.jumps() end, desc = 'Jumps' },
 		{ ';sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
-		{ ';sl', function() Snacks.picker.loclist() end, desc = 'Location List' },
 		{ ';sm', function() Snacks.picker.marks() end, desc = 'Marks' },
 		{ ';sM', function() Snacks.picker.man() end, desc = 'Man Pages' },
-		{ ';sp', function() Snacks.picker.lazy() end, desc = 'Search for Plugin Spec' },
 		{ ';sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
+		{ ';sl', function() Snacks.picker.loclist() end, desc = 'Location List' },
 		{ ';su', function() Snacks.picker.undo() end, desc = 'Undo History' },
 		{ ';st', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
 		-- lsp
-		{ ';ss', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
-		{ ';sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
+		{ ';ss', function() Snacks.picker.lsp_symbols { filter = LazyVim.config.kind_filter } end, desc = 'LSP Symbols' },
+		{ ';sS', function() Snacks.picker.lsp_workspace_symbols { filter = LazyVim.config.kind_filter } end, desc = 'LSP Workspace Symbols' },
 	},
 }
 

@@ -32,6 +32,8 @@ return {
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config | {}
 		opts = {
+			enabled = function() return not require('utils.const').filetype.ignored_map[vim.bo.filetype] end,
+
 			keymap = {
 				preset = 'enter',
 				['<c-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
@@ -120,6 +122,8 @@ return {
 					},
 				},
 			},
+
+			signature = { enabled = false },
 
 			appearance = {
 				-- supported: tokyonight

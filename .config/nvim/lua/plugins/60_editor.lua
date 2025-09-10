@@ -1,4 +1,3 @@
----@diagnostic disable: undefined-field
 local excluded_filetypes = require('utils.const').filetype.ignored_list
 
 ---@diagnostic disable: no-unknown, missing-fields, missing-parameter
@@ -91,12 +90,19 @@ return {
 						local todo_comments_map = require('utils.table').map(keywords, function(text, tag) return { text = text, tag = tag } end)
 						Snacks.picker.pick {
 							title = 'Todo comment',
-							layout = 'select',
+							layout = 'vscode_min',
 							items = todo_comments_map,
 							format = function(item)
+								local a = Snacks.picker.util.align
+								local ret = {}
 								local fg = 'TodoFg' .. item.tag
 								local bg = 'TodoBg' .. item.tag
-								return { { '  ', fg }, { item.tag, bg }, { ' ' .. item.text, fg } }
+								ret[#ret + 1] = { '  ', fg }
+								ret[#ret + 1] = { ' ' }
+								ret[#ret + 1] = { a(item.tag, 4), bg }
+								ret[#ret + 1] = { '  ' }
+								ret[#ret + 1] = { a(item.text, 10), fg }
+								return ret
 							end,
 							confirm = function(picker, item)
 								picker:close()
@@ -110,7 +116,7 @@ return {
 				},
 				{ '<leader>xt', '<cmd>Trouble todo toggle<cr>', desc = 'Todo (Trouble)' },
 				{ '<leader>xT', '<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
-				{ ';sT', function() Snacks.picker.todo_comments() end, desc = 'Todo Trouble' },
+				{ ';sT', function() Snacks.picker['todo_comments']() end, desc = 'Todo Trouble' },
 			}
 		end,
 	},
@@ -273,5 +279,61 @@ return {
 				['gx'] = { 'actions.open_external', mode = { 'n', 'v' } },
 			},
 		},
+	},
+
+	{ -- Multiple Cursors
+		'jake-stewart/multicursor.nvim',
+		enabled = false,
+		keys = {
+			-- Add or skip cursor above/below the main cursor.
+			{ '<up>', function() require('multicursor-nvim').lineAddCursor(-1) end, mode = { 'n', 'x' } },
+			{ '<down>', function() require('multicursor-nvim').lineAddCursor(1) end, mode = { 'n', 'x' } },
+			{ '<leader><up>', function() require('multicursor-nvim').lineSkipCursor(-1) end, mode = { 'n', 'x' } },
+			{ '<leader><down>', function() require('multicursor-nvim').lineSkipCursor(1) end, mode = { 'n', 'x' } },
+
+			-- Add or skip adding a new cursor by matching word/selection
+			{ '<leader>n', function() require('multicursor-nvim').matchAddCursor(1) end, mode = { 'n', 'x' } },
+			{ '<leader>s', function() require('multicursor-nvim').matchSkipCursor(1) end, mode = { 'n', 'x' } },
+			{ '<leader>N', function() require('multicursor-nvim').matchAddCursor(-1) end, mode = { 'n', 'x' } },
+			{ '<leader>S', function() require('multicursor-nvim').matchSkipCursor(-1) end, mode = { 'n', 'x' } },
+
+			-- Add and remove cursors with control + left click.
+			{ '<c-leftmouse>', function() require('multicursor-nvim').handleMouse() end },
+			{ '<c-leftdrag>', function() require('multicursor-nvim').handleMouseDrag() end },
+			{ '<c-leftrelease>', function() require('multicursor-nvim').handleMouseRelease() end },
+
+			-- Disable and enable cursors.
+			{ '<c-q>', function() require('multicursor-nvim').toggleCursor() end, mode = { 'n', 'x' } },
+		},
+		config = function()
+			-- Mappings defined in a keymap layer only apply when there are
+			-- multiple cursors. This lets you have overlapping mappings.
+			require('multicursor-nvim').addKeymapLayer(function(layerSet)
+				-- Select a different cursor as the main one.
+				layerSet({ 'n', 'x' }, '<left>', require('multicursor-nvim').prevCursor)
+				layerSet({ 'n', 'x' }, '<right>', require('multicursor-nvim').nextCursor)
+
+				-- Delete the main cursor.
+				layerSet({ 'n', 'x' }, '<leader>x', require('multicursor-nvim').deleteCursor)
+
+				-- Enable and clear cursors using escape.
+				layerSet('n', '<esc>', function()
+					if not require('multicursor-nvim').cursorsEnabled() then
+						require('multicursor-nvim').enableCursors()
+					else
+						require('multicursor-nvim').clearCursors()
+					end
+				end)
+			end)
+		end,
+	},
+
+	{
+		'johmsalas/text-case.nvim',
+		priority = 1000,
+		keys = {
+			{ ';C', function() require('utils.text-case'):picker() end, desc = 'Change Text Case', mode = { 'n', 's', 'x' } },
+		},
+		opts = { default_keymappings_enabled = false },
 	},
 }

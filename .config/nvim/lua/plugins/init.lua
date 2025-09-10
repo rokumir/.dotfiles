@@ -23,7 +23,6 @@ return {
 				{ '<leader>!', group = 'shell', icon = '' },
 				{ '<leader><leader>', group = 'toggle' },
 				{ '<leader><leader>a', group = 'AI' },
-				{ '<leader><tab>', group = 'tab' },
 				{ '<leader>c', group = 'code' },
 				{ '<leader>g', group = 'git' },
 				{ '<leader>gh', group = 'hunks' },

@@ -7,11 +7,6 @@ return {
 		'folke/snacks.nvim',
 		keys = function()
 			return {
-				-- scratch
-				{ '<leader>.', function() Snacks.scratch() end, desc = 'Toggle Scratch Buffer' },
-				{ '<leader>S', function() Snacks.scratch.select() end, desc = 'Select Scratch Buffer' },
-				{ '<leader>dps', function() Snacks.profiler.scratch() end, desc = 'Profiler Scratch Buffer' },
-
 				{ '<f2>h', function() Snacks.health.check() end, desc = 'Check Health' },
 			}
 		end,
@@ -21,6 +16,15 @@ return {
 			scroll = { enabled = false },
 			input = { enabled = true },
 			scope = { enabled = true },
+
+			image = {
+				enabled = true,
+				preferred_protocol = 'wezterm', -- or "kitty"
+				fallback_protocol = 'chafa',
+				inline_in_docs = true,
+				max_width = 80,
+				max_height = 40,
+			},
 
 			quickfile = {
 				exclude = { 'latex', 'typescript', 'typescriptreact' },
@@ -39,15 +43,6 @@ return {
 				-- 		if vim.api.nvim_buf_is_valid(ctx.buf) then vim.bo[ctx.buf].syntax = ctx.ft end
 				-- 	end)
 				-- end,
-			},
-
-			scratch = {
-				win = {
-					max_height = 25,
-					keys = {
-						q = false,
-					},
-				},
 			},
 
 			indent = {

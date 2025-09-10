@@ -30,8 +30,6 @@ require('lazy').setup {
 		--#endregion
 
 		--#region Extras modules
-		-- { import = 'lazyvim.plugins.extras.ui.edgy' },
-
 		{ import = 'lazyvim.plugins.extras.editor.snacks_explorer' },
 		{ import = 'lazyvim.plugins.extras.editor.snacks_picker' },
 		{ import = 'lazyvim.plugins.extras.editor.refactoring' },
@@ -40,12 +38,12 @@ require('lazy').setup {
 
 		{ import = 'lazyvim.plugins.extras.util.dot' },
 
-		-- { import = 'lazyvim.plugins.extras.lang.typescript' },
-		{ import = 'lazyvim.plugins.extras.lang.tailwind' },
+		{ import = 'lazyvim.plugins.extras.lang.typescript' },
 		{ import = 'lazyvim.plugins.extras.lang.json' },
-		{ import = 'lazyvim.plugins.extras.lang.rust' },
-		{ import = 'lazyvim.plugins.extras.lang.go' },
-		{ import = 'lazyvim.plugins.extras.lang.astro' },
+		{ import = 'lazyvim.plugins.extras.lang.tailwind' },
+		-- { import = 'lazyvim.plugins.extras.lang.rust' },
+		-- { import = 'lazyvim.plugins.extras.lang.go' },
+		-- { import = 'lazyvim.plugins.extras.lang.astro' },
 		-- { import = 'lazyvim.plugins.extras.lang.omnisharp' },
 		-- { import = 'lazyvim.plugins.extras.lang.svelte' },
 
@@ -53,10 +51,11 @@ require('lazy').setup {
 		{ import = 'lazyvim.plugins.extras.coding.blink' },
 		{ import = 'lazyvim.plugins.extras.coding.yanky' },
 		{ import = 'lazyvim.plugins.extras.coding.neogen' },
-		{ import = 'lazyvim.plugins.extras.linting.eslint' },
+		{ import = 'lazyvim.plugins.extras.dap.core' },
+
+		-- { import = 'lazyvim.plugins.extras.linting.eslint' },
 		{ import = 'lazyvim.plugins.extras.formatting.biome' },
 		{ import = 'lazyvim.plugins.extras.formatting.prettier' },
-		-- { import = 'lazyvim.plugins.extras.dap.core' },
 
 		{ import = 'lazyvim.plugins.extras.ai.copilot-chat' },
 		--#endregion

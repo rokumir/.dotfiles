@@ -1,11 +1,5 @@
----@diagnostic disable: no-unknown
 local map = require('utils.keymap').map
 local ui_utils = require 'utils.ui'
-
---#region --- UNMAP
-map { 'K', '<nop>', mode = { 'n', 's', 'x' } }
-map { '<c-e>', '<nop>', mode = { 'i' } }
---#endregion UNMAP
 
 --#region --- MISC
 -- Movement
@@ -54,11 +48,8 @@ map { '<c-k>', '5k', mode = { 'n', 'v' }, nowait = true }
 map { '<c-j>', '5j', mode = { 'n', 'v' }, nowait = true }
 
 -- foldings
-map { 'zO', '<cmd>set foldlevel=99 <cr>', nowait = true }
-map { 'zC', '<cmd>set foldlevel=0 <cr>', nowait = true }
-
--- search
--- map { '<c-f>', '/', mode = { 'n', 'i', 's' }, remap = true }
+-- map { 'zO', '<cmd>set foldlevel=99 <cr>', nowait = true }
+-- map { 'zC', '<cmd>set foldlevel=0 <cr>', nowait = true }
 
 -- Better Next/Prev (https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n)
 map { 'n', [['Nn'[v:searchforward].'zzzv']], expr = true, desc = 'Next Search Result' }
@@ -115,13 +106,17 @@ map { '<c-a-left>', ':vertical resize -1 <cr>', desc = 'Decrease Window Width' }
 map { '<c-a-right>', ':vertical resize +1 <cr>', desc = 'Increase Window Width' }
 
 -- tabs
--- map { '<leader>t', '', desc = 'tab' }
+map { '<leader>t', '', desc = 'tab' }
 map { '<leader>td', '<cmd>tabclose<cr>', desc = 'Tab: Close' }
 map { '<leader>tn', '<cmd>tabnew<cr>', desc = 'Tab: New' }
 map { '<leader><tab>', '<cmd>tabnext<cr>', desc = 'Tab: Next' }
 map { '<leader><s-tab>', '<cmd>tabprevious<cr>', desc = 'Tab: Previous' }
--- map { '<leader>t<', ':tabm +1 <cr>', desc = 'Move Tab Right' }
--- map { '<leader>t>', ':tabm -1 <cr>', desc = 'Move Tab Left' }
+-- map { '<c-s-right>', ':tabm +1 <cr>', desc = 'Move Tab Right' }
+-- map { '<c-s-left>', ':tabm -1 <cr>', desc = 'Move Tab Left' }
+map { '<leader>tX', function() require('utils.buffer-history'):clear() end, desc = 'Clear Buffer History' }
+map { '<leader>ts', function() require('utils.buffer-history'):restore() end, desc = 'Restore Buffer History' }
+map { '<c-s-t>', function() require('utils.buffer-history'):restore() end, desc = 'Restore Buffer History' }
+map { ';`', function() require('utils.buffer-history'):picker() end, desc = 'Buffer History Search' }
 
 -- buffers (use like tab)
 -- map { '<tab>', ':bnext <cr>', desc = 'Next Buffer' }
@@ -177,7 +172,7 @@ map { '<a-F>', function() LazyVim.format { force = true } end, mode = { 'n', 'v'
 
 -- diagnostics
 ---@param count number
----@param severity? vim.diagnostic.SeverityName|vim.diagnostic.Severity
+---@param severity? vim.diagnostic.Severity
 local function diag_jump(count, severity)
 	if severity then severity = vim.diagnostic.severity[severity] end
 	return function() vim.diagnostic.jump { float = true, count = count, severity = severity } end

@@ -1,8 +1,6 @@
 ---@diagnostic disable: no-unknown
 local M = {}
 
-local lsp_util = require 'lspconfig.util'
-
 ---@param path string
 ---@param options? { realpath?:boolean }
 function M.is_match(path, options)
@@ -24,7 +22,7 @@ end
 
 ---@param ... string
 function M.match_pattern(...)
-	local root_dir_matcher = lsp_util.root_pattern(...)
+	local root_dir_matcher = require('lspconfig.util').root_pattern(...)
 	local is_matched = root_dir_matcher(vim.uv.cwd()) ~= nil
 	return is_matched
 end
@@ -34,12 +32,12 @@ end
 function M.ignored_list()
 	local root_dir = vim.fn.getcwd()
 	local ignore_filepath = vim.fn.findfile('.ignore', root_dir .. ';')
-	if not ignore_filepath or ignore_filepath == '' or #ignore_filepath == 0 then return {} end
-
-	if type(ignore_filepath) == 'table' then
-		LazyVim.error { '[DEBUG]:', 'Weird type', '(type:', type(ignore_filepath) .. ')!' }
-		return {}
-	end
+	-- stylua: ignore
+	if
+		not ignore_filepath
+		or ignore_filepath == ''
+		or #ignore_filepath == 0
+	then return {} end
 
 	local ignore_list = {}
 	for _, line in ipairs(vim.fn.readfile(ignore_filepath) or {}) do

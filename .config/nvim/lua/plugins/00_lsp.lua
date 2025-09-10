@@ -123,12 +123,11 @@ return {
 			},
 		},
 	},
-
 	{
 		'neovim/nvim-lspconfig',
+		---@module 'snacks'
 		opts = function()
 			local doc_size = vim.g.lsp_doc_max_size or 50
-
 			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), {
 				{ 'gd', function() Snacks.picker.lsp_definitions() end, has = 'definition', desc = 'Definition' },
 				{ 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Declaration' },
@@ -143,10 +142,25 @@ return {
 				{ '<c-s-k>', function() vim.lsp.buf.signature_help { max_width = doc_size, max_height = doc_size } end, mode = { 'i', 'n' }, has = 'signatureHelp', desc = 'Signature Help' },
 				{ '<leader>cR', function() Snacks.rename.rename_file() end, desc = 'Rename File', has = { 'workspace/didRenameFiles', 'workspace/willRenameFiles' } },
 				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, has = 'rename', desc = 'Rename Symbol' },
-				{ '<a-r>', function() require('live-rename').rename { insert = true } end, has = 'rename', desc = 'Rename Symbol' },
+				{ '<a-r>', function() require('live-rename').rename { insert = true } end, mode = 'i', has = 'rename', desc = 'Rename Symbol' },
 				{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], has = 'organizeImports', desc = 'Organize Imports' },
 				{ '🔥', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
 				{ '<c-.>', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
+				{ '<leader>ss', false },
+				{ '<leader>sS', false },
+			})
+
+			-- Advanced LSP progress
+			vim.api.nvim_create_autocmd('LspProgress', {
+				group = vim.api.nvim_create_augroup('nihil_lsp_progress_loading_notif', { clear = true }),
+				callback = function(ev) ---@param ev {data: {client_id: number, params: lsp.ProgressParams}}
+					local spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
+					vim.notify(vim.lsp.status(), 'info', {
+						id = 'lsp_progress',
+						title = 'LSP Progress',
+						opts = function(notif) notif.icon = ev.data.params.value.kind == 'end' and ' ' or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1] end,
+					})
+				end,
 			})
 		end,
 	},

@@ -7,7 +7,7 @@ vim.g.lsp_doc_max_size = 50
 vim.opt.background = 'dark'
 vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'
-vim.opt.clipboard = 'unnamed'
+vim.opt.clipboard = ''
 vim.opt.path:append { '**' } -- Finding files - Search down into subfolders
 vim.opt.wildignore:append { '*/node_modules/*' }
 vim.opt.formatoptions:append { 'r' } -- Add asterisks in block comments

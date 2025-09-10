@@ -1,7 +1,6 @@
 local M = {}
 
 M.filetype = {}
-
 M.filetype.ignored_map = {
 	[''] = true,
 	notify = true, -- LazyVim notifications
@@ -9,9 +8,8 @@ M.filetype.ignored_map = {
 	mason = true,
 	lazy = true,
 	help = true,
+	noice = true,
 	nofile = true,
-	TelescopePrompt = true,
-	NvimTree = true,
 	dashboard = true,
 	alpha = true,
 	about = true,
@@ -27,7 +25,6 @@ M.filetype.ignored_map = {
 	tsplayground = true,
 	['gitsigns-blame'] = true,
 	['grug-far'] = true,
-	['neo-tree'] = true,
 	['neotest-output'] = true,
 	['neotest-output-panel'] = true,
 	['neotest-summary'] = true,
@@ -38,12 +35,12 @@ M.filetype.ignored_map = {
 	tutor = true,
 	Undotree = true,
 	UndotreeDiff = true,
-	codecompanion = true,
 	oil = true,
 	snacks_picker_input = true,
 	ministarter = true,
 	snacks_dashboard = true,
 	dropbar_menu = true,
+	man = true,
 }
 M.filetype.ignored_list = vim.tbl_keys(M.filetype.ignored_map) ---@type string[]
 
@@ -59,7 +56,6 @@ M.filetype.document_map = {
 M.filetype.document_list = vim.tbl_keys(M.filetype.document_map)
 
 M.buftype = {}
-
 M.buftype.ignored_map = {
 	[''] = true,
 	nofile = true,
@@ -70,7 +66,6 @@ M.buftype.ignored_map = {
 M.buftype.ignored_list = vim.tbl_keys(M.buftype.ignored_map) ---@type string[]
 
 M.snacks = {}
-
 M.snacks.disabled_default_keys = {
 	a = false,
 	d = false,
@@ -86,10 +81,101 @@ M.snacks.disabled_default_keys = {
 	H = false,
 	Z = false,
 }
-
 M.snacks.excludes = {
 	'**/.git/*',
 	'**/node_modules/*',
+}
+
+M.bufferline = {}
+M.bufferline.transparent_bg_highlights = {
+	'fill',
+	'tab',
+	'buffer',
+	'numbers',
+	'modified',
+	'tab_close',
+	'separator',
+	'background',
+	'diagnostic',
+	'close_button',
+	'hint_visible',
+	'info_visible',
+	'trunc_marker',
+	'error_visible',
+	'tab_separator',
+	'buffer_visible',
+	'group_separator',
+	'mini_icons_azure',
+	'mini_icons_green',
+	'numbers_visible',
+	'warning_visible',
+	'modified_visible',
+	'offset_separator',
+	'indicator_visible',
+	'separator_visible',
+	'diagnostic_visible',
+	'close_button_visible',
+	'hint_diagnostic_visible',
+	'info_diagnostic_visible',
+	'error_diagnostic_visible',
+	'mini_icons_azure_inactive',
+	'mini_icons_green_inactive',
+	'warning_diagnostic_visible',
+	'hint',
+	'info',
+	'error',
+	'warning',
+	'hint_diagnostic',
+	'info_diagnostic',
+	'error_diagnostic',
+	'warning_diagnostic',
+	'duplicate',
+	'duplicate_visible',
+	'tab_selected',
+	'modified_selected',
+	'pick',
+	'indicator_selected',
+	'separator_selected',
+	'close_button_selected',
+	'tab_separator_selected',
+	'mini_icons_grey_selected',
+	'mini_icons_azure_selected',
+	'mini_icons_green_selected',
+	'pick_visible',
+	'duplicate_selected',
+	'hint_selected',
+	'info_selected',
+	'pick_selected',
+	'error_selected',
+	'buffer_selected',
+	'numbers_selected',
+	'warning_selected',
+	'diagnostic_selected',
+	'hint_diagnostic_selected',
+	'info_diagnostic_selected',
+	'error_diagnostic_selected',
+	'warning_diagnostic_selected',
+}
+M.bufferline.underline_highlights = {
+	'tab_selected',
+	'modified_selected',
+	'indicator_selected',
+	'separator_selected',
+	'close_button_selected',
+	'tab_separator_selected',
+	'duplicate_selected',
+	'hint_selected',
+	'info_selected',
+	'pick_selected',
+	'error_selected',
+	'buffer_selected',
+	'numbers_selected',
+	'warning_selected',
+	'diagnostic_selected',
+	'hint_diagnostic_selected',
+	'info_diagnostic_selected',
+	'error_diagnostic_selected',
+	'warning_diagnostic_selected',
 }
 
 return M

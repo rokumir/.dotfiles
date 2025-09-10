@@ -7,27 +7,23 @@ return {
 
 	{ -- better yanking
 		'gbprod/yanky.nvim',
+		dependencies = 'kkharji/sqlite.lua',
+		lazy = false,
 		opts = {
 			ring = {
 				history_length = 50,
-				sync_with_numbered_registers = true,
 				ignore_registers = { '_' },
+				storage_path = vim.fn.stdpath 'data' .. '/nvim/yanky.db', -- Only for sqlite storage
 			},
-			highlight = {
-				on_put = true,
-				on_yank = true,
-				timer = 500,
-			},
-			textobj = { enabled = false },
-			preserve_cursor_position = {
-				enabled = true,
-			},
+			preserve_cursor_position = { enabled = true },
+			highlight = { on_put = true, on_yank = true, timer = 500 },
 		},
 		keys = function()
 			return {
 				{ '<leader>p', '', desc = 'yanky' },
-				{ '<leader>pp', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
 				{ '<leader>pc', function() require('yanky').history.clear() end, desc = 'Clear Yank History' },
+				{ '<leader>pp', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
+				{ ';sp', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
 
 				{ '<a-N>', '<Plug>(YankyNextEntry)', mode = { 'n', 'i' }, desc = 'Next Entry' },
 				{ '<a-B>', '<Plug>(YankyPreviousEntry)', mode = { 'n', 'i' }, desc = 'Prev Entry' },
@@ -61,7 +57,7 @@ return {
 		},
 	},
 
-	{ -- Refactoring (primeagen)
+	{ -- Refactoring
 		'ThePrimeagen/refactoring.nvim',
 		keys = function()
 			return {
@@ -93,10 +89,14 @@ return {
 		},
 	},
 
-	{ -- better UX than inc-rename
+	{ -- Better UX than inc-rename
 		'saecki/live-rename.nvim',
 		priority = 1000,
 		event = 'VeryLazy',
+		keys = {
+			{ '<leader>cr', '', desc = 'Rename Symbol' },
+			{ '<a-r>', '', mode = 'i', desc = 'Rename Symbol' },
+		},
 		opts = {
 			prepare_rename = true,
 			request_timeout = 2000,
@@ -129,7 +129,7 @@ return {
 		},
 	},
 
-	{
+	{ -- Chat
 		'CopilotC-Nvim/CopilotChat.nvim',
 		opts = {
 			auto_insert_mode = false,

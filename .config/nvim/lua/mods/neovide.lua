@@ -7,13 +7,12 @@ if not vim.g.neovide then return end
 -- ---------------------------
 -- Settings
 vim.g.neovide_working_dir = '~'
-vim.g.neovide_no_custom_clipboard = false
-vim.opt.linespace = 10
-vim.g.neovide_scale_factor = 1.2
-vim.g.neovide_confirm_quit = true
+vim.g.neovide_no_custom_clipboard = true
+vim.opt.linespace = 9
+vim.g.neovide_scale_factor = 1
+vim.g.neovide_confirm_quit = false
 vim.g.neovide_hide_mouse_when_typing = false
 vim.g.neovide_underline_stroke_scale = 2
-vim.g.neovide_show_border = false
 vim.g.neovide_refresh_rate_idle = 3
 
 -- Animations
@@ -35,15 +34,20 @@ vim.g.neovide_title_background_color = vim.g.neovide_background_color
 -- Keymaps
 local map = require('utils.keymap').map
 
-map { '<c-s-n>', function() os.execute 'neovide.exe > /dev/null 2>&1 &' end, desc = 'New Neovide Instance' }
+map {
+	'<c-s-n>',
+	function()
+		vim.schedule(function() os.execute 'neovide.exe > /dev/null 2>&1 &' end)
+	end,
+	desc = 'New Neovide Instance',
+}
 
 -- ---------------------------
 -- Goto working dir
 if #vim.v.argv > 0 then
-	for i, arg in pairs(vim.v.argv) do
-		if not vim.tbl_contains({ '-c', '--cmd' }, arg) or not string.find(vim.v.argv[i + 1], '%f[%a]cd%f[%A]') then
-			vim.cmd('cd ' .. (vim.g.neovide_working_dir or '~'))
-			break
-		end
+	local cmd_flag_index = require('utils.list').index_of(vim.v.argv, function(v) return v == '-c' or v == '--cmd' end)
+	if not (cmd_flag_index and string.find(vim.v.argv[cmd_flag_index + 1] or '', '%f[%a]cd%f[%A]')) then
+		local cd_home = 'cd ' .. (vim.g.neovide_working_dir or '~')
+		vim.cmd(cd_home)
 	end
 end

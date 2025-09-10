@@ -20,23 +20,19 @@ return {
 				long_message_to_split = true,
 			},
 
-			commands = {
-				all = { -- options for the message history that you get with `:Noice`
-					view = 'split',
-					opts = { enter = true, format = 'details' },
-					filter = {},
-				},
-			},
-
 			lsp = {
 				progress = { enabled = false },
 				hover = {
 					enabled = true,
 					silent = true,
-					---@type NoiceViewOptions
 					opts = {
 						size = { max_width = 80 },
 					},
+				},
+				signature = {
+					enabled = true,
+					opts = { max_size = 80 },
+					auto_open = { enabled = false, trigger = false, throttle = 50 },
 				},
 				override = {
 					['vim.lsp.util.convert_input_to_markdown_lines'] = true,
@@ -44,80 +40,47 @@ return {
 					['cmp.entry.get_documentation'] = true,
 				},
 			},
-
-			signature = {
-				enabled = true,
-				---@type NoiceViewOptions
-				opts = {
-					max_size = 80,
-				},
-			},
 		},
 	},
 
 	{ -- Statusline
 		'nvim-lualine/lualine.nvim',
-		opts = {
-			options = {
-				globalstatus = true,
-				always_show_tabline = false,
-				always_divide_middle = true,
-				component_separators = { left = '', right = '' },
-				section_separators = { left = '', right = '' },
-				refresh = {
-					refresh_time = 16, -- ~60fps
-					statusline = 16,
-				},
-			},
-			sections = {
-				lualine_c = {
-					LazyVim.lualine.root_dir(),
-					{ 'filetype', icon_only = true, separator = '', padding = { left = 1, right = 0 } },
-					{
-						LazyVim.lualine.pretty_path {
-							length = 3,
-							relative = 'cwd',
-							modified_hl = 'Error',
-							directory_hl = 'Comment',
-							filename_hl = 'Conditional',
-							modified_sign = icons.misc.modified,
-							readonly_icon = icons.misc.readonly,
-						},
-					},
-					{
-						'diagnostics',
-						symbols = {
-							error = icons.diagnostics.Error,
-							warn = icons.diagnostics.Warn,
-							info = icons.diagnostics.Info,
-							hint = icons.diagnostics.Hint,
-						},
-					},
-				},
-
-				lualine_y = {
-					'location',
-					{ function() return require('utils.datetime').format.pretty_date() end },
-				},
-				lualine_z = {
-					{ function() return require('utils.datetime').format.pretty_time() end },
-				},
-			},
+		dependencies = {
+			-- disable navic in lualine
+			{ 'SmiteshP/nvim-navic', optional = true, opts = function() return { lazy_update_context = true } end },
 		},
-	},
-	{ -- Statusline
-		'nvim-lualine/lualine.nvim',
 		opts = function(_, opts)
-			--#region
-			if type(opts.options.theme) == 'string' then
-				local theme = opts.options.theme or 'auto'
-				opts.options.theme = require('lualine.themes.' .. theme)
-			end
+			opts.options.globalstatus = true
+			opts.options.always_show_tabline = false
+			opts.options.always_divide_middle = true
+			opts.options.component_separators = { left = '', right = '' }
+			opts.options.section_separators = { left = '', right = '' }
+			opts.options.refresh = { refresh_time = 16, statusline = 16 } -- ~60fps
 
-			for _, mode in ipairs { 'normal', 'insert', 'visual', 'replace', 'command' } do
-				opts.options.theme[mode].c.bg = 'none'
-			end
-			--#endregion
+			opts.sections.lualine_c = {
+				LazyVim.lualine.root_dir(),
+				{ 'filetype', icon_only = true, separator = '', padding = { left = 1, right = 0 } },
+				{
+					LazyVim.lualine.pretty_path {
+						length = 3,
+						relative = 'cwd',
+						modified_hl = 'Error',
+						directory_hl = 'Comment',
+						filename_hl = 'Conditional',
+						modified_sign = icons.misc.modified,
+						readonly_icon = icons.misc.readonly,
+					},
+				},
+				{
+					'diagnostics',
+					symbols = {
+						error = icons.diagnostics.Error,
+						warn = icons.diagnostics.Warn,
+						info = icons.diagnostics.Info,
+						hint = icons.diagnostics.Hint,
+					},
+				},
+			}
 
 			vim.list_extend(opts.sections.lualine_x, {
 				{ -- word count
@@ -143,10 +106,25 @@ return {
 					cond = function() return vim.bo.ff ~= 'unix' end,
 				},
 			})
+
+			opts.sections.lualine_y = {
+				'location',
+				{ function() return require('utils.datetime').format.pretty_date() end },
+			}
+			opts.sections.lualine_z = {
+				{ function() return require('utils.datetime').format.pretty_time() end },
+			}
+
+			---- Highlights config
+			-- Transparent lualine fill bg
+			local theme = require 'lualine.themes.auto'
+			local lualine_modes = { 'insert', 'normal', 'visual', 'command', 'replace', 'inactive', 'terminal' }
+			for _, mode in ipairs(lualine_modes) do
+				if theme[mode] and theme[mode].c then theme[mode].c.bg = 'NONE' end
+			end
+			opts.options.theme = theme
 		end,
 	},
-	-- disable navic in lualine
-	{ 'SmiteshP/nvim-navic', optional = true, opts = function() return { lazy_update_context = true } end },
 
 	{ -- Tabs
 		'akinsho/bufferline.nvim',
@@ -179,7 +157,7 @@ return {
 					Snacks.picker.pick {
 						source = 'tabs_sort',
 						title = 'Sort tabs by',
-						layout = 'vscode_unfocus',
+						layout = 'vscode_focus',
 						-- stylua: ignore
 						items = {
 							{ icon = '󰥨 ', text = 'Directory'          , cmd = 'BufferLineSortByDirectory'         , hl = 'DiagnosticInfo' },
@@ -208,25 +186,46 @@ return {
 		---@type bufferline.UserConfig
 		opts = {
 			options = {
-				mode = 'buffers',
-				indicator = { style = 'underline' },
-				always_show_bufferline = false,
-				show_tab_indicators = true,
 				show_close_icon = false,
+				always_show_bufferline = false,
 				show_buffer_close_icons = false,
 				show_buffer_icons = true,
-				separator_style = 'thin', ---@type 'slant' | 'slope' | 'thick' | 'thin' | [string,string]?
-				modified_icon = icons.misc.modified,
+				show_tab_indicators = true,
 				enforce_regular_tabs = true,
+
+				mode = 'buffers',
+				indicator = { style = 'underline' },
+				separator_style = { '', '' },
+				modified_icon = icons.misc.modified,
 				sort_by = 'insert_at_end',
 				hover = { enabled = true, delay = 200 },
+
+				close_command = function(buf) require('utils.ui').bufremove(buf) end,
+				middle_mouse_command = function(buf) require('utils.ui').bufremove(buf) end,
 			},
-			highlights = {
-				fill = { bg = 'none' },
-				background = { bg = 'none' },
-				separator = { bg = 'none' },
-			},
+			highlights = {},
 		},
+	},
+	{
+		'akinsho/bufferline.nvim',
+		optional = true,
+		opts = function(_, opts)
+			local const = require('utils.const').bufferline
+
+			for _, hl in pairs(const.transparent_bg_highlights) do
+				opts.highlights[hl] = vim.tbl_extend('force', opts.highlights[hl], { bg = 'none' })
+			end
+
+			local palette_fn = {
+				['rose-pine'] = function() return require('rose-pine.palette').love end,
+			}
+			local get_color = palette_fn[vim.g.colors_name] or function() return '#E84D4F' end
+			local indicator_color = get_color()
+			for _, prefix in pairs(const.underline_highlights) do
+				local hl_name = prefix .. '_selected'
+				opts.highlights[hl_name] = vim.tbl_extend('force', opts.highlights[hl_name], { sp = indicator_color })
+			end
+		end,
 	},
 
 	{ -- Git status in line number
@@ -324,6 +323,12 @@ return {
 		'kevinhwang91/nvim-ufo',
 		dependencies = 'kevinhwang91/promise-async',
 		event = 'VimEnter',
+		keys = {
+			{ 'zO', function() require('ufo').openAllFolds() end, nowait = true, desc = 'Unfold All' },
+			{ 'zC', function() require('ufo').closeAllFolds() end, nowait = true, desc = 'Fold All' },
+			{ ']u', function() require('ufo').goNextClosedFold() end, nowait = true, desc = 'Fold: Next' },
+			{ '[u', function() require('ufo').goPreviousClosedFold() end, nowait = true, desc = 'Fold: Prev' },
+		},
 		opts = {
 			open_fold_hl_timeout = 150,
 			close_fold_kinds_for_ft = {
