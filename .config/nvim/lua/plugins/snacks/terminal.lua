@@ -11,6 +11,7 @@ return {
 			terminal = {
 				win = {
 					style = 'terminal',
+					wo = { winhighlight = 'SnacksNormal:NormalFloat' },
 					actions = {
 						term_toggle = function(self) self:hide() end,
 						term_normal = function() vim.cmd 'stopinsert' end,

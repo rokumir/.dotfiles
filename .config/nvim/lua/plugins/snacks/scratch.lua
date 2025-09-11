@@ -7,6 +7,21 @@ return {
 	},
 	---@type snacks.Config
 	opts = {
+		styles = {
+			scratch = {
+				width = 0.8,
+				height = 0.8,
+				bo = { buftype = '', buflisted = false, bufhidden = 'hide', swapfile = false },
+				minimal = false,
+				noautocmd = false,
+				-- position = "right",
+				zindex = 20,
+				wo = { winhighlight = 'NormalFloat:Normal' },
+				border = 'rounded',
+				title_pos = 'center',
+				footer_pos = 'center',
+			},
+		},
 		scratch = {
 			win = {
 				max_height = 25,

@@ -213,7 +213,7 @@ return {
 			local const = require('utils.const').bufferline
 
 			for _, hl in pairs(const.transparent_bg_highlights) do
-				opts.highlights[hl] = vim.tbl_extend('force', opts.highlights[hl], { bg = 'none' })
+				opts.highlights[hl] = vim.tbl_extend('force', opts.highlights[hl] or {}, { bg = 'none' })
 			end
 
 			local palette_fn = {
@@ -221,9 +221,8 @@ return {
 			}
 			local get_color = palette_fn[vim.g.colors_name] or function() return '#E84D4F' end
 			local indicator_color = get_color()
-			for _, prefix in pairs(const.underline_highlights) do
-				local hl_name = prefix .. '_selected'
-				opts.highlights[hl_name] = vim.tbl_extend('force', opts.highlights[hl_name], { sp = indicator_color })
+			for _, hl in pairs(const.underline_highlights) do
+				opts.highlights[hl] = vim.tbl_extend('force', opts.highlights[hl] or {}, { sp = indicator_color })
 			end
 		end,
 	},

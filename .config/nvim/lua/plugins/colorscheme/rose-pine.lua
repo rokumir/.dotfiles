@@ -61,6 +61,7 @@ return {
 			--#endregion
 
 			--#region misc
+			DarkBackground = { bg = 'surface' },
 			TreesitterContext = { bg = 'surface' },
 			TreesitterContextLineNumber = { bg = 'surface' },
 			TreesitterContextBottom = { bg = 'surface' },
@@ -85,6 +86,7 @@ return {
 			WhichKeyBorder = { link = 'FloatBorder' },
 			TroubleNormal = { bg = 'none' },
 
+			-- SnacksNormal = { bg = 'surface' },
 			SnacksBackdrop = { bg = 'none', blend = 0 },
 			SnacksIndent = { fg = 'overlay' },
 			SnacksIndentScope = { fg = 'highlight_med' },
