@@ -229,7 +229,6 @@ return {
 
 	keys = {
 		{ ';;', function() Snacks.picker.resume() end, desc = 'Resume' },
-		{ ';S', function() Snacks.picker() end, desc = 'Search Pickers' },
 
 		-- Top Pickers & Explorer
 		{ ';b', function() Snacks.picker.buffers() end, desc = 'Buffers' },
@@ -263,6 +262,7 @@ return {
 		{ ';sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
 		{ ';sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
 		-- others
+		{ ';sP', function() Snacks.picker() end, desc = 'Search Pickers' },
 		{ ';s"', function() Snacks.picker.registers() end, desc = 'Registers' },
 		{ ';s/', function() Snacks.picker.search_history() end, desc = 'Search History' },
 		{ ';sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },

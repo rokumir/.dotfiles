@@ -55,6 +55,7 @@ end
 
 function M:picker()
 	Snacks.picker.pick {
+		source = 'text_case_actions',
 		title = 'Change Text Case',
 		layout = 'vscode_min',
 		items = self:get_items(),

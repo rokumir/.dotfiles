@@ -1,46 +1,91 @@
 -- NOTE: Cross session tab restore is not supported.
 local M = {}
 
--- Internal state
----@type BufferHistoryState
-M.state = {
-	nodes = {},
-	head = nil,
-	tail = nil,
-	size = 0,
-}
-
-local MAX_ENTRIES = 30
-
 -- Unified notifier
 ---@param msg string|string[]
 ---@param lvl snacks.notifier.level?
 local function notice(msg, lvl)
-	local notify = Snacks.notify or LazyVim.notify
+	local ext_notify = Snacks.notify or LazyVim.notify
 	local title = 'Buffer History'
-	if notify then
-		notify(msg, { title = title, level = lvl or vim.log.levels.INFO })
+	if ext_notify then
+		ext_notify(msg, { title = title, level = lvl or vim.log.levels.INFO })
 	else
 		vim.notify(title .. ': ' .. msg, vim.log.levels.INFO)
 	end
 end
 
+---@param bufnr number?  Buffer to delete (0 or nil = current)
+---@param failsafe boolean?  Fallback buffers if windows show it (default: true)
+function M.bufremove(bufnr, failsafe)
+	bufnr = bufnr or 0
+	bufnr = bufnr == 0 and vim.api.nvim_get_current_buf() or bufnr
+	failsafe = failsafe ~= false
+
+	-- prompt to save if modified
+	if vim.bo.modified then
+		local name = vim.fn.bufname()
+		local choice = vim.fn.confirm(('Save changes to %q?'):format(name), '&Yes\n&No\n&Cancel')
+		if choice ~= 1 then return end
+		vim.cmd.write()
+	end
+
+	-- reassign any windows showing this buffer
+	if failsafe then
+		for _, win in ipairs(vim.fn.win_findbuf(bufnr)) do
+			vim.api.nvim_win_call(win, function()
+				if not vim.api.nvim_win_is_valid(win) or vim.api.nvim_win_get_buf(win) ~= bufnr then return end
+
+				-- try alternate buffer
+				local alt = vim.fn.bufnr '#'
+				if alt ~= bufnr and vim.fn.buflisted(alt) == 1 then
+					vim.api.nvim_win_set_buf(win, alt)
+					return
+				end
+
+				-- try previous buffer
+				local has_previous = pcall(vim.cmd.bprevious)
+				if has_previous and bufnr ~= vim.api.nvim_win_get_buf(win) then return end
+
+				-- fallback to a new listed buffer
+				local new_buf = vim.api.nvim_create_buf(true, false)
+				vim.api.nvim_win_set_buf(win, new_buf)
+			end)
+		end
+	end
+
+	if vim.api.nvim_buf_is_valid(bufnr) then -- finally delete the buffer
+		pcall(vim.api.nvim_buf_delete, bufnr, { force = true })
+	end
+end
+
+M.history = {
+	MAX_ENTRIES = 30,
+	---@type BufferHistoryState
+	_state = {
+		nodes = {},
+		head = nil,
+		tail = nil,
+		size = 0,
+	},
+}
+
 --- Clears the entire history.
-function M:clear()
-	self.state.nodes = {}
-	self.state.head = nil
-	self.state.tail = nil
-	self.state.size = 0
+function M.history:clear()
+	self._state.nodes = {}
+	self._state.head = nil
+	self._state.tail = nil
+	self._state.size = 0
 	notice 'History cleared'
 end
 
 --- Adds (or moves) a buffer path to the front of history.
 ---@param path string
-function M:put(path)
+function M.history:put(path)
+	local state = self._state
 	-- No-op if already at front
-	if path == self.state.head then return end
+	if path == state.head then return end
 
-	local nodes = self.state.nodes
+	local nodes = state.nodes
 	local node = nodes[path]
 
 	-- Decouple/preprocessing stuffs
@@ -48,7 +93,7 @@ function M:put(path)
 		-- Detach existing node
 		if node.next then nodes[node.next].prev = node.prev end
 		if node.prev then nodes[node.prev].next = node.next end
-		if path == self.state.tail then self.state.tail = node.next end
+		if path == state.tail then state.tail = node.next end
 	else
 		-- Create new node
 		local cwd = vim.fn.getcwd()
@@ -62,33 +107,34 @@ function M:put(path)
 		nodes[path] = node
 
 		-- Enforce max size: drop oldest
-		if self.state.size == MAX_ENTRIES then
-			local oldTail = self.state.tail ---@cast oldTail string
+		if state.size == self.MAX_ENTRIES then
+			local oldTail = state.tail ---@cast oldTail string
 			local newTail = nodes[oldTail].next
 			nodes[newTail].prev = nil -- detach
 			nodes[oldTail] = nil -- terminate
-			self.state.tail = newTail
+			state.tail = newTail
 		end
 
-		self.state.size = self.state.size + 1
+		state.size = state.size + 1
 	end
 
 	-- Insert at head (newest)
 	node.next = nil
-	node.prev = self.state.head
-	local prev_head = nodes[self.state.head]
+	node.prev = state.head
+	local prev_head = nodes[state.head]
 	if prev_head then prev_head.next = path end
 
-	self.state.head = path
-	if self.state.size == 1 then self.state.tail = path end
+	state.head = path
+	if state.size == 1 then state.tail = path end
 end
 
 --- Pops and reopens the most recent buffer, or a specific one if `path` is provided.
 ---@param path? string
-function M:pop(path)
-	local target = path or self.state.head
+function M.history:pop(path)
+	local state = self._state
+	local target = path or state.head
 	if not target then
-		if self.state.size == 0 then
+		if state.size == 0 then
 			notice 'History is empty'
 		else
 			notice({ 'Incorrect state!', 'Initiate factory reset!' }, 'error')
@@ -97,31 +143,31 @@ function M:pop(path)
 		return
 	end
 
-	local node = self.state.nodes[target]
+	local node = state.nodes[target]
 	if not node then return notice('Not in history: ' .. target) end
 
 	local newer = node.next
 	local older = node.prev
 
 	-- Unlink from newer neighbor (toward head)
+	-- if no newer, we popped the head
 	if newer then
-		self.state.nodes[newer].prev = older
+		state.nodes[newer].prev = older
 	else
-		-- if no newer, we popped the head
-		self.state.head = older
+		state.head = older
 	end
 
 	-- Unlink from older neighbor (toward tail)
+	-- if no older, we popped the tail
 	if older then
-		self.state.nodes[older].next = newer
+		state.nodes[older].next = newer
 	else
-		-- if no older, we popped the tail
-		self.state.tail = newer
+		state.tail = newer
 	end
 
 	-- Remove the node and update size
-	self.state.nodes[target] = nil
-	self.state.size = self.state.size - 1
+	state.nodes[target] = nil
+	state.size = state.size - 1
 
 	-- Attempt to open the file
 	if vim.fn.filereadable(target) == 0 then return notice('File not found: ' .. target, 'error') end
@@ -129,16 +175,16 @@ function M:pop(path)
 end
 
 --- Launches a Snacks.nvim picker for buffer history.
-function M:picker()
+function M.history:picker()
 	if not Snacks then return notice({ '**Snacks.nvim** picker not found!', 'Picker disabled.' }, 'error') end
-	if self.state.size == 0 then return notice 'Empty!' end
+	if self._state.size == 0 then return notice 'Empty!' end
 
 	Snacks.picker.pick {
 		source = 'buffer_history',
 		title = 'Buffer History',
 		layout = 'vscode_focus_min',
 		format = 'file',
-		items = vim.tbl_values(self.state.nodes),
+		items = vim.tbl_values(self._state.nodes),
 		confirm = function(picker)
 			local selections = picker:selected { fallback = true }
 			picker.list:set_selected()
@@ -166,9 +212,9 @@ function M:picker()
 end
 
 -- Aliases
-M.restore = M.pop
-M.store = M.put
-M.snacks = M.picker
+M.history.restore = M.history.pop
+M.history.store = M.history.put
+M.history.snacks = M.history.picker
 
 return M
 

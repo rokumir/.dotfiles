@@ -14,6 +14,7 @@ return {
 				history_length = 50,
 				ignore_registers = { '_' },
 				storage_path = vim.fn.stdpath 'data' .. '/nvim/yanky.db', -- Only for sqlite storage
+				permanent_wrapper = function(...) return require('yanky.wrappers').remove_carriage_return(...) end,
 			},
 			preserve_cursor_position = { enabled = true },
 			highlight = { on_put = true, on_yank = true, timer = 500 },

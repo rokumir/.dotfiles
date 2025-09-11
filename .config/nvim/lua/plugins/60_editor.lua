@@ -89,6 +89,7 @@ return {
 						local keywords = require('todo-comments.config').keywords
 						local todo_comments_map = require('utils.table').map(keywords, function(text, tag) return { text = text, tag = tag } end)
 						Snacks.picker.pick {
+							source = 'todo_comments_keys',
 							title = 'Todo comment',
 							layout = 'vscode_min',
 							items = todo_comments_map,

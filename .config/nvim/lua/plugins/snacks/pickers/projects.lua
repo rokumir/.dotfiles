@@ -49,9 +49,9 @@ return {
 		cond = vim.g.neovide,
 		---@param opts snacks.Config
 		opts = function(_, opts)
-			opts.picker.sources.projects.win.input.keys['<a-N>'] = { 'project_open_new_neovide_window', mode = { 'i', 'n' } }
+			opts.picker.sources.projects.win.input.keys['<a-N>'] = { 'open_new_neovide_window', mode = { 'i', 'n' } }
 
-			opts.picker.sources.projects.actions.project_open_new_neovide_window = function(picker)
+			opts.picker.sources.projects.actions.open_new_neovide_window = function(picker)
 				local paths = vim.tbl_map(Snacks.picker.util.path, picker:selected { fallback = true })
 				picker.list:set_selected()
 				if #paths == 0 then return end

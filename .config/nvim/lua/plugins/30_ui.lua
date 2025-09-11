@@ -155,7 +155,7 @@ return {
 				'<leader>bs',
 				function()
 					Snacks.picker.pick {
-						source = 'tabs_sort',
+						source = 'tabs_sort_actions',
 						title = 'Sort tabs by',
 						layout = 'vscode_focus',
 						-- stylua: ignore
@@ -200,8 +200,8 @@ return {
 				sort_by = 'insert_at_end',
 				hover = { enabled = true, delay = 200 },
 
-				close_command = function(buf) require('utils.ui').bufremove(buf) end,
-				middle_mouse_command = function(buf) require('utils.ui').bufremove(buf) end,
+				close_command = function(bufnr) require('utils.buffer').bufremove(bufnr) end,
+				middle_mouse_command = function(bufnr) require('utils.buffer').bufremove(bufnr) end,
 			},
 			highlights = {},
 		},

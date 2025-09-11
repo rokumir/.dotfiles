@@ -123,6 +123,6 @@ vim.api.nvim_create_autocmd('BufDelete', {
 		local ft_ignored_map = require('utils.const').filetype.ignored_map
 
 		local is_buffer_valid = vim.api.nvim_buf_is_valid(bufnr) and bo.modifiable and #buf_path > 0 and not ft_ignored_map[bo.filetype]
-		if is_buffer_valid then require('utils.buffer-history'):store(buf_path) end
+		if is_buffer_valid then require('utils.buffer').history:store(buf_path) end
 	end,
 })

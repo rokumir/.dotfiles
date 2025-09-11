@@ -1,5 +1,4 @@
 local map = require('utils.keymap').map
-local ui_utils = require 'utils.ui'
 
 --#region --- MISC
 -- Movement
@@ -66,13 +65,13 @@ map { '<leader>fn', '<cmd>enew<cr>', desc = 'New File' }
 --#endregion
 
 --#region --- EDITOR
-map { '<c-q>', ui_utils.bufremove, desc = 'Close buffer' }
+map { '<c-q>', function() require('utils.buffer').bufremove() end, desc = 'Close buffer' }
 map { 'ZZ', vim.cmd.quitall, desc = 'Close Session' }
-map { '<c-s>', '<cmd>write<cr><esc>', mode = { 'i', 'x', 'n', 's' }, desc = 'Save File' }
+map { '<c-s>', '<cmd>write<cr><esc>', mode = { 'i', 'n', 'x', 's' }, desc = 'Save File' }
 
 map { 'o', 'o<esc>', remap = true, desc = 'Open Line' }
 map { 'O', 'O<esc>', remap = true, desc = 'Open Line Above' }
-map { 'p', 'P', remap = true, mode = 'v', desc = 'Paste Line' }
+-- map { 'p', 'P', remap = true, mode = 'v', desc = 'Paste Line' }
 
 -- map { '+', '<c-a>', mode = { 'n', 'v' }, desc = 'Increase Number' }
 -- map { '-', '<c-x>', mode = { 'n', 'v' }, desc = 'Decrease Number' }
@@ -113,10 +112,10 @@ map { '<leader><tab>', '<cmd>tabnext<cr>', desc = 'Tab: Next' }
 map { '<leader><s-tab>', '<cmd>tabprevious<cr>', desc = 'Tab: Previous' }
 -- map { '<c-s-right>', ':tabm +1 <cr>', desc = 'Move Tab Right' }
 -- map { '<c-s-left>', ':tabm -1 <cr>', desc = 'Move Tab Left' }
-map { '<leader>tX', function() require('utils.buffer-history'):clear() end, desc = 'Clear Buffer History' }
-map { '<leader>ts', function() require('utils.buffer-history'):restore() end, desc = 'Restore Buffer History' }
-map { '<c-s-t>', function() require('utils.buffer-history'):restore() end, desc = 'Restore Buffer History' }
-map { ';`', function() require('utils.buffer-history'):picker() end, desc = 'Buffer History Search' }
+map { '<leader>tX', function() require('utils.buffer').history:clear() end, desc = 'Clear Buffer History' }
+map { '<leader>ts', function() require('utils.buffer').history:restore() end, desc = 'Restore Buffer History' }
+map { '<c-s-t>', function() require('utils.buffer').history:restore() end, desc = 'Restore Buffer History' }
+map { ';S', function() require('utils.buffer').history:picker() end, desc = 'Buffer History Search' }
 
 -- buffers (use like tab)
 -- map { '<tab>', ':bnext <cr>', desc = 'Next Buffer' }
