@@ -22,7 +22,7 @@ return {
 				{ '<leader>m', group = 'menu', icon = '󰒲' },
 				{ '<leader>!', group = 'shell', icon = '' },
 				{ '<leader><leader>', group = 'toggle' },
-				{ '<leader><leader>a', group = 'AI' },
+				{ '<leader><leader>p', group = 'profiler' },
 				{ '<leader>c', group = 'code' },
 				{ '<leader>g', group = 'git' },
 				{ '<leader>gh', group = 'hunks' },

@@ -1,4 +1,4 @@
-local Const = require('utils.const').snacks
+local Const = require('config.const.snacks')
 local Actions = require 'snacks.explorer.actions'
 local Tree = require 'snacks.explorer.tree'
 
@@ -45,7 +45,7 @@ return {
 
 					win = {
 						list = {
-							keys = vim.tbl_extend('force', {}, require('utils.const').snacks.disabled_default_keys, {
+							keys = vim.tbl_extend('force', {}, require('config.const.snacks').disabled_default_keys, {
 								['<bs>'] = 'explorer_up',
 								['h'] = 'explorer_close', -- close directory
 								['<c-s-u>'] = 'explorer_update',

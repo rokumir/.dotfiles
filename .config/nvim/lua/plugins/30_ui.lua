@@ -1,8 +1,10 @@
 ---@diagnostic disable: missing-fields
-
 local icons = LazyVim.config.icons
 icons.misc.modified = '✨'
 icons.misc.readonly = '🔒'
+
+local bt_config = require 'config.const.buffertype'
+local ft_config = require 'config.const.filetype'
 
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
@@ -90,7 +92,7 @@ return {
 					end,
 					color = 'PreCondit',
 					separator = '',
-					cond = function() return require('utils.const').filetype.document_map[vim.bo.ft] end,
+					cond = function() return ft_config.document_map[vim.bo.ft] end,
 				},
 				{
 					'encoding',
@@ -128,36 +130,37 @@ return {
 
 	{ -- Tabs
 		'akinsho/bufferline.nvim',
-		keys = {
-			{ '<tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Tab: Next' },
-			{ '<s-tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Tab: Prev' },
-			{ '<c-s-right>', '<cmd>BufferLineMoveNext<cr>', desc = 'Tab: Move Right' },
-			{ '<c-s-left>', '<cmd>BufferLineMovePrev<cr>', desc = 'Tab: Move Left' },
+		keys = function()
+			local keys = {
+				{ '<tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Tab: Next' },
+				{ '<s-tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Tab: Prev' },
+				{ '<c-s-right>', '<cmd>BufferLineMoveNext<cr>', desc = 'Tab: Move Right' },
+				{ '<c-s-left>', '<cmd>BufferLineMovePrev<cr>', desc = 'Tab: Move Left' },
 
-			{ '<a-1>', '<cmd>BufferLineGoToBuffer 1<cr>', desc = 'Tab: Go To 1' },
-			{ '<a-2>', '<cmd>BufferLineGoToBuffer 2<cr>', desc = 'Tab: Go To 2' },
-			{ '<a-3>', '<cmd>BufferLineGoToBuffer 3<cr>', desc = 'Tab: Go To 3' },
-			{ '<a-4>', '<cmd>BufferLineGoToBuffer 4<cr>', desc = 'Tab: Go To 4' },
-			{ '<a-5>', '<cmd>BufferLineGoToBuffer 5<cr>', desc = 'Tab: Go To 5' },
-			{ '<a-6>', '<cmd>BufferLineGoToBuffer 6<cr>', desc = 'Tab: Go To 6' },
-			{ '<a-7>', '<cmd>BufferLineGoToBuffer 7<cr>', desc = 'Tab: Go To 7' },
-			{ '<a-8>', '<cmd>BufferLineGoToBuffer 8<cr>', desc = 'Tab: Go To 8' },
-			{ '<a-9>', '<cmd>BufferLineGoToBuffer 9<cr>', desc = 'Tab: Go To 9' },
-			{ '<a-0>', '<cmd>BufferLineGoToBuffer -1<cr>', desc = 'Tab: Go To Last' },
+				{ '<a-1>', '<cmd>BufferLineGoToBuffer 1<cr>', desc = 'Tab: Go To 1' },
+				{ '<a-2>', '<cmd>BufferLineGoToBuffer 2<cr>', desc = 'Tab: Go To 2' },
+				{ '<a-3>', '<cmd>BufferLineGoToBuffer 3<cr>', desc = 'Tab: Go To 3' },
+				{ '<a-4>', '<cmd>BufferLineGoToBuffer 4<cr>', desc = 'Tab: Go To 4' },
+				{ '<a-5>', '<cmd>BufferLineGoToBuffer 5<cr>', desc = 'Tab: Go To 5' },
+				{ '<a-6>', '<cmd>BufferLineGoToBuffer 6<cr>', desc = 'Tab: Go To 6' },
+				{ '<a-7>', '<cmd>BufferLineGoToBuffer 7<cr>', desc = 'Tab: Go To 7' },
+				{ '<a-8>', '<cmd>BufferLineGoToBuffer 8<cr>', desc = 'Tab: Go To 8' },
+				{ '<a-9>', '<cmd>BufferLineGoToBuffer 9<cr>', desc = 'Tab: Go To 9' },
+				{ '<a-0>', '<cmd>BufferLineGoToBuffer -1<cr>', desc = 'Tab: Go To Last' },
 
-			{ '<leader>b', '', desc = 'buffer/tab' },
-			{ '<leader>bp', '<cmd>BufferLineTogglePin<cr>', desc = 'Pin/Unpin' },
-			{ '<leader>bb', '<cmd>BufferLinePick<cr>', desc = 'Pick' },
-			{ '<leader>bB', '<cmd>BufferLinePickClose<cr>', desc = 'Delete Pick' },
+				{ '<leader>b', '', desc = 'buffer/tab' },
+				{ '<leader>bp', '<cmd>BufferLineTogglePin<cr>', desc = 'Pin/Unpin' },
+				{ '<leader>bb', '<cmd>BufferLinePick<cr>', desc = 'Pick' },
+				{ '<leader>bB', '<cmd>BufferLinePickClose<cr>', desc = 'Delete Pick' },
 
-			{
-				desc = 'Sort',
-				'<leader>bs',
-				function()
-					Snacks.picker.pick {
-						source = 'tabs_sort_actions',
-						title = 'Sort tabs by',
-						layout = 'vscode_focus',
+				{
+					desc = 'Sort',
+					'<leader>bs',
+					function()
+						Snacks.picker.pick {
+							source = 'tabs_sort_actions',
+							title = 'Sort tabs by',
+							layout = 'vscode_focus',
 						-- stylua: ignore
 						items = {
 							{ icon = '󰥨 ', text = 'Directory'          , cmd = 'BufferLineSortByDirectory'         , hl = 'DiagnosticInfo' },
@@ -165,23 +168,29 @@ return {
 							{ icon = ' ', text = 'Extension'          , cmd = 'BufferLineSortByExtension'         , hl = 'Error'     },
 							{ icon = '󱎅 ', text = 'Tabs'               , cmd = 'BufferLineSortByTabs'              , hl = 'DiagnosticHint' },
 						},
-						format = function(item)
-							return {
-								{ item.icon, item.hl },
-								{ ' ' .. item.text .. ' ', item.hl },
-								{ item.cmd, 'Comment' },
-							}
-						end,
-						confirm = function(picker, item)
-							picker:close()
-							if not item then Snacks.notify.error('Picker "' .. picker.opts.source .. '":\nItem not found!') end
-							vim.cmd[item.cmd]()
-							Snacks.notify('Bufferline sort by ' .. item.text)
-						end,
-					}
-				end,
-			},
-		},
+							format = function(item)
+								return {
+									{ item.icon, item.hl },
+									{ ' ' .. item.text .. ' ', item.hl },
+									{ item.cmd, 'Comment' },
+								}
+							end,
+							confirm = function(picker, item)
+								picker:close()
+								if not item then Snacks.notify.error('Picker "' .. picker.opts.source .. '":\nItem not found!') end
+								vim.cmd[item.cmd]()
+								Snacks.notify('Bufferline sort by ' .. item.text)
+							end,
+						}
+					end,
+				},
+			}
+
+			keys[#keys + 1] = { '<c-tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Tab: Next' }
+			keys[#keys + 1] = { '<c-s-tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Tab: Prev' }
+
+			return keys
+		end,
 		---@module 'bufferline'
 		---@type bufferline.UserConfig
 		opts = {
@@ -210,18 +219,20 @@ return {
 		'akinsho/bufferline.nvim',
 		optional = true,
 		opts = function(_, opts)
-			local const = require('utils.const').bufferline
+			local config = require 'config.const.bufferline'
 
-			for _, hl in pairs(const.transparent_bg_highlights) do
+			for _, hl in pairs(config.transparent_bg_highlights) do
 				opts.highlights[hl] = vim.tbl_extend('force', opts.highlights[hl] or {}, { bg = 'none' })
 			end
 
-			local palette_fn = {
+			local indicator_color = setmetatable({
 				['rose-pine'] = function() return require('rose-pine.palette').love end,
-			}
-			local get_color = palette_fn[vim.g.colors_name] or function() return '#E84D4F' end
-			local indicator_color = get_color()
-			for _, hl in pairs(const.underline_highlights) do
+			}, {
+				__index = function(t, k)
+					return rawget(t, k) or function() return '#E84D4F' end
+				end,
+			})[vim.g.colors_name]()
+			for _, hl in pairs(config.underline_highlights) do
 				opts.highlights[hl] = vim.tbl_extend('force', opts.highlights[hl] or {}, { sp = indicator_color })
 			end
 		end,
@@ -321,7 +332,7 @@ return {
 	{ -- better folding treesitter
 		'kevinhwang91/nvim-ufo',
 		dependencies = 'kevinhwang91/promise-async',
-		event = 'VimEnter',
+		lazy = false,
 		keys = {
 			{ 'zO', function() require('ufo').openAllFolds() end, nowait = true, desc = 'Unfold All' },
 			{ 'zC', function() require('ufo').closeAllFolds() end, nowait = true, desc = 'Fold All' },
@@ -334,7 +345,6 @@ return {
 				default = { 'imports', 'comment' },
 				json = { 'array' },
 				c = { 'comment', 'region' },
-				snacks_dashboard = '',
 			},
 			enable_get_fold_virt_text = true,
 			fold_virt_text_handler = require('utils.ufo').make_fold_handler {

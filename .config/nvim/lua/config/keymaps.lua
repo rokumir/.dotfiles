@@ -85,15 +85,17 @@ map { '>', '>gv', mode = 'v', desc = 'Unindent' }
 --#region --- UI
 map { '<leader>u', '', desc = '+ui' }
 map { '<leader>ui', vim.show_pos, desc = 'Inspect highlight under cursor' }
-local function clearVisualNoises()
-	vim.cmd.nohlsearch() -- Clear the search highlighting
-	vim.cmd.diffupdate() -- Redraw the screen
-	vim.cmd.redraw() -- Update the diff highlighting and folds.
-	pcall(vim.cmd.NoiceDismiss) -- Clear noice mini view
-	pcall(Snacks.words.clear)
+local function clear_visual_noises()
+	pcall(function()
+		vim.cmd.nohlsearch() -- Clear the search highlighting
+		vim.cmd.diffupdate() -- Redraw the screen
+		vim.cmd.redraw() -- Update the diff highlighting and folds.
+		vim.cmd.NoiceDismiss() -- Clear noice mini view
+		Snacks.words.clear()
+	end)
 end
-map { '<c-l>', clearVisualNoises, desc = 'Clear Visual Noises', mode = { 'n', 'i', 'x' }, nowait = true }
-map { '<leader>uc', clearVisualNoises, desc = 'Clear Visual Noises', mode = { 'n', 'x' }, nowait = true }
+map { '<c-l>', clear_visual_noises, desc = 'Clear Visual Noises', mode = { 'n', 'i', 'x' }, nowait = true }
+map { '<leader>uc', clear_visual_noises, desc = 'Clear Visual Noises', mode = { 'n', 'x' }, nowait = true }
 map { '<leader>um', '<cmd>delm! | delm A-Z0-9<cr>', desc = 'Clear Marks' }
 --#endregion
 
@@ -158,16 +160,17 @@ Snacks.toggle
 
 --#region --- SYSTEM
 map { '<f2>l', function() vim.cmd.Lazy() end, desc = 'Lazy' }
-map { '<f2>E', function() vim.cmd.LazyExtra() end, desc = 'Lazy' }
+map { '<f2>E', function() vim.cmd.LazyExtra() end, desc = 'Lazy Extras' }
 map { '<f2>i', function() vim.cmd.LspInfo() end, desc = 'LSP info' }
 map { '<f2>r', function() vim.cmd.LspRestart() end, desc = 'Restart LSP' }
 map { '<f2>m', function() vim.cmd.Mason() end, desc = 'Mason' }
 map { '<f2>f', function() vim.cmd.ConformInfo() end, desc = 'Conform' }
 map { '<f2>L', function() LazyVim.news.changelog() end, desc = 'LazyVim Changelog' }
+map { '<f2>h', function() vim.cmd.checkhealth() end, desc = 'Check Health' }
 --#endregion
 
 --#region --- LSP
-map { '<a-F>', function() LazyVim.format { force = true } end, mode = { 'n', 'v' }, desc = 'Format' }
+map { '<a-F>', function() LazyVim.format { force = true } end, mode = { 'n', 'v', 'i' }, desc = 'Format' }
 
 -- diagnostics
 ---@param count number

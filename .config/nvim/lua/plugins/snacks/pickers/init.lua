@@ -1,9 +1,9 @@
-local snacks_const = require('utils.const').snacks
+local snacks_const = require 'config.const.snacks'
 
 ---@type snacks.win.Keys
 local default_keys = vim.tbl_extend('force', {}, snacks_const.disabled_default_keys, {
-	k = false,
-	j = false,
+	['k'] = false,
+	['j'] = false,
 	['<c-k>'] = false,
 	['<c-j>'] = false,
 	['<c-u>'] = false,
@@ -43,11 +43,12 @@ local default_keys = vim.tbl_extend('force', {}, snacks_const.disabled_default_k
 
 local INPUT_TITLE = '{title} {live} {flags}'
 
----@type YankPickerUtilsMap
+---@type table<string, PickerYankAction>
 local yank_picker_utils_map = {
-	highlights = { predicate = function(item) return item.hl_group end },
+	highlights = { predicate = { 'hl_group' } },
+	notifications = { predicate = { 'item', 'msg' } },
 	explorer = {
-		predicate = function(...) return Snacks.picker.util.path(...) end,
+		predicate = function(i) return Snacks.picker.util.path(i) end,
 		callback = function(paths, copy)
 			local path_opts = {
 				{ key = 'Relative Path', format = ':.' },
@@ -67,7 +68,6 @@ local yank_picker_utils_map = {
 			end)
 		end,
 	},
-	notifications = { predicate = function(item) return item.item.msg end },
 }
 
 return {
@@ -139,12 +139,19 @@ return {
 					picker.list:set_selected()
 					if #selected_items == 0 then return end
 
-					local utils = (yank_picker_utils_map[picker.opts.source] or {})
-					local action --[[@type YankPickerUtil]] = vim.tbl_extend('keep', utils, {
+					---@type PickerYankAction
+					local action = vim.tbl_extend('force', {
 						predicate = function(item) return item.text end,
 						callback = function(items, copy) copy(items) end,
-					})
+					}, yank_picker_utils_map[picker.opts.source] or {})
 
+					if type(action.predicate) == 'table' and #action.predicate > 0 then
+						---@diagnostic disable-next-line: param-type-mismatch
+						local predicate = vim.deepcopy(action.predicate, true) ---@cast predicate table
+						action.predicate = function(item) return vim.tbl_get(item, unpack(predicate)) end
+					end
+
+					---@diagnostic disable-next-line: param-type-mismatch
 					local mapped_items = vim.tbl_map(action.predicate, selected_items)
 					action.callback(mapped_items, function(items)
 						local content = table.concat(items, '\n')
@@ -169,6 +176,7 @@ return {
 						height = 0.6,
 						min_width = 80,
 						min_height = 10,
+						title = '{title}',
 						box = 'vertical',
 						border = 'rounded',
 						{ win = 'input', height = 1, border = 'bottom', title = INPUT_TITLE, title_pos = 'center' },
@@ -184,6 +192,7 @@ return {
 						height = 0.4,
 						min_width = 60,
 						min_height = 10,
+						title = '{title}',
 						box = 'vertical',
 						border = 'rounded',
 						{ win = 'input', height = 1, border = 'bottom', title = INPUT_TITLE, title_pos = 'center' },
@@ -198,6 +207,7 @@ return {
 						height = 0.4,
 						min_width = 60,
 						min_height = 10,
+						title = '{title}',
 						box = 'vertical',
 						border = 'rounded',
 						{ win = 'input', height = 1, border = 'bottom', title = INPUT_TITLE, title_pos = 'center' },
@@ -211,6 +221,7 @@ return {
 						min_width = 50,
 						height = 0.4,
 						min_height = 3,
+						title = '{title}',
 						box = 'vertical',
 						border = 'rounded',
 						{ win = 'input', height = 1, border = 'bottom' },
@@ -221,7 +232,6 @@ return {
 
 			sources = {
 				pickers = { layout = 'vscode_focus' },
-				pickers_actions = { layout = 'vscode_focus' },
 				noice = { confirm = { 'yank', 'close' } },
 			},
 		},
@@ -229,6 +239,7 @@ return {
 
 	keys = {
 		{ ';;', function() Snacks.picker.resume() end, desc = 'Resume' },
+		{ ';<leader>', function() Snacks.picker.pickers() end, desc = 'All Pickers' },
 
 		-- Top Pickers & Explorer
 		{ ';b', function() Snacks.picker.buffers() end, desc = 'Buffers' },
@@ -291,10 +302,8 @@ return {
 ---@field hidden? boolean
 ---@field ignored? boolean
 
----@alias YankPickerUtilsMap table<string, YankPickerUtil>
+---@class PickerYankAction
+---@field predicate (fun(item: snacks.picker.Item): any) | string[]
+---@field callback? fun(items: snacks.picker.Item[]|string[], copy: PickerYankCopyFn)
 
----@class YankPickerUtil
----@field predicate fun(item: snacks.picker.Item): any
----@field callback? fun(items: snacks.picker.Item[]|string[], copy: CopyToClipboardFunc)
-
----@alias CopyToClipboardFunc fun(items: string[]): any
+---@alias PickerYankCopyFn fun(items: string[]): any

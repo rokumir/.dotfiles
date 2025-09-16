@@ -48,7 +48,7 @@ return {
 
 			PmenuThumb = { bg = 'subtle', blend = 20 },
 			PmenuSel = { bg = 'muted', fg = 'none', blend = 15 },
-			Conceal = { bg = 'base', blend = 15, force = true },
+			Conceal = { blend = 15, force = true, link = 'NonText' },
 			MsgArea = { fg = 'subtle' },
 			Comment = { fg = 'muted' },
 			Folded = { fg = 'pine', bg = 'highlight_med', blend = 20 },
@@ -72,6 +72,9 @@ return {
 			YankyYanked = { bg = 'love', blend = 25 },
 			UfoFoldVirtText = { fg = 'pine', bold = true },
 			UfoFoldVirtFillerText = { fg = 'pine', bold = true },
+			MiniMapNormal = { bg = 'none' },
+			MiniMapSymbolLine = { fg = 'pine', blend = 20 },
+			MiniMapSymbolView = { bg = 'muted', blend = 20 },
 			--#endregion
 
 			--#region lsp

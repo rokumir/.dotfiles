@@ -1,9 +1,7 @@
-local const = require 'utils.const'
+local ft_config = require 'config.const.filetype'
 local keymap_utils = require 'utils.keymap'
-local keymap_func_factory = keymap_utils.map_factory
-local keymap = keymap_utils.map
 
-local function augroup(name, opts) return vim.api.nvim_create_augroup('nihil_' .. name, opts or { clear = true }) end
+local function augroup(name) return vim.api.nvim_create_augroup('nihil_' .. name, { clear = true }) end
 
 -- Settings for the greatest script of all time
 vim.api.nvim_create_autocmd('FileType', {
@@ -16,7 +14,7 @@ vim.api.nvim_create_autocmd('FileType', {
 		vim.opt_local.showcmd = false
 		vim.opt_local.wrap = false
 
-		local map = keymap_func_factory { buffer = ev.buf }
+		local map = keymap_utils.map_factory { buffer = ev.buf }
 		map { '<c-q>', '<cmd>quit <cr>' }
 		map { '<c-s>', '<cmd>write | quit <cr>' }
 	end,
@@ -63,7 +61,7 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 	callback = function(ev)
 		local bufnr = ev.buf
 		local filetype = vim.bo[bufnr].filetype
-		if const.filetype.ignored_map[filetype] or vim.b[bufnr].nihil_last_loc then return end
+		if ft_config.ignored_map[filetype] or vim.b[bufnr].nihil_last_loc then return end
 
 		vim.b[bufnr].nihil_last_loc = true
 		local mark = vim.api.nvim_buf_get_mark(bufnr, '"')
@@ -75,12 +73,12 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 -- close some filetypes with <q>
 vim.api.nvim_create_autocmd('FileType', {
 	group = augroup 'q_easy_closing',
-	pattern = const.filetype.ignored_list,
+	pattern = ft_config.ignored_list,
 	callback = function(ev)
 		local bufnr = ev.buf
 		vim.bo[bufnr].buflisted = false
-		local map = keymap_func_factory { buffer = bufnr, desc = 'Quit buffer' }
-		local quit = function() require('utils.ui').bufremove(bufnr, false) end
+		local map = keymap_utils.map_factory { buffer = bufnr, desc = 'Quit buffer' }
+		local quit = function() require('utils.buffer').bufremove(bufnr, false) end
 		vim.schedule(function()
 			map { 'q', quit }
 			map { '<c-q>', quit }
@@ -120,9 +118,17 @@ vim.api.nvim_create_autocmd('BufDelete', {
 		local bufnr = ev.buf
 		local bo = vim.bo[bufnr]
 		local buf_path = vim.api.nvim_buf_get_name(bufnr)
-		local ft_ignored_map = require('utils.const').filetype.ignored_map
 
-		local is_buffer_valid = vim.api.nvim_buf_is_valid(bufnr) and bo.modifiable and #buf_path > 0 and not ft_ignored_map[bo.filetype]
+		local is_buffer_valid = vim.api.nvim_buf_is_valid(bufnr) and bo.modifiable and #buf_path > 0 and not ft_config.ignored_map[bo.filetype]
 		if is_buffer_valid then require('utils.buffer').history:store(buf_path) end
+	end,
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+	group = augroup 'disable_folding',
+	pattern = ft_config.ignored_list,
+	callback = function()
+		vim.opt_local.foldenable = false
+		vim.opt_local.foldcolumn = '0'
 	end,
 })

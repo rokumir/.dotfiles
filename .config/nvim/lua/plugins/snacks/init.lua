@@ -5,11 +5,7 @@
 return {
 	{
 		'folke/snacks.nvim',
-		keys = function()
-			return {
-				{ '<f2>h', function() Snacks.health.check() end, desc = 'Check Health' },
-			}
-		end,
+		keys = function() return {} end,
 
 		---@type snacks.Config
 		opts = {

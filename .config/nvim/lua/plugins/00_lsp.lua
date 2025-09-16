@@ -125,21 +125,17 @@ return {
 	},
 	{
 		'neovim/nvim-lspconfig',
-		---@module 'snacks'
 		opts = function()
-			local doc_size = vim.g.lsp_doc_max_size or 50
+			local doc_win_size = vim.g.lsp_doc_max_size or 50
 			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), {
 				{ 'gd', function() Snacks.picker.lsp_definitions() end, has = 'definition', desc = 'Definition' },
 				{ 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Declaration' },
 				{ 'gr', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
 				{ 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Implementation' },
 				{ 'gy', function() Snacks.picker.lsp_type_definitions() end, desc = 'T[y]pe Definition' },
-				{ 'K', function() vim.lsp.buf.hover { max_width = doc_size, max_height = doc_size } end, has = 'hover', desc = 'Hover' },
-				{ '<c-u>', function() require('noice.lsp').scroll(-4) end, has = 'hover', desc = 'Scroll Up LSP Docs' },
-				{ '<c-d>', function() require('noice.lsp').scroll(4) end, has = 'hover', desc = 'Scroll Down LSP Docs' },
+				{ 'K', function() vim.lsp.buf.hover { max_width = doc_win_size, max_height = doc_win_size } end, has = 'hover', desc = 'Hover' },
 				{ '<c-k>', false, mode = 'i', has = 'signatureHelp' },
-				{ 'gK', function() vim.lsp.buf.signature_help { max_width = doc_size, max_height = doc_size } end, has = 'signatureHelp', desc = 'Signature Help' },
-				{ '<c-s-k>', function() vim.lsp.buf.signature_help { max_width = doc_size, max_height = doc_size } end, mode = { 'i', 'n' }, has = 'signatureHelp', desc = 'Signature Help' },
+				{ 'gK', function() vim.lsp.buf.signature_help { max_width = doc_win_size, max_height = doc_win_size } end, has = 'signatureHelp', desc = 'Signature Help' },
 				{ '<leader>cR', function() Snacks.rename.rename_file() end, desc = 'Rename File', has = { 'workspace/didRenameFiles', 'workspace/willRenameFiles' } },
 				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, has = 'rename', desc = 'Rename Symbol' },
 				{ '<a-r>', function() require('live-rename').rename { insert = true } end, mode = 'i', has = 'rename', desc = 'Rename Symbol' },

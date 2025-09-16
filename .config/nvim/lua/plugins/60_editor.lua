@@ -1,4 +1,4 @@
-local excluded_filetypes = require('utils.const').filetype.ignored_list
+local excluded_filetypes = require('config.const.filetype').ignored_list
 
 ---@diagnostic disable: no-unknown, missing-fields, missing-parameter
 ---@type LazyPluginSpec[]
@@ -65,55 +65,49 @@ return {
 	},
 
 	{ -- Easy location list
-		'folke/trouble.nvim',
+		-- FIX: https://github.com/folke/trouble.nvim/pull/656
+		'h-michael/trouble.nvim',
+		branch = 'fix/decoration-provider-api',
 		optional = true,
 		opts = {
 			use_diagnostic_signs = true,
 			height = 6,
 			padding = false,
-			keys = {
-				['<c-q>'] = 'close',
-			},
+			keys = { ['<c-q>'] = 'close' },
 		},
 	},
 	{ -- Todo Comments
 		'folke/todo-comments.nvim',
-		version = false,
+		optional = true,
 		keys = function()
+			local keywords = require('todo-comments.config').keywords
+			local snacks_items = require('utils.table').map(keywords, function(key, value) return { text = key, tag = value } end)
 			return {
-				{ ';T', '', desc = 'todo-comments' },
 				{
-					';TT',
+					';T',
 					function()
-						local commentstring = vim.bo.commentstring or ''
-						local keywords = require('todo-comments.config').keywords
-						local todo_comments_map = require('utils.table').map(keywords, function(text, tag) return { text = text, tag = tag } end)
 						Snacks.picker.pick {
 							source = 'todo_comments_keys',
 							title = 'Todo comment',
 							layout = 'vscode_min',
-							items = todo_comments_map,
+							items = snacks_items,
 							format = function(item)
-								local a = Snacks.picker.util.align
-								local ret = {}
 								local fg = 'TodoFg' .. item.tag
-								local bg = 'TodoBg' .. item.tag
-								ret[#ret + 1] = { '  ', fg }
-								ret[#ret + 1] = { ' ' }
-								ret[#ret + 1] = { a(item.tag, 4), bg }
-								ret[#ret + 1] = { '  ' }
-								ret[#ret + 1] = { a(item.text, 10), fg }
-								return ret
+								return {
+									{ Snacks.picker.util.align(item.text, 10), fg },
+									{ '  ', fg },
+									{ item.tag, fg },
+								}
 							end,
 							confirm = function(picker, item)
 								picker:close()
-								local row, col = unpack(vim.api.nvim_win_get_cursor(0))
-								vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { string.format(commentstring, item.text) .. ': ' })
-								vim.cmd.startinsert()
+								local content = string.format(vim.bo.commentstring, item.text) .. ': '
+								vim.fn.setreg('"', content)
+								Snacks.notify 'Copied to clipboard (")!'
 							end,
 						}
 					end,
-					desc = 'Insert',
+					desc = 'Todo-Comments: Insert',
 				},
 				{ '<leader>xt', '<cmd>Trouble todo toggle<cr>', desc = 'Todo (Trouble)' },
 				{ '<leader>xT', '<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
@@ -282,58 +276,11 @@ return {
 		},
 	},
 
-	{ -- Multiple Cursors
-		'jake-stewart/multicursor.nvim',
-		enabled = false,
-		keys = {
-			-- Add or skip cursor above/below the main cursor.
-			{ '<up>', function() require('multicursor-nvim').lineAddCursor(-1) end, mode = { 'n', 'x' } },
-			{ '<down>', function() require('multicursor-nvim').lineAddCursor(1) end, mode = { 'n', 'x' } },
-			{ '<leader><up>', function() require('multicursor-nvim').lineSkipCursor(-1) end, mode = { 'n', 'x' } },
-			{ '<leader><down>', function() require('multicursor-nvim').lineSkipCursor(1) end, mode = { 'n', 'x' } },
-
-			-- Add or skip adding a new cursor by matching word/selection
-			{ '<leader>n', function() require('multicursor-nvim').matchAddCursor(1) end, mode = { 'n', 'x' } },
-			{ '<leader>s', function() require('multicursor-nvim').matchSkipCursor(1) end, mode = { 'n', 'x' } },
-			{ '<leader>N', function() require('multicursor-nvim').matchAddCursor(-1) end, mode = { 'n', 'x' } },
-			{ '<leader>S', function() require('multicursor-nvim').matchSkipCursor(-1) end, mode = { 'n', 'x' } },
-
-			-- Add and remove cursors with control + left click.
-			{ '<c-leftmouse>', function() require('multicursor-nvim').handleMouse() end },
-			{ '<c-leftdrag>', function() require('multicursor-nvim').handleMouseDrag() end },
-			{ '<c-leftrelease>', function() require('multicursor-nvim').handleMouseRelease() end },
-
-			-- Disable and enable cursors.
-			{ '<c-q>', function() require('multicursor-nvim').toggleCursor() end, mode = { 'n', 'x' } },
-		},
-		config = function()
-			-- Mappings defined in a keymap layer only apply when there are
-			-- multiple cursors. This lets you have overlapping mappings.
-			require('multicursor-nvim').addKeymapLayer(function(layerSet)
-				-- Select a different cursor as the main one.
-				layerSet({ 'n', 'x' }, '<left>', require('multicursor-nvim').prevCursor)
-				layerSet({ 'n', 'x' }, '<right>', require('multicursor-nvim').nextCursor)
-
-				-- Delete the main cursor.
-				layerSet({ 'n', 'x' }, '<leader>x', require('multicursor-nvim').deleteCursor)
-
-				-- Enable and clear cursors using escape.
-				layerSet('n', '<esc>', function()
-					if not require('multicursor-nvim').cursorsEnabled() then
-						require('multicursor-nvim').enableCursors()
-					else
-						require('multicursor-nvim').clearCursors()
-					end
-				end)
-			end)
-		end,
-	},
-
-	{
+	{ -- Change text case
 		'johmsalas/text-case.nvim',
 		priority = 1000,
 		keys = {
-			{ ';C', function() require('utils.text-case'):picker() end, desc = 'Change Text Case', mode = { 'n', 's', 'x' } },
+			{ ';C', function() require('config.const.text-case'):picker() end, desc = 'Change Text Case', mode = { 'n', 's', 'x' } },
 		},
 		opts = { default_keymappings_enabled = false },
 	},

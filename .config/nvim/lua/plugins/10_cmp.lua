@@ -32,7 +32,7 @@ return {
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config | {}
 		opts = {
-			enabled = function() return not require('utils.const').filetype.ignored_map[vim.bo.filetype] end,
+			enabled = function() return not require('config.const.filetype').ignored_map[vim.bo.filetype] end,
 
 			keymap = {
 				preset = 'enter',
@@ -56,6 +56,9 @@ return {
 				default = { 'lsp', 'snippets', 'path', 'buffer' },
 				providers = {
 					buffer = { max_items = 4, min_keyword_length = 4 },
+					snippets = {
+						should_show_items = function(ctx) return ctx.trigger.initial_kind ~= 'trigger_character' end,
+					},
 				},
 
 				per_filetype = {
@@ -165,10 +168,11 @@ return {
 			fuzzy = {
 				implementation = 'prefer_rust_with_warning',
 				max_typos = function(keyword) return math.floor(#keyword / 10) end,
-				use_frecency = true,
+				use_frecency = false,
 				use_proximity = true,
 				sorts = {
 					function(a, b)
+						if a.source_name == 'snippets' then return false end
 						local a_priority = source_priority[a.source_id]
 						local b_priority = source_priority[b.source_id]
 						if a_priority == nil or b_priority == nil then return false end
