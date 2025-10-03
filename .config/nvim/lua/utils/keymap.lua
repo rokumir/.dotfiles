@@ -1,8 +1,8 @@
 ---@diagnostic disable: duplicate-doc-field
 local M = {}
 
----@generic K: string
----@type table<K, true>
+local wk_exist, wk = pcall(require, 'which-key')
+
 local takes = {
 	callback = true,
 	buffer = true,
@@ -16,10 +16,8 @@ local takes = {
 	silent = true,
 	unique = true,
 }
-
----@param keys table<string, unknown>
 local function get_opts(keys)
-	vim.validate('keys', keys, 'table', true)
+	vim.validate('keys', keys, 'table')
 	local opts = {} ---@type vim.keymap.set.Opts
 	for k, v in pairs(keys) do
 		if type(k) == 'string' and takes[k] then opts[k] = v end
@@ -27,9 +25,8 @@ local function get_opts(keys)
 	return opts
 end
 
----@param args KeymapingFunArgs
-function M.map(args)
-	vim.validate('args', args, 'table', true)
+function M.legacy_map(args)
+	vim.validate('args', args, 'table')
 	if args.disabled then return end
 	local opts = get_opts(args)
 	opts.silent = opts.silent ~= false
@@ -37,29 +34,11 @@ function M.map(args)
 	vim.keymap.set(args.mode or 'n', args[1], args[2], opts)
 end
 
----@param base_opts KeymapingFunOptions
-function M.map_factory(base_opts)
-	---@param args KeymapingFunArgs
-	return function(args) return M.map(vim.tbl_extend('force', base_opts, args)) end
+---@param mappings wk.Spec|{ [number]: wk.Spec|{ [number]: wk.Spec } }
+---@param opts wk.Parse?
+function M.map(mappings, opts)
+	if not wk_exist then error({ '"which-key" plugin is not found!', 'Use `legacy_map` func instead!' }, 4) end
+	wk.add(mappings, opts)
 end
 
 return M
-
----@class KeymapingFunArgs : KeymapingFunOptions
----@field [1] string
----@field [2] function|string
-
----@class KeymapingFunOptions
----@field mode? table|string
----@field buffer? boolean|integer
----@field callback? function
----@field desc? string
----@field expr? boolean
----@field noremap? boolean
----@field nowait? boolean
----@field remap? boolean
----@field replace_keycodes? boolean
----@field script? boolean
----@field silent? boolean
----@field unique? boolean
----@field disabled? boolean

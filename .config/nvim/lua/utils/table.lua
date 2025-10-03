@@ -20,8 +20,9 @@ function M.from_entries(tbl)
 	return result
 end
 
----@param tbl table<string, unknown>
----@param callback fun(key: string, value: unknown)
+---@generic TValue
+---@param tbl table<string, TValue>
+---@param callback fun(key: string, value: TValue): any
 function M.map(tbl, callback)
 	local result = {}
 	for key, value in pairs(tbl) do
@@ -36,6 +37,55 @@ function M.join_sep(tbl, sep)
 		if index % 2 == 0 then table.insert(tbl, index, sep) end
 	end
 	return tbl
+end
+
+---@generic T : table
+---@param tbl T best to be a dict
+---@return T
+function M.readonly(tbl)
+	vim.validate('tbl', tbl, 'table')
+	return setmetatable(vim.deepcopy(tbl, true), { __newindex = function() end })
+end
+
+---@generic T : table
+---@param tbl T underlying storage table
+---@param getters table<string, function>? map: key -> function(backing) returning value
+---@param opts { strict?: boolean, silent?: boolean }?
+---@return T
+function M.complex_readonly(tbl, getters, opts)
+	vim.validate('backing', tbl, 'table')
+	vim.validate('getters', getters, 'table', true)
+	vim.validate('opts', opts, 'table', true)
+
+	getters = getters or {}
+	opts = opts or {}
+
+	-- Precompute readonly set for O(1) checks
+	local readonly = {}
+	for k, _ in pairs(getters) do
+		readonly[k] = true
+	end
+
+	-- Localize upvalues
+	local t = tbl
+	local g = getters
+	local strict = opts.strict ~= false
+	local silent = opts.silent == true
+
+	return setmetatable({}, {
+		__index = function(_, key)
+			local gf = rawget(g, key)
+			return type(gf) == 'function' and gf(t) or rawget(t, key)
+		end,
+		__newindex = function(_, key, value)
+			if strict then
+				if not silent then error(("Attempt to modify read-only property '%s'"):format(tostring(key)), 2) end
+				return
+			end
+
+			if not readonly[key] then rawset(t, key, value) end
+		end,
+	})
 end
 
 return M

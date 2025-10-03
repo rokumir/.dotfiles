@@ -6,12 +6,7 @@ local M = {}
 ---@param lvl snacks.notifier.level?
 local function notice(msg, lvl)
 	local ext_notify = Snacks.notify or LazyVim.notify
-	local title = 'Buffer History'
-	if ext_notify then
-		ext_notify(msg, { title = title, level = lvl or vim.log.levels.INFO })
-	else
-		vim.notify(title .. ': ' .. msg, vim.log.levels.INFO)
-	end
+	ext_notify(msg, { title = 'Buffer History', level = lvl or vim.log.levels.INFO })
 end
 
 ---@param bufnr number?  Buffer to delete (0 or nil = current)
@@ -170,7 +165,10 @@ function M.history:pop(path)
 	state.size = state.size - 1
 
 	-- Attempt to open the file
-	if vim.fn.filereadable(target) == 0 then return notice('File not found: ' .. target, 'error') end
+	if vim.fn.filereadable(target) == 0 then
+		local readable_target = target:gsub('^' .. vim.fn.getcwd() .. '/', '')
+		return notice('File not found: **' .. readable_target .. '**', 'error')
+	end
 	vim.cmd('edit ' .. vim.fn.fnameescape(target))
 end
 

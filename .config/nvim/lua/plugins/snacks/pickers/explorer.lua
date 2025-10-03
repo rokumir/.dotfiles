@@ -1,5 +1,5 @@
-local Const = require('config.const.snacks')
 local Actions = require 'snacks.explorer.actions'
+local Const = require 'config.const.snacks'
 local Tree = require 'snacks.explorer.tree'
 
 --- NOTE: Explorer doesn't use the `.ignore` file. So have to manually add it to the explorer exclude
@@ -88,10 +88,7 @@ return {
 							-- Protect root folder
 							local selected_items = picker:selected { fallback = true }
 							local has_root = vim.iter(selected_items):any(function(s) return not s.parent end)
-							if has_root then
-								Snacks.notify.error 'ERROR: Root included!'
-								return
-							end
+							if has_root then error('Root included!', 4) end
 
 							-- Deleting files
 							local paths = vim.tbl_map(Snacks.picker.util.path, selected_items)

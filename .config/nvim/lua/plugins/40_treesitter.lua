@@ -1,12 +1,10 @@
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
-	{ 'nvim-treesitter/playground', cmd = 'TSPlaygroundToggle' },
-
 	{ -- Treesitter
 		'nvim-treesitter/nvim-treesitter',
-		opts = {
-			ensure_installed = {
+		opts = function(_, opts)
+			vim.list_extend(opts.ensure_installed, {
 				'css',
 				'fish',
 				'gitignore',
@@ -14,22 +12,10 @@ return {
 				'http',
 				'scss',
 				'sql',
-			},
+			})
 
-			-- matchup = {
-			--     enable = true,
-			-- },
-
-			-- https://github.com/nvim-treesitter/playground#query-linter
-			query_linter = {
-				enable = true,
-				use_virtual_text = true,
-				lint_events = { 'BufWrite', 'CursorHold' },
-			},
-
-			-- my custom options
 			--- Registers filetypes/files/path_to_file to langs
-			filetypes = { -- vim settings
+			vim.filetype.add { -- vim settings
 				pattern = {
 					['%.dataviewjs'] = 'dataviewjs',
 					['%.tmux%-harpoon%-sessions'] = 'tmux-harpoon',
@@ -45,31 +31,21 @@ return {
 					tmux = 'tmux',
 					gitconfig = 'gitconfig',
 				},
-			},
+			}
 
 			--- Registers SYNTAX for filetypes to langs
-			-- {exist_lang} = [registered_filetypes]
-			---@type table<string, string|string[]>
-			treesitter = {
-				-- markdown = 'mdx',
+			for lang, ft in pairs { -- lang = registered_filetypes
+				markdown = 'mdx',
 				bash = { 'tmux-harpoon', 'dotenv' },
 				javascript = 'dataviewjs',
 				json = 'jsonl',
-			},
-		},
-		config = function(_, opts)
-			require('nvim-treesitter.configs').setup(opts)
-
-			vim.filetype.add(opts.filetypes)
-
-			---@diagnostic disable-next-line: no-unknown
-			for lang, ft in pairs(opts.treesitter) do
+			} do
 				vim.treesitter.language.register(lang, ft)
 			end
 		end,
 	},
 
-	{ -- cool treesitter
+	{ -- cool context
 		'nvim-treesitter/nvim-treesitter-context',
 		priority = 1000,
 		keys = {
@@ -79,6 +55,9 @@ return {
 			enable = false,
 			mode = 'cursor',
 			max_lines = 3,
+			separator = '',
 		},
 	},
+
+	{ 'nvim-treesitter/playground', cmd = 'TSPlaygroundToggle' },
 }

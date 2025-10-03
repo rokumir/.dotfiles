@@ -2,7 +2,9 @@
 ---@type LazyPluginSpec[]
 return {
 	{ -- npm package management
-		'williamboman/mason.nvim',
+		'mason.nvim',
+		optional = true,
+		keys = function() return {} end,
 		opts = {
 			ui = { border = 'rounded' },
 			ensure_installed = {
@@ -12,32 +14,17 @@ return {
 	},
 
 	{ -- keymaps helper
-		'folke/which-key.nvim',
-		event = 'VeryLazy',
+		'which-key.nvim',
+		lazy = false,
+		optional = true,
+		priority = 1000,
 		opts = {
 			win = { border = 'rounded' },
-			default = {
-				mode = { 'n', 'v' },
-				{ '<leader>r', group = 'refactor', icon = '' },
-				{ '<leader>m', group = 'menu', icon = '󰒲' },
-				{ '<leader>!', group = 'shell', icon = '' },
-				{ '<leader><leader>', group = 'toggle' },
-				{ '<leader><leader>p', group = 'profiler' },
-				{ '<leader>c', group = 'code' },
-				{ '<leader>g', group = 'git' },
-				{ '<leader>gh', group = 'hunks' },
-				{ '<leader>n', group = 'notify' },
-				{ '<leader>s', group = 'search' },
-				{ '<leader>u', group = 'ui' },
-				{ '<leader>x', group = 'diagnostics/quickfix' },
-				{ '[', group = 'prev' },
-				{ ']', group = 'next' },
-				{ 'g', group = 'goto' },
-			},
+			layout = { spacing = 4 },
 		},
 	},
 
-	{
+	{ -- sessions manager
 		'persistence.nvim',
 		opts = {
 			options = { 'globals' },

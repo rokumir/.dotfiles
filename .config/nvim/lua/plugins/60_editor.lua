@@ -65,10 +65,9 @@ return {
 	},
 
 	{ -- Easy location list
-		-- FIX: https://github.com/folke/trouble.nvim/pull/656
-		'h-michael/trouble.nvim',
-		branch = 'fix/decoration-provider-api',
+		'folke/trouble.nvim',
 		optional = true,
+		version = false,
 		opts = {
 			use_diagnostic_signs = true,
 			height = 6,
@@ -80,38 +79,10 @@ return {
 		'folke/todo-comments.nvim',
 		optional = true,
 		keys = function()
-			local keywords = require('todo-comments.config').keywords
-			local snacks_items = require('utils.table').map(keywords, function(key, value) return { text = key, tag = value } end)
 			return {
-				{
-					';T',
-					function()
-						Snacks.picker.pick {
-							source = 'todo_comments_keys',
-							title = 'Todo comment',
-							layout = 'vscode_min',
-							items = snacks_items,
-							format = function(item)
-								local fg = 'TodoFg' .. item.tag
-								return {
-									{ Snacks.picker.util.align(item.text, 10), fg },
-									{ '  ', fg },
-									{ item.tag, fg },
-								}
-							end,
-							confirm = function(picker, item)
-								picker:close()
-								local content = string.format(vim.bo.commentstring, item.text) .. ': '
-								vim.fn.setreg('"', content)
-								Snacks.notify 'Copied to clipboard (")!'
-							end,
-						}
-					end,
-					desc = 'Todo-Comments: Insert',
-				},
 				{ '<leader>xt', '<cmd>Trouble todo toggle<cr>', desc = 'Todo (Trouble)' },
 				{ '<leader>xT', '<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
-				{ ';sT', function() Snacks.picker['todo_comments']() end, desc = 'Todo Trouble' },
+				{ ';T', function() Snacks.picker['todo_comments']() end, desc = 'Todo Trouble' },
 			}
 		end,
 	},
@@ -149,31 +120,6 @@ return {
 		},
 		keys = {
 			{ ';gD', '<cmd>DiffviewOpen<cr>', desc = 'DiffView' },
-		},
-	},
-
-	{ -- Undo tree
-		'jiaoshijie/undotree',
-		priority = 1000,
-		keys = { -- load the plugin only when using it's keybinding:
-			{ '<leader>U', function() require('undotree').toggle() end, desc = 'Undotree' },
-		},
-		opts = {
-			float_diff = false, -- using float window previews diff, set this `true` will disable layout option
-			layout = 'left_left_bottom', -- "left_bottom", "left_left_bottom"
-			position = 'left', -- "right", "bottom"
-			ignore_filetype = excluded_filetypes,
-			window = { winblend = 100 },
-			keymaps = {
-				['j'] = 'move_next',
-				['k'] = 'move_prev',
-				['gj'] = 'move2parent',
-				['J'] = 'move_change_next',
-				['K'] = 'move_change_prev',
-				['<cr>'] = 'action_enter',
-				['p'] = 'enter_diffbuf',
-				['q'] = 'quit',
-			},
 		},
 	},
 
@@ -233,7 +179,7 @@ return {
 		'stevearc/oil.nvim',
 		cmd = 'Oil',
 		keys = {
-			{ ';e', function() require('oil').toggle_float() end, desc = 'Oil' },
+			{ ';E', function() require('oil').toggle_float() end, desc = 'Oil' },
 		},
 		---@module 'oil'
 		---@type oil.SetupOpts
@@ -280,7 +226,7 @@ return {
 		'johmsalas/text-case.nvim',
 		priority = 1000,
 		keys = {
-			{ ';C', function() require('config.const.text-case'):picker() end, desc = 'Change Text Case', mode = { 'n', 's', 'x' } },
+			{ ';C', function() require('utils.text-case'):picker() end, desc = 'Change Text Case', mode = { 'n', 's', 'x' } },
 		},
 		opts = { default_keymappings_enabled = false },
 	},

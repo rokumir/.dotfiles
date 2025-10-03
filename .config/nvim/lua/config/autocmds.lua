@@ -1,5 +1,5 @@
 local ft_config = require 'config.const.filetype'
-local keymap_utils = require 'utils.keymap'
+local map = require('utils.keymap').map
 
 local function augroup(name) return vim.api.nvim_create_augroup('nihil_' .. name, { clear = true }) end
 
@@ -14,9 +14,7 @@ vim.api.nvim_create_autocmd('FileType', {
 		vim.opt_local.showcmd = false
 		vim.opt_local.wrap = false
 
-		local map = keymap_utils.map_factory { buffer = ev.buf }
-		map { '<c-q>', '<cmd>quit <cr>' }
-		map { '<c-s>', '<cmd>write | quit <cr>' }
+		map { '<c-s>', '<cmd>write | quit <cr>', buffer = ev.buf }
 	end,
 })
 
@@ -29,11 +27,11 @@ vim.api.nvim_create_autocmd('InsertLeave', {
 
 vim.api.nvim_create_autocmd('FileType', {
 	group = augroup 'lang_markdown',
-	pattern = { 'markdown' },
+	pattern = 'markdown',
 	callback = function()
 		vim.opt_local.wrap = false
 		vim.opt_local.spell = false
-		vim.opt_local.concealcursor = 'ivc'
+		vim.opt_local.concealcursor = 'nv'
 	end,
 })
 
@@ -77,11 +75,13 @@ vim.api.nvim_create_autocmd('FileType', {
 	callback = function(ev)
 		local bufnr = ev.buf
 		vim.bo[bufnr].buflisted = false
-		local map = keymap_utils.map_factory { buffer = bufnr, desc = 'Quit buffer' }
 		local quit = function() require('utils.buffer').bufremove(bufnr, false) end
 		vim.schedule(function()
-			map { 'q', quit }
-			map { '<c-q>', quit }
+			map {
+				buffer = bufnr,
+				{ 'q', quit },
+				{ '<c-q>', quit },
+			}
 		end)
 	end,
 })

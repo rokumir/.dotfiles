@@ -1,29 +1,24 @@
--- for 'johmsalas/text-case.nvim' plugin
+-- plugin: johmsalas/text-case.nvim
 local M = {}
 
-M.snacks_items = {}
-
-function M:get_items()
-	-- stylua: ignore
-	if #self.snacks_items == 0 then self.snacks_items = {
-		{ text = 'Upper'       , example = 'UPPER CASE'       , action = 'to_upper_case'        },
-		{ text = 'Lower'       , example = 'lower case'       , action = 'to_lower_case'        },
-		{ text = 'Snake'       , example = 'snake_case'       , action = 'to_snake_case'        },
-		{ text = 'Dash'        , example = 'dash-case'        , action = 'to_dash_case'         },
-		{ text = 'Title Dash'  , example = 'Title-Dash-Case'  , action = 'to_title_dash_case'   },
-		{ text = 'Constant'    , example = 'CONSTANT_CASE'    , action = 'to_constant_case'     },
-		{ text = 'Dot'         , example = 'dot.case'         , action = 'to_dot_case'          },
-		{ text = 'Comma'       , example = 'comma,case'       , action = 'to_comma_case'        },
-		{ text = 'Camel'       , example = 'camelCase'        , action = 'to_camel_case'        },
-		{ text = 'Pascal'      , example = 'PascalCase'       , action = 'to_pascal_case'       },
-		{ text = 'Title'       , example = 'Title Case'       , action = 'to_title_case'        },
-		{ text = 'Path'        , example = 'path/case'        , action = 'to_path_case'         },
-		{ text = 'Phrase'      , example = 'Phrase case'      , action = 'to_phrase_case'       },
-		{ text = 'Upper Phrase', example = 'UPPER PHRASE CASE', action = 'to_upper_phrase_case' },
-		{ text = 'Lower Phrase', example = 'lower phrase case', action = 'to_lower_phrase_case' },
-	} end
-	return self.snacks_items
-end
+-- stylua: ignore
+M.snacks_items = require('utils.table').readonly({
+	{ text = 'Upper'       , example = 'UPPER CASE'       , action = 'to_upper_case'        },
+	{ text = 'Lower'       , example = 'lower case'       , action = 'to_lower_case'        },
+	{ text = 'Snake'       , example = 'snake_case'       , action = 'to_snake_case'        },
+	{ text = 'Dash'        , example = 'dash-case'        , action = 'to_dash_case'         },
+	{ text = 'Title Dash'  , example = 'Title-Dash-Case'  , action = 'to_title_dash_case'   },
+	{ text = 'Constant'    , example = 'CONSTANT_CASE'    , action = 'to_constant_case'     },
+	{ text = 'Dot'         , example = 'dot.case'         , action = 'to_dot_case'          },
+	{ text = 'Comma'       , example = 'comma,case'       , action = 'to_comma_case'        },
+	{ text = 'Camel'       , example = 'camelCase'        , action = 'to_camel_case'        },
+	{ text = 'Pascal'      , example = 'PascalCase'       , action = 'to_pascal_case'       },
+	{ text = 'Title'       , example = 'Title Case'       , action = 'to_title_case'        },
+	{ text = 'Path'        , example = 'path/case'        , action = 'to_path_case'         },
+	{ text = 'Phrase'      , example = 'Phrase case'      , action = 'to_phrase_case'       },
+	{ text = 'Upper Phrase', example = 'UPPER PHRASE CASE', action = 'to_upper_phrase_case' },
+	{ text = 'Lower Phrase', example = 'lower phrase case', action = 'to_lower_phrase_case' },
+})
 
 function M:apply_on_visual(fn)
 	local bufnr = vim.api.nvim_get_current_buf()
@@ -58,7 +53,7 @@ function M:picker()
 		source = 'text_case_actions',
 		title = 'Change Text Case',
 		layout = 'vscode_min',
-		items = self:get_items(),
+		items = M.snacks_items,
 		format = function(item)
 			local a = Snacks.picker.util.align
 			local ret = {}

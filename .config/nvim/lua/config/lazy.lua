@@ -57,7 +57,8 @@ require('lazy').setup {
 		{ import = 'lazyvim.plugins.extras.formatting.biome' },
 		{ import = 'lazyvim.plugins.extras.formatting.prettier' },
 
-		{ import = 'lazyvim.plugins.extras.ai.copilot-chat' },
+		-- { import = 'lazyvim.plugins.extras.ai.copilot-chat' },
+		{ import = 'lazyvim.plugins.extras.ai.sidekick' },
 		--#endregion
 
 		{ import = 'plugins' },

@@ -5,6 +5,8 @@ return {
 	{
 		'neovim/nvim-lspconfig',
 		lazy = false,
+		---@type lspconfig.Config
+		---@diagnostic disable-next-line: missing-fields
 		opts = {
 			inlay_hints = { enabled = false },
 			codelens = { enabled = false },
@@ -128,6 +130,8 @@ return {
 		opts = function()
 			local doc_win_size = vim.g.lsp_doc_max_size or 50
 			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), {
+				{ '<leader>ss', false },
+				{ '<leader>sS', false },
 				{ 'gd', function() Snacks.picker.lsp_definitions() end, has = 'definition', desc = 'Definition' },
 				{ 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Declaration' },
 				{ 'gr', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
@@ -136,14 +140,12 @@ return {
 				{ 'K', function() vim.lsp.buf.hover { max_width = doc_win_size, max_height = doc_win_size } end, has = 'hover', desc = 'Hover' },
 				{ '<c-k>', false, mode = 'i', has = 'signatureHelp' },
 				{ 'gK', function() vim.lsp.buf.signature_help { max_width = doc_win_size, max_height = doc_win_size } end, has = 'signatureHelp', desc = 'Signature Help' },
-				{ '<leader>cR', function() Snacks.rename.rename_file() end, desc = 'Rename File', has = { 'workspace/didRenameFiles', 'workspace/willRenameFiles' } },
-				{ '<leader>cr', function() require('live-rename').rename { insert = true } end, has = 'rename', desc = 'Rename Symbol' },
-				{ '<a-r>', function() require('live-rename').rename { insert = true } end, mode = 'i', has = 'rename', desc = 'Rename Symbol' },
+				{ '<a-r>', function() require('live-rename').rename() end, mode = { 'n', 'i' }, has = 'rename', desc = 'Rename Symbol' },
+				{ '<leader>cr', function() require('live-rename').rename() end, has = 'rename', desc = 'Rename Symbol' },
 				{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], has = 'organizeImports', desc = 'Organize Imports' },
 				{ '🔥', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
 				{ '<c-.>', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
-				{ '<leader>ss', false },
-				{ '<leader>sS', false },
+				{ '<c-y>', function() vim.lsp.inline_completion.get() end, mode = 'i', desc = 'Accept Inline Suggestion' },
 			})
 
 			-- Advanced LSP progress

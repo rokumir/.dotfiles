@@ -2,8 +2,6 @@ return {
 	{
 		'folke/snacks.nvim',
 		keys = {
-			{ '<c-/>', function() Snacks.terminal.toggle() end, mode = { 'n', 'i' }, desc = 'Terminal: Toggle' },
-			{ '<c-_>', function() Snacks.terminal.toggle() end, mode = { 'n', 'i' }, desc = 'Terminal: Toggle' },
 			{ '<c-`>', function() Snacks.terminal.toggle() end, mode = { 'n', 'i' }, desc = 'Terminal: Toggle' },
 		},
 		---@type snacks.Config
@@ -17,10 +15,7 @@ return {
 						term_normal = function() vim.cmd 'stopinsert' end,
 					},
 					keys = {
-						['<c-/>'] = { 'term_toggle', expr = true, mode = 't', desc = 'Terminal: Toggle' },
-						['<c-_>'] = { 'term_toggle', expr = true, mode = 't', desc = 'Terminal: Toggle' },
-						['<c-`>'] = { 'term_toggle', expr = true, mode = 't', desc = 'Terminal: Toggle' },
-						['<c-s-s>'] = { 'term_normal', expr = true, mode = 't', desc = 'Terminal: Escape' },
+						['<c-`>'] = { 'term_toggle', expr = true, mode = 't', desc = 'Terminal Toggle' },
 					},
 				},
 			},

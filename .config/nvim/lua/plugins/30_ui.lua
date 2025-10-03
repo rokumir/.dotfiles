@@ -251,19 +251,20 @@ return {
 			opts.signs.untracked.text = char_bar
 
 			opts.on_attach = function(buffer)
-				local map = require('utils.keymap').map_factory { buffer = buffer }
+				require('utils.keymap').map {
+					buffer = buffer,
+					{ ']h', '<cmd>Gitsigns nav_hunk next<cr>', desc = 'Next Hunk' },
+					{ '[h', '<cmd>Gitsigns nav_hunk prev<cr>', desc = 'Prev Hunk' },
 
-				map { ']h', '<cmd>Gitsigns nav_hunk next<cr>', desc = 'Next Hunk' }
-				map { '[h', '<cmd>Gitsigns nav_hunk prev<cr>', desc = 'Prev Hunk' }
+					{ '<leader>ghu', '<cmd>Gitsigns undo_stage_hunk<cr>', desc = 'Undo Stage Hunk' },
+					{ '<leader>ghp', '<cmd>Gitsigns preview_hunk_inline<cr>', desc = 'Preview Hunk Inline' },
+					{ '<leader>ghb', '<cmd>Gitsigns toggle_current_line_blame<cr>', desc = 'Toggle line blame' },
 
-				map { '<leader>ghu', '<cmd>Gitsigns undo_stage_hunk<cr>', desc = 'Undo Stage Hunk' }
-				map { '<leader>ghp', '<cmd>Gitsigns preview_hunk_inline<cr>', desc = 'Preview Hunk Inline' }
-				map { '<leader>ghb', '<cmd>Gitsigns toggle_current_line_blame<cr>', desc = 'Toggle line blame' }
-
-				map { '<leader>ghs', '<cmd>Gitsigns stage_hunk<cr>', mode = { 'n', 'v' }, desc = 'Stage Hunk' }
-				map { '<leader>gh<s-s>', '<cmd>Gitsigns stage_buffer<cr>', desc = 'Stage Buffer' }
-				map { '<leader>ghr', '<cmd>Gitsigns reset_hunk<cr>', mode = { 'n', 'v' }, desc = 'Reset Hunk' }
-				map { '<leader>gh<s-r>', '<cmd>Gitsigns reset_buffer<cr>', desc = 'Reset Buffer' }
+					{ '<leader>ghs', '<cmd>Gitsigns stage_hunk<cr>', mode = { 'n', 'v' }, desc = 'Stage Hunk' },
+					{ '<leader>gh<s-s>', '<cmd>Gitsigns stage_buffer<cr>', desc = 'Stage Buffer' },
+					{ '<leader>ghr', '<cmd>Gitsigns reset_hunk<cr>', mode = { 'n', 'v' }, desc = 'Reset Hunk' },
+					{ '<leader>gh<s-r>', '<cmd>Gitsigns reset_buffer<cr>', desc = 'Reset Buffer' },
+				}
 			end
 		end,
 	},

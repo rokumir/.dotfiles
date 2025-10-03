@@ -9,7 +9,30 @@ local source_priority = {
 	buffer = 1,
 	lazydev = 1,
 	snippets = -10,
+	todo_comments = -100,
 }
+local ts_reject_nodes = {
+	comment = true,
+	line_comment = true,
+	block_comment = true,
+	comment_content = true,
+	doc = true,
+	doc_comment = true,
+	string = true,
+	string_fragment = true,
+	string_content = true,
+}
+local function is_reject_ts_nodes()
+	if require('config.const.filetype').document_map[vim.bo.filetype] then return true end
+
+	local row, column = unpack(vim.api.nvim_win_get_cursor(0))
+	local success, node = pcall(vim.treesitter.get_node, {
+		bufnr = 0,
+		pos = { row - 1, math.max(0, column - 1) }, -- seems to be necessary...
+	})
+
+	return success and node ~= nil and ts_reject_nodes[node:type()]
+end
 
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
@@ -38,7 +61,6 @@ return {
 				preset = 'enter',
 				['<c-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
 				['<cr>'] = { 'select_accept_and_enter' },
-				['<c-y>'] = { 'select_and_accept' },
 				['<c-l>'] = { 'select_and_accept' },
 				['<c-e>'] = { 'hide', 'fallback' },
 				['<c-q>'] = { 'hide', 'fallback' },
@@ -53,11 +75,19 @@ return {
 			},
 
 			sources = {
-				default = { 'lsp', 'snippets', 'path', 'buffer' },
+				default = { 'lsp', 'snippets', 'path', 'buffer', 'todo_comments' },
 				providers = {
 					buffer = { max_items = 4, min_keyword_length = 4 },
 					snippets = {
 						should_show_items = function(ctx) return ctx.trigger.initial_kind ~= 'trigger_character' end,
+					},
+					todo_comments = {
+						name = 'TodoComments',
+						module = 'utils.todo-comments',
+						score_offset = -100,
+						async = true,
+						should_show_items = is_reject_ts_nodes,
+						min_keyword_length = 3,
 					},
 				},
 
@@ -126,8 +156,6 @@ return {
 				},
 			},
 
-			signature = { enabled = false },
-
 			appearance = {
 				-- supported: tokyonight
 				-- not supported: nightfox, gruvbox-material
@@ -185,6 +213,10 @@ return {
 					'sort_text',
 				},
 			},
+
+			-- Built-in sources configs
+			signature = { enabled = false },
+			cmdline = { enabled = true },
 		},
 	},
 }

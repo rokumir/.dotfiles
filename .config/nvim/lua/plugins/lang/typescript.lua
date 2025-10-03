@@ -1,5 +1,3 @@
-local key_set = require('utils.keymap').map
-
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
@@ -92,16 +90,12 @@ return {
 			},
 
 			on_attach = function(client, bufnr)
-				---@type table<number, KeymapingFunArgs>
-				local keymaps = {
+				require('utils.keymap').map {
+					buffer = bufnr,
 					{ '<leader>cM', '<cmd>TSToolsAddMissingImports<cr>', desc = 'TSTools: Add missing imports' },
 					{ '<leader>cD', '<cmd>TSToolsFixAll<cr>', desc = 'TSTools: Fix all diagnostics' },
 					{ '<leader>cR', '<cmd>TSToolsRenameFile<cr>', desc = 'TSTools: Rename file' },
 				}
-				for _, keymap_args in ipairs(keymaps) do
-					keymap_args.buffer = bufnr
-					key_set(keymap_args)
-				end
 
 				-- plugins
 				require('twoslash-queries').attach(client, bufnr)

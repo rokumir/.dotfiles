@@ -61,11 +61,10 @@ return {
 			--#endregion
 
 			--#region misc
-			DarkBackground = { bg = 'surface' },
 			TreesitterContext = { bg = 'surface' },
 			TreesitterContextLineNumber = { bg = 'surface' },
 			TreesitterContextBottom = { bg = 'surface' },
-			TreesitterContextLineNumberBottom = { bg = 'surface' },
+			TreesitterContextSeparator = { fg = 'highlight_low' },
 			EdgyWinBar = { bg = 'surface' },
 			DropBarMenuHoverEntry = { bg = 'overlay' },
 			YankyPut = { bg = 'pine', blend = 25 },
@@ -75,6 +74,9 @@ return {
 			MiniMapNormal = { bg = 'none' },
 			MiniMapSymbolLine = { fg = 'pine', blend = 20 },
 			MiniMapSymbolView = { bg = 'muted', blend = 20 },
+			GitSignsAdd = { fg = 'pine' },
+			-- GitSignsChange = { fg = 'rose' },
+			-- GitSignsDelete = { fg = 'pine' },
 			--#endregion
 
 			--#region lsp
@@ -111,6 +113,16 @@ return {
 			BlinkCmpDoc = { bg = 'surface' },
 			BlinkCmpDocBorder = { fg = 'overlay' },
 			BlinkCmpDocSeparator = { bg = 'surface', fg = 'overlay' },
+			--#endregion
+
+			--#region render markdown
+			RenderMarkdownCheckboxTodo = { fg = 'subtle' },
+			RenderMarkdownCheckboxDone = { fg = 'pine' },
+			RenderMarkdownCheckboxInProgress = { fg = 'gold' },
+			RenderMarkdownCheckboxCanceled = { fg = 'muted', strikethrough = true, italic = true },
+			RenderMarkdownCodeInline = { fg = 'rose', bg = 'overlay' },
+			RenderMarkdownCode = { bg = 'surface' },
+			RenderMarkdownDash = { fg = 'highlight_low' },
 			--#endregion
 		},
 	},

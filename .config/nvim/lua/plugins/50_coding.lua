@@ -21,10 +21,9 @@ return {
 		},
 		keys = function()
 			return {
-				{ '<leader>p', '', desc = 'yanky' },
-				{ '<leader>pc', function() require('yanky').history.clear() end, desc = 'Clear Yank History' },
-				{ '<leader>pp', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
-				{ ';sp', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
+				{ '<leader>yc', function() require('yanky').history.clear() end, desc = 'Clear Yank History' },
+				{ '<leader>yp', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
+				{ ';sy', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
 
 				{ '<a-N>', '<Plug>(YankyNextEntry)', mode = { 'n', 'i' }, desc = 'Next Entry' },
 				{ '<a-B>', '<Plug>(YankyPreviousEntry)', mode = { 'n', 'i' }, desc = 'Prev Entry' },
@@ -38,8 +37,9 @@ return {
 	},
 
 	{ -- Delimiter pairs surroundability
-		'echasnovski/mini.surround',
+		'mini.surround',
 		lazy = true,
+		optional = true,
 		opts = {
 			n_lines = 30,
 			respect_selection_type = true,
@@ -62,11 +62,10 @@ return {
 		'ThePrimeagen/refactoring.nvim',
 		keys = function()
 			return {
-				{ '<leader>r', '', desc = 'refactor' },
 				{ '<leader>rr', function() require('refactoring').select_refactor() end, mode = { 'n', 'v' }, desc = 'Options' },
-				{ '<leader>rp', function() require('refactoring').debug.print_var { normal = true } end, desc = '[Debug] Print Variable' },
-				{ '<leader>rp', function() require('refactoring').debug.print_var {} end, mode = 'v', desc = '[Debug] Print Variable' },
-				{ '<leader>rc', function() require('refactoring').debug.cleanup {} end, desc = '[Debug] Cleanup' },
+				{ '<leader>rp', function() require('refactoring').debug.print_var { normal = true } end, desc = 'Print Debug Variable' },
+				{ '<leader>rp', function() require('refactoring').debug.print_var {} end, mode = 'v', desc = 'Print Debug Variable' },
+				{ '<leader>rc', function() require('refactoring').debug.cleanup {} end, desc = 'Cleanup Debug Code' },
 			}
 		end,
 	},
@@ -94,10 +93,7 @@ return {
 		'saecki/live-rename.nvim',
 		priority = 1000,
 		event = 'VeryLazy',
-		keys = {
-			{ '<leader>cr', '', desc = 'Rename Symbol' },
-			{ '<a-r>', '', mode = 'i', desc = 'Rename Symbol' },
-		},
+		lazy = true,
 		opts = {
 			prepare_rename = true,
 			request_timeout = 2000,
@@ -111,9 +107,9 @@ return {
 					{ 'n', '<c-j>' },
 					{ 'v', '<c-j>' },
 					{ 'i', '<c-j>' },
-					{ 'n', '<c-l>' },
-					{ 'v', '<c-l>' },
-					{ 'i', '<c-l>' },
+					{ 'n', '<c-s>' },
+					{ 'v', '<c-s>' },
+					{ 'i', '<c-s>' },
 				},
 				cancel = {
 					{ 'n', '<esc>' },
@@ -130,10 +126,30 @@ return {
 		},
 	},
 
-	{ -- Chat
-		'CopilotC-Nvim/CopilotChat.nvim',
+	{ -- Copilot AI Chat
+		'CopilotChat.nvim',
+		optional = true,
 		opts = {
 			auto_insert_mode = false,
+		},
+	},
+
+	{ --- AI chat
+		'sidekick.nvim',
+		optional = true,
+		keys = function()
+			return {
+				{ '<leader>aa', function() require('sidekick.cli').toggle() end, mode = { 'n' }, desc = 'Sidekick' },
+				{ '<leader>an', function() require('sidekick.cli').select_tool() end, mode = { 'n' }, desc = 'Sidekick New Tool' },
+				{ '<leader>ap', function() require('sidekick.cli').select_prompt() end, desc = 'Sidekick Ask Prompt', mode = { 'n', 'v' } },
+				{ '<a-`>', function() require('sidekick.cli').focus() end, mode = { 'n', 'x', 'i', 't' }, desc = 'Sidekick Switch Focus' },
+			}
+		end,
+		---@type sidekick.Config
+		opts = {
+			nes = {
+				enabled = false,
+			},
 		},
 	},
 }

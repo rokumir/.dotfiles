@@ -13,7 +13,9 @@ end
 
 return {
 	{
-		'stevearc/conform.nvim',
+		'conform.nvim',
+		optional = true,
+		keys = function() return {} end,
 		---@type conform.setupOpts
 		opts = {
 			log_level = vim.log.levels.WARN,
@@ -24,7 +26,8 @@ return {
 	},
 
 	{
-		'stevearc/conform.nvim',
+		'conform.nvim',
+		optional = true,
 		---@param opts conform.setupOpts
 		opts = function(_, opts)
 			for _, ft in ipairs {

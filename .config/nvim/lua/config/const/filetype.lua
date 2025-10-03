@@ -50,12 +50,18 @@ M.ignored_list = vim.tbl_keys(M.ignored_map) ---@type string[]
 
 M.document_map = {
 	markdown = true,
+	gitcommit = true,
 	mdx = true,
 	vimwiki = true,
 	latex = true,
 	help = true,
 	text = true,
 	tex = true,
+	norg = true,
+	rmd = true,
+	org = true,
+	codecompanion = true,
+	['copilot-chat'] = true,
 }
 
 M.document_list = vim.tbl_keys(M.document_map)
