@@ -6,7 +6,7 @@ set -U fish_cursor_default block blink
 set -U fish_prompt_pwd_dir_length 1
 set -U fish_prompt_pwd_full_dirs 3
 
-## plugins
+# plugins
 if functions -q fundle
     fundle plugin IlanCosman/tide@v6
     fundle init
@@ -21,7 +21,7 @@ alias rm 'rm -iv'
 alias mkdir 'mkdir -pv'
 alias which 'type -a'
 alias vi nvim
-alias ls 'eza -laU --icons --no-user --group-directories-first'
+alias ls 'eza -laU --icons --no-user --group-directories-first --color always'
 alias l ls
 alias g git
 alias gd 'git --git-dir $HOME/.dotfiles -C $HOME --work-tree $HOME'
@@ -56,7 +56,7 @@ function fish_user_key_bindings
 
     # scripts
     # script closing
-    set _sc "; echo; commandline -t ''; commandline -f repaint-mode; set fish_bind_mode insert;"
+    set _sc '; echo; commandline -t ""; commandline -f repaint-mode; set fish_bind_mode insert;'
 
     bind --preset -M insert \cp '[ -z "$fish_private_mode" ] && fish --private || echo -e \n(set_color yellow)Private mode is active!!'$_sc
 
@@ -68,10 +68,4 @@ function fish_user_key_bindings
     # extenal scripts needed to be sourced, otherwise it won't work as expected
     bind --preset -M insert \ce 'source (type -p fuzzy.find)'
     bind --preset -M insert \cd 'source (type -p fuzzy.vault)'
-end
-
-## os
-switch (uname -sr)
-    case 'Linux*WSL*'
-        source (dirname (status --current-filename))/config-wsl.fish
 end

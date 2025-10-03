@@ -40,3 +40,11 @@ set -gx RH_VAULT \
     ~/documents
 
 set -gx GTRASH_HOME_TRASH_DIR "$XDG_DATA_HOME/trash"
+
+# FX - JSON viewer
+set -gx FX_SHOW_SIZE true
+set -gx FX_LINE_NUMBERS true
+set -gx FX_THEME 2
+
+# GEMINI CLI
+set -gx GEMINI_CLI_SYSTEM_SETTINGS_PATH ~/.config/gemini/settings.json

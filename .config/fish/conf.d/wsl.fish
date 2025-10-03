@@ -1,3 +1,5 @@
+not string match 'Linux*WSL*' "$(uname -sr)" > /dev/null; and return
+
 function win-home
     if not set -q WIN_HOME
         set path (cmd.exe /c '<nul set /p=%UserProfile%' 2>/dev/null) # still in Windows path format (forward slashes)
