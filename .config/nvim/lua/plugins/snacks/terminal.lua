@@ -1,34 +1,37 @@
-return {
+local function term_nav(dir)
+	return function()
+		return vim.schedule(function() vim.cmd.wincmd(dir) end)
+	end
+end
+
+require('utils.keymap').map {
+	{ '<c-`>', function() Snacks.terminal() end, mode = { 'n', 'i', 't' }, desc = 'Terminal: Toggle' },
 	{
-		'folke/snacks.nvim',
-		keys = {
-			{ '<c-`>', function() Snacks.terminal.toggle() end, mode = { 'n', 'i' }, desc = 'Terminal: Toggle' },
-		},
-		---@type snacks.Config
-		opts = {
-			terminal = {
-				win = {
-					style = 'terminal',
-					wo = { winhighlight = 'SnacksNormal:NormalFloat' },
-					actions = {
-						term_toggle = function(self) self:hide() end,
-						term_normal = function() vim.cmd 'stopinsert' end,
-					},
-					keys = {
-						['<c-`>'] = { 'term_toggle', expr = true, mode = 't', desc = 'Terminal Toggle' },
-					},
+		expr = true,
+		mode = 't',
+		{ '<a-H>', term_nav 'h', desc = 'Go to Left Window' },
+		{ '<a-J>', term_nav 'j', desc = 'Go to Lower Window' },
+		{ '<a-K>', term_nav 'k', desc = 'Go to Upper Window' },
+		{ '<a-L>', term_nav 'l', desc = 'Go to Right Window' },
+	},
+}
+
+return {
+	'folke/snacks.nvim',
+	---@type snacks.Config
+	opts = {
+		terminal = {
+			win = {
+				style = 'terminal',
+				wo = { winhighlight = 'SnacksNormal:NormalFloat' },
+				keys = {
+					nav_h = false,
+					nav_j = false,
+					nav_k = false,
+					nav_l = false,
 				},
 			},
 		},
 	},
-	{
-		'folke/snacks.nvim',
-		---@param opts snacks.Config
-		opts = function(_, opts)
-			opts.terminal.win.keys.nav_h[1] = '<a-H>'
-			opts.terminal.win.keys.nav_j[1] = '<a-J>'
-			opts.terminal.win.keys.nav_k[1] = '<a-K>'
-			opts.terminal.win.keys.nav_l[1] = '<a-L>'
-		end,
-	},
 }
+

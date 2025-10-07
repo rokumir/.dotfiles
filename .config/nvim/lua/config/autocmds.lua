@@ -132,3 +132,18 @@ vim.api.nvim_create_autocmd('FileType', {
 		vim.opt_local.foldcolumn = '0'
 	end,
 })
+
+if vim.g.neovide then
+	-- FIX: Temporary https://github.com/neovide/neovide/issues/1331#issuecomment-1261545158
+	vim.api.nvim_create_autocmd('UIEnter', {
+		group = augroup 'clipboard_neovide_fix',
+		callback = function()
+			if (vim.v.event.chan or 0) > 1 then
+				if vim.g.loaded_clipboard_provider then
+					vim.g.loaded_clipboard_provider = nil
+					vim.api.nvim_cmd({ cmd = 'runtime', args = { 'autoload/provider/clipboard.vim' } }, {})
+				end
+			end
+		end,
+	})
+end

@@ -139,7 +139,7 @@ map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File E
 
 --#region --- TERMINAL
 map { '<c-q>', '<c-c>', mode = 'c' }
-map { '<c-s-s>', '<c-\\><c-n>', expr = true, mode = 't', desc = 'Terminal: Escape' }
+map { '<c-s-s>', '<c-\\><c-n>', mode = 't', desc = 'Terminal: Escape' }
 
 -- Mimic CTRL-R in terminal to paste from a register
 map {
@@ -154,6 +154,16 @@ map {
 	end,
 	mode = 't',
 	desc = 'Mimic CTRL-R in Terminal',
+}
+map {
+	'<c-s-v>',
+	function()
+		local key_sequence = '<C-\\><C-N>"+pi'
+		local keycodes = vim.api.nvim_replace_termcodes(key_sequence, true, false, true)
+		vim.api.nvim_feedkeys(keycodes, 'n', false)
+	end,
+	mode = 't',
+	desc = 'Paste from System Clipboard',
 }
 --#endregion
 
@@ -182,9 +192,15 @@ map { '<leader>ui', vim.show_pos, desc = 'Inspect highlight under cursor' }
 map { '<leader>um', '<cmd>delm! | delm A-Z0-9 | redraw <cr>', desc = 'Clear Marks' }
 
 -- Clear visual noise
-local clear_cmd = '<cmd> nohlsearch | diffupdate | NoiceDismiss | lua Snacks.words.clear() | redraw <cr>'
-map { '<leader>uc', clear_cmd, desc = 'Clear Visual Noises', mode = { 'n', 'x' }, nowait = true }
-map { '<c-l>', clear_cmd, desc = 'Clear Visual Noises', mode = { 'n', 'i', 'x' }, nowait = true }
+local function clear_noises()
+	vim.cmd.nohlsearch()
+	vim.cmd.diffupdate()
+	pcall(vim.cmd.NoiceDismiss)
+	Snacks.words.clear()
+	vim.cmd.redraw()
+end
+map { '<leader>uc', clear_noises, desc = 'Clear Visual Noises', mode = { 'n', 'x' }, nowait = true }
+map { '<c-l>', clear_noises, desc = 'Clear Visual Noises', mode = { 'n', 'i', 'x' }, nowait = true }
 --#endregion
 
 if LazyVim == nil then return end
@@ -209,6 +225,7 @@ Snacks.toggle.inlay_hints():map '<leader><leader>H'
 map { '<leader><leader>p', '', desc = '+profiler' }
 Snacks.toggle.profiler():map '<leader><leader>pp'
 Snacks.toggle.profiler_highlights():map '<leader><leader>ph'
+
 Snacks.toggle
 	.new({
 		name = 'Rulers',

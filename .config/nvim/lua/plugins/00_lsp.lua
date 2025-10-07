@@ -5,11 +5,11 @@ return {
 	{
 		'neovim/nvim-lspconfig',
 		lazy = false,
-		---@type lspconfig.Config
-		---@diagnostic disable-next-line: missing-fields
+		---@class PluginLspOpts
 		opts = {
 			inlay_hints = { enabled = false },
 			codelens = { enabled = false },
+			inline_completion = { enabled = true },
 
 			---@type vim.diagnostic.Opts
 			diagnostics = {

@@ -1,3 +1,4 @@
+--- Globals
 vim.g.autoformat = false
 vim.g.lazyvim_picker = 'snacks'
 vim.g.lsp_doc_max_size = 50
@@ -59,4 +60,3 @@ opt.hlsearch = true
 opt.ignorecase = true -- case insensitive searching UNLESS /C or capital in search
 opt.path:append { '**' } -- Finding files - Search down into subfolders
 opt.wildignore:append { '*/node_modules/*' }
-

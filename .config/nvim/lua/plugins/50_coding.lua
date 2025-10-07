@@ -140,8 +140,8 @@ return {
 		keys = function()
 			return {
 				{ '<leader>aa', function() require('sidekick.cli').toggle() end, mode = { 'n' }, desc = 'Sidekick' },
-				{ '<leader>an', function() require('sidekick.cli').select_tool() end, mode = { 'n' }, desc = 'Sidekick New Tool' },
-				{ '<leader>ap', function() require('sidekick.cli').select_prompt() end, desc = 'Sidekick Ask Prompt', mode = { 'n', 'v' } },
+				{ '<leader>an', function() require('sidekick.cli').select() end, mode = { 'n' }, desc = 'Sidekick New Tool' },
+				{ '<leader>ap', function() require('sidekick.cli').prompt() end, desc = 'Sidekick Ask Prompt', mode = { 'n', 'v' } },
 				{ '<a-`>', function() require('sidekick.cli').focus() end, mode = { 'n', 'x', 'i', 't' }, desc = 'Sidekick Switch Focus' },
 			}
 		end,

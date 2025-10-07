@@ -164,6 +164,12 @@ return {
 
 				list_page_down = function(picker) picker.list:move(5) end,
 				list_page_up = function(picker) picker.list:move(-5) end,
+
+				log = function(picker)
+					local selected_items = picker:selected { fallback = true }
+					picker.list:set_selected()
+					if #selected_items == 0 then return end
+				end,
 			},
 
 			layouts = {
@@ -233,6 +239,7 @@ return {
 			sources = {
 				pickers = { layout = 'vscode_focus' },
 				noice = { confirm = { 'yank', 'close' } },
+				notifications = { confirm = { 'yank', 'close' } },
 			},
 		},
 	},

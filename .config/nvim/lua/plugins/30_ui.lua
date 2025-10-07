@@ -1,10 +1,6 @@
----@diagnostic disable: missing-fields
 local icons = LazyVim.config.icons
 icons.misc.modified = '✨'
 icons.misc.readonly = '🔒'
-
-local bt_config = require 'config.const.buffertype'
-local ft_config = require 'config.const.filetype'
 
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
@@ -12,6 +8,7 @@ return {
 	{ ---@module 'noice' Better general UI (should be deprecated soon)
 		'folke/noice.nvim',
 		keys = function() return {} end,
+		---@type NoiceConfig
 		opts = {
 			presets = {
 				bottom_search = true,
@@ -92,7 +89,7 @@ return {
 					end,
 					color = 'PreCondit',
 					separator = '',
-					cond = function() return ft_config.document_map[vim.bo.ft] end,
+					cond = function() return require('config.const.filetype').document_map[vim.bo.ft] end,
 				},
 				{
 					'encoding',
@@ -303,31 +300,6 @@ return {
 				end,
 			},
 		},
-	},
-
-	{ -- A Neovim plugin to easily create and manage predefined window layouts, bringing a new edge to your workflow.
-		'folke/edgy.nvim',
-		optional = true,
-		keys = {
-			{ '<c-\\><c-\\>', function() require('edgy').goto_main() end, mode = { 'n', 'i', 't' }, desc = 'Edgy Focus Main' },
-		},
-		---@module 'edgy'
-		---@param opts Edgy.Config
-		opts = function(_, opts)
-			opts.keys['<c-a-left>'] = function(win) win:resize('width', 1) end
-			opts.keys['<c-a-right>'] = function(win) win:resize('width', -1) end
-			opts.keys['<c-a-up>'] = function(win) win:resize('height', 1) end
-			opts.keys['<c-a-down>'] = function(win) win:resize('height', -1) end
-
-			vim.list_extend(opts.right, {
-				{
-					ft = 'copilot-chat',
-					size = { width = 0.35, height = 0.35 },
-					pinned = true,
-					open = 'CopilotChatToggle',
-				},
-			})
-		end,
 	},
 
 	{ -- better folding treesitter

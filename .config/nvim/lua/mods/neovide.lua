@@ -7,7 +7,7 @@ if not vim.g.neovide then return end
 -- ---------------------------
 -- Settings
 vim.g.neovide_working_dir = '~'
-vim.g.neovide_no_custom_clipboard = true
+vim.g.neovide_no_custom_clipboard = false
 vim.opt.linespace = 9
 vim.g.neovide_scale_factor = 1
 vim.g.neovide_confirm_quit = false
