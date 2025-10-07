@@ -1,4 +1,4 @@
-not string match 'Linux*WSL*' "$(uname -sr)" > /dev/null; and return
+not string match 'Linux*WSL*' "$(uname -sr)" >/dev/null; and return
 
 function win-home
     if not set -q WIN_HOME
@@ -16,4 +16,5 @@ function wezterm-config
 end
 
 alias pwsh 'pwsh.exe -WorkingDirectory "~"'
-type -q neovide.exe && alias nvi 'neovide.exe'
+type -q 'neovide.exe' && alias nvi 'neovide.exe'
+type -q 'btop.exe' && alias btop-win 'btop.exe'
