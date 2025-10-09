@@ -40,7 +40,7 @@ opt.wrap = false
 opt.background = 'dark'
 -- opt.colorcolumn = '80,120'
 opt.concealcursor = 'ivc'
-opt.conceallevel = 0
+opt.conceallevel = 2
 opt.cursorline = true
 opt.cursorlineopt = 'number'
 opt.guicursor:append { 'n-i-r:blinkwait700-blinkon500-blinkoff500' }

@@ -203,7 +203,7 @@ map { '<leader>uc', clear_noises, desc = 'Clear Visual Noises', mode = { 'n', 'x
 map { '<c-l>', clear_noises, desc = 'Clear Visual Noises', mode = { 'n', 'i', 'x' }, nowait = true }
 --#endregion
 
-if LazyVim == nil then return end
+if not LazyVim and not Snacks then return end
 
 --#region --- TOGGLES
 LazyVim.format.snacks_toggle():map '<leader><leader>f'
@@ -212,7 +212,7 @@ Snacks.toggle.option('spell'):map '<leader><leader>s'
 Snacks.toggle.option('wrap'):map '<a-z>'
 Snacks.toggle.line_number():map '<leader><leader>n'
 Snacks.toggle.option('relativenumber'):map '<leader><leader>r'
-Snacks.toggle.option('conceallevel', { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 3, name = 'Conceal' }):map '<leader><leader>c'
+Snacks.toggle.option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2, name = "Conceal Level" }):map("<leader>uc")
 Snacks.toggle.treesitter():map '<leader><leader>T'
 Snacks.toggle.option('background', { off = 'light', on = 'dark', name = 'Dark Background' }):map '<leader><leader>b'
 Snacks.toggle.dim():map '<leader><leader>D'

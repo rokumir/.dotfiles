@@ -1,5 +1,15 @@
 ---@diagnostic disable: missing-fields
-local doc_ft_list = require('config.const.filetype').document_list
+local ft_util = require 'config.const.filetype'
+
+require('which-key').add {
+	{
+		'<a-o>',
+		require('utils.markdown').open_current_buffer_in_obsidian,
+		mode = { 'n', 'i' },
+		cond = function() return ft_util.document_map[vim.bo.filetype] end,
+		desc = 'Open File in Obsidian',
+	},
+}
 
 return {
 	-- MDX highlighting
@@ -12,7 +22,7 @@ return {
 			require('lazy').load { plugins = { 'markdown-preview.nvim' } }
 			vim.fn['mkdp#util#install']()
 		end,
-		ft = doc_ft_list,
+		ft = ft_util.document_list,
 		keys = {
 			{ '<leader>uM', '<cmd>MarkdownPreviewToggle<cr>', ft = 'markdown', desc = 'Markdown Preview' },
 		},
@@ -21,14 +31,13 @@ return {
 
 	{ -- Prettify markdown in neovim
 		'MeanderingProgrammer/render-markdown.nvim',
-		ft = doc_ft_list,
+		ft = ft_util.document_list,
 		keys = {
 			{ '<leader>ur', '', desc = 'Render Markdown' },
 			{ '<leader>urm', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
 			{ '<leader>urM', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
 			{ '<leader><leader>m', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
 			{ '<leader><leader>M', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
-			{ '<a-o>', function() require('utils.markdown').open_current_buffer_in_obsidian() end, mode = { 'n', 'i' }, ft = { 'markdown' }, desc = 'Open File in Obsidian' },
 		},
 		---@type render.md.Config
 		opts = {

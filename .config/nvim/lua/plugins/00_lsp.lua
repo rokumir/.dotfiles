@@ -30,7 +30,12 @@ return {
 				biome = {},
 
 				mdx_analyzer = {},
-				markdown_oxide = {},
+				markdown_oxide = {
+					cmd = { 'markdown-oxide' },
+					filetypes = {},
+					root_markers = { '.git', '.obsidian', '.moxide.toml' },
+					root_dir = util.root_pattern('.git', '.obsidian', '.moxide.toml'),
+				},
 
 				emmet_language_server = {
 					filetypes = { 'html', 'javascriptreact', 'typescriptreact', 'htmlangular', 'vue' },

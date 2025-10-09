@@ -7,13 +7,12 @@ return {
 
 	{ -- better yanking
 		'gbprod/yanky.nvim',
+		version = '*',
 		dependencies = 'kkharji/sqlite.lua',
 		lazy = false,
 		opts = {
 			ring = {
-				history_length = 50,
-				ignore_registers = { '_' },
-				storage_path = vim.fn.stdpath 'data' .. '/nvim/yanky.db', -- Only for sqlite storage
+				storage = 'sqlite',
 				permanent_wrapper = function(...) return require('yanky.wrappers').remove_carriage_return(...) end,
 			},
 			preserve_cursor_position = { enabled = true },
@@ -22,8 +21,8 @@ return {
 		keys = function()
 			return {
 				{ '<leader>yc', function() require('yanky').history.clear() end, desc = 'Clear Yank History' },
-				{ '<leader>yp', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
-				{ ';sy', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
+				{ '<leader>yp', function() pcall(Snacks.picker['yanky']) end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
+				{ ';sy', function() pcall(Snacks.picker['yanky']) end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
 
 				{ '<a-N>', '<Plug>(YankyNextEntry)', mode = { 'n', 'i' }, desc = 'Next Entry' },
 				{ '<a-B>', '<Plug>(YankyPreviousEntry)', mode = { 'n', 'i' }, desc = 'Prev Entry' },
@@ -147,9 +146,7 @@ return {
 		end,
 		---@type sidekick.Config
 		opts = {
-			nes = {
-				enabled = false,
-			},
+			nes = { enabled = false },
 		},
 	},
 }
