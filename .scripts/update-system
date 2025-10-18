@@ -18,6 +18,12 @@ cargo install-update -a; or return
 
 # NeoVim version manager
 bob update nightly; or return
+bob update stable; or return
 
 # Bun
-which bun &>/dev/null; and bun upgrade; or return
+begin
+    if which bun &>/dev/null
+        bun upgrade
+        bun update -g --latest
+    end
+end; or return
