@@ -22,7 +22,9 @@
 
     s = status --short --branch
     su = status --short --branch --untracked-files
-    sp = !git.status-prettify
+
+    status-prettify = !git.status-prettify
+    sp = status-prettify
 
     l = log-prettify
 
