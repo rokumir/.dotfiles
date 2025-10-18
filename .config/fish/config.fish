@@ -26,6 +26,8 @@ alias l ls
 alias g git
 alias gd 'git --git-dir $HOME/.dotfiles -C $HOME --work-tree $HOME'
 
+type -q gtrash && alias trash gtrash
+
 function mkcd
     mkdir $argv[1]
     cd $argv[1]
@@ -63,6 +65,11 @@ function fish_user_key_bindings
     if not set -q TMUX
         bind --preset -M insert \e\;\en 'tmuxizer'$_sc
         bind --preset -M insert \e\;\e\; 'tmux attach-session'$_sc
+
+        if set -q NEOVIM_TERM
+            bind --preset -M insert \e\: 'tmuxizer (pwd)'$_sc
+            bind --preset -M insert \e\:\e\: 'tmux attach-session'$_sc
+        end
     end
 
     # extenal scripts needed to be sourced, otherwise it won't work as expected

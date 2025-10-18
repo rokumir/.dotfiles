@@ -5,7 +5,6 @@ set -gx XDG_STATE_HOME ~/.local/state
 set -gx XDG_RUNTIME_DIR /run/user/1000
 
 fish_add_path -g ~/.local/bin # third parties' scripts
-fish_add_path -g ~/go/bin
 fish_add_path -g ~/.bun/bin ~/.cache/.bun/bin
 fish_add_path -g ~/.cargo/bin
 fish_add_path -g ~/.deno/bin
@@ -13,6 +12,11 @@ fish_add_path -g $XDG_DATA_HOME/bob/nvim-bin
 
 fish_add_path -g $XDG_DATA_HOME/fnm
 type -q fnm && fnm env --use-on-cd --shell=fish --version-file-strategy=recursive | source
+
+if type -q go
+    set -gx GOPATH ~/go
+    fish_add_path -g $GOPATH/bin
+end
 
 set -gx TERMINFO $XDG_CONFIG_HOME/terminfo
 set -gx TERM wezterm # enable undercurl .terminfo/w/wezterm
@@ -48,3 +52,5 @@ set -gx FX_THEME 2
 
 # GEMINI CLI
 set -gx GEMINI_CLI_SYSTEM_SETTINGS_PATH ~/.config/gemini/settings.json
+
+set -gx DISPLAY ':0.0'
