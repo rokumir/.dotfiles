@@ -1,16 +1,6 @@
 ---@diagnostic disable: missing-fields
 local ft_util = require 'config.const.filetype'
 
-require('which-key').add {
-	{
-		'<a-o>',
-		require('utils.markdown').open_current_buffer_in_obsidian,
-		mode = { 'n', 'i' },
-		cond = function() return ft_util.document_map[vim.bo.filetype] end,
-		desc = 'Open File in Obsidian',
-	},
-}
-
 return {
 	-- MDX highlighting
 	{ 'davidmh/mdx.nvim', ft = 'mdx' },
@@ -38,6 +28,7 @@ return {
 			{ '<leader>urM', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
 			{ '<leader><leader>m', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
 			{ '<leader><leader>M', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
+			{ '<a-o>', require('utils.markdown').open_current_buffer_in_obsidian, mode = { 'n', 'i' }, desc = 'Open File in Obsidian' },
 		},
 		---@type render.md.Config
 		opts = {

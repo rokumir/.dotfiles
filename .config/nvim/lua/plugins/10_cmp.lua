@@ -1,13 +1,13 @@
 -- use source-specific icons, and `kind_icon` only for items from LSPs
-local sourceIcons = {
+local source_icons = {
 	emmet = '',
 	cmdline = '󰘳',
 }
-local source_priority = {
-	lsp = 3,
-	path = 2,
-	buffer = 1,
-	lazydev = 1,
+local source_priorities = {
+	lsp = 100,
+	buffer = 50,
+	path = 40,
+	lazydev = 50,
 	snippets = -10,
 	todo_comments = -100,
 }
@@ -64,6 +64,7 @@ return {
 				['<c-l>'] = { 'select_and_accept' },
 				['<c-e>'] = { 'hide', 'fallback' },
 				['<c-q>'] = { 'hide', 'fallback' },
+				['<c-y>'] = false,
 
 				--- movements
 				['<c-u>'] = { 'scroll_documentation_up', 'fallback' },
@@ -78,9 +79,7 @@ return {
 				default = { 'lsp', 'snippets', 'path', 'buffer', 'todo_comments' },
 				providers = {
 					buffer = { max_items = 4, min_keyword_length = 4 },
-					snippets = {
-						should_show_items = function(ctx) return ctx.trigger.initial_kind ~= 'trigger_character' end,
-					},
+					snippets = {},
 					todo_comments = {
 						name = 'TodoComments',
 						module = 'utils.todo-comments',
@@ -134,7 +133,7 @@ return {
 									-- detect emmet-ls
 									if lspName == 'emmet_language_server' then source = 'emmet' end
 
-									return sourceIcons[source] or ctx.kind_icon
+									return source_icons[source] or ctx.kind_icon
 								end,
 							},
 						},
@@ -201,8 +200,8 @@ return {
 				sorts = {
 					function(a, b)
 						if a.source_name == 'snippets' then return false end
-						local a_priority = source_priority[a.source_id]
-						local b_priority = source_priority[b.source_id]
+						local a_priority = source_priorities[a.source_id]
+						local b_priority = source_priorities[b.source_id]
 						if a_priority == nil or b_priority == nil then return false end
 						if a_priority ~= b_priority then return a_priority > b_priority end
 					end,

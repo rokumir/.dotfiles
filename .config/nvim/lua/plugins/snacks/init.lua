@@ -13,6 +13,11 @@ return {
 			input = { enabled = true },
 			scope = { enabled = true },
 
+			statuscolumn = {
+				enabled = true,
+				refresh = 50, --ms
+			},
+
 			image = {
 				enabled = true,
 				preferred_protocol = 'wezterm', -- or "kitty"

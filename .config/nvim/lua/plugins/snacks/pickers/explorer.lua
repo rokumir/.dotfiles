@@ -85,44 +85,33 @@ return {
 						end,
 
 						explorer_del = function(picker)
-							-- Protect root folder
 							local selected_items = picker:selected { fallback = true }
-							local has_root = vim.iter(selected_items):any(function(s) return not s.parent end)
-							if has_root then error('Root included!', 4) end
+							picker.list:set_selected()
 
-							-- Deleting files
-							local paths = vim.tbl_map(Snacks.picker.util.path, selected_items)
+							local paths = require('utils.table').map(selected_items, function(_, snacks_item)
+								if not snacks_item.parent then error 'Root included!' end -- Protect root folder
+								return Snacks.picker.util.path(snacks_item)
+							end)
+
 							local what = #paths == 1 and vim.fn.fnamemodify(paths[1], ':p:~:.') or #paths .. ' files'
 							Actions.confirm('Put to the trash ' .. what .. '?', function()
-								local after_job = function()
-									picker.list:set_selected()
-									Actions.update(picker, { refresh = false })
-								end
-
 								for _, path in ipairs(paths) do
 									local err_data = {}
-									local cmd = 'gtrash put ' .. path -- Actual command to run
-									local job_id = vim.fn.jobstart(cmd, {
+									local job_id = vim.fn.jobstart('trash put ' .. path, {
 										detach = true,
 										on_stderr = function(_, data) err_data[#err_data + 1] = table.concat(data, '\n') end,
 										on_exit = function(_, code)
 											pcall(function()
-												if code == 0 then
-													Snacks.bufdelete { file = path, force = true }
-												else
-													local err_msg = vim.trim(table.concat(err_data, ''))
-													Snacks.notify.error('Failed to delete `' .. path .. '`:\n- ' .. err_msg)
-												end
-												Tree:refresh(vim.fs.dirname(path))
+												if code == 0 then return Snacks.bufdelete { file = path, force = true } end
+												local err_msg = vim.trim(table.concat(err_data, ''))
+												Snacks.notify.error('Failed to delete `' .. path .. '`:\n- ' .. err_msg)
 											end)
-											after_job()
 										end,
 									})
-									if job_id == 0 then
-										after_job()
-										Snacks.notify.error('Failed to start the job for: ' .. path)
-									end
+									Tree:refresh(vim.fs.dirname(path))
+									if job_id == 0 then Snacks.notify.error('Failed to start the job for: ' .. path) end
 								end
+								Actions.update(picker, { refresh = false })
 							end)
 						end,
 

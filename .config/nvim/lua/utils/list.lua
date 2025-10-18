@@ -20,6 +20,24 @@ function M.index_of(tbl, value, opts)
 	end
 end
 
+--- Filter a table using a predicate function
+---
+---@generic T
+---@param t T[] (table) Table
+---@param fn fun(value: T): boolean (function) Function
+---@return T[] : Table of filtered values
+function M.filter(t, fn)
+	vim.validate('fn', fn, 'callable')
+	vim.validate('t', t, 'table')
+	--- @cast t table<any,any>
+
+	local rettab = {} --- @type table<any,any>
+	for _, entry in pairs(t) do
+		if fn(entry) then rettab[#rettab + 1] = entry end
+	end
+	return rettab
+end
+
 return M
 
 ---

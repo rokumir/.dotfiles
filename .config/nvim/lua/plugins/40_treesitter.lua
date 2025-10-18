@@ -56,6 +56,7 @@ return {
 			mode = 'cursor',
 			max_lines = 3,
 			separator = '',
+			playground = { enable = true },
 		},
 	},
 

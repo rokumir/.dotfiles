@@ -8,21 +8,18 @@ return {
 		branch = 'harpoon2',
 		---@type fun(): LazyKeysSpec[]
 		keys = function()
-			local function harpoon_goto(index)
-				return function() require('harpoon'):list():select(index) end
-			end
 			return {
 				{ ';h', '', desc = 'harpoon' },
 				{ ';hh', function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end, desc = 'List' },
 				{ ';hp', function() require('harpoon'):list():prepend() end, desc = 'Prepend' },
 				{ ';ha', function() require('harpoon'):list():add() end, desc = 'Add' },
-				{ '<a-}>', function() require('harpoon'):list():next() end, desc = 'Harpoon next' },
-				{ '<a-{>', function() require('harpoon'):list():prev() end, desc = 'Harpoon prev' },
+				{ '<c-a-]>', function() require('harpoon'):list():next() end, desc = 'Harpoon next' },
+				{ '<c-a-[>', function() require('harpoon'):list():prev() end, desc = 'Harpoon prev' },
 
-				{ '<a-U>', harpoon_goto(1), desc = 'Harpoon 1st entry' },
-				{ '<a-I>', harpoon_goto(2), desc = 'Harpoon 2nd entry' },
-				{ '<a-O>', harpoon_goto(3), desc = 'Harpoon 3rd entry' },
-				{ '<a-P>', harpoon_goto(4), desc = 'Harpoon 4th entry' },
+				{ '<c-a-u>', function() require('harpoon'):list():select(1) end, desc = 'Harpoon 1st entry' },
+				{ '<c-a-i>', function() require('harpoon'):list():select(2) end, desc = 'Harpoon 2nd entry' },
+				{ '<c-a-o>', function() require('harpoon'):list():select(3) end, desc = 'Harpoon 3rd entry' },
+				{ '<c-a-p>', function() require('harpoon'):list():select(4) end, desc = 'Harpoon 4th entry' },
 
 				{ '<c-q>', function() require('harpoon').ui:close_menu() end, mode = { 'n', 'i' }, ft = 'harpoon', desc = 'Harpoon Quit' },
 				{ '<c-l>', function() require('harpoon').ui:select_menu_item {} end, ft = 'harpoon', desc = 'Harpoon Open' },
@@ -31,18 +28,37 @@ return {
 				{ 't', function() require('harpoon').ui:select_menu_item { tabedit = true } end, ft = 'harpoon', desc = 'Harpoon New Tab' },
 			}
 		end,
-		opts = {
-			menu = { width = vim.api.nvim_win_get_width(0) - 4 },
-			settings = {
-				save_on_toggle = true,
-				sync_on_ui_close = true,
-				key = function() return vim.uv.cwd() or '' end,
-			},
-		},
+		opts = function(_, opts)
+			-- Settings for the greatest script of all time
+			vim.api.nvim_create_autocmd({ 'FileType' }, {
+				group = vim.api.nvim_create_augroup('nihil_tmux_harpoon', { clear = true }),
+				pattern = 'tmux-harpoon', -- in config.filetype
+				callback = function(ev)
+					vim.opt_local.showmode = false
+					vim.opt_local.ruler = false
+					vim.opt_local.laststatus = 0
+					vim.opt_local.showcmd = false
+					vim.opt_local.wrap = false
+
+					require('utils.keymap').map { '<c-s>', '<cmd>write | quit <cr>', buffer = ev.buf }
+				end,
+			})
+
+			return vim.tbl_deep_extend('force', opts or {}, {
+				menu = { width = vim.api.nvim_win_get_width(0) - 4 },
+				settings = {
+					save_on_toggle = true,
+					sync_on_ui_close = true,
+					key = function() return vim.uv.cwd() or '' end,
+				},
+			})
+		end,
 	},
 
 	{ -- Flash
-		'folke/flash.nvim',
+		'flash.nvim',
+		version = false,
+		optional = true,
 		event = 'VeryLazy',
 		---@type Flash.Config
 		opts = {

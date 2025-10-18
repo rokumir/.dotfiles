@@ -82,9 +82,9 @@ return {
 			exclude = snacks_const.excludes,
 
 			matcher = {
-				fuzzy = true, -- use fuzzy matching
-				smartcase = true, -- use smartcase
-				ignorecase = true, -- use ignorecase
+				fuzzy = true,
+				smartcase = true,
+				ignorecase = true,
 				sort_empty = false, -- sort results when the search string is empty
 				filename_bonus = true, -- give bonus for matching file names (last part of the path)
 				file_pos = true, -- e.g.: file:line:col, file:line
@@ -137,7 +137,6 @@ return {
 				yank = function(picker)
 					local selected_items = picker:selected { fallback = true }
 					picker.list:set_selected()
-					if #selected_items == 0 then return end
 
 					---@type PickerYankAction
 					local action = vim.tbl_extend('force', {
@@ -165,6 +164,7 @@ return {
 				list_page_down = function(picker) picker.list:move(5) end,
 				list_page_up = function(picker) picker.list:move(-5) end,
 
+				-- TODO: FEAT: snacks debugging
 				log = function(picker)
 					local selected_items = picker:selected { fallback = true }
 					picker.list:set_selected()
@@ -217,20 +217,6 @@ return {
 						box = 'vertical',
 						border = 'rounded',
 						{ win = 'input', height = 1, border = 'bottom', title_pos = 'center' },
-						{ win = 'list', border = 'none' },
-					},
-				},
-				select_min = {
-					layout = {
-						backdrop = false,
-						width = 0.4,
-						min_width = 50,
-						height = 0.4,
-						min_height = 3,
-						title = '{title}',
-						box = 'vertical',
-						border = 'rounded',
-						{ win = 'input', height = 1, border = 'bottom' },
 						{ win = 'list', border = 'none' },
 					},
 				},
@@ -297,7 +283,7 @@ return {
 		{ ';sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 		{ ';sl', function() Snacks.picker.loclist() end, desc = 'Location List' },
 		{ ';su', function() Snacks.picker.undo() end, desc = 'Undo History' },
-		{ ';st', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+		{ ';sT', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
 		-- lsp
 		{ ';ss', function() Snacks.picker.lsp_symbols { filter = LazyVim.config.kind_filter } end, desc = 'LSP Symbols' },
 		{ ';sS', function() Snacks.picker.lsp_workspace_symbols { filter = LazyVim.config.kind_filter } end, desc = 'LSP Workspace Symbols' },

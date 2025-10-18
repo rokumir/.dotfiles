@@ -1,6 +1,7 @@
 local map = require('utils.keymap').map
 
-require('which-key').add {
+-- Which-key groups register
+map {
 	mode = { 'n', 'v' },
 	{ '[', group = 'prev' },
 	{ ']', group = 'next' },
@@ -18,13 +19,16 @@ require('which-key').add {
 	{ '<leader>t', group = 'tab' },
 	{ '<leader>f', group = 'file', icon = '' },
 	{ '<leader>x', group = 'diagnostics/quickfix' },
-	{ '<leader>y', group = 'yanky', icon = '' },
+	{ '<leader>y', group = 'yanky', icon = '' },
+	{ '<leader><leader>p', group = 'profiler' },
 }
 
 --#region --- EDITOR
 -- Insert mode escapes
 map { 'jj', '<esc>', mode = 'i' }
 map { 'jk', '<esc>', mode = 'i' }
+
+map { '<c-q>', '<c-c>', mode = 'c' }
 
 -- Add new lines without staying in insert mode
 map { 'o', 'o<esc>', remap = true, desc = 'Open Line' }
@@ -43,12 +47,12 @@ map { '<a-j>', [[:<c-u>execute "'<,'>move '>+" . v:count1<cr>gv=gv]], mode = 'v'
 map { '<a-k>', [[:<c-u>execute "'<,'>move '<-" . (v:count1 + 1)<cr>gv=gv]], mode = 'v', desc = 'Move Up' }
 
 -- Duplicate lines
-map { '<a-J>', '<cmd>t. <cr>', desc = 'Duplicate Lines Down' }
-map { '<a-K>', '<cmd>t. <cr>k', desc = 'Duplicate Lines Up' }
-map { '<a-J>', '<cmd>t. <cr>', mode = 'i', desc = 'Duplicate Line Down' }
-map { '<a-K>', '<cmd>t. | -1 <cr>', mode = 'i', desc = 'Duplicate Line Up' }
-map { '<a-J>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate Lines Down' }
-map { '<a-K>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate Lines Up' }
+map { '<c-s-j>', '<cmd>t. <cr>', desc = 'Duplicate Lines Down' }
+map { '<c-s-k>', '<cmd>t. <cr>k', desc = 'Duplicate Lines Up' }
+map { '<c-s-j>', '<cmd>t. <cr>', mode = 'i', desc = 'Duplicate Line Down' }
+map { '<c-s-k>', '<cmd>t. | -1 <cr>', mode = 'i', desc = 'Duplicate Line Up' }
+map { '<c-s-j>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate Lines Down' }
+map { '<c-s-k>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate Lines Up' }
 
 -- Register control
 map { 'x', '"_x', mode = { 'n', 's', 'x' }, desc = 'Void yank x' }
@@ -85,7 +89,8 @@ map { 'N', [['nN'[v:searchforward].'zz']], mode = { 'x', 'o' }, expr = true, des
 
 --#region --- WORKSPACE (WINDOWS, TABS, BUFFERS)
 -- Close buffer / quit
-map { '<c-q>', function() require('utils.buffer').bufremove() end, desc = 'Close buffer' }
+map { '<c-q>', function() require('utils.buffer').bufremove() end, desc = 'Safely Close Buffer' }
+map { '<c-s-q>', function() require('utils.buffer').bufremove(nil, { failsafe = false }) end, desc = 'Destroy Buffer' }
 map { 'ZZ', vim.cmd.quitall, desc = 'Close Session' }
 
 -- Window resizing
@@ -106,6 +111,21 @@ map { '<leader>ts', function() require('utils.buffer').history:restore() end, de
 map { '<c-s-t>', function() require('utils.buffer').history:restore() end, desc = 'Restore Buffer History' }
 map { ';S', function() require('utils.buffer').history:picker() end, desc = 'Buffer History Search' }
 map { '<leader>`', ':b# <cr>', desc = 'Alternate buffer' }
+
+-- Pane Navigation
+local function nav(dir)
+	return function()
+		return vim.schedule(function() vim.cmd.wincmd(dir) end)
+	end
+end
+map {
+	mode = { 'i', 'n', 't' },
+	expr = true,
+	{ '<a-H>', nav 'h', desc = 'Go to Left Window' },
+	{ '<a-J>', nav 'j', desc = 'Go to Lower Window' },
+	{ '<a-K>', nav 'k', desc = 'Go to Upper Window' },
+	{ '<a-L>', nav 'l', desc = 'Go to Right Window' },
+}
 --#endregion
 
 --#region --- FILE
@@ -117,18 +137,18 @@ map { '<leader>fn', '<cmd>enew<cr>', desc = 'New File' }
 map {
 	'<leader>fd',
 	function()
-		local current_file = vim.fn.expand '%:p' -- Get the full path of the current file
-		if current_file == '' then return Snacks.notify 'No file to delete.' end
+		local bufnr = vim.api.nvim_get_current_buf()
+		local file = vim.api.nvim_buf_get_name(bufnr)
+		if file == '' or not vim.api.nvim_buf_is_valid(bufnr) then error 'No file to delete!' end
 
-		local confirm = vim.fn.confirm('Are you sure you want to delete this file?', '&Yes&No', 2)
-		if confirm == 1 then
-			os.remove(current_file)
-			Snacks.notify('File deleted: ' .. current_file)
-			vim.cmd 'bd!'
-			return
-		end
+		local prompt = 'Delete ' .. require('utils.path').shorten(file, { keep_last = 4 }) .. ' ?'
+		Snacks.picker.select({ 'Yes', 'No' }, { prompt = prompt }, function(_, idx)
+			if idx ~= 1 then return Snacks.notify.info 'Aborted!' end
+			local job_id = vim.fn.jobstart('gtrash put ' .. file, { detach = true })
+			Snacks.notify((job_id ~= 0 and 'File deleted: ' or 'Failed to start the job for: ') .. file, { level = job_id == 0 and 'error' or 'info' })
 
-		Snacks.notify 'File deletion canceled.'
+			require('utils.buffer').bufremove(bufnr, { buffer_guard = false })
+		end)
 	end,
 	desc = 'Delete File',
 }
@@ -138,8 +158,9 @@ map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File E
 --#endregion
 
 --#region --- TERMINAL
-map { '<c-q>', '<c-c>', mode = 'c' }
-map { '<c-s-s>', '<c-\\><c-n>', mode = 't', desc = 'Terminal: Escape' }
+map { '<a-~>', '<cmd>term <cr>', desc = 'New Terminal' }
+map { '<c-s-space>', '<c-\\><c-n>', mode = 't', desc = 'Escape Terminal' }
+map { '<c-;>', '<a-|>', mode = 't', desc = 'Sendkey alt-|' }
 
 -- Mimic CTRL-R in terminal to paste from a register
 map {
@@ -169,7 +190,7 @@ map {
 
 --#region --- LSP & DIAGNOSTICS
 -- Format
-map { '<a-F>', function() LazyVim.format.format { force = true } end, mode = { 'n', 'v', 'i' }, desc = 'Format' }
+map { '<a-F>', function() LazyVim.format.format { force = true } end, mode = { 'n', 'v', 'i' }, desc = 'Format Buffer' }
 
 -- Diagnostics
 ---@param count number
@@ -178,13 +199,12 @@ local function diag_jump(count, severity)
 	local s = vim.diagnostic.severity[severity] or nil
 	return function() vim.diagnostic.jump { float = true, count = count, severity = s } end
 end
-map { ']d', diag_jump(1), desc = 'Diagnostic: Next' }
-map { '[d', diag_jump(-1), desc = 'Diagnostic: Prev' }
-map { ']w', diag_jump(1, 'WARN'), desc = 'Diagnostic: Next warning' }
-map { '[w', diag_jump(-1, 'WARN'), desc = 'Diagnostic: Prev warning' }
-map { ']e', diag_jump(1, 'ERROR'), desc = 'Diagnostic: Next error' }
-map { '[e', diag_jump(-1, 'ERROR'), desc = 'Diagnostic: Prev error' }
--- Note: <leader>x is defined in the which-key group for diagnostics/quickfix
+map { ']d', diag_jump(1), desc = 'Next Diagnostic' }
+map { '[d', diag_jump(-1), desc = 'Prev Diagnostic' }
+map { ']w', diag_jump(1, 'WARN'), desc = 'Next Warning Diagnostic' }
+map { '[w', diag_jump(-1, 'WARN'), desc = 'Prev Warning Diagnostic' }
+map { ']e', diag_jump(1, 'ERROR'), desc = 'Next Error Diagnostic' }
+map { '[e', diag_jump(-1, 'ERROR'), desc = 'Prev Error Diagnostic' }
 --#endregion
 
 --#region --- UI
@@ -195,7 +215,6 @@ map { '<leader>um', '<cmd>delm! | delm A-Z0-9 | redraw <cr>', desc = 'Clear Mark
 local function clear_noises()
 	vim.cmd.nohlsearch()
 	vim.cmd.diffupdate()
-	pcall(vim.cmd.NoiceDismiss)
 	Snacks.words.clear()
 	vim.cmd.redraw()
 end
@@ -212,9 +231,15 @@ Snacks.toggle.option('spell'):map '<leader><leader>s'
 Snacks.toggle.option('wrap'):map '<a-z>'
 Snacks.toggle.line_number():map '<leader><leader>n'
 Snacks.toggle.option('relativenumber'):map '<leader><leader>r'
-Snacks.toggle.option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2, name = "Conceal Level" }):map("<leader>uc")
+Snacks.toggle
+	.option('conceallevel', {
+		off = 0,
+		on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2,
+		name = 'Conceal Level',
+	})
+	:map('<leader>uc')
+	:map '<leader><leader>c'
 Snacks.toggle.treesitter():map '<leader><leader>T'
-Snacks.toggle.option('background', { off = 'light', on = 'dark', name = 'Dark Background' }):map '<leader><leader>b'
 Snacks.toggle.dim():map '<leader><leader>D'
 Snacks.toggle.diagnostics():map '<leader><leader>d'
 Snacks.toggle.indent():map '<leader><leader>g'
@@ -222,7 +247,6 @@ Snacks.toggle.scroll():map '<leader><leader>S'
 Snacks.toggle.zoom():map '<leader><leader>w'
 Snacks.toggle.zen():map '<leader><leader>z'
 Snacks.toggle.inlay_hints():map '<leader><leader>H'
-map { '<leader><leader>p', '', desc = '+profiler' }
 Snacks.toggle.profiler():map '<leader><leader>pp'
 Snacks.toggle.profiler_highlights():map '<leader><leader>ph'
 
@@ -249,6 +273,23 @@ map { '<f2>i', function() vim.cmd.LspInfo() end, desc = 'LSP info', icon = ''
 map { '<f2>r', function() vim.cmd.LspRestart() end, desc = 'Restart LSP', icon = '' }
 map { '<f2>m', function() vim.cmd.Mason() end, desc = 'Mason', icon = '' }
 map { '<f2>f', function() vim.cmd.ConformInfo() end, desc = 'Conform', icon = '' }
-map { '<f2>L', function() LazyVim.news.changelog() end, desc = 'LazyVim Changelog', icon = '' }
 map { '<f2>h', function() vim.cmd.checkhealth() end, desc = 'Check Health', icon = '' }
+map { '<f2>L', function() LazyVim.news.changelog() end, desc = 'LazyVim Changelog', icon = '' }
+map {
+	'<f2>U',
+	function()
+		local function safe_notif_run(cmd)
+			vim.schedule(function()
+				local success = pcall(vim.cmd, cmd) ---@diagnostic disable-line: param-type-mismatch
+				if not success then Snacks.notify.error('Failed to run: ' .. cmd) end
+			end)
+		end
+
+		safe_notif_run 'TSUpdate'
+		safe_notif_run 'Lazy update'
+		safe_notif_run 'MasonUpdate'
+	end,
+	desc = 'BIG Update',
+	icon = '',
+}
 --#endregion

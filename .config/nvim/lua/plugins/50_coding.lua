@@ -1,22 +1,18 @@
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
-	{ 'mini.pairs', opts = { modes = {
-		terminal = false,
-	} } },
-
 	{ -- better yanking
 		'gbprod/yanky.nvim',
-		version = '*',
-		dependencies = 'kkharji/sqlite.lua',
+		version = false,
 		lazy = false,
 		opts = {
 			ring = {
-				storage = 'sqlite',
+				history_length = 50,
 				permanent_wrapper = function(...) return require('yanky.wrappers').remove_carriage_return(...) end,
 			},
 			preserve_cursor_position = { enabled = true },
 			highlight = { on_put = true, on_yank = true, timer = 500 },
+			system_clipboard = { sync_with_ring = false },
 		},
 		keys = function()
 			return {
@@ -24,8 +20,8 @@ return {
 				{ '<leader>yp', function() pcall(Snacks.picker['yanky']) end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
 				{ ';sy', function() pcall(Snacks.picker['yanky']) end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
 
-				{ '<a-N>', '<Plug>(YankyNextEntry)', mode = { 'n', 'i' }, desc = 'Next Entry' },
-				{ '<a-B>', '<Plug>(YankyPreviousEntry)', mode = { 'n', 'i' }, desc = 'Prev Entry' },
+				{ '<a-<>', function() require('yanky').cycle(1) end, mode = { 'n', 'i' }, desc = 'Next Entry' },
+				{ '<a->>', function() require('yanky').cycle(-1) end, mode = { 'n', 'i' }, desc = 'Prev Entry' },
 
 				{ 'y', '<Plug>(YankyYank)', mode = { 'n', 'x' }, desc = 'Yank Text' },
 				{ 'p', '<Plug>(YankyPutAfter)', desc = 'Put Text After Cursor' },
@@ -138,10 +134,14 @@ return {
 		optional = true,
 		keys = function()
 			return {
-				{ '<leader>aa', function() require('sidekick.cli').toggle() end, mode = { 'n' }, desc = 'Sidekick' },
-				{ '<leader>an', function() require('sidekick.cli').select() end, mode = { 'n' }, desc = 'Sidekick New Tool' },
+				{ '<leader>aa', function() require('sidekick.cli').toggle() end, desc = 'Sidekick' },
+				{ '<leader>ac', function() require('sidekick.cli').toggle { name = 'gemini', focus = true } end, desc = 'Sidekick' },
+				{ '<leader>an', function() require('sidekick.cli').select() end, desc = 'Sidekick New Tool' },
 				{ '<leader>ap', function() require('sidekick.cli').prompt() end, desc = 'Sidekick Ask Prompt', mode = { 'n', 'v' } },
-				{ '<a-`>', function() require('sidekick.cli').focus() end, mode = { 'n', 'x', 'i', 't' }, desc = 'Sidekick Switch Focus' },
+				{ '<leader>at', function() require('sidekick.cli').send { msg = '{this}' } end, mode = { 'x', 'n' }, desc = 'Send This' },
+				{ '<leader>af', function() require('sidekick.cli').send { msg = '{file}' } end, desc = 'Send File' },
+				{ '<leader>av', function() require('sidekick.cli').send { msg = '{selection}' } end, mode = 'x', desc = 'Send Visual Selection' },
+				{ '<a-`>', function() require('sidekick.cli').focus { all = true } end, mode = { 'n', 'x', 'i', 't' }, desc = 'Sidekick Switch Focus' },
 			}
 		end,
 		---@type sidekick.Config

@@ -1,4 +1,5 @@
----@diagnostic disable: duplicate-doc-field
+---@module 'which-key'
+
 local M = {}
 
 local wk_exist, wk = pcall(require, 'which-key')
@@ -34,7 +35,7 @@ function M.legacy_map(args)
 	vim.keymap.set(args.mode or 'n', args[1], args[2], opts)
 end
 
----@param mappings wk.Spec|{ [number]: wk.Spec|{ [number]: wk.Spec } }
+---@param mappings wk.Spec
 ---@param opts wk.Parse?
 function M.map(mappings, opts)
 	if not wk_exist then error({ '"which-key" plugin is not found!', 'Use `legacy_map` func instead!' }, 4) end

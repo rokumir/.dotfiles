@@ -8,6 +8,7 @@ return {
 	{ ---@module 'noice' Better general UI (should be deprecated soon)
 		'folke/noice.nvim',
 		keys = function() return {} end,
+		---@module 'noice'
 		---@type NoiceConfig
 		opts = {
 			presets = {
@@ -20,7 +21,7 @@ return {
 			},
 
 			lsp = {
-				progress = { enabled = false },
+				progress = { enabled = true },
 				hover = {
 					enabled = true,
 					silent = true,
@@ -158,13 +159,13 @@ return {
 							source = 'tabs_sort_actions',
 							title = 'Sort tabs by',
 							layout = 'vscode_focus',
-						-- stylua: ignore
-						items = {
-							{ icon = '󰥨 ', text = 'Directory'          , cmd = 'BufferLineSortByDirectory'         , hl = 'DiagnosticInfo' },
-							{ icon = '󰥨 ', text = 'Relative Directory' , cmd = 'BufferLineSortByRelativeDirectory' , hl = '@namespace'     },
-							{ icon = ' ', text = 'Extension'          , cmd = 'BufferLineSortByExtension'         , hl = 'Error'     },
-							{ icon = '󱎅 ', text = 'Tabs'               , cmd = 'BufferLineSortByTabs'              , hl = 'DiagnosticHint' },
-						},
+							-- stylua: ignore
+							items = {
+								{ icon = '󰥨 ', text = 'Directory'         , cmd = 'BufferLineSortByDirectory'        , hl = 'DiagnosticInfo' },
+								{ icon = '󰥨 ', text = 'Relative Directory', cmd = 'BufferLineSortByRelativeDirectory', hl = '@namespace'     },
+								{ icon = ' ', text = 'Extension'         , cmd = 'BufferLineSortByExtension'        , hl = 'Error'     },
+								{ icon = '󱎅 ', text = 'Tabs'              , cmd = 'BufferLineSortByTabs'             , hl = 'DiagnosticHint' },
+							},
 							format = function(item)
 								return {
 									{ item.icon, item.hl },

@@ -11,9 +11,10 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup {
 	spec = {
-		--#region lazyvim
+		{ 'folke/lazy.nvim', version = false },
 		{
 			'LazyVim/LazyVim',
+			version = false,
 			import = 'lazyvim.plugins',
 			opts = {
 				colorscheme = 'rose-pine',
@@ -27,7 +28,6 @@ require('lazy').setup {
 				},
 			},
 		},
-		--#endregion
 
 		--#region Extras modules
 		{ import = 'lazyvim.plugins.extras.editor.snacks_explorer' },
@@ -56,21 +56,21 @@ require('lazy').setup {
 		{ import = 'lazyvim.plugins.extras.formatting.biome' },
 		{ import = 'lazyvim.plugins.extras.formatting.prettier' },
 
-		-- { import = 'lazyvim.plugins.extras.ai.copilot-chat' },
+		-- { import = 'lazyvim.plugins.extras.ui.edgy' },
+
 		{ import = 'lazyvim.plugins.extras.ai.sidekick' },
 		--#endregion
 
 		{ import = 'plugins' },
 	},
-	checker = { enabled = false }, -- automatically check for plugin updates
+	ui = { border = 'rounded' },
+	rocks = { enabled = false },
+	checker = { enabled = false }, -- auto updates
 	performance = {
 		cache = { enabled = true },
-		rtp = {
-			-- disable some rtp plugins
+		rtp = { -- disable some rtp plugins
 			disabled_plugins = {
 				'gzip',
-				-- "matchit",
-				-- "matchparen",
 				'netrwPlugin',
 				'tarPlugin',
 				'tohtml',
@@ -78,9 +78,5 @@ require('lazy').setup {
 				'zipPlugin',
 			},
 		},
-	},
-	ui = {
-		border = 'rounded',
-		backdrop = 0,
 	},
 }

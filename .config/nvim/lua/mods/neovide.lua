@@ -8,12 +8,15 @@ if not vim.g.neovide then return end
 -- Settings
 vim.g.neovide_working_dir = '~'
 vim.g.neovide_no_custom_clipboard = false
-vim.opt.linespace = 9
+vim.opt.linespace = 8
 vim.g.neovide_scale_factor = 1
 vim.g.neovide_confirm_quit = false
 vim.g.neovide_hide_mouse_when_typing = false
 vim.g.neovide_underline_stroke_scale = 2
+vim.g.neovide_no_idle = false
 vim.g.neovide_refresh_rate_idle = 3
+vim.g.neovide_theme = 'auto'
+vim.g.neovide_hide_mouse_when_typing = true
 
 -- Animations
 vim.g.neovide_cursor_animate_command_line = false
@@ -21,20 +24,18 @@ vim.g.neovide_cursor_smooth_blink = true
 
 -- Themes
 local get_color = require('utils.highlight').get
-local theme_hl = {
+local theme = {
 	fg = get_color('Identifier').fg,
 	bg = get_color('Normal').bg,
 }
 vim.g.neovide_opacity = 1
-vim.g.neovide_background_color = theme_hl.bg
-vim.g.neovide_title_text_color = theme_hl.fg
+vim.g.neovide_background_color = theme.bg
+vim.g.neovide_title_text_color = theme.fg
 vim.g.neovide_title_background_color = vim.g.neovide_background_color
 
 -- ---------------------------
 -- Keymaps
-local map = require('utils.keymap').map
-
-map {
+require('utils.keymap').map {
 	'<c-s-n>',
 	function()
 		vim.schedule(function() os.execute 'neovide.exe > /dev/null 2>&1 &' end)

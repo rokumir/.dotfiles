@@ -1,37 +1,23 @@
-local ft_config = require 'config.const.filetype'
 local map = require('utils.keymap').map
+local bt_config = require 'config.const.buffertype'
+local ft_config = require 'config.const.filetype'
 
 local function augroup(name) return vim.api.nvim_create_augroup('nihil_' .. name, { clear = true }) end
 
--- Settings for the greatest script of all time
+-- close some filetypes with <q>
 vim.api.nvim_create_autocmd('FileType', {
-	group = augroup 'simple_window',
-	pattern = 'tmux-harpoon', -- in config.filetype
-	callback = function(ev)
-		vim.opt_local.showmode = false
-		vim.opt_local.ruler = false
-		vim.opt_local.laststatus = 0
-		vim.opt_local.showcmd = false
-		vim.opt_local.wrap = false
-
-		map { '<c-s>', '<cmd>write | quit <cr>', buffer = ev.buf }
-	end,
-})
-
--- Turn off paste mode when leaving insert
-vim.api.nvim_create_autocmd('InsertLeave', {
-	group = augroup 'no_paste',
-	pattern = '*',
-	command = 'set nopaste',
-})
-
-vim.api.nvim_create_autocmd('FileType', {
-	group = augroup 'lang_markdown',
-	pattern = 'markdown',
-	callback = function()
-		vim.opt_local.wrap = false
-		vim.opt_local.spell = false
-		vim.opt_local.concealcursor = 'nv'
+	group = augroup 'close_with_q',
+	pattern = ft_config.ignored_list,
+	callback = function(event)
+		vim.bo[event.buf].buflisted = false
+		local function quit_fn()
+			vim.cmd 'close'
+			pcall(vim.api.nvim_buf_delete, event.buf, { force = true })
+		end
+		vim.schedule(function()
+			map { 'q', quit_fn, buffer = event.buf, silent = true, desc = 'Quit buffer' }
+			map { '<c-q>', quit_fn, buffer = event.buf, silent = true, desc = 'Quit buffer' }
+		end)
 	end,
 })
 
@@ -41,6 +27,11 @@ vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
 	callback = function()
 		if vim.o.buftype ~= 'nofile' then vim.cmd 'checktime' end
 	end,
+})
+
+vim.api.nvim_create_autocmd('TermOpen', {
+	group = augroup 'startinsert_terminal',
+	command = 'startinsert',
 })
 
 -- Resize splits if window got resized
@@ -65,24 +56,6 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 		local mark = vim.api.nvim_buf_get_mark(bufnr, '"')
 		local lcount = vim.api.nvim_buf_line_count(bufnr)
 		if mark[1] > 0 and mark[1] <= lcount then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
-	end,
-})
-
--- close some filetypes with <q>
-vim.api.nvim_create_autocmd('FileType', {
-	group = augroup 'q_easy_closing',
-	pattern = ft_config.ignored_list,
-	callback = function(ev)
-		local bufnr = ev.buf
-		vim.bo[bufnr].buflisted = false
-		local quit = function() require('utils.buffer').bufremove(bufnr, false) end
-		vim.schedule(function()
-			map {
-				buffer = bufnr,
-				{ 'q', quit },
-				{ '<c-q>', quit },
-			}
-		end)
 	end,
 })
 
@@ -132,18 +105,3 @@ vim.api.nvim_create_autocmd('FileType', {
 		vim.opt_local.foldcolumn = '0'
 	end,
 })
-
-if vim.g.neovide then
-	-- FIX: Temporary https://github.com/neovide/neovide/issues/1331#issuecomment-1261545158
-	vim.api.nvim_create_autocmd('UIEnter', {
-		group = augroup 'clipboard_neovide_fix',
-		callback = function()
-			if (vim.v.event.chan or 0) > 1 then
-				if vim.g.loaded_clipboard_provider then
-					vim.g.loaded_clipboard_provider = nil
-					vim.api.nvim_cmd({ cmd = 'runtime', args = { 'autoload/provider/clipboard.vim' } }, {})
-				end
-			end
-		end,
-	})
-end

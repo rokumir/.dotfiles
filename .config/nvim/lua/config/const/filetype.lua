@@ -1,7 +1,6 @@
 local M = {}
 
 M.ignored_map = {
-	[''] = true,
 	notify = true, -- LazyVim notifications
 	noice = true, -- Noice UI
 	mason = true,

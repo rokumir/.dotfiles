@@ -1,5 +1,7 @@
 local util = require 'lspconfig.util'
 
+pcall(vim.lsp.inline_completion.enable, true)
+
 ---@type LazyPluginSpec[]
 return {
 	{
@@ -52,10 +54,8 @@ return {
 					},
 				},
 
-				vtsls = {
-					on_attach = function(client, bufnr) require('twoslash-queries').attach(client, bufnr) end,
-				},
-
+				tsgo = {},
+				vtsls = {},
 				denols = {
 					enabled = false,
 					root_dir = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock', 'package.json', 'node_modules'),
@@ -120,19 +120,16 @@ return {
 
 			---@type table<string, fun(server:string, opts:lspconfig.Config|{}):boolean?>
 			setup = {
-				-- example to setup with typescript.nvim
-				--tsserver = function(_, opts); require('typescript').setup({ server = opts }); return true; end,
+				-- For example: tsserver = function(_, opts) require('typescript').setup({ server = opts }); return true end,
 				-- Specify * to use this function as a fallback for any server
-				--['*'] = function(server, opts) end,
-
-				---- note: IDK why this is needed, but it is for my tailwindcss config to work
-				--tailwindcss = function(_, opts) require('lspconfig').tailwindcss.setup(opts) end,
+				['*'] = function(_, opts) opts.capabilities = require('blink.cmp').get_lsp_capabilities(opts.capabilities) end,
 			},
 		},
 	},
 	{
 		'neovim/nvim-lspconfig',
-		opts = function()
+		---@param opts PluginLspOpts
+		opts = function(_, opts)
 			local doc_win_size = vim.g.lsp_doc_max_size or 50
 			vim.list_extend(require('lazyvim.plugins.lsp.keymaps').get(), {
 				{ '<leader>ss', false },
@@ -150,21 +147,13 @@ return {
 				{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], has = 'organizeImports', desc = 'Organize Imports' },
 				{ '🔥', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
 				{ '<c-.>', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
-				{ '<c-y>', function() vim.lsp.inline_completion.get() end, mode = 'i', desc = 'Accept Inline Suggestion' },
+				{ '<c-s-y>', function() vim.lsp.inline_completion.get() end, mode = 'i', desc = 'Accept Inline Suggestion' },
 			})
 
-			-- Advanced LSP progress
-			vim.api.nvim_create_autocmd('LspProgress', {
-				group = vim.api.nvim_create_augroup('nihil_lsp_progress_loading_notif', { clear = true }),
-				callback = function(ev) ---@param ev {data: {client_id: number, params: lsp.ProgressParams}}
-					local spinner = { '⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏' }
-					vim.notify(vim.lsp.status(), 'info', {
-						id = 'lsp_progress',
-						title = 'LSP Progress',
-						opts = function(notif) notif.icon = ev.data.params.value.kind == 'end' and ' ' or spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1] end,
-					})
-				end,
-			})
+			-- Attach Twoslash Querries plugin to Typescript LSP servers
+			for _, server in ipairs { 'tsgo', 'vtsls', 'denols' } do
+				opts.servers[server].on_attach = function(client, bufnr) require('twoslash-queries').attach(client, bufnr) end
+			end
 		end,
 	},
 }

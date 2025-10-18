@@ -12,11 +12,13 @@ function M.open_current_buffer_in_obsidian()
 		on_exit = function(_, return_val)
 			local success = return_val == 0
 			local action = success and 'info' or 'error'
-			local message = success and 'Opened in Obsidian:' or 'Failed to open Obsidian URL:'
-			vim.schedule(function() Snacks.notify[action](message .. ' ' .. obsidian_url, vim.log.levels[action]) end)
-		end,
-		on_stderr = function(_, data)
-			if data then vim.schedule(function() Snacks.notify.error('Error opening Obsidian URL: ' .. table.concat(data, ' ')) end) end
+			local title = success and 'Opened in Obsidian' or 'Failed to open Obsidian URL'
+			vim.schedule(function()
+				Snacks.notify[action]({
+					'Vault: ' .. vault_name,
+					'File: ' .. relative_file,
+				}, { title = title })
+			end)
 		end,
 	})
 end
