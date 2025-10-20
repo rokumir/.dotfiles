@@ -83,14 +83,16 @@ return {
 					inlay_hints = false,
 				},
 				show = {
-					statusline = false,
-					tabline = false,
+					statusline = true,
+					tabline = true,
+				},
+				---@type snacks.win.Config
+				win = {
+					backdrop = 25,
 				},
 			},
 
-			explorer = {
-				replace_netrw = true,
-			},
+			explorer = { replace_netrw = false },
 		},
 	},
 	{ import = 'plugins.snacks' },

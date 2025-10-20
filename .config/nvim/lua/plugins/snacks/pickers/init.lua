@@ -220,6 +220,21 @@ return {
 						{ win = 'list', border = 'none' },
 					},
 				},
+				select_min = {
+					layout = {
+						backdrop = false,
+						width = 0.4,
+						min_width = 50,
+						height = 0.4,
+						min_height = 3,
+						title = '{title}',
+						title_pos = 'center',
+						box = 'vertical',
+						border = 'rounded',
+						{ win = 'input', height = 1, border = 'bottom' },
+						{ win = 'list', border = 'none' },
+					},
+				},
 			},
 
 			sources = {

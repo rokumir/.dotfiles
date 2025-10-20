@@ -11,7 +11,6 @@ return {
 				style = 'terminal',
 				noautocmd = true,
 				wo = { winhighlight = 'SnacksNormal:NormalFloat' },
-				title = '  %{b:snacks_terminal.id}: %{b:term_title}',
 				keys = {
 					nav_h = false,
 					nav_j = false,

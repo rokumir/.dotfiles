@@ -56,8 +56,15 @@ map { '<c-s-k>', ":'<,'>t'><cr>gv", mode = { 'v', 's', 'x' }, desc = 'Duplicate 
 
 -- Register control
 map { 'x', '"_x', mode = { 'n', 's', 'x' }, desc = 'Void yank x' }
-map { ',', '"_', mode = { 'n', 's', 'x', 'o' }, desc = 'Void Reigster' }
-map { ',s', '"+', mode = { 'n', 's', 'x', 'o' }, desc = 'System Clipboard Register' }
+map { ',', '"_', mode = { 'o', 'n', 's', 'x' }, desc = 'Void Reigster' }
+map {
+	nowait = true,
+	mode = { 'o', 'n', 's', 'x' },
+	desc = 'System Clipboard Register',
+	{ '<a-,>', '"+' },
+	{ '<a-,>p', '"+p' },
+	{ '<a-,>P', '"+P' },
+}
 
 -- Paste from system clipboard
 map { '<c-s-v>', '"+P', mode = { 'n', 'v' }, nowait = true, desc = 'Paste from System Clipboard' }

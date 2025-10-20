@@ -33,7 +33,6 @@ return {
 		optional = true,
 		opts = {
 			options = { 'globals' },
-			pre_save = function() vim.api.nvim_exec_autocmds('User', { pattern = 'SessionSavePre' }) end,
 		},
 		keys = {
 			{ '<leader>qQ', function() require('persistence').save() end, desc = 'Save Session' },

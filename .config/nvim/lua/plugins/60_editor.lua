@@ -193,49 +193,72 @@ return {
 
 	{ -- A vim-vinegar like file explorer that lets you edit your filesystem like a normal Neovim buffer.
 		'stevearc/oil.nvim',
+		lazy = true,
 		cmd = 'Oil',
 		keys = {
 			{ ';E', function() require('oil').toggle_float() end, desc = 'Oil' },
 		},
-		---@module 'oil'
-		---@type oil.SetupOpts
-		opts = {
-			win_options = {
-				winblend = 0,
-				number = false,
-				relativenumber = false,
-				signcolumn = 'auto:2',
-			},
-			view_options = {
-				show_hidden = false,
-				case_insensitive = false,
-				natural_order = 'fast',
-			},
-			float = {
-				padding = 2,
-				max_width = 0.4,
-				max_height = 0.6,
-				border = 'rounded',
-			},
-			keymaps = {
-				['?'] = { 'actions.show_help', mode = 'n' },
-				['<c-l>'] = 'actions.select',
-				['<c-v>'] = { 'actions.select', opts = { vertical = true } },
-				['<c-s>'] = { 'actions.select', opts = { horizontal = true } },
-				['<c-q>'] = { 'actions.close', mode = { 'n', 'i' } },
-				['<c-c>'] = { 'actions.close', mode = { 'n', 'i' } },
-				['<a-p>'] = 'actions.preview',
-				['<a-r>'] = 'actions.refresh',
-				['-'] = { 'actions.parent', mode = 'n' },
-				['_'] = { 'actions.open_cwd', mode = 'n' },
-				['`'] = { 'actions.cd', mode = 'n' },
-				['~'] = { 'actions.cd', opts = { scope = 'tab' }, mode = 'n' },
-				['<a-s>'] = { 'actions.change_sort', mode = 'n' },
-				['<a-h>'] = { 'actions.toggle_hidden', mode = 'n' },
-				['<a-T>'] = { 'actions.toggle_trash', mode = 'n' },
-				['gx'] = { 'actions.open_external', mode = { 'n', 'v' } },
-			},
-		},
+		opts = function()
+			vim.api.nvim_create_autocmd('User', {
+				group = vim.api.nvim_create_augroup('nihil_snacks_oil_rename', { clear = true }),
+				pattern = 'OilActionsPost',
+				callback = function(event)
+					if event.data.actions.type == 'move' then Snacks.rename.on_rename_file(event.data.actions.src_url, event.data.actions.dest_url) end
+				end,
+			})
+
+			---@type oil.SetupOpts
+			return {
+				cleanup_delay_ms = 2000,
+				skip_confirm_for_simple_edits = false,
+				confirmation = {
+					border = 'rounded',
+					win_options = { winblend = 0 },
+				},
+				win_options = {
+					winblend = 0,
+					number = false,
+					relativenumber = false,
+					signcolumn = 'auto:2',
+				},
+				view_options = {
+					show_hidden = true,
+					case_insensitive = false,
+					natural_order = 'fast',
+				},
+				float = {
+					padding = 2,
+					max_width = 0.4,
+					max_height = 0.6,
+					border = 'rounded',
+				},
+				keymaps_help = { border = 'rounded' },
+				keymaps = {
+					['?'] = { 'actions.show_help', mode = 'n' },
+					['<c-l>'] = 'actions.select',
+					['<c-s>'] = { function() require('oil').save() end, mode = { 'n', 'i' } },
+					['l'] = { 'actions.select', mode = 'n' },
+					['v'] = { 'actions.select', opts = { vertical = true }, mode = 'n' },
+					['s'] = { 'actions.select', opts = { horizontal = true }, mode = 'n' },
+					['<c-q>'] = { 'actions.close', mode = { 'n', 'i' } },
+					['<c-c>'] = { 'actions.close', mode = { 'n', 'i' } },
+					['<a-p>'] = 'actions.preview',
+					['<a-r>'] = 'actions.refresh',
+					['<a-y>'] = 'actions.yank_entry',
+					['<'] = { 'actions.parent', mode = 'n' },
+					['>'] = { 'actions.select', mode = 'n' },
+					['o'] = { 'actions.open_cwd', mode = 'n' }, -- goto active working project dir
+					['<c-.>'] = { 'actions.cd', mode = 'n' },
+					['<a-s>'] = { 'actions.change_sort', mode = 'n' },
+					['<a-h>'] = { 'actions.toggle_hidden', mode = 'n' },
+					['<a-T>'] = { 'actions.toggle_trash', mode = 'n' },
+					['gx'] = { 'actions.open_external', mode = { 'n', 'v' } },
+					['g.'] = { 'actions.toggle_hidden', mode = 'n' },
+					['g\\'] = { 'actions.toggle_trash', mode = 'n' },
+					['gd'] = function() require('oil').set_columns { 'icon', 'permissions', 'size', 'mtime' } end,
+				},
+			}
+		end,
 	},
 
 	{ -- Change text case

@@ -32,7 +32,9 @@ return {
 				biome = {},
 
 				mdx_analyzer = {},
+				marksman = { enabled = false },
 				markdown_oxide = {
+					enabled = false,
 					cmd = { 'markdown-oxide' },
 					filetypes = {},
 					root_markers = { '.git', '.obsidian', '.moxide.toml' },
@@ -139,7 +141,7 @@ return {
 				{ 'gr', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
 				{ 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Implementation' },
 				{ 'gy', function() Snacks.picker.lsp_type_definitions() end, desc = 'T[y]pe Definition' },
-				{ 'K', function() vim.lsp.buf.hover { max_width = doc_win_size, max_height = doc_win_size } end, has = 'hover', desc = 'Hover' },
+				{ 'K', function() vim.lsp.buf.hover { max_width = doc_win_size, max_height = doc_win_size } end, has = 'hover', desc = 'Hover', mode = { 'n', 'v' } },
 				{ '<c-k>', false, mode = 'i', has = 'signatureHelp' },
 				{ 'gK', function() vim.lsp.buf.signature_help { max_width = doc_win_size, max_height = doc_win_size } end, has = 'signatureHelp', desc = 'Signature Help' },
 				{ '<a-r>', function() require('live-rename').rename() end, mode = { 'n', 'i' }, has = 'rename', desc = 'Rename Symbol' },
