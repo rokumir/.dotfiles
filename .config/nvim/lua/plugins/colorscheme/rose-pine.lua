@@ -61,9 +61,9 @@ return {
 			--#endregion
 
 			--#region misc
-			TreesitterContext = { bg = 'surface' },
-			TreesitterContextLineNumber = { bg = 'surface' },
-			TreesitterContextBottom = { bg = 'surface' },
+			TreesitterContext = { bg = 'base' },
+			TreesitterContextLineNumber = { bg = 'base' },
+			TreesitterContextBottom = { bg = 'base' },
 			TreesitterContextSeparator = { fg = 'highlight_low' },
 			EdgyWinBar = { bg = 'surface' },
 			DropBarMenuHoverEntry = { bg = 'overlay' },
@@ -92,12 +92,12 @@ return {
 			TroubleNormal = { bg = 'none' },
 
 			-- SnacksNormal = { bg = 'surface' },
-			SnacksBackdrop = { bg = 'none', blend = 0 },
+			-- SnacksBackdrop = { bg = 'none', blend = 0 },
 			SnacksIndent = { fg = 'overlay' },
 			SnacksIndentScope = { fg = 'highlight_med' },
 			SnacksIndentChunk = { fg = 'highlight_med' },
 			SnacksInputNormal = { bg = 'none' },
-			SnacksPicker = { bg = 'surfae' },
+			SnacksPicker = { bg = 'surface' },
 			SnacksPickerTree = { fg = 'highlight_low' },
 
 			NoicePopupBorder = { fg = 'overlay', bg = 'none', blend = 0 },

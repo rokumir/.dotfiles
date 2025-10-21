@@ -1,7 +1,9 @@
 local snacks_const = require 'config.const.snacks'
 
+local INPUT_TITLE = '{title} {live} {flags}'
+
 ---@type snacks.win.Keys
-local default_keys = vim.tbl_extend('force', {}, snacks_const.disabled_default_keys, {
+local default_keys = vim.tbl_extend('keep', {
 	['k'] = false,
 	['j'] = false,
 	['<c-k>'] = false,
@@ -39,9 +41,7 @@ local default_keys = vim.tbl_extend('force', {}, snacks_const.disabled_default_k
 	['<c-w>i'] = 'focus_input',
 	['<c-w>l'] = 'focus_list',
 	['<c-w>p'] = 'focus_preview',
-})
-
-local INPUT_TITLE = '{title} {live} {flags}'
+}, snacks_const.disabled_default_keys)
 
 ---@type table<string, PickerYankAction>
 local yank_picker_utils_map = {
@@ -163,13 +163,6 @@ return {
 
 				list_page_down = function(picker) picker.list:move(5) end,
 				list_page_up = function(picker) picker.list:move(-5) end,
-
-				-- TODO: FEAT: snacks debugging
-				log = function(picker)
-					local selected_items = picker:selected { fallback = true }
-					picker.list:set_selected()
-					if #selected_items == 0 then return end
-				end,
 			},
 
 			layouts = {
@@ -241,6 +234,7 @@ return {
 				pickers = { layout = 'vscode_focus' },
 				noice = { confirm = { 'yank', 'close' } },
 				notifications = { confirm = { 'yank', 'close' } },
+				highlights = { confirm = { 'yank', 'close' } },
 			},
 		},
 	},
@@ -254,8 +248,6 @@ return {
 		{ ';/', function() Snacks.picker.grep() end, desc = 'Grep' },
 		{ ';:', function() Snacks.picker.command_history() end, desc = 'Command History' },
 		{ ';n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
-		{ 'zx', function() Snacks.explorer() end, desc = 'File Explorer' },
-		{ 'zX', function() Snacks.explorer.open { focus = false } end, desc = 'File Explorer' },
 
 		-- Find
 		{ ';f', '', desc = 'find' },

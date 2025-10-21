@@ -37,9 +37,10 @@ vim.g.neovide_title_background_color = vim.g.neovide_background_color
 -- Keymaps
 require('utils.keymap').map {
 	'<c-s-n>',
-	function()
-		vim.schedule(function() os.execute 'neovide.exe > /dev/null 2>&1 &' end)
-	end,
+	vim.schedule_wrap(function()
+		local job_id = vim.fn.jobstart 'neovide.exe > /dev/null 2>&1 &'
+		Snacks.notify((job_id ~= 0 and 'Open a new Neovide instance.' or 'Failed to open a new Neovide!'), { level = job_id == 0 and 'error' or 'info' })
+	end),
 	desc = 'New Neovide Instance',
 }
 

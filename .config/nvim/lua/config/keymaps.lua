@@ -23,6 +23,10 @@ map {
 	{ '<leader><leader>p', group = 'profiler' },
 }
 
+map {
+	{ '<f1>', '<nop>' },
+}
+
 --#region --- EDITOR
 -- Insert mode escapes
 map { 'jj', '<esc>', mode = 'i' }
@@ -61,14 +65,26 @@ map {
 	nowait = true,
 	mode = { 'o', 'n', 's', 'x' },
 	desc = 'System Clipboard Register',
-	{ '<a-,>', '"+' },
-	{ '<a-,>p', '"+p' },
-	{ '<a-,>P', '"+P' },
+	{ ',s', '"+' },
+	{ ',sp', '"+p' },
+	{ ',sP', '"+P' },
 }
 
 -- Paste from system clipboard
-map { '<c-s-v>', '"+P', mode = { 'n', 'v' }, nowait = true, desc = 'Paste from System Clipboard' }
-map { '<c-s-v>', '<c-r>+', mode = { 'i', 'c' }, nowait = true, desc = 'Paste from System Clipboard' }
+map {
+	desc = 'Paste from System Clipboard',
+	{ '<c-s-v>', '"+P', mode = { 'n', 'v' } }, -- normal & visual
+	{ '<c-s-v>', '<c-r>+', mode = { 'i', 'c' } }, -- insert & cmdline
+	{ -- terminal
+		'<c-s-v>',
+		function()
+			local key_sequence = '<C-\\><C-N>"+pi'
+			local keycodes = vim.api.nvim_replace_termcodes(key_sequence, true, false, true)
+			vim.api.nvim_feedkeys(keycodes, 'n', false)
+		end,
+		mode = 't',
+	},
+}
 --#endregion
 
 --#region --- MOVEMENT
@@ -168,6 +184,8 @@ map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File E
 map { '<a-~>', '<cmd>term <cr>', desc = 'New Terminal' }
 map { '<c-s-space>', '<c-\\><c-n>', mode = 't', desc = 'Escape Terminal' }
 map { '<c-;>', '<a-|>', mode = 't', desc = 'Sendkey alt-|' }
+-- map { '<c-tab>', '<c-tab>', mode = 't', desc = 'Sendkey ctrl-tab' }
+-- map { '<c-s-tab>', '<c-s-tab>', mode = 't', desc = 'Sendkey ctrl-shift-tab' }
 
 -- Mimic CTRL-R in terminal to paste from a register
 map {
@@ -182,16 +200,6 @@ map {
 	end,
 	mode = 't',
 	desc = 'Mimic CTRL-R in Terminal',
-}
-map {
-	'<c-s-v>',
-	function()
-		local key_sequence = '<C-\\><C-N>"+pi'
-		local keycodes = vim.api.nvim_replace_termcodes(key_sequence, true, false, true)
-		vim.api.nvim_feedkeys(keycodes, 'n', false)
-	end,
-	mode = 't',
-	desc = 'Paste from System Clipboard',
 }
 --#endregion
 
@@ -219,14 +227,20 @@ map { '<leader>ui', vim.show_pos, desc = 'Inspect highlight under cursor' }
 map { '<leader>um', '<cmd>delm! | delm A-Z0-9 | redraw <cr>', desc = 'Clear Marks' }
 
 -- Clear visual noise
-local function clear_noises()
-	vim.cmd.nohlsearch()
-	vim.cmd.diffupdate()
-	Snacks.words.clear()
-	vim.cmd.redraw()
-end
-map { '<leader>uc', clear_noises, desc = 'Clear Visual Noises', mode = { 'n', 'x' }, nowait = true }
-map { '<c-l>', clear_noises, desc = 'Clear Visual Noises', mode = { 'n', 'i', 'x' }, nowait = true }
+map {
+	desc = 'Clear Visual Noises',
+	mode = { 'n', 'x' },
+	{
+		'<leader>uu',
+		function()
+			Snacks.words.clear()
+			vim.cmd.nohlsearch()
+			vim.cmd.diffupdate()
+			vim.cmd.redraw()
+		end,
+	},
+	{ '<c-l>', '<leader>uu', mode = 'i', nowait = true },
+}
 --#endregion
 
 if not LazyVim and not Snacks then return end
@@ -274,28 +288,27 @@ Snacks.toggle
 --#endregion
 
 --#region --- SYSTEM
-map { '<f2>l', function() vim.cmd.Lazy() end, desc = 'Lazy', icon = '' }
-map { '<f2>E', function() vim.cmd.LazyExtra() end, desc = 'Lazy Extras', icon = '' }
-map { '<f2>i', function() vim.cmd.LspInfo() end, desc = 'LSP info', icon = '' }
-map { '<f2>r', function() vim.cmd.LspRestart() end, desc = 'Restart LSP', icon = '' }
-map { '<f2>m', function() vim.cmd.Mason() end, desc = 'Mason', icon = '' }
-map { '<f2>f', function() vim.cmd.ConformInfo() end, desc = 'Conform', icon = '' }
-map { '<f2>h', function() vim.cmd.checkhealth() end, desc = 'Check Health', icon = '' }
-map { '<f2>L', function() LazyVim.news.changelog() end, desc = 'LazyVim Changelog', icon = '' }
+map { '<f2>', group = 'Menu' }
+map { '<f2>l', '<cmd>Lazy <cr>', desc = 'Lazy', icon = '' }
+map { '<f2>E', '<cmd>LazyExtra <cr>', desc = 'Lazy Extras', icon = '' }
+map { '<f2>i', '<cmd>LspInfo <cr>', desc = 'LSP info', icon = '' }
+map { '<f2>r', '<cmd>LspRestart <cr>', desc = 'Restart LSP', icon = '' }
+map { '<f2>m', '<cmd>Mason <cr>', desc = 'Mason', icon = '' }
+map { '<f2>f', '<cmd>ConformInfo <cr>', desc = 'Conform', icon = '' }
+map { '<f2>h', '<cmd>checkhealth <cr>', desc = 'Check Health', icon = '' }
+map { '<f2>L', LazyVim.news.changelog, desc = 'LazyVim Changelog', icon = '' }
+map { '<f2>b', vim.schedule_wrap(function() vim.fn.jobstart('btop', { term = true }) end), desc = 'LazyVim Changelog', icon = '' }
 map {
 	'<f2>U',
-	function()
+	vim.schedule_wrap(function()
 		local function safe_notif_run(cmd)
-			vim.schedule(function()
-				local success = pcall(vim.cmd, cmd) ---@diagnostic disable-line: param-type-mismatch
-				if not success then Snacks.notify.error('Failed to run: ' .. cmd) end
-			end)
+			if not pcall(vim.cmd[cmd]) then Snacks.notify.error('Failed to run: ' .. cmd) end
 		end
 
 		safe_notif_run 'TSUpdate'
 		safe_notif_run 'Lazy update'
 		safe_notif_run 'MasonUpdate'
-	end,
+	end),
 	desc = 'BIG Update',
 	icon = '',
 }

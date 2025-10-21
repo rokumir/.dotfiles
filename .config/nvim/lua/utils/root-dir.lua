@@ -4,19 +4,21 @@ local M = {}
 ---@param path string
 ---@param options? { realpath?:boolean }
 function M.is_match(path, options)
-	path = path or ''
+	path = (path or ''):gsub('^~', vim.env.HOME or '')
 	options = options or {}
+	options.realpath = options.realpath ~= false
 
-	local fullpath = (options.realpath or true) and vim.uv.fs_realpath(path) or path
-	if not fullpath then return false end
+	local success, is_match = pcall(function()
+		if options.realpath then path = vim.uv.fs_realpath(path) or error() end
+		return path == vim.uv.cwd()
+	end)
 
-	local current_path = vim.uv.cwd()
-	return current_path == fullpath
+	return success and is_match
 end
 
 ---@param patterns string[]
 function M.validate_func(patterns)
-	if type(patterns) ~= 'table' then return end
+	vim.validate('patterns', patterns, 'table')
 	return function() return M.match_pattern(unpack(patterns)) end
 end
 
@@ -32,17 +34,17 @@ end
 function M.ignored_list()
 	local root_dir = vim.fn.getcwd()
 	local ignore_filepath = vim.fn.findfile('.ignore', root_dir .. ';')
-	-- stylua: ignore
-	if
-		not ignore_filepath
-		or ignore_filepath == ''
-		or #ignore_filepath == 0
-	then return {} end
+	if #ignore_filepath == 0 then return {} end
+
+	if type(ignore_filepath) == 'string' then ignore_filepath = { ignore_filepath } end
+	---@cast ignore_filepath string[]
 
 	local ignore_list = {}
-	for _, line in ipairs(vim.fn.readfile(ignore_filepath) or {}) do
-		local trimmed_line = vim.trim(line)
-		if #trimmed_line > 0 and not trimmed_line:match '^#' then table.insert(ignore_list, trimmed_line) end
+	for _, file_path in ipairs(ignore_filepath) do
+		for _, line in ipairs(vim.fn.readfile(file_path)) do
+			local trimmed_line = vim.trim(line)
+			if #trimmed_line > 0 and not trimmed_line:match '^#' then table.insert(ignore_list, trimmed_line) end
+		end
 	end
 
 	return ignore_list

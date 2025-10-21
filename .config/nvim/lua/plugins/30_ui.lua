@@ -129,9 +129,13 @@ return {
 	{ -- Tabs
 		'akinsho/bufferline.nvim',
 		keys = function()
-			local keys = {
-				{ '<tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Tab: Next' },
-				{ '<s-tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Tab: Prev' },
+			local cycle_keys = {
+				next = vim.g.neovide and '<c-tab>' or '<tab>',
+				prev = vim.g.neovide and '<c-s-tab>' or '<s-tab>',
+			}
+			return {
+				{ cycle_keys.next, '<cmd>BufferLineCycleNext<cr>', desc = 'Tab: Next' },
+				{ cycle_keys.prev, '<cmd>BufferLineCyclePrev<cr>', desc = 'Tab: Prev' },
 				{ '<c-s-right>', '<cmd>BufferLineMoveNext<cr>', desc = 'Tab: Move Right' },
 				{ '<c-s-left>', '<cmd>BufferLineMovePrev<cr>', desc = 'Tab: Move Left' },
 
@@ -183,11 +187,6 @@ return {
 					end,
 				},
 			}
-
-			keys[#keys + 1] = { '<c-tab>', '<cmd>BufferLineCycleNext<cr>', desc = 'Tab: Next' }
-			keys[#keys + 1] = { '<c-s-tab>', '<cmd>BufferLineCyclePrev<cr>', desc = 'Tab: Prev' }
-
-			return keys
 		end,
 		---@module 'bufferline'
 		---@type bufferline.UserConfig

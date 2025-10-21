@@ -5,7 +5,10 @@
 return {
 	{
 		'folke/snacks.nvim',
-		keys = function() return {} end,
+		keys = function()
+			require('utils.keymap').map { ';', '', desc = 'Snacks/Pickers' }
+			return {}
+		end,
 
 		---@type snacks.Config
 		opts = {

@@ -245,10 +245,10 @@ return {
 					['<a-p>'] = 'actions.preview',
 					['<a-r>'] = 'actions.refresh',
 					['<a-y>'] = 'actions.yank_entry',
-					['<'] = { 'actions.parent', mode = 'n' },
-					['>'] = { 'actions.select', mode = 'n' },
+					['<a-<>'] = { 'actions.parent', mode = 'n' },
+					['<a->>'] = { 'actions.select', mode = 'n' },
 					['o'] = { 'actions.open_cwd', mode = 'n' }, -- goto active working project dir
-					['<c-.>'] = { 'actions.cd', mode = 'n' },
+					['<c-.>'] = 'actions.cd',
 					['<a-s>'] = { 'actions.change_sort', mode = 'n' },
 					['<a-h>'] = { 'actions.toggle_hidden', mode = 'n' },
 					['<a-T>'] = { 'actions.toggle_trash', mode = 'n' },
@@ -256,6 +256,7 @@ return {
 					['g.'] = { 'actions.toggle_hidden', mode = 'n' },
 					['g\\'] = { 'actions.toggle_trash', mode = 'n' },
 					['gd'] = function() require('oil').set_columns { 'icon', 'permissions', 'size', 'mtime' } end,
+					['J'] = { '', mode = 'n' },
 				},
 			}
 		end,

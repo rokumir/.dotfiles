@@ -31,6 +31,32 @@ return {
 				html = {},
 				biome = {},
 
+				zk = {
+					name = 'zk',
+					cmd = { 'zk', 'lsp' },
+					filetypes = { 'markdown' },
+					root_dir = vim.env.RH_NOTE or require('lspconfig.util').root_pattern('.git', '.obsidian', '.moxide.toml'),
+					on_attach = function()
+						require('utils.keymap').map {
+							{ '<leader>z', group = 'ZK' },
+							{ '<leader>zn', [[<cmd>ZkNew { title = vim.fn.input('Title: ') } <cr>]], desc = 'ZK New Note' },
+							{ '<leader>znt', [[<cmd>'<,'>ZkNewFromTitleSelection { dir = vim.fn.expand('%:p:h') } <cr>]], mode = 'v', desc = 'ZK New Note in Current Directory' },
+							{
+								'<leader>znc',
+								[[<cmd>'<,'>ZkNewFromContentSelection { dir = vim.fn.expand('%:p:h'), title = vim.fn.input('Title: ') } <cr>]],
+								mode = 'v',
+								desc = 'ZK New Note from Content Selection in Current Directory',
+							},
+
+							{ '<leader>zb', '<cmd>ZkBacklinks <cr>', desc = 'ZK Backlinks' },
+							{ '<leader>zl', '<cmd>ZkLinks <cr>', desc = 'ZK Links (Notes linked by the current buffer)' },
+							{ '<leader>zo', [[<cmd>ZkNotes { sort = { 'modified' } }<cr>]], desc = 'Open notes.' },
+							{ '<leader>zt', '<cmd>ZkTags <cr>', desc = 'Open notes associated with the selected tags.' },
+							{ '<leader>zf', [[<cmd>ZkNotes { sort = { 'modified' }, match = { vim.fn.input('Search: ') } } <cr>]], desc = 'Search for the notes matching a given query.' },
+							{ '<leader>zf', [[<cmd>'<,'>ZkMatch <cr>]], mode = 'v', desc = 'Search for the notes matching the current visual selection.' },
+						}
+					end,
+				},
 				mdx_analyzer = {},
 				marksman = { enabled = false },
 				markdown_oxide = {

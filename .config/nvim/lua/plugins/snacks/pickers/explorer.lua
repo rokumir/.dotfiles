@@ -16,6 +16,11 @@ end
 
 return {
 	'folke/snacks.nvim',
+	keys = {
+		{ ';fe', function() Snacks.explorer { focus = false } end, desc = 'File Explorer' },
+		{ 'zx', function() Snacks.explorer { focus = false } end, desc = 'File Explorer' },
+		{ 'zX', function() Snacks.explorer.reveal { focus = true } end, desc = 'File Explorer' },
+	},
 	---@type snacks.Config
 	opts = {
 		picker = {
