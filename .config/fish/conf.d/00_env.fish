@@ -27,7 +27,7 @@ set -gx PAGER bat
 ## ---------------------------------------
 
 # Rokumir Home
-set -gx RH_NOTE ~/documents/notes
+set -gx RH_NOTE ~/documents/nihil
 set -gx RH_PROJECT ~/documents/projects
 set -gx RH_WORK ~/documents/works
 set -gx RH_THROWAWAY ~/documents/throwaways

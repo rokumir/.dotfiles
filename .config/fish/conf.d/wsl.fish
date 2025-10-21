@@ -15,6 +15,6 @@ function wezterm-config
     printf $WEZTERM_CONFIG
 end
 
-alias pwsh 'pwsh.exe -WorkingDirectory "~"'
+# alias pwsh 'pwsh.exe -WorkingDirectory "~"'
 type -q 'neovide.exe' && alias nvi 'neovide.exe'
 type -q 'btop.exe' && alias btop-win 'btop.exe'
