@@ -1,7 +1,6 @@
 #!/usr/bin/env fish
 
 set -l nightly_old_versions (bob ls | rg --only-matching 'nightly-\w*')
-
 for ver in $nightly_old_versions
     set -l prompt_msg (set_color yellow)" > Delete bob NeoVim Version" (set_color -o cyan)"$ver" (set_color -d brwhite)"[Y/n]"(set_color normal)
     read -lP "$prompt_msg" confirm
@@ -15,6 +14,5 @@ for ver in $nightly_old_versions
             echo -e " ->" (set_color -o yellow)"Cancel deleting" (set_color -o cyan)"$ver"
     end
 end
-
 echo
 bob list
