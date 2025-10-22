@@ -202,7 +202,6 @@ function M.history:picker()
 		confirm = function(picker)
 			local selections = picker:selected { fallback = true }
 			picker.list:set_selected()
-			if vim.tbl_isempty(selections) then return end
 
 			-- Process each selected entry
 			for _, item in ipairs(selections) do

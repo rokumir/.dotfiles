@@ -10,7 +10,7 @@ return {
 	'folke/snacks.nvim',
 	keys = {
 		{ '<f2>D', open_dashboard, desc = 'Open Snacks Dashboard' },
-		{ '<leader><esc>', open_dashboard, desc = 'Open Snacks Dashboard' },
+		{ '<leader><f2>', open_dashboard, desc = 'Open Snacks Dashboard' },
 	},
 	---@module 'snacks'
 	---@type snacks.Config
@@ -20,8 +20,8 @@ return {
 			preset = {
 				---@type snacks.dashboard.Item[]
 				keys = {
-					{ icon = ' ', key = 's', desc = 'Restore Session', section = 'session' },
-					{ icon = ' ', key = 'c', desc = 'Open Config', action = ":cd `=stdpath('config')` | lua Snacks.picker.files()" },
+					{ icon = '󰑏 ', key = 's', desc = 'Restore Session', section = 'session' },
+					{ icon = ' ', key = 'c', desc = 'Open Config', action = ":cd `=stdpath('config')` | lua Snacks.picker.files()" },
 					{ icon = ' ', key = 'Q', desc = 'Quit', action = 'ZZ' },
 				},
 			},
