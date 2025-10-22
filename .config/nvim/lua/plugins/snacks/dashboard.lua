@@ -1,16 +1,11 @@
 ---@diagnostic disable: missing-parameter
 ---@type snacks.dashboard.Item[]
 local sep_line_text = { { ('─'):rep(20), hl = 'WinSeparator', align = 'center' } }
-local open_dashboard = function()
-	Snacks.dashboard.open()
-	vim.cmd.stopinsert()
-end
 
 return {
 	'folke/snacks.nvim',
 	keys = {
-		{ '<f2>D', open_dashboard, desc = 'Open Snacks Dashboard' },
-		{ '<leader><f2>', open_dashboard, desc = 'Open Snacks Dashboard' },
+		{ '<f2><f2>', '<cmd>lua Snacks.dashboard.open() <cr><cmd>stopinsert <cr>', desc = 'Open Snacks Dashboard' },
 	},
 	---@module 'snacks'
 	---@type snacks.Config

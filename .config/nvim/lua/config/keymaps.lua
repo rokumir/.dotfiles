@@ -297,7 +297,7 @@ map { '<f2>m', '<cmd>Mason <cr>', desc = 'Mason', icon = '' }
 map { '<f2>f', '<cmd>ConformInfo <cr>', desc = 'Conform', icon = '' }
 map { '<f2>h', '<cmd>checkhealth <cr>', desc = 'Check Health', icon = '' }
 map { '<f2>L', LazyVim.news.changelog, desc = 'LazyVim Changelog', icon = '' }
-map { '<f2>b', vim.schedule_wrap(function() vim.fn.jobstart('btop', { term = true }) end), desc = 'LazyVim Changelog', icon = '' }
+map { '<f2>b', vim.schedule_wrap(function() vim.fn.jobstart('btop', { term = true }) end), desc = 'BTOP', icon = '' }
 map {
 	'<f2>U',
 	vim.schedule_wrap(function()
