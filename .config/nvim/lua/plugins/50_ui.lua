@@ -43,12 +43,20 @@ return {
 		},
 	},
 
+	{
+		'nvim-navic',
+		optional = true,
+		lazy = true,
+		init = function()
+			vim.g.navic_silence = true
+			require('snacks.util.lsp').on({
+				method = 'textDocument/documentSymbol',
+			}, function(buffer, client) require('nvim-navic').attach(client, buffer) end)
+		end,
+	},
+
 	{ -- Statusline
 		'nvim-lualine/lualine.nvim',
-		dependencies = {
-			-- disable navic in lualine
-			{ 'SmiteshP/nvim-navic', optional = true, opts = function() return { lazy_update_context = true } end },
-		},
 		opts = function(_, opts)
 			opts.options.globalstatus = true
 			opts.options.always_show_tabline = false

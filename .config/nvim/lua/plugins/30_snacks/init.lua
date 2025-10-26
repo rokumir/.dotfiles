@@ -98,6 +98,6 @@ return {
 			explorer = { replace_netrw = false },
 		},
 	},
-	{ import = 'plugins.snacks' },
-	{ import = 'plugins.snacks.pickers' },
+	{ import = 'plugins.30_snacks' },
+	{ import = 'plugins.30_snacks.pickers' },
 }

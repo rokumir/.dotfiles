@@ -30,8 +30,8 @@ require('lazy').setup {
 		},
 
 		--#region Extras modules
-		{ import = 'lazyvim.plugins.extras.editor.snacks_explorer' },
 		{ import = 'lazyvim.plugins.extras.editor.snacks_picker' },
+		{ import = 'lazyvim.plugins.extras.editor.snacks_explorer' },
 		{ import = 'lazyvim.plugins.extras.editor.refactoring' },
 		{ import = 'lazyvim.plugins.extras.editor.dial' },
 		{ import = 'lazyvim.plugins.extras.editor.navic' },

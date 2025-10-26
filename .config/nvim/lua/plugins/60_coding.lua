@@ -31,6 +31,7 @@ return {
 		end,
 	},
 
+	-- TODO: delete outter surround
 	{ -- Delimiter pairs surroundability
 		'mini.surround',
 		lazy = true,
@@ -118,14 +119,6 @@ return {
 				current = 'CurSearch',
 				others = 'Search',
 			},
-		},
-	},
-
-	{ -- Copilot AI Chat
-		'CopilotChat.nvim',
-		optional = true,
-		opts = {
-			auto_insert_mode = false,
 		},
 	},
 

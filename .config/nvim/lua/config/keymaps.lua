@@ -291,24 +291,24 @@ Snacks.toggle
 map { '<f2>', group = 'Menu' }
 map { '<f2>l', '<cmd>Lazy <cr>', desc = 'Lazy', icon = '' }
 map { '<f2>E', '<cmd>LazyExtra <cr>', desc = 'Lazy Extras', icon = '' }
-map { '<f2>i', '<cmd>LspInfo <cr>', desc = 'LSP info', icon = '' }
+map { '<f2>I', '<cmd>LspInfo <cr>', desc = 'LSP Info', icon = '' }
+map { '<f2>i', function() Snacks.picker.lsp_config() end, desc = 'Lsp Info [Snacks]', icon = '' }
 map { '<f2>r', '<cmd>LspRestart <cr>', desc = 'Restart LSP', icon = '' }
 map { '<f2>m', '<cmd>Mason <cr>', desc = 'Mason', icon = '' }
 map { '<f2>f', '<cmd>ConformInfo <cr>', desc = 'Conform', icon = '' }
 map { '<f2>h', '<cmd>checkhealth <cr>', desc = 'Check Health', icon = '' }
 map { '<f2>L', LazyVim.news.changelog, desc = 'LazyVim Changelog', icon = '' }
-map { '<f2>b', vim.schedule_wrap(function() vim.fn.jobstart('btop', { term = true }) end), desc = 'BTOP', icon = '' }
+map { '<f2>b', vim.schedule_wrap(function()
+	vim.cmd.enew()
+	vim.fn.jobstart('btop', { term = true })
+end), desc = 'BTOP', icon = '' }
 map {
 	'<f2>U',
-	vim.schedule_wrap(function()
-		local function safe_notif_run(cmd)
-			if not pcall(vim.cmd[cmd]) then Snacks.notify.error('Failed to run: ' .. cmd) end
-		end
-
-		safe_notif_run 'TSUpdate'
-		safe_notif_run 'Lazy update'
-		safe_notif_run 'MasonUpdate'
-	end),
+	function()
+		vim.cmd 'TSUpdate'
+		vim.cmd 'Lazy update'
+		vim.cmd 'MasonUpdate'
+	end,
 	desc = 'BIG Update',
 	icon = '',
 }
