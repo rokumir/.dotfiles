@@ -81,7 +81,7 @@ return {
 	},
 
 	{ -- Easy location list
-		'folke/trouble.nvim',
+		'trouble.nvim',
 		optional = true,
 		version = false,
 		opts = {

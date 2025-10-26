@@ -15,6 +15,7 @@ return {
 			scroll = { enabled = false },
 			input = { enabled = true },
 			scope = { enabled = true },
+			words = { enabled = true },
 
 			statuscolumn = {
 				enabled = true,

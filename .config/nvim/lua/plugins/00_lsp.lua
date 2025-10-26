@@ -1,6 +1,10 @@
 local util = require 'lspconfig.util'
 local DOC_WIN_SIZE = vim.g.lsp_doc_max_size or 50
 local function twoslash_queries_attach_fn(...) return require('twoslash-queries').attach(...) end
+local function with_blink_capa(capabilities) ---@param capabilities lsp.ClientCapabilities
+	local exist, blink_cmp = pcall(require, 'blink.cmp')
+	return exist and blink_cmp.get_lsp_capabilities(capabilities) or capabilities
+end
 
 return {
 	'neovim/nvim-lspconfig',
@@ -24,10 +28,21 @@ return {
 		---@type table<string, lazyvim.lsp.Config|boolean>
 		servers = {
 			['*'] = {
-				-- require('blink.cmp').get_lsp_capabilities(opts.capabilities)
-				-- capabilities = {},
+				capabilities = with_blink_capa {
+					workspace = {
+						fileOperations = {
+							didRename = true,
+							willRename = true,
+						},
+					},
+				},
 
 				keys = {
+					{ '<leader>ss', false },
+					{ '<leader>sS', false },
+					{ '<leader>cc', false },
+					{ '<leader>cC', false },
+
 					{ 'gd', function() Snacks.picker.lsp_definitions() end, has = 'definition', desc = 'Definition' },
 					{ 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Declaration' },
 					{ 'gr', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
@@ -52,10 +67,10 @@ return {
 					{ '<leader>cr', function() require('live-rename').rename() end, has = 'rename', desc = 'Rename Symbol' },
 					{ '<a-r>', function() require('live-rename').rename() end, mode = { 'n', 'i' }, has = 'rename', desc = 'Rename Symbol' },
 
-					{ ']]', function() Snacks.words.jump(vim.v.count1) end, has = 'documentHighlight', desc = 'Next Reference', cond = function() return Snacks.words.is_enabled() end },
-					{ '[[', function() Snacks.words.jump(-vim.v.count1) end, has = 'documentHighlight', desc = 'Prev Reference', cond = function() return Snacks.words.is_enabled() end },
-					{ '<a-n>', function() Snacks.words.jump(vim.v.count1, true) end, has = 'documentHighlight', desc = 'Next Reference', cond = function() return Snacks.words.is_enabled() end },
-					{ '<a-p>', function() Snacks.words.jump(-vim.v.count1, true) end, has = 'documentHighlight', desc = 'Prev Reference', cond = function() return Snacks.words.is_enabled() end },
+					{ ']]', function() Snacks.words.jump(vim.v.count1) end, has = 'documentHighlight', desc = 'Next Reference' },
+					{ '[[', function() Snacks.words.jump(-vim.v.count1) end, has = 'documentHighlight', desc = 'Prev Reference' },
+					{ '<a-n>', function() Snacks.words.jump(vim.v.count1, true) end, has = 'documentHighlight', desc = 'Next Reference' },
+					{ '<a-p>', function() Snacks.words.jump(-vim.v.count1, true) end, has = 'documentHighlight', desc = 'Prev Reference' },
 				},
 			},
 

@@ -2,6 +2,8 @@ local icons = LazyVim.config.icons
 icons.misc.modified = '✨'
 icons.misc.readonly = '🔒'
 
+local hl_color = require('snacks.util').color
+
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
@@ -57,73 +59,130 @@ return {
 
 	{ -- Statusline
 		'nvim-lualine/lualine.nvim',
-		opts = function(_, opts)
-			opts.options.globalstatus = true
-			opts.options.always_show_tabline = false
-			opts.options.always_divide_middle = true
-			opts.options.component_separators = { left = '', right = '' }
-			opts.options.section_separators = { left = '', right = '' }
-			opts.options.refresh = { refresh_time = 16, statusline = 16 } -- ~60fps
+		opts = function()
+			local opts = {
+				options = {
+					disabled_filetypes = {
+						statusline = require('config.const.filetype').ignored_list,
+					},
+					globalstatus = true,
+					always_show_tabline = false,
+					always_divide_middle = true,
+					component_separators = { left = '', right = '' },
+					section_separators = { left = '', right = '' },
+					refresh = { refresh_time = 16, statusline = 16 }, -- ~60fps
+				},
+				sections = {
+					lualine_c = {
+						LazyVim.lualine.root_dir(),
+						{ 'filetype', icon_only = true, separator = '', padding = { left = 1, right = 0 } },
+						{
+							LazyVim.lualine.pretty_path {
+								length = 3,
+								relative = 'cwd',
+								modified_hl = 'Error',
+								directory_hl = 'Comment',
+								filename_hl = 'Conditional',
+								modified_sign = icons.misc.modified,
+								readonly_icon = icons.misc.readonly,
+							},
+						},
+						{
+							'diagnostics',
+							symbols = {
+								error = icons.diagnostics.Error,
+								warn = icons.diagnostics.Warn,
+								info = icons.diagnostics.Info,
+								hint = icons.diagnostics.Hint,
+							},
+						},
+					},
 
-			opts.sections.lualine_c = {
-				LazyVim.lualine.root_dir(),
-				{ 'filetype', icon_only = true, separator = '', padding = { left = 1, right = 0 } },
-				{
-					LazyVim.lualine.pretty_path {
-						length = 3,
-						relative = 'cwd',
-						modified_hl = 'Error',
-						directory_hl = 'Comment',
-						filename_hl = 'Conditional',
-						modified_sign = icons.misc.modified,
-						readonly_icon = icons.misc.readonly,
+					lualine_x = {
+						require('snacks.profiler').status(),
+						{ -- shows key typing
+							function() return require('noice').api.status.command.get() end,
+							cond = function() return package.loaded['noice'] and require('noice').api.status.command.has() end,
+							color = { fg = hl_color 'Statement' },
+						},
+						{
+							function() return require('noice').api.status.mode.get() end,
+							cond = function() return package.loaded['noice'] and require('noice').api.status.mode.has() end,
+							color = { fg = hl_color 'Constant' },
+						},
+						{ -- Dap
+							function() return '  ' .. require('dap').status() end,
+							cond = function() return package.loaded['dap'] and require('dap').status() ~= '' end,
+							color = { fg = hl_color 'Debug' },
+						},
+						{
+							'diff',
+							symbols = {
+								added = icons.git.added,
+								modified = icons.git.modified,
+								removed = icons.git.removed,
+							},
+							source = function()
+								local gitsigns = vim.b.gitsigns_status_dict
+								if gitsigns then return {
+									added = gitsigns.added,
+									modified = gitsigns.changed,
+									removed = gitsigns.removed,
+								} end
+							end,
+						},
+						{ -- word count
+							function()
+								local wc = vim.fn.wordcount()
+								return wc.words .. 'w ' .. wc.chars .. 'c'
+							end,
+							color = 'PreCondit',
+							separator = '',
+							cond = function() return require('config.const.filetype').document_map[vim.bo.ft] end,
+						},
+						{
+							'encoding',
+							color = 'PreCondit',
+							separator = '',
+							cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-8' end,
+						},
+						{
+							'fileformat',
+							symbols = { unix = 'lf', dos = 'crlf', mac = 'cr' },
+							color = 'PreCondit',
+							separator = '',
+							cond = function() return vim.bo.ff ~= 'unix' end,
+						},
+					},
+
+					lualine_y = {
+						'location',
+						{ function() return require('utils.datetime').format.pretty_date() end },
+					},
+					lualine_z = {
+						{ function() return require('utils.datetime').format.pretty_time() end },
 					},
 				},
-				{
-					'diagnostics',
-					symbols = {
-						error = icons.diagnostics.Error,
-						warn = icons.diagnostics.Warn,
-						info = icons.diagnostics.Info,
-						hint = icons.diagnostics.Hint,
-					},
-				},
 			}
 
-			vim.list_extend(opts.sections.lualine_x, {
-				{ -- word count
-					function()
-						local wc = vim.fn.wordcount()
-						return wc.words .. 'w ' .. wc.chars .. 'c'
-					end,
-					color = 'PreCondit',
-					separator = '',
-					cond = function() return require('config.const.filetype').document_map[vim.bo.ft] end,
-				},
-				{
-					'encoding',
-					color = 'PreCondit',
-					separator = '',
-					cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-8' end,
-				},
-				{
-					'fileformat',
-					symbols = { unix = 'lf', dos = 'crlf', mac = 'cr' },
-					color = 'PreCondit',
-					separator = '',
-					cond = function() return vim.bo.ff ~= 'unix' end,
-				},
-			})
+			-- -- do not add trouble symbols if aerial is enabled
+			-- -- And allow it to be overriden for some buffer types (see autocmds)
+			-- if vim.g.trouble_lualine and LazyVim.has 'trouble.nvim' then
+			-- 	local trouble = require 'trouble'
+			-- 	local symbols = trouble.statusline {
+			-- 		mode = 'symbols',
+			-- 		groups = {},
+			-- 		title = false,
+			-- 		filter = { range = true },
+			-- 		format = '{kind_icon}{symbol.name:Normal}',
+			-- 		hl_group = 'lualine_c_normal',
+			-- 	}
+			-- 	table.insert(opts.sections.lualine_c, {
+			-- 		symbols and symbols.get,
+			-- 		cond = function() return vim.b.trouble_lualine ~= false and symbols.has() end,
+			-- 	})
+			-- end
 
-			opts.sections.lualine_y = {
-				'location',
-				{ function() return require('utils.datetime').format.pretty_date() end },
-			}
-			opts.sections.lualine_z = {
-				{ function() return require('utils.datetime').format.pretty_time() end },
-			}
-
-			---- Highlights config
 			-- Transparent lualine fill bg
 			local theme = require 'lualine.themes.auto'
 			local lualine_modes = { 'insert', 'normal', 'visual', 'command', 'replace', 'inactive', 'terminal' }

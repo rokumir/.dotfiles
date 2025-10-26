@@ -93,10 +93,10 @@ return {
 							local selected_items = picker:selected { fallback = true }
 							picker.list:set_selected()
 
-							local paths = require('utils.table').map(selected_items, function(_, snacks_item)
-								if not snacks_item.parent then error 'Root included!' end -- Protect root folder
-								return Snacks.picker.util.path(snacks_item)
-							end)
+							---@type string[]
+							local paths = vim.tbl_map(function(snacks_item)
+								return snacks_item.parent and Snacks.picker.util.path(snacks_item) or error 'Root included!' -- Protect root folder
+							end, selected_items)
 
 							local what = #paths == 1 and vim.fn.fnamemodify(paths[1], ':p:~:.') or #paths .. ' files'
 							Actions.confirm('Put to the trash ' .. what .. '?', function()

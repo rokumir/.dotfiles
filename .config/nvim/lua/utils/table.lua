@@ -26,10 +26,28 @@ end
 ---@param tbl table<number|string, TValue> | TValue[]
 ---@param callback fun(key: number|string, value: TValue): TResult
 ---@return TResult[]
-function M.map(tbl, callback)
+function M.map_to_list(tbl, callback)
 	local result = {}
 	for key, value in pairs(tbl) do
 		table.insert(result, callback(key, value))
+	end
+	return result
+end
+
+--- Custom table map that have both key and value in the callback function
+---@generic TValue : unknown
+---@generic TKey : number|string
+---@generic TPK : number|string
+---@generic TPV : unknown
+---@param tbl table<TKey, TValue> | TValue[]
+---@param callback fun(key: TKey, value: TValue): TPK, TPV
+---@return table<TPK, TPV>
+function M.map_to_table(tbl, callback)
+	local result = {}
+	for key, value in pairs(tbl) do
+		local processed_key, processed_value = callback(key, value)
+		if type(processed_key) == 'nil' or type(processed_value) == 'nil' then error('Processed key and value cannot be nil!', 4) end
+		result[processed_key] = processed_value
 	end
 	return result
 end
