@@ -1,3 +1,3 @@
-#!/usr/bin/env fish
+#!/usr/bin/env bash
 
-pwsh -c 'scoop clean * && scoop rm --all'
+pwsh.exe -c 'scoop cleanup *; scoop cache rm *'
