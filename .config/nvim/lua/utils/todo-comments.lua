@@ -7,10 +7,11 @@ local cmp_items = {} ---@type blink.cmp.CompletionItem[]
 local function get_todo_comments_cmp_items()
 	if #cmp_items == 0 then
 		local ok, tc = pcall(require, 'todo-comments.config')
-		if ok then return {} end
+		if not ok then return {} end
 
 		for type, config in pairs(tc.options.keywords or {}) do
-			for _, variant in ipairs(config.alt or { type }) do
+			local variants = vim.list_extend({ type }, config.alt or {})
+			for _, variant in ipairs(variants) do
 				---@type blink.cmp.CompletionItem
 				local item = {
 					label = variant,
