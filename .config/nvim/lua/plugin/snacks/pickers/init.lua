@@ -44,7 +44,7 @@ local default_keys = vim.tbl_extend('keep', {
 }, snacks_const.disabled_default_keys)
 
 ---@type table<string, PickerYankAction>
-local yank_picker_utils_map = {
+local picker_yank_actions = {
 	highlights = { predicate = { 'hl_group' } },
 	notifications = { predicate = { 'item', 'msg' } },
 	explorer = {
@@ -142,7 +142,7 @@ return {
 					local action = vim.tbl_extend('force', {
 						predicate = function(item) return item.text end,
 						callback = function(items, copy) copy(items) end,
-					}, yank_picker_utils_map[picker.opts.source] or {})
+					}, picker_yank_actions[picker.opts.source] or {})
 
 					if type(action.predicate) == 'table' and #action.predicate > 0 then
 						---@diagnostic disable-next-line: param-type-mismatch

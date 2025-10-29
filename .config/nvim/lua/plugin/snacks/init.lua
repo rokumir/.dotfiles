@@ -6,7 +6,7 @@ return {
 	{
 		'folke/snacks.nvim',
 		keys = function()
-			require('utils.keymap').map { ';', '', desc = 'Snacks/Pickers' }
+			require('util.keymap').map { ';', '', desc = 'Snacks/Pickers' }
 			return {}
 		end,
 
@@ -70,7 +70,7 @@ return {
 			---@type snacks.notifier.Config|{}
 			notifier = {
 				---@type snacks.notifier.style
-				style = 'compact',
+				style = 'minimal',
 				top_down = false,
 			},
 
@@ -99,6 +99,6 @@ return {
 			explorer = { replace_netrw = false },
 		},
 	},
-	{ import = 'plugins.snacks' },
-	{ import = 'plugins.snacks.pickers' },
+	{ import = 'plugin.snacks' },
+	{ import = 'plugin.snacks.pickers' },
 }

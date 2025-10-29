@@ -37,7 +37,7 @@ return {
 				expose_as_code_action = 'all',
 
 				tsserver_file_preferences = {
-					disableSuggestions = not require('utils.root-dir').validate_func {
+					disableSuggestions = not require('util.root-dir').validate_func {
 						'package.json',
 						'node_modules',
 						'*.lock',
@@ -90,7 +90,7 @@ return {
 			},
 
 			on_attach = function(client, bufnr)
-				require('utils.keymap').map {
+				require('util.keymap').map {
 					buffer = bufnr,
 					{ '<leader>cM', '<cmd>TSToolsAddMissingImports<cr>', desc = 'TSTools: Add missing imports' },
 					{ '<leader>cD', '<cmd>TSToolsFixAll<cr>', desc = 'TSTools: Fix all diagnostics' },

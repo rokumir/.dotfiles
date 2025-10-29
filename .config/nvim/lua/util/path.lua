@@ -25,4 +25,12 @@ function M.shorten(path, opts)
 	return table.concat(components, '/')
 end
 
+---@param path string
+---@param opts {cwd?:string}?
+function M.relative(path, opts)
+	opts = opts or {}
+	local cwd = opts.cwd or vim.fn.getcwd()
+	return path:gsub('^' .. cwd .. '/', '')
+end
+
 return M

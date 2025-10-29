@@ -38,10 +38,18 @@ return {
 				},
 
 				keys = {
+					-- default keybinds
 					{ '<leader>ss', false },
 					{ '<leader>sS', false },
 					{ '<leader>cc', false },
 					{ '<leader>cC', false },
+					-- { ']]', function() Snacks.words.jump(vim.v.count1) end, has = 'documentHighlight', desc = 'Next Reference' },
+					-- { '[[', function() Snacks.words.jump(-vim.v.count1) end, has = 'documentHighlight', desc = 'Prev Reference' },
+					-- { '<a-n>', function() Snacks.words.jump(vim.v.count1, true) end, has = 'documentHighlight', desc = 'Next Reference' },
+					-- { '<a-p>', function() Snacks.words.jump(-vim.v.count1, true) end, has = 'documentHighlight', desc = 'Prev Reference' },
+					-- { '<leader>cc', vim.lsp.codelens.run, desc = 'Run Codelens', mode = { 'n', 'x' }, has = 'codeLens' },
+					-- { '<leader>cC', vim.lsp.codelens.refresh, desc = 'Refresh & Display Codelens', mode = { 'n' }, has = 'codeLens' },
+					-- { '<leader>cr', vim.lsp.buf.rename, desc = 'Rename', has = 'rename' },
 
 					{ 'gd', function() Snacks.picker.lsp_definitions() end, has = 'definition', desc = 'Definition' },
 					{ 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Declaration' },
@@ -60,17 +68,9 @@ return {
 
 					{ '<leader>ca', vim.lsp.buf.code_action, desc = 'Code Action', mode = { 'n', 'x' }, has = 'codeAction' },
 					{ '<leader>cA', LazyVim.lsp.action.source, desc = 'Source Action', has = 'codeAction' },
-					-- { '<leader>cc', vim.lsp.codelens.run, desc = 'Run Codelens', mode = { 'n', 'x' }, has = 'codeLens' },
-					-- { '<leader>cC', vim.lsp.codelens.refresh, desc = 'Refresh & Display Codelens', mode = { 'n' }, has = 'codeLens' },
 					{ '<leader>cR', function() Snacks.rename.rename_file() end, desc = 'Rename File', mode = { 'n' }, has = { 'workspace/didRenameFiles', 'workspace/willRenameFiles' } },
-					-- { '<leader>cr', vim.lsp.buf.rename, desc = 'Rename', has = 'rename' },
 					{ '<leader>cr', function() require('live-rename').rename() end, has = 'rename', desc = 'Rename Symbol' },
 					{ '<a-r>', function() require('live-rename').rename() end, mode = { 'n', 'i' }, has = 'rename', desc = 'Rename Symbol' },
-
-					{ ']]', function() Snacks.words.jump(vim.v.count1) end, has = 'documentHighlight', desc = 'Next Reference' },
-					{ '[[', function() Snacks.words.jump(-vim.v.count1) end, has = 'documentHighlight', desc = 'Prev Reference' },
-					{ '<a-n>', function() Snacks.words.jump(vim.v.count1, true) end, has = 'documentHighlight', desc = 'Next Reference' },
-					{ '<a-p>', function() Snacks.words.jump(-vim.v.count1, true) end, has = 'documentHighlight', desc = 'Prev Reference' },
 				},
 			},
 

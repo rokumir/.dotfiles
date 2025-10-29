@@ -1,4 +1,4 @@
-local map = require('utils.keymap').map
+local map = require('util.keymap').map
 
 -- Which-key groups register
 map {
@@ -112,8 +112,8 @@ map { 'N', [['nN'[v:searchforward].'zz']], mode = { 'x', 'o' }, expr = true, des
 
 --#region --- WORKSPACE (WINDOWS, TABS, BUFFERS)
 -- Close buffer / quit
-map { '<c-q>', function() require('utils.buffer').bufremove() end, desc = 'Safely Close Buffer' }
-map { '<c-s-q>', function() require('utils.buffer').bufremove(nil, { failsafe = false }) end, desc = 'Destroy Buffer' }
+map { '<c-q>', function() require('util.buffer').bufremove() end, desc = 'Safely Close Buffer' }
+map { '<c-s-q>', function() require('util.buffer').bufremove(nil, { failsafe = false }) end, desc = 'Destroy Buffer' }
 map { 'ZZ', vim.cmd.quitall, desc = 'Close Session' }
 
 -- Window resizing
@@ -129,10 +129,10 @@ map { '<leader>tn', '<cmd>tabnext<cr>', desc = 'Tab: Next' }
 map { '<leader>tp', '<cmd>tabprevious<cr>', desc = 'Tab: Previous' }
 
 -- Buffer history
-map { '<leader>tX', function() require('utils.buffer').history:clear() end, desc = 'Clear Buffer History' }
-map { '<leader>ts', function() require('utils.buffer').history:restore() end, desc = 'Restore Buffer History' }
-map { '<c-s-t>', function() require('utils.buffer').history:restore() end, desc = 'Restore Buffer History' }
-map { ';S', function() require('utils.buffer').history:picker() end, desc = 'Buffer History Search' }
+map { '<leader>tX', function() require('util.buffer').history:clear() end, desc = 'Clear Buffer History' }
+map { '<leader>ts', function() require('util.buffer').history:restore() end, desc = 'Restore Buffer History' }
+map { '<c-s-t>', function() require('util.buffer').history:restore() end, desc = 'Restore Buffer History' }
+map { ';S', function() require('util.buffer').history:picker() end, desc = 'Buffer History Search' }
 map { '<leader>`', ':b# <cr>', desc = 'Alternate buffer' }
 
 -- Pane Navigation
@@ -164,13 +164,13 @@ map {
 		local file = vim.api.nvim_buf_get_name(bufnr)
 		if file == '' or not vim.api.nvim_buf_is_valid(bufnr) then error 'No file to delete!' end
 
-		local prompt = 'Delete ' .. require('utils.path').shorten(file, { keep_last = 4 }) .. ' ?'
-		Snacks.picker.select({ 'Yes', 'No' }, { prompt = prompt }, function(_, idx)
-			if idx ~= 1 then return Snacks.notify.info 'Aborted!' end
-			local job_id = vim.fn.jobstart('gtrash put ' .. file, { detach = true })
-			Snacks.notify((job_id ~= 0 and 'File deleted: ' or 'Failed to start the job for: ') .. file, { level = job_id == 0 and 'error' or 'info' })
-
-			require('utils.buffer').bufremove(bufnr, { buffer_guard = false })
+		local prompt = 'Delete ' .. require('util.path').shorten(file, { keep_last = 4 }) .. ' ?'
+		Snacks.picker.util.confirm(prompt, function()
+			local job_id = vim.fn.jobstart('trash put ' .. file, { detach = true })
+			Snacks.notify({ (job_id ~= 0 and 'File deleted:' or 'Failed to delete:'), file }, {
+				level = job_id == 0 and 'error' or 'info',
+			})
+			require('util.buffer').bufremove(bufnr, { buffer_guard = false })
 		end)
 	end,
 	desc = 'Delete File',

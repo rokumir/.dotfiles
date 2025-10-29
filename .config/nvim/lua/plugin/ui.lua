@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-field
 local icons = LazyVim.config.icons
 icons.misc.modified = '✨'
 icons.misc.readonly = '🔒'
@@ -45,20 +46,10 @@ return {
 		},
 	},
 
-	{
-		'nvim-navic',
-		optional = true,
-		lazy = true,
-		init = function()
-			vim.g.navic_silence = true
-			require('snacks.util.lsp').on({
-				method = 'textDocument/documentSymbol',
-			}, function(buffer, client) require('nvim-navic').attach(client, buffer) end)
-		end,
-	},
-
 	{ -- Statusline
 		'nvim-lualine/lualine.nvim',
+		optional = true,
+		lazy = false,
 		opts = function()
 			local opts = {
 				options = {
@@ -157,10 +148,10 @@ return {
 
 					lualine_y = {
 						'location',
-						{ function() return require('utils.datetime').format.pretty_date() end },
+						{ function() return require('util.datetime').format.pretty_date() end },
 					},
 					lualine_z = {
-						{ function() return require('utils.datetime').format.pretty_time() end },
+						{ function() return require('util.datetime').format.pretty_time() end },
 					},
 				},
 			}
@@ -190,16 +181,18 @@ return {
 				if theme[mode] and theme[mode].c then theme[mode].c.bg = 'NONE' end
 			end
 			opts.options.theme = theme
+
+			return opts
 		end,
 	},
 
 	{ -- Tabs
 		'akinsho/bufferline.nvim',
 		keys = function()
-			local cycle_keys = {
-				next = vim.g.neovide and '<c-tab>' or '<tab>',
-				prev = vim.g.neovide and '<c-s-tab>' or '<s-tab>',
-			}
+			--stylua: ignore
+			local cycle_keys = vim.g.neovide
+				and { next = '<c-tab>', prev = '<c-s-tab>' }
+				or { next = '<tab>', prev = '<s-tab>' }
 			return {
 				{ cycle_keys.next, '<cmd>BufferLineCycleNext<cr>', desc = 'Tab: Next' },
 				{ cycle_keys.prev, '<cmd>BufferLineCyclePrev<cr>', desc = 'Tab: Prev' },
@@ -273,8 +266,8 @@ return {
 				sort_by = 'insert_at_end',
 				hover = { enabled = true, delay = 200 },
 
-				close_command = function(bufnr) require('utils.buffer').bufremove(bufnr) end,
-				middle_mouse_command = function(bufnr) require('utils.buffer').bufremove(bufnr) end,
+				close_command = function(bufnr) require('util.buffer').bufremove(bufnr) end,
+				middle_mouse_command = function(bufnr) require('util.buffer').bufremove(bufnr) end,
 			},
 			highlights = {},
 		},
@@ -315,7 +308,7 @@ return {
 			opts.signs.untracked.text = char_bar
 
 			opts.on_attach = function(buffer)
-				require('utils.keymap').map {
+				require('util.keymap').map {
 					buffer = buffer,
 					{ ']h', '<cmd>Gitsigns nav_hunk next<cr>', desc = 'Next Hunk' },
 					{ '[h', '<cmd>Gitsigns nav_hunk prev<cr>', desc = 'Prev Hunk' },
@@ -389,7 +382,7 @@ return {
 				c = { 'comment', 'region' },
 			},
 			enable_get_fold_virt_text = true,
-			fold_virt_text_handler = require('utils.ufo').make_fold_handler {
+			fold_virt_text_handler = require('util.ufo').make_fold_handler {
 				icon = '',
 			},
 		},

@@ -1,17 +1,17 @@
-local Actions = require 'snacks.explorer.actions'
-local Const = require 'config.const.snacks'
-local Tree = require 'snacks.explorer.tree'
+local snacks_actions = require 'snacks.explorer.actions'
+local snacks_const = require 'config.const.snacks'
+local snacks_tree = require 'snacks.explorer.tree'
 
 --- NOTE: Explorer doesn't use the `.ignore` file. So have to manually add it to the explorer exclude
 local function get_excludes()
-	local root_excludes = require('utils.root-dir').ignored_list()
-	local excludes = vim.list_extend(root_excludes, Const.excludes)
-	return vim.g.snacks_ignored and Const.excludes or excludes
+	local root_excludes = require('util.root-dir').ignored_list()
+	local excludes = vim.list_extend(root_excludes, snacks_const.excludes)
+	return vim.g.snacks_ignored and snacks_const.excludes or excludes
 end
 
 local function unfold_dir(picker, path)
-	Tree:open(path)
-	Actions.update(picker, { refresh = false })
+	snacks_tree:open(path)
+	snacks_actions.update(picker, { refresh = false })
 end
 
 return {
@@ -99,30 +99,31 @@ return {
 							end, selected_items)
 
 							local what = #paths == 1 and vim.fn.fnamemodify(paths[1], ':p:~:.') or #paths .. ' files'
-							Actions.confirm('Put to the trash ' .. what .. '?', function()
+							Snacks.picker.util.confirm('Put to the trash ' .. what .. '?', function()
 								for _, path in ipairs(paths) do
-									local err_data = {}
-									local job_id = vim.fn.jobstart('trash put ' .. path, {
+									local path_md = '**' .. require('util.path').relative(path) .. '**'
+									Snacks.notify.info({ 'Deleting...', path_md }, { id = path_md })
+
+									vim.fn.jobstart('trash put --debug ' .. path, {
 										detach = true,
-										on_stderr = function(_, data) err_data[#err_data + 1] = table.concat(data, '\n') end,
 										on_exit = function(_, code)
-											pcall(function()
-												if code == 0 then return Snacks.bufdelete { file = path, force = true } end
-												local err_msg = vim.trim(table.concat(err_data, ''))
-												Snacks.notify.error('Failed to delete `' .. path .. '`:\n- ' .. err_msg)
-											end)
+											if code == 0 then
+												Snacks.notify.info({ 'Deleted!', path_md }, { id = path_md })
+												Snacks.bufdelete { file = path, force = true }
+												return
+											end
+											Snacks.notify.error({ 'Failed to delete!', path_md }, { id = path_md })
 										end,
 									})
-									Tree:refresh(vim.fs.dirname(path))
-									if job_id == 0 then Snacks.notify.error('Failed to start the job for: ' .. path) end
+
+									snacks_actions.update(picker, { refresh = false })
 								end
-								Actions.update(picker, { refresh = false })
 							end)
 						end,
 
 						--- Explorer open all (recursive toggle)
 						explorer_open_all_sub = function(picker, item)
-							local curr_node = Tree:node(item.file)
+							local curr_node = snacks_tree:node(item.file)
 							if not (curr_node and curr_node.dir) then return end
 							local function unfold(node) ---@param node snacks.picker.explorer.Node
 								unfold_dir(picker, node.path)
@@ -138,7 +139,7 @@ return {
 
 						-- Better confirm action
 						confirm = function(picker, item)
-							local selected_node = Tree:node(item.file)
+							local selected_node = snacks_tree:node(item.file)
 							if not selected_node or (selected_node.dir and selected_node.open) then return end
 
 							if selected_node.dir then

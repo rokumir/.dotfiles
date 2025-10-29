@@ -31,7 +31,6 @@ return {
 		end,
 	},
 
-	-- TODO: delete outter surround
 	{ -- Delimiter pairs surroundability
 		'mini.surround',
 		lazy = true,

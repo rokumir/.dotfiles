@@ -32,10 +32,8 @@ function M.bufremove(bufnr, opts)
 
 	-- prompt to save if modified
 	if vim.bo.modified then
-		local prompt = 'Save changes to ' .. require('utils.path').shorten(vim.fn.bufname()) .. '?'
-		Snacks.picker.select({ 'Yes', 'No' }, { prompt = prompt }, function(_, idx)
-			if idx == 1 then vim.cmd.write() end
-		end)
+		local prompt = 'Save changes to ' .. require('util.path').shorten(vim.fn.bufname()) .. '?'
+		Snacks.picker.util.confirm(prompt, function() vim.cmd.write() end)
 		return
 	end
 

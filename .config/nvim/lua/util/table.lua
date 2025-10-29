@@ -36,12 +36,8 @@ end
 
 --- Custom table map that have both key and value in the callback function
 ---@generic TValue : unknown
----@generic TKey : number|string
----@generic TPK : number|string
----@generic TPV : unknown
----@param tbl table<TKey, TValue> | TValue[]
----@param callback fun(key: TKey, value: TValue): TPK, TPV
----@return table<TPK, TPV>
+---@param tbl table<number|string, TValue> | TValue[]
+---@param callback fun(key: number|string, value: TValue): number|string, unknown
 function M.map_to_table(tbl, callback)
 	local result = {}
 	for key, value in pairs(tbl) do
@@ -110,9 +106,3 @@ function M.complex_readonly(tbl, getters, opts)
 end
 
 return M
-
----@generic TValue : unknown
----@generic TKey : string|number
----@generic TResult
----@alias TableMapperList fun(tbl: TValue[], callback: fun(key: number, value: TValue): any): TResult[]
----@alias TableMapperDict fun(tbl: table<TKey, TValue>, callback: fun(key: TKey, value: TValue): any): TResult[]

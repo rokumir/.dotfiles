@@ -1,5 +1,4 @@
-local map = require('utils.keymap').map
-local bt_config = require 'config.const.buffertype'
+local map = require('util.keymap').map
 local ft_config = require 'config.const.filetype'
 
 local function augroup(name) return vim.api.nvim_create_augroup('nihil_' .. name, { clear = true }) end
@@ -93,7 +92,7 @@ vim.api.nvim_create_autocmd('BufDelete', {
 		local buf_path = vim.api.nvim_buf_get_name(bufnr)
 
 		local is_buffer_valid = vim.api.nvim_buf_is_valid(bufnr) and bo.modifiable and #buf_path > 0 and not ft_config.ignored_map[bo.filetype]
-		if is_buffer_valid then require('utils.buffer').history:store(buf_path) end
+		if is_buffer_valid then require('util.buffer').history:store(buf_path) end
 	end,
 })
 

@@ -1,4 +1,4 @@
-require('utils.keymap').map {
+require('util.keymap').map {
 	{ '<c-`>', function() Snacks.terminal.toggle() end, mode = { 'n', 'i', 't' }, desc = 'Terminal: Toggle Recent' },
 }
 

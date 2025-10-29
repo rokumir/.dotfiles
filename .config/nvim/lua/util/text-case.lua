@@ -2,7 +2,7 @@
 local M = {}
 
 -- stylua: ignore
-M.snacks_items = require('utils.table').readonly({
+M.snacks_items = require('util.table').readonly({
 	{ text = 'Upper'       , example = 'UPPER CASE'       , action = 'to_upper_case'        },
 	{ text = 'Lower'       , example = 'lower case'       , action = 'to_lower_case'        },
 	{ text = 'Snake'       , example = 'snake_case'       , action = 'to_snake_case'        },

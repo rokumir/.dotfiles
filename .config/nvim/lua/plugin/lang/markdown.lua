@@ -28,7 +28,7 @@ return {
 			{ '<leader>urM', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
 			{ '<leader><leader>m', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
 			{ '<leader><leader>M', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
-			{ '<a-o>', require('utils.markdown').open_current_buffer_in_obsidian, mode = { 'n', 'i' }, desc = 'Open File in Obsidian' },
+			{ '<a-o>', require('util.markdown').open_current_buffer_in_obsidian, mode = { 'n', 'i' }, desc = 'Open File in Obsidian' },
 		},
 		---@type render.md.Config
 		opts = {

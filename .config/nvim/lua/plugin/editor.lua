@@ -40,7 +40,7 @@ return {
 					vim.opt_local.showcmd = false
 					vim.opt_local.wrap = false
 
-					require('utils.keymap').map { '<c-s>', '<cmd>write | quit <cr>', buffer = ev.buf }
+					require('util.keymap').map { '<c-s>', '<cmd>write | quit <cr>', buffer = ev.buf }
 				end,
 			})
 
@@ -60,10 +60,24 @@ return {
 		version = false,
 		optional = true,
 		event = 'VeryLazy',
+		keys = function()
+			return {
+				{ 'r', function() require('flash').remote() end, mode = 'o', desc = 'Remote Flash' },
+				{ '<c-e>', mode = { 'c' }, function() require('flash').toggle() end, desc = 'Toggle Flash Search' },
+				{ -- Simulate nvim-treesitter incremental selection
+					'<c-space>',
+					mode = { 'n', 'o', 'x' },
+					function() require('flash').treesitter() end,
+					desc = 'Treesitter Incremental Selection',
+				},
+			}
+		end,
 		---@type Flash.Config
 		opts = {
+			---@type table<string, Flash.Config>
 			modes = {
 				char = {
+					enabled = true,
 					jump_labels = true,
 					keys = { 'f', 'F' },
 				},
@@ -73,10 +87,6 @@ return {
 				wrap = true,
 				mode = 'fuzzy',
 			},
-		},
-		keys = {
-			{ 'f', function() require('flash').jump { forward = true, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Forward 󱞣' },
-			{ 'F', function() require('flash').jump { forward = false, continue = true } end, mode = { 'n', 'x', 'o' }, desc = 'Flash Backward 󱞽' },
 		},
 	},
 
@@ -91,6 +101,7 @@ return {
 			keys = { ['<c-q>'] = 'close' },
 		},
 	},
+
 	{ -- Todo Comments
 		'folke/todo-comments.nvim',
 		optional = true,
@@ -266,7 +277,7 @@ return {
 		'johmsalas/text-case.nvim',
 		priority = 1000,
 		keys = {
-			{ ';C', function() require('utils.text-case'):picker() end, desc = 'Change Text Case', mode = { 'n', 's', 'x' } },
+			{ ';C', function() require('util.text-case'):picker() end, desc = 'Change Text Case', mode = { 'n', 's', 'x' } },
 		},
 		opts = { default_keymappings_enabled = false },
 	},
