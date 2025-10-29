@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-pwsh.exe -c 'scoop cleanup *; scoop cache rm *'
+pwsh.exe -WorkingDirectory "~" -c "scoop cleanup *; scoop cache rm *"
