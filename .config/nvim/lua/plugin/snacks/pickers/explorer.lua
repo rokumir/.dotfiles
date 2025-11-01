@@ -17,7 +17,7 @@ end
 return {
 	'folke/snacks.nvim',
 	keys = {
-		{ ';fe', function() Snacks.explorer { focus = false } end, desc = 'File Explorer' },
+		{ ';fe', function() Snacks.explorer { focus = true } end, desc = 'File Explorer' },
 		{ 'zx', function() Snacks.explorer { focus = false } end, desc = 'File Explorer' },
 		{ 'zX', function() Snacks.explorer.reveal { focus = true } end, desc = 'File Explorer' },
 	},
@@ -53,7 +53,6 @@ return {
 							keys = vim.tbl_extend('force', {}, require('config.const.snacks').disabled_default_keys, {
 								['<bs>'] = 'explorer_up',
 								['h'] = 'explorer_close', -- close directory
-								['<c-s-u>'] = 'explorer_update',
 								['U'] = 'explorer_update',
 								['<c-.>'] = 'explorer_focus',
 
@@ -91,7 +90,6 @@ return {
 
 						explorer_del = function(picker)
 							local selected_items = picker:selected { fallback = true }
-							picker.list:set_selected()
 
 							---@type string[]
 							local paths = vim.tbl_map(function(snacks_item)
@@ -100,23 +98,12 @@ return {
 
 							local what = #paths == 1 and vim.fn.fnamemodify(paths[1], ':p:~:.') or #paths .. ' files'
 							Snacks.picker.util.confirm('Put to the trash ' .. what .. '?', function()
-								for _, path in ipairs(paths) do
-									local path_md = '**' .. require('util.path').relative(path) .. '**'
-									Snacks.notify.info({ 'Deleting...', path_md }, { id = path_md })
-
-									vim.fn.jobstart('trash put --debug ' .. path, {
-										detach = true,
-										on_exit = function(_, code)
-											if code == 0 then
-												Snacks.notify.info({ 'Deleted!', path_md }, { id = path_md })
-												Snacks.bufdelete { file = path, force = true }
-												return
-											end
-											Snacks.notify.error({ 'Failed to delete!', path_md }, { id = path_md })
-										end,
+								picker.list:set_selected()
+								for _, file in ipairs(paths) do
+									require('util.file').delete(file, {
+										on_exit = function() picker:action 'explorer_update' end,
+										no_prompt = true,
 									})
-
-									snacks_actions.update(picker, { refresh = false })
 								end
 							end)
 						end,

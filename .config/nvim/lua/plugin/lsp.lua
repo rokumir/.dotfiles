@@ -12,7 +12,7 @@ return {
 	---@class PluginLspOpts
 	opts = {
 		autoformat = false,
-		inlay_hints = { enabled = false },
+		inlay_hints = { enabled = true },
 		codelens = { enabled = false },
 
 		---@type vim.diagnostic.Opts
@@ -45,10 +45,6 @@ return {
 					{ '<leader>cC', false },
 					-- { ']]', function() Snacks.words.jump(vim.v.count1) end, has = 'documentHighlight', desc = 'Next Reference' },
 					-- { '[[', function() Snacks.words.jump(-vim.v.count1) end, has = 'documentHighlight', desc = 'Prev Reference' },
-					-- { '<a-n>', function() Snacks.words.jump(vim.v.count1, true) end, has = 'documentHighlight', desc = 'Next Reference' },
-					-- { '<a-p>', function() Snacks.words.jump(-vim.v.count1, true) end, has = 'documentHighlight', desc = 'Prev Reference' },
-					-- { '<leader>cc', vim.lsp.codelens.run, desc = 'Run Codelens', mode = { 'n', 'x' }, has = 'codeLens' },
-					-- { '<leader>cC', vim.lsp.codelens.refresh, desc = 'Refresh & Display Codelens', mode = { 'n' }, has = 'codeLens' },
 					-- { '<leader>cr', vim.lsp.buf.rename, desc = 'Rename', has = 'rename' },
 
 					{ 'gd', function() Snacks.picker.lsp_definitions() end, has = 'definition', desc = 'Definition' },
@@ -68,9 +64,11 @@ return {
 
 					{ '<leader>ca', vim.lsp.buf.code_action, desc = 'Code Action', mode = { 'n', 'x' }, has = 'codeAction' },
 					{ '<leader>cA', LazyVim.lsp.action.source, desc = 'Source Action', has = 'codeAction' },
-					{ '<leader>cR', function() Snacks.rename.rename_file() end, desc = 'Rename File', mode = { 'n' }, has = { 'workspace/didRenameFiles', 'workspace/willRenameFiles' } },
+					{ '<leader>fr', function() Snacks.rename.rename_file() end, desc = 'Rename File', mode = 'n', has = { 'workspace/didRenameFiles', 'workspace/willRenameFiles' } },
 					{ '<leader>cr', function() require('live-rename').rename() end, has = 'rename', desc = 'Rename Symbol' },
 					{ '<a-r>', function() require('live-rename').rename() end, mode = { 'n', 'i' }, has = 'rename', desc = 'Rename Symbol' },
+					{ '<leader>cc', vim.lsp.codelens.run, desc = 'Run Codelens', mode = { 'n', 'x' }, has = 'codeLens' },
+					{ '<leader>cC', vim.lsp.codelens.refresh, desc = 'Refresh & Display Codelens', mode = { 'n' }, has = 'codeLens' },
 				},
 			},
 
@@ -78,14 +76,6 @@ return {
 			biome = true,
 
 			mdx_analyzer = true,
-			marksman = { enabled = false },
-			markdown_oxide = {
-				enabled = false,
-				cmd = { 'markdown-oxide' },
-				filetypes = {},
-				root_markers = { '.git', '.obsidian', '.moxide.toml' },
-				root_dir = util.root_pattern('.git', '.obsidian', '.moxide.toml'),
-			},
 
 			emmet_language_server = {
 				filetypes = { 'html', 'javascriptreact', 'typescriptreact', 'htmlangular', 'vue' },
@@ -102,8 +92,18 @@ return {
 				},
 			},
 
-			tsgo = true,
-			vtsls = true,
+			tsgo = {
+				enabled = true,
+				settings = {
+					codelens = true,
+				},
+			},
+			vtsls = {
+				enabled = false,
+				settings = {
+					codelens = true,
+				},
+			},
 			denols = {
 				enabled = false,
 				root_dir = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock', 'package.json', 'node_modules'),

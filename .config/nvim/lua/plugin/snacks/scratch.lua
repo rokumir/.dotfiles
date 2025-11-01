@@ -29,15 +29,7 @@ return {
 					q = false,
 					delete_file = {
 						'<a-D>',
-						function(self)
-							local file = vim.api.nvim_buf_get_name(self.buf)
-							if file == '' or vim.fn.filereadable(file) == 0 then return Snacks.notify.warn { 'File not found!', file } end
-
-							Snacks.picker.util.confirm('Delete this Scratch?', function()
-								vim.api.nvim_buf_delete(self.buf, { force = true })
-								if vim.fn.delete(file) then Snacks.notify.info 'File removed!' end
-							end)
-						end,
+						function(self) require('util.file').delete(self.buf) end,
 						desc = 'Delete Scratch File',
 						mode = { 'i', 'n' },
 					},

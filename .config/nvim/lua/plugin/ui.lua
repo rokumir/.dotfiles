@@ -266,8 +266,8 @@ return {
 				sort_by = 'insert_at_end',
 				hover = { enabled = true, delay = 200 },
 
-				close_command = function(bufnr) require('util.buffer').bufremove(bufnr) end,
-				middle_mouse_command = function(bufnr) require('util.buffer').bufremove(bufnr) end,
+				close_command = require('util.buffer').bufdelete,
+				middle_mouse_command = require('util.buffer').bufdelete,
 			},
 			highlights = {},
 		},

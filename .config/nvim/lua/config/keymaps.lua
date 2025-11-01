@@ -112,8 +112,8 @@ map { 'N', [['nN'[v:searchforward].'zz']], mode = { 'x', 'o' }, expr = true, des
 
 --#region --- WORKSPACE (WINDOWS, TABS, BUFFERS)
 -- Close buffer / quit
-map { '<c-q>', function() require('util.buffer').bufremove() end, desc = 'Safely Close Buffer' }
-map { '<c-s-q>', function() require('util.buffer').bufremove(nil, { failsafe = false }) end, desc = 'Destroy Buffer' }
+map { '<c-q>', function() Snacks.bufdelete.delete() end, desc = 'Safely Close Buffer' }
+-- map { '<c-s-q>', function() require('util.buffer').bufdelete { ft_passthru = false } end, desc = 'Destroy Buffer' }
 map { 'ZZ', vim.cmd.quitall, desc = 'Close Session' }
 
 -- Window resizing
@@ -157,24 +157,7 @@ map { '<c-s>', '<cmd>write<cr>', mode = { 'i', 'n', 'x', 's' }, desc = 'Save Fil
 
 -- New / Delete
 map { '<leader>fn', '<cmd>enew<cr>', desc = 'New File' }
-map {
-	'<leader>fd',
-	function()
-		local bufnr = vim.api.nvim_get_current_buf()
-		local file = vim.api.nvim_buf_get_name(bufnr)
-		if file == '' or not vim.api.nvim_buf_is_valid(bufnr) then error 'No file to delete!' end
-
-		local prompt = 'Delete ' .. require('util.path').shorten(file, { keep_last = 4 }) .. ' ?'
-		Snacks.picker.util.confirm(prompt, function()
-			local job_id = vim.fn.jobstart('trash put ' .. file, { detach = true })
-			Snacks.notify({ (job_id ~= 0 and 'File deleted:' or 'Failed to delete:'), file }, {
-				level = job_id == 0 and 'error' or 'info',
-			})
-			require('util.buffer').bufremove(bufnr, { buffer_guard = false })
-		end)
-	end,
-	desc = 'Delete File',
-}
+map { '<leader>fd', function() require('util.file').delete() end, desc = 'Delete File' }
 
 -- Make file executable
 map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File Executable' }
@@ -298,10 +281,24 @@ map { '<f2>m', '<cmd>Mason <cr>', desc = 'Mason', icon = '' }
 map { '<f2>f', '<cmd>ConformInfo <cr>', desc = 'Conform', icon = '' }
 map { '<f2>h', '<cmd>checkhealth <cr>', desc = 'Check Health', icon = '' }
 map { '<f2>L', LazyVim.news.changelog, desc = 'LazyVim Changelog', icon = '' }
-map { '<f2>b', vim.schedule_wrap(function()
-	vim.cmd.enew()
-	vim.fn.jobstart('btop', { term = true })
-end), desc = 'BTOP', icon = '' }
+map {
+	'<f2>b',
+	function()
+		Snacks.terminal.get('btop', {
+			cwd = vim.env.HOME,
+			win = {
+				ft = 'term_btop',
+				minimal = true,
+				position = 'float',
+				col = 0.9,
+				row = 0.9,
+				keys = { close_term_ = { '<c-q>', 'close', expr = true, mode = 't' } },
+			},
+		})
+	end,
+	desc = 'BTOP',
+	icon = '',
+}
 map {
 	'<f2>U',
 	function()

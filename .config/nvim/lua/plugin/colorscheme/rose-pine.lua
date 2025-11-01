@@ -4,12 +4,22 @@ return {
 	priority = 4000,
 	opts = {
 		variant = 'main',
-		dark_variant = 'dawn',
+		dark_variant = 'main',
 		dim_inactive_windows = false,
 		extend_background_behind_borders = true,
-		enable = { terminal = true, migrations = true },
-		styles = { transparency = false, bold = true, italic = true },
+		enable = {
+			terminal = true,
+			migrations = true, -- Handle deprecated options automatically
+			legacy_highlights = true, -- Improve compatibility for previous versions of Neovim
+		},
+		styles = {
+			bold = true,
+			italic = true,
+			transparency = false,
+		},
+
 		palette = {
+			---@class RosePinePalette
 			main = {
 				base = '#0f0f0f',
 				surface = '#0c0c0c',

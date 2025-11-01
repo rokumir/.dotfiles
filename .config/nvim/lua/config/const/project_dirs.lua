@@ -1,17 +1,31 @@
 local M = {}
 
-M.projects_dir = vim.env.RH_PROJECT
-M.throwaway_dir = vim.env.RH_THROWAWAY
-M.work_dir = vim.env.RH_WORK
-M.config_dir = vim.env.XDG_CONFIG_HOME
+M.project = vim.env.RH_PROJECT
+M.throwaway = vim.env.RH_THROWAWAY
+M.work = vim.env.RH_WORK
+M.config = vim.env.XDG_CONFIG_HOME
+M.script = vim.env.RH_SCRIPT
 
-M.all_working_dirs = {
+M.devs = {
 	vim.fs.normalize '~/documents',
-	vim.env.RH_SCRIPT,
-	M.projects_dir,
-	M.throwaway_dir,
-	M.work_dir,
-	M.config_dir,
+	M.config,
+	M.throwaway,
+	M.script,
+}
+
+M.works = {
+	M.project,
+	M.work,
+}
+
+M.all = {
+	unpack(M.devs),
+	unpack(M.works),
+}
+
+M.notes = {
+	main = vim.env.RH_NOTE,
+	old = vim.fs.normalize '~/documents/notes',
 }
 
 return M

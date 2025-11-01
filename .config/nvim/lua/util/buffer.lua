@@ -8,61 +8,41 @@ local function notice(msg, lvl)
 	ext_notify(msg, { title = 'Buffer History', level = lvl or vim.log.levels.INFO })
 end
 
----@param bufnr number?  Buffer to delete (0 or nil = current)
----@param opts BufferRemoveOptions?  Fallback buffers if windows show it (default: true)
-function M.bufremove(bufnr, opts)
-	bufnr = bufnr or 0
-	bufnr = bufnr == 0 and vim.api.nvim_get_current_buf() or bufnr
+---@param opts? number|BufferDeleteOptions bufnr | delete_options
+function M.bufdelete(opts)
 	opts = opts or {}
-	opts.failsafe = opts.failsafe ~= false
-	opts.buffer_guard = opts.buffer_guard ~= false
+	opts = type(opts) == 'number' and { buf = opts } or opts
+	opts = type(opts) == 'function' and { filter = opts } or opts
+	---@cast opts BufferDeleteOptions
 
-	local function close_buffer()
-		if vim.api.nvim_buf_is_valid(bufnr) then pcall(vim.api.nvim_buf_delete, bufnr, { force = true }) end
-	end
+	local buf = opts.buf or 0
+	if opts.file then buf = buf ~= -1 and vim.fn.bufnr(opts.file) or error 'Invalid buffer' end
+	buf = buf == 0 and vim.api.nvim_get_current_buf() or buf
 
-	-- skip certain filetypes/buffertypes
-	if opts.buffer_guard then
-		local filetype = vim.bo[bufnr].filetype
-		local buftype = vim.bo[bufnr].buftype
-		local ft_excludes = require('config.const.filetype').ignored_map
-		local bt_excludes = require('config.const.buffertype').ignored_map
-		if ft_excludes[filetype] or (buftype ~= '' and bt_excludes[buftype]) then return close_buffer() end
-	end
-
-	-- prompt to save if modified
-	if vim.bo.modified then
-		local prompt = 'Save changes to ' .. require('util.path').shorten(vim.fn.bufname()) .. '?'
-		Snacks.picker.util.confirm(prompt, function() vim.cmd.write() end)
-		return
-	end
-
-	-- reassign any windows showing this buffer
-	if opts.failsafe then
-		for _, win in ipairs(vim.fn.win_findbuf(bufnr)) do
-			vim.api.nvim_win_call(win, function()
-				if not vim.api.nvim_win_is_valid(win) or vim.api.nvim_win_get_buf(win) ~= bufnr then return end
-
-				-- try alternate buffer
-				local alt = vim.fn.bufnr '#'
-				if alt ~= bufnr and vim.fn.buflisted(alt) == 1 then
-					vim.api.nvim_win_set_buf(win, alt)
-					return
-				end
-
-				-- try previous buffer
-				local has_previous = pcall(vim.cmd.bprevious)
-				if has_previous and bufnr ~= vim.api.nvim_win_get_buf(win) then return end
-
-				-- fallback to a new listed buffer
-				local new_buf = vim.api.nvim_create_buf(true, false)
-				vim.api.nvim_win_set_buf(win, new_buf)
-			end)
+	if opts.ft_passthru ~= false then
+		local filetype = vim.bo[buf].filetype
+		local buftype = vim.bo[buf].buftype
+		local is_ignore_ft = require('config.const.filetype').ignored_map[filetype]
+		local is_ignore_bt = buftype ~= '' and require('config.const.buffertype').ignored_map[buftype]
+		if is_ignore_ft or is_ignore_bt then
+			opts.filter = true
+			opts.force = true
 		end
 	end
 
-	-- Finally, delete the buffer
-	close_buffer()
+	return Snacks.bufdelete.delete(opts)
+end
+
+---@param file? string
+---@return integer?
+function M.get_buf_from_file(file)
+	local buffers = vim.api.nvim_list_bufs()
+	for _, bufnr in ipairs(buffers) do
+		if vim.api.nvim_buf_is_loaded(bufnr) and vim.api.nvim_buf_get_name(bufnr) ~= '' then
+			local buffer_file_name = vim.api.nvim_buf_get_name(bufnr)
+			if buffer_file_name == file then return bufnr end
+		end
+	end
 end
 
 --#region Buffer History -------------------------
@@ -299,8 +279,8 @@ return M
 
 ---@class BufferHistoryState
 ---@field nodes table <string?, BufferHistoryEntry>
----@field head string?
----@field tail string?
+---@field head? string
+---@field tail? string
 ---@field size number
 ---
 ---@class BufferHistoryEntry
@@ -308,9 +288,8 @@ return M
 ---@field cwd string
 ---@field file string
 ---@field text string
----@field next string?
----@field prev string?
+---@field next? string
+---@field prev? string
 ---
----@class BufferRemoveOptions
----@field buffer_guard false?  Ignored filetypes/buffertypes
----@field failsafe false?  Fallback buffers if windows show it
+---@class BufferDeleteOptions : snacks.bufdelete.Opts
+---@field ft_passthru? false  Ignored filetypes/buffertypes

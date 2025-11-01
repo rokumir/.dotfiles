@@ -1,5 +1,6 @@
 ---@diagnostic disable: missing-fields
 local ft_util = require 'config.const.filetype'
+local note_dirs = require('config.const.project_dirs').notes
 
 ---@type LazyPluginSpec[]
 return {
@@ -136,6 +137,62 @@ return {
 
 			win_options = {
 				showbreak = { rendered = '  ' },
+			},
+		},
+	},
+
+	{
+		'obsidian-nvim/obsidian.nvim',
+		version = false,
+		ft = 'markdown',
+		event = {
+			'BufReadPre ' .. note_dirs.main .. '/*.md',
+			'BufNewFile ' .. note_dirs.main .. '/*.md',
+			'BufReadPre ' .. note_dirs.old .. '/*.md',
+			'BufNewFile ' .. note_dirs.old .. '/*.md',
+		},
+		---@module 'obsidian'
+		---@type obsidian.config
+		opts = {
+			workspaces = {
+				{ name = 'nihil', path = note_dirs.main },
+				{ name = 'notes', path = note_dirs.old },
+			},
+			frontmatter = { enabled = false },
+			ui = { enable = false, enabled = false },
+			checkbox = { enabled = false },
+			comment = { enabled = true },
+			callbacks = {
+				post_setup = function()
+					local function action(a) return '<cmd>Obsidian ' .. a .. ' <cr>' end
+					require('util.keymap').map {
+						{ '<leader>o', group = 'Obsidian', mode = { 'n', 'v' } },
+						{ '<leader>on', action 'new', desc = 'New Note' },
+						{ '<c-s-n>', action 'new', desc = 'Obsidian New Note' },
+						{ '<leader>op', group = 'Open Note' },
+						{ '<leader>opp', action 'search', desc = 'Search' },
+						{ '<leader>opt', action 'today', desc = 'Today' },
+						{ '<leader>opT', action 'tomorrow', desc = 'Tomorrow' },
+						{ '<leader>opy', action 'yesterday', desc = 'Yesterday' },
+						{ '<leader>ot', action 'tags', desc = 'Tags' },
+						{ ';t', action 'tags', desc = 'Tags' },
+						{ '<leader>ol', action 'links', desc = 'links' },
+						{ '<leader>ob', action 'backlinks', desc = 'Backlinks' },
+						{ 'grr', action 'backlinks', desc = 'Obsidian Backlinks' },
+						{ 'gd', action 'follow_link', desc = 'Obsidian Follow Link' },
+						{ '<leader>oT', action 'toc', desc = 'TOC' },
+						{ '<leader>oW', action 'workspace', desc = 'Switch Workspace' },
+						{ '<leader>fr', action 'rename', desc = 'Obsidian Rename' },
+						{ '<leader>oR', action 'rename', desc = 'Rename' },
+						{ '<c-enter>', action 'toggle_checkbox', desc = 'Obsidian Cycle Through Checkbox Options' },
+						{
+							mode = 'v',
+							{ '<leader>ol', action 'link', desc = 'Link Selection To A Note' },
+							{ '<leader>oL', action 'link_new', desc = 'Link to Selection In A New Note' },
+							{ '<leader>oe', action 'extract_node', desc = 'Put Selection In New Note & Link to it' },
+						},
+					}
+				end,
 			},
 		},
 	},

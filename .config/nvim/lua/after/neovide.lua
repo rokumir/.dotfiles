@@ -27,10 +27,10 @@ vim.g.neovide_title_background_color = vim.g.neovide_background_color
 -- Keymaps  BUG: Ctrl+Alt doesn't work on Windows -> https://github.com/neovide/neovide/issues/2899
 require('util.keymap').map {
 	{
-		'<c-s-n>',
+		'<f2>N',
 		vim.schedule_wrap(function()
 			vim.fn.jobstart 'neovide.exe ~ > /dev/null 2>&1 &'
-			Snacks.notify 'Opening a new Neovide instance...'
+			Snacks.notify '[Opening a new Neovide instance...]'
 		end),
 		desc = 'New Neovide Instance',
 	},

@@ -34,6 +34,7 @@ local default_keys = vim.tbl_extend('keep', {
 	['<a-L>'] = { 'preview_scroll_right', mode = { 'i', 'n' } },
 
 	['<a-y>'] = { 'yank', mode = { 'n', 'i' } },
+	['<a-l>'] = { 'toggle_live', mode = { 'i', 'n' } },
 	['<a-i>'] = { 'toggle_ignored_persist', mode = { 'i', 'n' } },
 	['<a-h>'] = { 'toggle_hidden_persist', mode = { 'i', 'n' } },
 	['<a-t>'] = { 'trouble_open_selected', mode = { 'i', 'n' } },
