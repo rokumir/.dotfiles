@@ -1,10 +1,6 @@
 local util = require 'lspconfig.util'
 local DOC_WIN_SIZE = vim.g.lsp_doc_max_size or 50
 local function twoslash_queries_attach_fn(...) return require('twoslash-queries').attach(...) end
-local function with_blink_capa(capabilities) ---@param capabilities lsp.ClientCapabilities
-	local exist, blink_cmp = pcall(require, 'blink.cmp')
-	return exist and blink_cmp.get_lsp_capabilities(capabilities) or capabilities
-end
 
 return {
 	'neovim/nvim-lspconfig',
@@ -28,7 +24,7 @@ return {
 		---@type table<string, lazyvim.lsp.Config|boolean>
 		servers = {
 			['*'] = {
-				capabilities = with_blink_capa {
+				capabilities = require('blink.cmp').get_lsp_capabilities {
 					workspace = {
 						fileOperations = {
 							didRename = true,
@@ -55,6 +51,9 @@ return {
 
 					{ 'K', function() vim.lsp.buf.hover { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE } end, has = 'hover', desc = 'Hover', mode = { 'n', 'v' } },
 					{ 'gK', function() vim.lsp.buf.signature_help { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE } end, has = 'signatureHelp', desc = 'Signature Help' },
+
+					{ '<a-n>', function() Snacks.words.jump(vim.v.count1, true) end, desc = 'Next Reference', enabled = function() return require('snacks.words').is_enabled() end },
+					{ '<a-p>', function() Snacks.words.jump(-vim.v.count1, true) end, desc = 'Prev Reference', enabled = function() return require('snacks.words').is_enabled() end },
 
 					{ '<c-a-k>', function() return vim.lsp.buf.signature_help { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE } end, mode = 'i', desc = 'Signature Help', has = 'signatureHelp' },
 					{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], has = 'organizeImports', desc = 'Organize Imports' },

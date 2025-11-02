@@ -29,8 +29,15 @@ vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
 })
 
 vim.api.nvim_create_autocmd('TermOpen', {
-	group = augroup 'startinsert_terminal',
+	group = augroup 'term_startinsert',
 	command = 'startinsert',
+})
+
+-- Fix conceallevel for json files
+vim.api.nvim_create_autocmd({ 'FileType' }, {
+	group = augroup 'conceal',
+	pattern = { 'markdown', 'mdx', 'json', 'jsonc', 'json5' },
+	command = 'set conceallevel=0',
 })
 
 -- Resize splits if window got resized

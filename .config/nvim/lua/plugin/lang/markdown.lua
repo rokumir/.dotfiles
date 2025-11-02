@@ -1,6 +1,11 @@
 ---@diagnostic disable: missing-fields
 local ft_util = require 'config.const.filetype'
-local note_dirs = require('config.const.project_dirs').notes
+local note_dir = require('config.const.project_dirs').notes
+
+local DATE_FORMAT = '%Y-%m-%d'
+local TIME_FORMAT = '%H:%M:%S'
+local DATETIME_FORMAT = DATE_FORMAT .. 'T' .. TIME_FORMAT
+local get_now_time = function() return tostring(os.date(DATETIME_FORMAT, os.time())) end
 
 ---@type LazyPluginSpec[]
 return {
@@ -29,7 +34,7 @@ return {
 			{ '<leader>urM', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
 			{ '<leader><leader>m', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
 			{ '<leader><leader>M', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
-			{ '<a-o>', require('util.markdown').open_current_buffer_in_obsidian, mode = { 'n', 'i' }, desc = 'Open File in Obsidian' },
+			-- { '<a-o>', require('util.markdown').open_current_buffer_in_obsidian, mode = { 'n', 'i' }, desc = 'Open File in Obsidian' },
 		},
 		---@type render.md.Config
 		opts = {
@@ -144,49 +149,69 @@ return {
 	{
 		'obsidian-nvim/obsidian.nvim',
 		version = false,
-		ft = 'markdown',
 		event = {
-			'BufReadPre ' .. note_dirs.main .. '/*.md',
-			'BufNewFile ' .. note_dirs.main .. '/*.md',
-			'BufReadPre ' .. note_dirs.old .. '/*.md',
-			'BufNewFile ' .. note_dirs.old .. '/*.md',
+			'BufReadPre ' .. note_dir.main .. '/*.md',
+			'BufNewFile ' .. note_dir.main .. '/*.md',
+			'BufReadPre ' .. note_dir.old .. '/*.md',
+			'BufNewFile ' .. note_dir.old .. '/*.md',
 		},
 		---@module 'obsidian'
 		---@type obsidian.config
 		opts = {
 			workspaces = {
-				{ name = 'nihil', path = note_dirs.main },
-				{ name = 'notes', path = note_dirs.old },
+				{ name = 'nihil', path = note_dir.main },
+				{ name = 'notes', path = note_dir.old },
 			},
 			frontmatter = { enabled = false },
-			ui = { enable = false, enabled = false },
 			checkbox = { enabled = false },
 			comment = { enabled = true },
+			ui = {
+				enable = false,
+				enabled = false,
+				ignore_conceal_warn = true,
+			},
+
+			---@type obsidian.config.TemplateOpts
+			templates = {
+				folder = '.meta/templates',
+				date_format = DATE_FORMAT,
+				time_format = TIME_FORMAT,
+				substitutions = {
+					-- yesterday = function() return tostring(os.date('%Y-%m-%d', os.time() - 86400)) end,
+					datetime = get_now_time,
+					now = get_now_time,
+				},
+				------@type table<string, obsidian.config.CustomTemplateOpts>
+				---customizations = {},
+			},
+
 			callbacks = {
 				post_setup = function()
 					local function action(a) return '<cmd>Obsidian ' .. a .. ' <cr>' end
 					require('util.keymap').map {
-						{ '<leader>o', group = 'Obsidian', mode = { 'n', 'v' } },
-						{ '<leader>on', action 'new', desc = 'New Note' },
+						{ '<leader>o', group = 'Obsidian', icon = '💎', mode = { 'n', 'v' } },
+						{ '<leader>on', action 'new', desc = 'New Note', icon = '󰎜' },
 						{ '<c-s-n>', action 'new', desc = 'Obsidian New Note' },
-						{ '<leader>op', group = 'Open Note' },
-						{ '<leader>opp', action 'search', desc = 'Search' },
-						{ '<leader>opt', action 'today', desc = 'Today' },
-						{ '<leader>opT', action 'tomorrow', desc = 'Tomorrow' },
-						{ '<leader>opy', action 'yesterday', desc = 'Yesterday' },
-						{ '<leader>ot', action 'tags', desc = 'Tags' },
-						{ ';t', action 'tags', desc = 'Tags' },
-						{ '<leader>ol', action 'links', desc = 'links' },
-						{ '<leader>ob', action 'backlinks', desc = 'Backlinks' },
-						{ 'grr', action 'backlinks', desc = 'Obsidian Backlinks' },
-						{ 'gd', action 'follow_link', desc = 'Obsidian Follow Link' },
-						{ '<leader>oT', action 'toc', desc = 'TOC' },
-						{ '<leader>oW', action 'workspace', desc = 'Switch Workspace' },
-						{ '<leader>fr', action 'rename', desc = 'Obsidian Rename' },
-						{ '<leader>oR', action 'rename', desc = 'Rename' },
-						{ '<c-enter>', action 'toggle_checkbox', desc = 'Obsidian Cycle Through Checkbox Options' },
+						{ '<leader>oN', action 'new_from_template', desc = 'New Note From Template', icon = '' },
+						{ '<leader>op', group = 'Open Note', icon = '󱙓' },
+						{ '<leader>opp', action 'search', desc = 'Search', icon = '󰍉' },
+						{ '<leader>opt', action 'today', desc = 'Today', icon = '󰃶' },
+						{ '<leader>opT', action 'tomorrow', desc = 'Tomorrow', icon = '' },
+						{ '<leader>opy', action 'yesterday', desc = 'Yesterday', icon = '' },
+						{ '<leader>ot', action 'tags', desc = 'Tags', icon = '' },
+						{ ';T', action 'tags', desc = 'Obsidian Tags', icon = '' },
+						{ '<leader>ol', action 'links', desc = 'links', icon = '' },
+						{ '<leader>ob', action 'backlinks', desc = 'Backlinks', icon = '' },
+						{ 'gr', action 'backlinks', desc = 'Obsidian Backlinks', icon = '' },
+						{ 'gd', action 'follow_link', desc = 'Obsidian Follow Link', icon = '' },
+						{ '<leader>oT', action 'toc', desc = 'TOC', icon = '' },
+						{ '<leader>oW', action 'workspace', desc = 'Switch Workspace', icon = '' },
+						{ '<leader>fr', action 'rename', desc = 'Obsidian Rename', icon = '' },
+						{ '<leader>oR', action 'rename', desc = 'Rename', icon = '' },
+						{ '<c-enter>', action 'toggle_checkbox', desc = 'Obsidian Cycle Through Checkbox Options', icon = '' },
 						{
 							mode = 'v',
+							icon = '',
 							{ '<leader>ol', action 'link', desc = 'Link Selection To A Note' },
 							{ '<leader>oL', action 'link_new', desc = 'Link to Selection In A New Note' },
 							{ '<leader>oe', action 'extract_node', desc = 'Put Selection In New Note & Link to it' },

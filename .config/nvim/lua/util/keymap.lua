@@ -42,4 +42,18 @@ function M.map(mappings, opts)
 	wk.add(mappings, opts)
 end
 
+---@param mappings (string|{[1]:string, mode?: string|string[], nop?:true})[]
+function M.unmap(mappings)
+	for _, keymap in ipairs(mappings) do
+		local is_tbl_km = type(keymap) == 'table'
+		local lhs = is_tbl_km and keymap[1] or keymap
+		local mode = is_tbl_km and keymap.mode or ''
+		if is_tbl_km and keymap.nop == true then
+			M.map { lhs, '<nop>', mode = mode }
+		else
+			pcall(vim.keymap.del, mode, lhs)
+		end
+	end
+end
+
 return M

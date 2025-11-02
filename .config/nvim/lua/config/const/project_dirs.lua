@@ -1,5 +1,7 @@
 local M = {}
 
+M.doc_dir = vim.fs.normalize '~/documents'
+
 M.project = vim.env.RH_PROJECT
 M.throwaway = vim.env.RH_THROWAWAY
 M.work = vim.env.RH_WORK
@@ -18,14 +20,13 @@ M.works = {
 	M.work,
 }
 
-M.all = {
-	unpack(M.devs),
-	unpack(M.works),
-}
-
 M.notes = {
 	main = vim.env.RH_NOTE,
-	old = vim.fs.normalize '~/documents/notes',
+	old = M.doc_dir .. '/notes',
 }
+
+M.all = {}
+vim.list_extend(M.all, M.devs)
+vim.list_extend(M.all, M.works)
 
 return M

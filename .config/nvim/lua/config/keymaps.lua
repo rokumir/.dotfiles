@@ -1,4 +1,6 @@
-local map = require('util.keymap').map
+local keymap_util = require 'util.keymap'
+local map = keymap_util.map
+local unmap = keymap_util.unmap
 
 -- Which-key groups register
 map {
@@ -23,8 +25,13 @@ map {
 	{ '<leader><leader>p', group = 'profiler' },
 }
 
-map {
-	{ '<f1>', '<nop>' },
+unmap {
+	{ '<f1>', nop = true },
+	{ 'gra', mode = { 'n', 'x' } },
+	'grr',
+	'grn',
+	'gri',
+	'grt',
 }
 
 --#region --- EDITOR
@@ -290,9 +297,10 @@ map {
 				ft = 'term_btop',
 				minimal = true,
 				position = 'float',
-				col = 0.9,
-				row = 0.9,
-				keys = { close_term_ = { '<c-q>', 'close', expr = true, mode = 't' } },
+				relative = 'editor',
+				width = 0.95,
+				height = 0.95,
+				keys = { ['<c-q>'] = { 'close', expr = true, mode = 't' } },
 			},
 		})
 	end,
