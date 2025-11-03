@@ -45,7 +45,7 @@ end
 ---@param opts? PrettyDateOpts
 ---@return string
 function M.format.pretty_date(t, opts)
-	opts = vim.tbl_deep_extend('force', {
+	opts = vim.tbl_extend('force', {
 		weekday = 'short',
 		month = 'short',
 		use_ordinal = true,
@@ -72,11 +72,11 @@ end
 ---@param opts? PrettyTimeOpts
 ---@return string
 function M.format.pretty_time(t, opts)
-	opts = vim.tbl_deep_extend('force', {
+	opts = vim.tbl_extend('force', {
 		hour12 = true,
 		pad_hour = false,
 		show_seconds = false,
-		ampm_upper = true,
+		ampm_uppercase = true,
 	}, opts or {})
 
 	local ts = to_timestamp(t)
@@ -90,7 +90,7 @@ function M.format.pretty_time(t, opts)
 		if h == 0 then h = 12 end
 		local hour = opts.pad_hour and string.format('%02d', h) or tostring(h)
 		local ampm = am and 'am' or 'pm'
-		if opts.ampm_upper then ampm = string.upper(ampm) end
+		if opts.ampm_uppercase then ampm = string.upper(ampm) end
 		if opts.show_seconds then
 			return string.format('%s:%s:%s %s', hour, MM, SS, ampm)
 		else
@@ -122,7 +122,7 @@ return M
 
 -- -------
 ---@class PrettyDateOpts
----@field weekday? 'short'|'long'|false include weekday or false to omit
+---@field weekday? 'short'|'long'|false weekday e.g., Mon, Monday, Sun, or Sunday
 ---@field month? 'short'|'long' month name style
 ---@field use_ordinal? boolean append st/nd/rd/th
 
@@ -130,7 +130,7 @@ return M
 ---@field hour12? boolean 12-hour if true, 24-hour if false
 ---@field pad_hour? boolean left-pad hour with 0
 ---@field show_seconds? boolean include :ss
----@field ampm_upper? boolean AM/PM upper-case
+---@field ampm_uppercase? boolean AM/PM upper-case
 
 ---@class PrettyOpts
 ---@field date? PrettyDateOpts

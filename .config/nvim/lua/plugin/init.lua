@@ -1,6 +1,24 @@
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
+	{
+		'LazyVim',
+		optional = true,
+		opts = {
+			icons = {
+				git = {
+					added = '󱅃 ',
+					modified = '󱅅 ',
+					removed = '󱅂 ',
+				},
+				misc = {
+					modified = '✨',
+					readonly = '🔒',
+				},
+			},
+		},
+	},
+
 	{ -- npm package management
 		'mason.nvim',
 		optional = true,

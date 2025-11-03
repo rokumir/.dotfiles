@@ -120,7 +120,6 @@ map { 'N', [['nN'[v:searchforward].'zz']], mode = { 'x', 'o' }, expr = true, des
 --#region --- WORKSPACE (WINDOWS, TABS, BUFFERS)
 -- Close buffer / quit
 map { '<c-q>', function() Snacks.bufdelete.delete() end, desc = 'Safely Close Buffer' }
--- map { '<c-s-q>', function() require('util.buffer').bufdelete { ft_passthru = false } end, desc = 'Destroy Buffer' }
 map { 'ZZ', vim.cmd.quitall, desc = 'Close Session' }
 
 -- Window resizing

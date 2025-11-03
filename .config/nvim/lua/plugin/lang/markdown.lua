@@ -163,7 +163,11 @@ return {
 				{ name = 'notes', path = note_dir.old },
 			},
 			frontmatter = { enabled = false },
-			checkbox = { enabled = false },
+			checkbox = {
+				enabled = true,
+				create_new = true,
+				order = { ' ', '/', '-', 'x' },
+			},
 			comment = { enabled = true },
 			ui = {
 				enable = false,
@@ -191,8 +195,9 @@ return {
 					require('util.keymap').map {
 						{ '<leader>o', group = 'Obsidian', icon = '💎', mode = { 'n', 'v' } },
 						{ '<leader>on', action 'new', desc = 'New Note', icon = '󰎜' },
-						{ '<c-s-n>', action 'new', desc = 'Obsidian New Note' },
+						{ '<c-n>', action 'new', desc = 'Obsidian New Note', icon = '󰎜' },
 						{ '<leader>oN', action 'new_from_template', desc = 'New Note From Template', icon = '' },
+						{ '<c-s-n>', action 'new_from_template', desc = 'Obsidian New Note', icon = '' },
 						{ '<leader>op', group = 'Open Note', icon = '󱙓' },
 						{ '<leader>opp', action 'search', desc = 'Search', icon = '󰍉' },
 						{ '<leader>opt', action 'today', desc = 'Today', icon = '󰃶' },

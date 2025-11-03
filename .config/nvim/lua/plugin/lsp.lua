@@ -82,13 +82,10 @@ return {
 
 			tailwindcss = true,
 
+			somesass_ls = true,
 			css_variables = true,
 			cssls = {
-				settings = {
-					css = { validate = true, lint = { unknownAtRules = 'ignore' } },
-					scss = { validate = true, lint = { unknownAtRules = 'ignore' } },
-					less = { validate = true, lint = { unknownAtRules = 'ignore' } },
-				},
+				init_options = { provideFormatter = false },
 			},
 
 			tsgo = {

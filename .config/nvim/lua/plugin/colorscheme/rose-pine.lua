@@ -68,6 +68,7 @@ return {
 			CurSearch = { bg = 'highlight_low', fg = 'none', underline = true },
 			Visual = { bg = 'subtle' },
 			Terminal = { bg = 'surface' },
+			MutedText = { fg = 'highlight_low' },
 			--#endregion
 
 			--#region misc
@@ -87,6 +88,8 @@ return {
 			GitSignsAdd = { fg = 'pine' },
 			-- GitSignsChange = { fg = 'rose' },
 			-- GitSignsDelete = { fg = 'pine' },
+			  InclineNormal = { bg = 'none', fg = 'muted' },
+			InclineNormalNC = { bg = 'none', fg = 'muted' },
 			--#endregion
 
 			--#region lsp

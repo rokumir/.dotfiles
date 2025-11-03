@@ -1,38 +1,5 @@
 local M = {}
 
--- Unified notifier
----@param msg string|string[]
----@param lvl snacks.notifier.level?
-local function notice(msg, lvl)
-	local ext_notify = Snacks.notify or LazyVim.notify
-	ext_notify(msg, { title = 'Buffer History', level = lvl or vim.log.levels.INFO })
-end
-
----@param opts? number|BufferDeleteOptions bufnr | delete_options
-function M.bufdelete(opts)
-	opts = opts or {}
-	opts = type(opts) == 'number' and { buf = opts } or opts
-	opts = type(opts) == 'function' and { filter = opts } or opts
-	---@cast opts BufferDeleteOptions
-
-	local buf = opts.buf or 0
-	if opts.file then buf = buf ~= -1 and vim.fn.bufnr(opts.file) or error 'Invalid buffer' end
-	buf = buf == 0 and vim.api.nvim_get_current_buf() or buf
-
-	if opts.ft_passthru ~= false then
-		local filetype = vim.bo[buf].filetype
-		local buftype = vim.bo[buf].buftype
-		local is_ignore_ft = require('config.const.filetype').ignored_map[filetype]
-		local is_ignore_bt = buftype ~= '' and require('config.const.buffertype').ignored_map[buftype]
-		if is_ignore_ft or is_ignore_bt then
-			opts.filter = true
-			opts.force = true
-		end
-	end
-
-	return Snacks.bufdelete.delete(opts)
-end
-
 ---@param file? string
 ---@return integer?
 function M.get_buf_from_file(file)
@@ -64,7 +31,7 @@ function M.history:clear()
 	self._state.head = nil
 	self._state.tail = nil
 	self._state.size = 0
-	notice 'History cleared'
+	Snacks.notify 'History cleared'
 end
 
 --- Adds (or moves) a buffer path to the front of history.
@@ -124,16 +91,16 @@ function M.history:pop(path)
 	local target = path or state.head
 	if not target then
 		if state.size == 0 then
-			notice 'History is empty'
+			Snacks.notify 'History is empty'
 		else
-			notice({ 'Incorrect state!', 'Initiate factory reset!' }, 'error')
+			Snacks.notify.error { 'Incorrect state!', 'Initiate factory reset!' }
 			self:clear()
 		end
 		return
 	end
 
 	local node = state.nodes[target]
-	if not node then return notice('Not in history: ' .. target) end
+	if not node then return Snacks.notify { 'Not in history:', '**[' .. target .. ']**' } end
 
 	local newer = node.next
 	local older = node.prev
@@ -161,15 +128,15 @@ function M.history:pop(path)
 	-- Attempt to open the file
 	if vim.fn.filereadable(target) == 0 then
 		local readable_target = target:gsub('^' .. vim.fn.getcwd() .. '/', '')
-		return notice('File not found: **' .. readable_target .. '**', 'error')
+		return Snacks.notify.error { 'File not found:', '**[' .. readable_target .. ']**' }
 	end
 	vim.cmd('edit ' .. vim.fn.fnameescape(target))
 end
 
 --- Launches a Snacks.nvim picker for buffer history.
 function M.history:picker()
-	if not Snacks then return notice({ '**Snacks.nvim** picker not found!', 'Picker disabled.' }, 'error') end
-	if self._state.size == 0 then return notice 'Empty!' end
+	if not Snacks then return Snacks.notify.error '**[Snacks.nvim]** picker not found!' end
+	if self._state.size == 0 then return Snacks.notify 'Empty!' end
 
 	Snacks.picker.pick {
 		source = 'buffer_history',

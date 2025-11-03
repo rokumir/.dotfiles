@@ -1,8 +1,3 @@
----@diagnostic disable: undefined-field
-local icons = LazyVim.config.icons
-icons.misc.modified = '✨'
-icons.misc.readonly = '🔒'
-
 local hl_color = require('snacks.util').color
 
 ---@module 'lazy'
@@ -51,6 +46,7 @@ return {
 		optional = true,
 		lazy = false,
 		opts = function()
+			local icons = LazyVim.config.icons
 			local opts = {
 				options = {
 					disabled_filetypes = {
@@ -64,6 +60,27 @@ return {
 					refresh = { refresh_time = 16, statusline = 16 }, -- ~60fps
 				},
 				sections = {
+					lualine_a = { 'mode' },
+					lualine_b = {
+						'branch',
+						{
+							'diff',
+							symbols = {
+								added = icons.git.added,
+								modified = icons.git.modified,
+								removed = icons.git.removed,
+							},
+							source = function()
+								local gitsigns = vim.b.gitsigns_status_dict
+								if gitsigns then return {
+									added = gitsigns.added,
+									modified = gitsigns.changed,
+									removed = gitsigns.removed,
+								} end
+							end,
+						},
+					},
+
 					lualine_c = {
 						LazyVim.lualine.root_dir(),
 						{ 'filetype', icon_only = true, separator = '', padding = { left = 1, right = 0 } },
@@ -106,22 +123,6 @@ return {
 							cond = function() return package.loaded['dap'] and require('dap').status() ~= '' end,
 							color = { fg = hl_color 'Debug' },
 						},
-						{
-							'diff',
-							symbols = {
-								added = icons.git.added,
-								modified = icons.git.modified,
-								removed = icons.git.removed,
-							},
-							source = function()
-								local gitsigns = vim.b.gitsigns_status_dict
-								if gitsigns then return {
-									added = gitsigns.added,
-									modified = gitsigns.changed,
-									removed = gitsigns.removed,
-								} end
-							end,
-						},
 						{ -- word count
 							function()
 								local wc = vim.fn.wordcount()
@@ -151,7 +152,11 @@ return {
 						{ function() return require('util.datetime').format.pretty_date() end },
 					},
 					lualine_z = {
-						{ function() return require('util.datetime').format.pretty_time() end },
+						{ function()
+							return require('util.datetime').format.pretty_time(nil, {
+								hour12 = false,
+							})
+						end },
 					},
 				},
 			}
@@ -178,7 +183,13 @@ return {
 			local theme = require 'lualine.themes.auto'
 			local lualine_modes = { 'insert', 'normal', 'visual', 'command', 'replace', 'inactive', 'terminal' }
 			for _, mode in ipairs(lualine_modes) do
-				if theme[mode] and theme[mode].c then theme[mode].c.bg = 'NONE' end
+				if theme[mode] then
+					if theme[mode].c then
+						theme[mode].c.bg = 'NONE'
+						theme[mode].c.fg = hl_color 'MutedText'
+					end
+					-- if theme[mode].x then theme[mode].x.bg = 'NONE' end
+				end
 			end
 			opts.options.theme = theme
 
@@ -248,50 +259,98 @@ return {
 				},
 			}
 		end,
-		---@module 'bufferline'
-		---@type bufferline.UserConfig
-		opts = {
-			options = {
-				show_close_icon = false,
-				always_show_bufferline = false,
-				show_buffer_close_icons = false,
-				show_buffer_icons = true,
-				show_tab_indicators = true,
-				enforce_regular_tabs = true,
+		opts = function()
+			---@module 'bufferline'
+			---@type bufferline.UserConfig
+			local opts = {
+				options = {
+					show_close_icon = false,
+					always_show_bufferline = false,
+					show_buffer_close_icons = false,
+					show_buffer_icons = true,
+					show_tab_indicators = true,
+					enforce_regular_tabs = true,
 
-				mode = 'buffers',
-				indicator = { style = 'underline' },
-				separator_style = { '', '' },
-				modified_icon = icons.misc.modified,
-				sort_by = 'insert_at_end',
-				hover = { enabled = true, delay = 200 },
+					mode = 'buffers',
+					indicator = { style = 'underline' },
+					separator_style = { '', '' },
+					modified_icon = LazyVim.config.icons.misc.modified,
+					sort_by = 'insert_at_end',
+					hover = { enabled = true, delay = 200 },
+					diagnostics = 'nvim_lsp',
+					diagnostics_indicator = function(_, _, diag)
+						local icons = LazyVim.config.icons.diagnostics
+						local ret = (diag.error and icons.Error .. diag.error .. ' ' or '') .. (diag.warning and icons.Warn .. diag.warning or '')
+						return vim.trim(ret)
+					end,
+					offsets = {
+						{ filetype = 'snacks_layout_box' },
+					},
+					get_element_icon = function(opts) return LazyVim.config.icons.ft[opts.filetype] end,
 
-				close_command = require('util.buffer').bufdelete,
-				middle_mouse_command = require('util.buffer').bufdelete,
-			},
-			highlights = {},
-		},
-	},
-	{
-		'akinsho/bufferline.nvim',
-		optional = true,
-		opts = function(_, opts)
+					close_command = function(n) Snacks.bufdelete(n) end,
+					middle_mouse_command = function(n) Snacks.bufdelete(n) end,
+				},
+				highlights = {},
+			}
+
 			local config = require 'config.const.bufferline'
-
 			for _, hl in pairs(config.transparent_bg_highlights) do
 				opts.highlights[hl] = vim.tbl_extend('force', opts.highlights[hl] or {}, { bg = 'none' })
 			end
 
-			local indicator_color = setmetatable({
+			local _, indicator_color = pcall(({
 				['rose-pine'] = function() return require('rose-pine.palette').love end,
-			}, {
-				__index = function(t, k)
-					return rawget(t, k) or function() return '#E84D4F' end
-				end,
-			})[vim.g.colors_name]()
+			})[vim.g.colors_name] or function() return '#E84D4F' end)
 			for _, hl in pairs(config.underline_highlights) do
 				opts.highlights[hl] = vim.tbl_extend('force', opts.highlights[hl] or {}, { sp = indicator_color })
 			end
+
+			return opts
+		end,
+	},
+
+	{ -- filename
+		'b0o/incline.nvim',
+		event = 'BufReadPre',
+		priority = 1200,
+		opts = function()
+			local opts = {
+				highlight = {
+					groups = {
+						InclineNormal = { default = true },
+						InclineNormalNC = { default = true },
+					},
+				},
+				window = {
+					margin = { vertical = 0, horizontal = 1 },
+				},
+				hide = {
+					cursorline = true,
+				},
+				ignore = {
+					filetypes = require('config.const.filetype').ignored_list,
+					floating_wins = true,
+					unlisted_buffers = true,
+				},
+				render = function(props)
+					local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ':t')
+					local ft_icon, ft_color = require('nvim-web-devicons').get_icon_color(filename)
+
+					if vim.bo[props.buf].modified then
+						local modified_icon = LazyVim.config.icons.misc.modified or '[+]'
+						filename = filename .. ' ' .. modified_icon
+					end
+
+					return {
+						{ ft_icon, guifg = ft_color },
+						{ ' ' },
+						{ filename },
+					}
+				end,
+			}
+
+			return opts
 		end,
 	},
 
@@ -334,32 +393,33 @@ return {
 			{ '[;', function() require('dropbar.api').goto_context_start() end, desc = 'Go to start of current c }ontext' },
 			{ '];', function() require('dropbar.api').select_next_context() end, desc = 'Select next context' },
 		},
-		---@type dropbar_configs_t
-		opts = {
-			sources = {
-				path = { max_depth = 1, modified = function(sym)
-					return sym:merge {
-						name = sym.name .. ' ' .. icons.misc.modified,
-						name_hl = 'Error',
-					}
-				end },
-			},
-			bar = {
-				padding = { left = 2, right = 2 },
-				sources = function(buf)
-					local sources = require 'dropbar.sources'
-					local fallback = require('dropbar.utils').source.fallback
+		opts = function()
+			local sources = require 'dropbar.sources'
+			local source_fallback = require('dropbar.utils').source.fallback
+			---@type dropbar_configs_t
+			return {
+				sources = {
+					path = { max_depth = 1, modified = function(sym)
+						return sym:merge {
+							name = sym.name,
+							name_hl = 'Error',
+						}
+					end },
+				},
+				bar = {
+					padding = { left = 2, right = 2 },
+					sources = function(buf)
+						if vim.bo[buf].ft == 'markdown' then return { sources.markdown } end
+						if vim.bo[buf].buftype == 'terminal' then return { sources.terminal } end
 
-					if vim.bo[buf].ft == 'markdown' then return { sources.path, sources.markdown } end
-					if vim.bo[buf].buftype == 'terminal' then return { sources.terminal } end
-
-					return {
-						-- dropbar_sources.path,
-						fallback { sources.lsp, sources.treesitter },
-					}
-				end,
-			},
-		},
+						return {
+							-- dropbar_sources.path,
+							source_fallback { sources.lsp, sources.treesitter },
+						}
+					end,
+				},
+			}
+		end,
 	},
 
 	{ -- better folding treesitter
