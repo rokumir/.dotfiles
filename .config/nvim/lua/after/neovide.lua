@@ -23,6 +23,8 @@ vim.g.neovide_opacity = 1
 vim.g.neovide_background_color = hl_color('Normal', 'bg')
 vim.g.neovide_title_text_color = hl_color('Identifier', 'fg')
 vim.g.neovide_title_background_color = vim.g.neovide_background_color
+vim.g.neovide_background_image = '/mnt/r/images/wallpapers/xianyu-hao-YKVLhmbz81w-unsplash.jpg'
+vim.g.neovide_background_image_transparency = 0.5
 
 -- Keymaps  BUG: Ctrl+Alt doesn't work on Windows -> https://github.com/neovide/neovide/issues/2899
 require('util.keymap').map {

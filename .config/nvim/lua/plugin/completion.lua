@@ -11,23 +11,6 @@ local source_priorities = {
 	snippets = -10,
 	todo_comments = -100,
 }
-local ts_reject_nodes = {
-	comment = true,
-	line_comment = true,
-	block_comment = true,
-	comment_content = true,
-	doc = true,
-	doc_comment = true,
-}
-local function is_reject_ts_nodes()
-	if require('config.const.filetype').document_map[vim.bo.filetype] then return true end
-	local row, column = unpack(vim.api.nvim_win_get_cursor(0))
-	local node = vim.treesitter.get_node {
-		bufnr = 0,
-		pos = { row - 1, math.max(0, column - 1) }, -- seems to be necessary...
-	}
-	return node and ts_reject_nodes[node:type()]
-end
 
 ---@module 'lazy'
 ---@type LazyPluginSpec
@@ -75,10 +58,10 @@ return { -- Blink.cmp
 				},
 				todo_comments = {
 					name = 'TodoComments',
-					module = 'util.todo-comments',
+					module = 'util.todo-comments.blink',
 					score_offset = -100,
 					async = true,
-					should_show_items = is_reject_ts_nodes,
+					should_show_items = require('util.todo-comments.util').should_show_items,
 					min_keyword_length = 3,
 				},
 			},

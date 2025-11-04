@@ -316,12 +316,6 @@ return {
 		priority = 1200,
 		opts = function()
 			local opts = {
-				highlight = {
-					groups = {
-						InclineNormal = { default = true },
-						InclineNormalNC = { default = true },
-					},
-				},
 				window = {
 					margin = { vertical = 0, horizontal = 1 },
 				},

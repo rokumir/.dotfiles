@@ -1,10 +1,8 @@
----@diagnostic disable: missing-fields, return-type-mismatch
---- @module 'blink.cmp'
---- @type blink.cmp.Source
+---@diagnostic disable: missing-fields
 local M = {}
 
 local cmp_items = {} ---@type blink.cmp.CompletionItem[]
-local function get_todo_comments_cmp_items()
+function M.get_todo_comments_cmp_items()
 	if #cmp_items == 0 then
 		local ok, tc = pcall(require, 'todo-comments.config')
 		if not ok then return {} end
@@ -35,16 +33,23 @@ local function get_todo_comments_cmp_items()
 	return cmp_items
 end
 
-function M.new() return setmetatable({}, { __index = M }) end
-
-function M:get_completions(_, callback)
-	local items = get_todo_comments_cmp_items()
-	callback {
-		items = items,
-		is_incomplete_forward = true,
-		is_incomplete_backward = false,
+local ts_reject_nodes = {
+	comment = true,
+	line_comment = true,
+	block_comment = true,
+	comment_content = true,
+	doc = true,
+	doc_comment = true,
+}
+--- Check if the treesitter context is not a comment (if detectable)
+---@return boolean
+function M.should_show_items()
+	local row, column = unpack(vim.api.nvim_win_get_cursor(0))
+	local node = vim.treesitter.get_node {
+		bufnr = 0,
+		pos = { row - 1, math.max(0, column - 1) }, -- seems to be necessary...
 	}
-	return function() end -- cancel function
+	return node ~= nil and ts_reject_nodes[node:type()]
 end
 
 return M

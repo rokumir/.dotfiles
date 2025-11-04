@@ -35,39 +35,37 @@ return {
 
 				keys = {
 					-- default keybinds
+					{ 'K', mode = 'i', false },
 					{ '<leader>ss', false },
 					{ '<leader>sS', false },
 					{ '<leader>cc', false },
 					{ '<leader>cC', false },
-					-- { ']]', function() Snacks.words.jump(vim.v.count1) end, has = 'documentHighlight', desc = 'Next Reference' },
-					-- { '[[', function() Snacks.words.jump(-vim.v.count1) end, has = 'documentHighlight', desc = 'Prev Reference' },
-					-- { '<leader>cr', vim.lsp.buf.rename, desc = 'Rename', has = 'rename' },
 
-					{ 'gd', function() Snacks.picker.lsp_definitions() end, has = 'definition', desc = 'Definition' },
+					{ 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Definition' },
 					{ 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Declaration' },
 					{ 'gr', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
 					{ 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Implementation' },
 					{ 'gy', function() Snacks.picker.lsp_type_definitions() end, desc = 'T[y]pe Definition' },
 
-					{ 'K', function() vim.lsp.buf.hover { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE } end, has = 'hover', desc = 'Hover', mode = { 'n', 'v' } },
-					{ 'gK', function() vim.lsp.buf.signature_help { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE } end, has = 'signatureHelp', desc = 'Signature Help' },
+					{ 'K', function() vim.lsp.buf.hover { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE } end, desc = 'Hover', mode = { 'n', 'v' } },
+					{ 'gK', function() vim.lsp.buf.signature_help { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE } end, desc = 'Signature Help' },
 
-					{ '<a-n>', function() Snacks.words.jump(vim.v.count1, true) end, desc = 'Next Reference', enabled = function() return require('snacks.words').is_enabled() end },
-					{ '<a-p>', function() Snacks.words.jump(-vim.v.count1, true) end, desc = 'Prev Reference', enabled = function() return require('snacks.words').is_enabled() end },
+					{ '<c-a-k>', function() return vim.lsp.buf.signature_help { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE } end, mode = 'i', desc = 'Signature Help' },
+					{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], desc = 'Organize Imports' },
 
-					{ '<c-a-k>', function() return vim.lsp.buf.signature_help { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE } end, mode = 'i', desc = 'Signature Help', has = 'signatureHelp' },
-					{ '<a-s-o>', LazyVim.lsp.action['source.organizeImports'], has = 'organizeImports', desc = 'Organize Imports' },
+					{ '🔥', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, desc = 'Code actions' },
+					{ '<c-.>', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, desc = 'Code actions' },
 
-					{ '🔥', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
-					{ '<c-.>', vim.lsp.buf.code_action, mode = { 'n', 'v', 'i' }, has = 'codeAction', desc = 'Code actions' },
+					{ '<leader>ca', vim.lsp.buf.code_action, desc = 'Code Action', mode = { 'n', 'x' } },
+					{ '<leader>cA', LazyVim.lsp.action.source, desc = 'Source Action' },
+					{ '<leader>fr', function() Snacks.rename.rename_file() end, desc = 'Rename File', mode = 'n' },
+					{ '<leader>cr', function() require('live-rename').rename() end, desc = 'Rename Symbol' },
+					{ '<a-r>', function() require('live-rename').rename() end, mode = { 'n', 'i' }, desc = 'Rename Symbol' },
 
-					{ '<leader>ca', vim.lsp.buf.code_action, desc = 'Code Action', mode = { 'n', 'x' }, has = 'codeAction' },
-					{ '<leader>cA', LazyVim.lsp.action.source, desc = 'Source Action', has = 'codeAction' },
-					{ '<leader>fr', function() Snacks.rename.rename_file() end, desc = 'Rename File', mode = 'n', has = { 'workspace/didRenameFiles', 'workspace/willRenameFiles' } },
-					{ '<leader>cr', function() require('live-rename').rename() end, has = 'rename', desc = 'Rename Symbol' },
-					{ '<a-r>', function() require('live-rename').rename() end, mode = { 'n', 'i' }, has = 'rename', desc = 'Rename Symbol' },
-					{ '<leader>cc', vim.lsp.codelens.run, desc = 'Run Codelens', mode = { 'n', 'x' }, has = 'codeLens' },
-					{ '<leader>cC', vim.lsp.codelens.refresh, desc = 'Refresh & Display Codelens', mode = { 'n' }, has = 'codeLens' },
+					{ ']]', function() Snacks.words.jump(vim.v.count1) end, desc = 'Next Reference' },
+					{ '[[', function() Snacks.words.jump(-vim.v.count1) end, desc = 'Prev Reference' },
+					{ '<a-n>', function() Snacks.words.jump(vim.v.count1, true) end, mode = { 'n', 'v' }, desc = 'Next Reference' },
+					{ '<a-p>', function() Snacks.words.jump(-vim.v.count1, true) end, mode = { 'n', 'v' }, desc = 'Prev Reference' },
 				},
 			},
 

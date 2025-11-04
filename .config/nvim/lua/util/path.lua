@@ -33,4 +33,45 @@ function M.relative(path, opts)
 	return path:gsub('^' .. cwd .. '/', '')
 end
 
+---@param paths string[]
+---@return boolean
+function M.is_matches(paths)
+	local pwd = vim.fn.getcwd()
+	for _, path in ipairs(paths) do
+		local realpath = vim.fn.expand(path)
+		if realpath == pwd then return true end
+	end
+	return false
+end
+
+M.root_dir = {}
+
+---@param pattern string[]
+function M.root_dir.match_pattern(pattern)
+	local root_dir_matcher = require('lspconfig.util').root_pattern(unpack(pattern))
+	local is_matched = root_dir_matcher(vim.uv.cwd()) ~= nil
+	return is_matched
+end
+
+--- Get ignored list from the root dir (.ignore)
+---@return string[]
+function M.root_dir.ignored_list()
+	local root_dir = vim.fn.getcwd()
+	local ignore_filepath = vim.fn.findfile('.ignore', root_dir .. ';')
+	if #ignore_filepath == 0 then return {} end
+
+	if type(ignore_filepath) == 'string' then ignore_filepath = { ignore_filepath } end
+	---@cast ignore_filepath string[]
+
+	local ignore_list = {}
+	for _, file_path in ipairs(ignore_filepath) do
+		for _, line in ipairs(vim.fn.readfile(file_path)) do
+			local trimmed_line = vim.trim(line)
+			if #trimmed_line > 0 and not trimmed_line:match '^#' then table.insert(ignore_list, trimmed_line) end
+		end
+	end
+
+	return ignore_list
+end
+
 return M

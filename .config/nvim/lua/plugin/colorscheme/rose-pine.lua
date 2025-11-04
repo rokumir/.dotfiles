@@ -10,7 +10,7 @@ return {
 		enable = {
 			terminal = true,
 			migrations = true, -- Handle deprecated options automatically
-			legacy_highlights = true, -- Improve compatibility for previous versions of Neovim
+			legacy_highlights = false, -- Improve compatibility for previous versions of Neovim
 		},
 		styles = {
 			bold = true,
@@ -21,7 +21,7 @@ return {
 		palette = {
 			---@class RosePinePalette
 			main = {
-				base = '#0f0f0f',
+				base = '#080808',
 				surface = '#0c0c0c',
 				overlay = '#1f1f1f',
 				muted = '#687077',
@@ -106,9 +106,9 @@ return {
 
 			-- SnacksNormal = { bg = 'surface' },
 			-- SnacksBackdrop = { bg = 'none', blend = 0 },
-			SnacksIndent = { fg = 'overlay' },
-			SnacksIndentScope = { fg = 'highlight_med' },
-			SnacksIndentChunk = { fg = 'highlight_med' },
+			SnacksIndent = { fg = '#141414' },
+			SnacksIndentScope = { fg = 'highlight_low' },
+			SnacksIndentChunk = { fg = 'highlight_low' },
 			SnacksInputNormal = { bg = 'none' },
 			SnacksPicker = { bg = 'surface' },
 			SnacksPickerTree = { fg = 'highlight_low' },

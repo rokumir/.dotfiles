@@ -37,11 +37,6 @@ return {
 				expose_as_code_action = 'all',
 
 				tsserver_file_preferences = {
-					disableSuggestions = not require('util.root-dir').validate_func {
-						'package.json',
-						'node_modules',
-						'*.lock',
-					}(),
 					quotePreference = 'single', --= auto, double, or single
 					includeCompletionsForModuleExports = true,
 					includeCompletionsForImportStatements = true,

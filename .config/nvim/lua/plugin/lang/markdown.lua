@@ -7,35 +7,31 @@ local TIME_FORMAT = '%H:%M:%S'
 local DATETIME_FORMAT = DATE_FORMAT .. 'T' .. TIME_FORMAT
 local get_now_time = function() return tostring(os.date(DATETIME_FORMAT, os.time())) end
 
+vim.api.nvim_create_autocmd('DirChanged', {
+	group = vim.api.nvim_create_augroup('nihil_enable_obsidian_dir', { clear = true }),
+	callback = function()
+		local is_note_dirs = require('util.path').is_matches { note_dir.main, note_dir.old }
+		if is_note_dirs then require('lazy').load { plugins = { 'obsidian.nvim' } } end
+	end,
+})
+
 ---@type LazyPluginSpec[]
 return {
-	{ 'davidmh/mdx.nvim', ft = 'mdx' }, -- treesitter for MDX files
-
-	{ -- Live preview
-		'iamcco/markdown-preview.nvim',
-		cmd = { 'MarkdownPreviewToggle', 'MarkdownPreview', 'MarkdownPreviewStop' },
-		build = function()
-			require('lazy').load { plugins = { 'markdown-preview.nvim' } }
-			vim.fn['mkdp#util#install']()
-		end,
-		ft = ft_util.document_list,
-		keys = {
-			{ '<leader>uM', '<cmd>MarkdownPreviewToggle<cr>', ft = 'markdown', desc = 'Markdown Preview' },
-		},
-		config = function() vim.cmd [[do FileType]] end,
-	},
+	{ 'davidmh/mdx.nvim', ft = 'mdx' }, -- Treesitter for MDX files
 
 	{ -- Prettify markdown in neovim
 		'MeanderingProgrammer/render-markdown.nvim',
 		ft = ft_util.document_list,
-		keys = {
-			{ '<leader>ur', '', desc = 'Render Markdown' },
-			{ '<leader>urm', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
-			{ '<leader>urM', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
-			{ '<leader><leader>m', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
-			{ '<leader><leader>M', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
-			-- { '<a-o>', require('util.markdown').open_current_buffer_in_obsidian, mode = { 'n', 'i' }, desc = 'Open File in Obsidian' },
-		},
+		keys = function()
+			require('util.keymap').map {
+				{ '<leader>ur', group = 'Render Markdown' },
+				{ '<leader>urm', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
+				{ '<leader>urM', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
+				{ '<leader><leader>m', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
+				{ '<leader><leader>M', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
+			}
+			return {}
+		end,
 		---@type render.md.Config
 		opts = {
 			file_types = { 'markdown', 'norg', 'rmd', 'org', 'codecompanion', 'copilot-chat' },
@@ -44,8 +40,9 @@ return {
 
 			link = { enabled = true },
 			html = { enabled = true },
-			quote = { repeat_linebreak = true, icon = '│ ' },
 			yaml = { enabled = true },
+			quote = { repeat_linebreak = true, icon = '│ ' },
+			completions = { lsp = { enabled = true } },
 
 			heading = {
 				enabled = true,
@@ -103,19 +100,19 @@ return {
 
 			-- stylua: ignore
 			callout = {
-				-- 	-- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'.
-				-- 	-- The key is for healthcheck and to allow users to change its values, value type below.
-				-- 	-- | raw        | matched against the raw text of a 'shortcut_link', case insensitive |
-				-- 	-- | rendered   | replaces the 'raw' value when rendering                             |
-				-- 	-- | highlight  | highlight for the 'rendered' text and quote markers                 |
-				-- 	-- | quote_icon | optional override for quote.icon value for individual callout       |
-				-- 	-- | category   | optional metadata useful for filtering                              |
+				-- Callouts are a special instance of a 'block_quote' that start with a 'shortcut_link'.
+				-- The key is for healthcheck and to allow users to change its values, value type below.
+				-- | raw        | matched against the raw text of a 'shortcut_link', case insensitive |
+				-- | rendered   | replaces the 'raw' value when rendering                             |
+				-- | highlight  | highlight for the 'rendered' text and quote markers                 |
+				-- | quote_icon | optional override for quote.icon value for individual callout       |
+				-- | category   | optional metadata useful for filtering                              |
 				note      = { raw = '[!NOTE]',      rendered = ' 󰋽 Note',      highlight = 'RenderMarkdownInfo',    category = 'github'   },
 				tip       = { raw = '[!TIP]',       rendered = ' 󰌶 Tip',       highlight = 'RenderMarkdownSuccess', category = 'github'   },
 				important = { raw = '[!IMPORTANT]', rendered = ' 󰅾 Important', highlight = 'RenderMarkdownHint',    category = 'github'   },
 				warning   = { raw = '[!WARNING]',   rendered = ' 󰀪 Warning',   highlight = 'RenderMarkdownWarn',    category = 'github'   },
 				caution   = { raw = '[!CAUTION]',   rendered = ' 󰳦 Caution',   highlight = 'RenderMarkdownError',   category = 'github'   },
-				-- 	-- Obsidian: https://help.obsidian.md/Editing+and+formatting/Callouts
+				-- Obsidian: https://help.obsidian.md/Editing+and+formatting/Callouts
 				abstract  = { raw = '[!ABSTRACT]',  rendered = ' 󰨸 Abstract',  highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
 				summary   = { raw = '[!SUMMARY]',   rendered = ' 󰨸 Summary',   highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
 				tldr      = { raw = '[!TLDR]',      rendered = ' 󰨸 Tldr',      highlight = 'RenderMarkdownInfo',    category = 'obsidian' },
@@ -149,14 +146,10 @@ return {
 	{
 		'obsidian-nvim/obsidian.nvim',
 		version = false,
-		event = {
-			'BufReadPre ' .. note_dir.main .. '/*.md',
-			'BufNewFile ' .. note_dir.main .. '/*.md',
-			'BufReadPre ' .. note_dir.old .. '/*.md',
-			'BufNewFile ' .. note_dir.old .. '/*.md',
+		lazy = true,
+		dependencies = {
+			{ 'goropikari/front-matter.nvim', build = 'make setup', lazy = true, config = true },
 		},
-		---@module 'obsidian'
-		---@type obsidian.config
 		opts = {
 			workspaces = {
 				{ name = 'nihil', path = note_dir.main },
@@ -175,7 +168,6 @@ return {
 				ignore_conceal_warn = true,
 			},
 
-			---@type obsidian.config.TemplateOpts
 			templates = {
 				folder = '.meta/templates',
 				date_format = DATE_FORMAT,
@@ -220,6 +212,45 @@ return {
 							{ '<leader>ol', action 'link', desc = 'Link Selection To A Note' },
 							{ '<leader>oL', action 'link_new', desc = 'Link to Selection In A New Note' },
 							{ '<leader>oe', action 'extract_node', desc = 'Put Selection In New Note & Link to it' },
+						},
+						{ '<c-s-e>', function() Snacks.picker.files() end, desc = 'Find Files' },
+						{
+							'<c-e>',
+							function()
+								local snacks_format = require 'snacks.picker.format'
+								local fm_exists, fm = pcall(require, 'front-matter')
+								if not fm_exists then return Snacks.notify.error '**[front-matter.nvim]** plugin not found!' end
+
+								Snacks.picker.files {
+									source = 'markdown_notes',
+									title = 'Quick Switch',
+									layout = 'vscode_focus_min',
+									ft = { 'markdown', 'mdx', 'md' },
+									---@type snacks.picker.format
+									format = function(item, picker)
+										local ret = {}
+
+										local fm_results = fm.get { item.file } or {}
+										local frontmatter = fm_results[item._path] -- frontmatter keys are fullpaths
+
+										if frontmatter then
+											local ft_icon = Snacks.picker.util.align(frontmatter.icon or '󰍔', picker.opts.formatters.file.icon_width or 2)
+											ret[#ret + 1] = { ft_icon, 'MiniIconsGrey', virtual = true }
+
+											local file_title = frontmatter.title or frontmatter.aliases[1]
+											ret[#ret + 1] = { file_title, 'SnacksPickerFile', field = 'file' }
+
+											ret[#ret + 1] = { ' ' }
+											ret[#ret + 1] = { item.file, 'SnacksPickerDir', field = 'file' }
+										else
+											vim.list_extend(ret, snacks_format.filename(item, picker))
+										end
+
+										return ret
+									end,
+								}
+							end,
+							desc = 'Quick Switch',
 						},
 					}
 				end,

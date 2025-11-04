@@ -71,7 +71,7 @@ map { ',', '"_', mode = { 'o', 'n', 's', 'x' }, desc = 'Void Reigster' }
 map {
 	nowait = true,
 	mode = { 'o', 'n', 's', 'x' },
-	desc = 'System Clipboard Register',
+	group = 'System Clipboard Register',
 	{ ',s', '"+' },
 	{ ',sp', '"+p' },
 	{ ',sP', '"+P' },
@@ -79,7 +79,7 @@ map {
 
 -- Paste from system clipboard
 map {
-	desc = 'Paste from System Clipboard',
+	group = 'Paste from System Clipboard',
 	{ '<c-s-v>', '"+P', mode = { 'n', 'v' } }, -- normal & visual
 	{ '<c-s-v>', '<c-r>+', mode = { 'i', 'c' } }, -- insert & cmdline
 	{ -- terminal
@@ -170,7 +170,6 @@ map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File E
 --#endregion
 
 --#region --- TERMINAL
-map { '<a-~>', '<cmd>term <cr>', desc = 'New Terminal' }
 map { '<c-s-space>', '<c-\\><c-n>', mode = 't', desc = 'Escape Terminal' }
 map { '<c-;>', '<a-|>', mode = 't', desc = 'Sendkey alt-|' }
 -- map { '<c-tab>', '<c-tab>', mode = 't', desc = 'Sendkey ctrl-tab' }
@@ -190,6 +189,7 @@ map {
 	mode = 't',
 	desc = 'Mimic CTRL-R in Terminal',
 }
+map { '<a-~>', function() Snacks.terminal.get(nil, { win = { position = 'current' } }) end, desc = 'New Terminal' }
 --#endregion
 
 --#region --- LSP & DIAGNOSTICS
@@ -217,7 +217,7 @@ map { '<leader>um', '<cmd>delm! | delm A-Z0-9 | redraw <cr>', desc = 'Clear Mark
 
 -- Clear visual noise
 map {
-	desc = 'Clear Visual Noises',
+	group = 'Clear Visual Noises',
 	mode = { 'n', 'x' },
 	{
 		'<leader>uu',
@@ -259,7 +259,6 @@ Snacks.toggle.zen():map '<leader><leader>z'
 Snacks.toggle.inlay_hints():map '<leader><leader>H'
 Snacks.toggle.profiler():map '<leader><leader>pp'
 Snacks.toggle.profiler_highlights():map '<leader><leader>ph'
-
 Snacks.toggle
 	.new({
 		name = 'Rulers',
@@ -297,8 +296,6 @@ map {
 				minimal = true,
 				position = 'float',
 				relative = 'editor',
-				width = 0.95,
-				height = 0.95,
 				keys = { ['<c-q>'] = { 'close', expr = true, mode = 't' } },
 			},
 		})

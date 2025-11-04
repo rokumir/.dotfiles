@@ -107,7 +107,7 @@ return {
 		optional = true,
 		opts = function(_, opts)
 			opts.keywords = opts.keywords or {}
-			if opts.keywords.TEST ~= nil then opts.keywords.TEST.icon = ' ' end
+			if opts.keywords.TEST then opts.keywords.TEST.icon = ' ' end
 		end,
 		keys = function()
 			return {
