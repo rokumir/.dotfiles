@@ -1,15 +1,15 @@
 ---@diagnostic disable: missing-fields
 local ft_util = require 'config.const.filetype'
-local note_dir = require('config.const.project_dirs').notes
+local note_dirs = require('config.const.project_dirs').notes
 
 local DATE_FORMAT = '%Y-%m-%d'
 local TIME_FORMAT = '%H:%M:%S'
-local function is_note_dirs() return require('util.path').is_matches { note_dir.main, note_dir.old } end
+local function is_note_pwd() return require('util.path').is_matches { note_dirs.main, note_dirs.old } end
 
 vim.api.nvim_create_autocmd('DirChanged', {
 	group = require('util.autocmd').augroup 'enable_obsidian_dir',
 	callback = function()
-		if is_note_dirs() then require('lazy').load { plugins = { 'obsidian.nvim' } } end
+		if is_note_pwd() then require('lazy').load { plugins = { 'obsidian.nvim' } } end
 	end,
 })
 
@@ -144,14 +144,14 @@ return {
 	{
 		'obsidian-nvim/obsidian.nvim',
 		version = false,
-		lazy = not is_note_dirs(),
+		lazy = not is_note_pwd(),
 		dependencies = {
 			{ 'goropikari/front-matter.nvim', build = 'make setup', lazy = true, config = true },
 		},
 		opts = {
 			workspaces = {
-				{ name = 'nihil', path = note_dir.main },
-				{ name = 'notes', path = note_dir.old },
+				{ name = 'nihil', path = note_dirs.main },
+				{ name = 'notes', path = note_dirs.old },
 			},
 			frontmatter = { enabled = false },
 			checkbox = {

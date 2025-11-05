@@ -113,5 +113,8 @@ vim.api.nvim_create_autocmd('FileType', {
 
 vim.api.nvim_create_autocmd('DirChanged', {
 	group = augroup 'notify_dir_changed',
-	callback = function() Snacks.notify { '**Changed Directory:**', '**[' .. vim.uv.cwd() .. ']**' } end,
+	callback = function()
+		local cwd = vim.uv.cwd():gsub('^' .. vim.env.HOME, '~')
+		Snacks.notify { '**Changed Directory:**', '**[' .. cwd .. ']**' }
+	end,
 })

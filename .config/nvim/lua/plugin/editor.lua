@@ -80,6 +80,9 @@ return {
 					enabled = true,
 					jump_labels = true,
 					keys = { 'f', 'F' },
+					search = {
+						mode = 'fuzzy',
+					},
 				},
 			},
 			search = {

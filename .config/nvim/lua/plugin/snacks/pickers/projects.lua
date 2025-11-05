@@ -9,7 +9,7 @@ return {
 		picker = {
 			sources = {
 				projects = {
-					dev = require('config.const.project_dirs').all,
+					dev = require('config.const.project_dirs').all(),
 					layout = 'vscode_focus',
 					patterns = {
 						'.git',
