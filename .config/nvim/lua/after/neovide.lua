@@ -27,21 +27,24 @@ vim.g.neovide_title_background_color = vim.g.neovide_background_color
 -- vim.g.neovide_background_image_transparency = 0.5
 
 vim.api.nvim_create_user_command('OpenNewNeovide', function(opts)
-	local expanded_args = vim.fn.expand(opts.nargs)
-	local path = vim.fn.isdirectory(expanded_args) ~= 0 and expanded_args or nil
 	vim.schedule(function()
+		local expanded_args = vim.fn.expand(opts.args)
+		local path = vim.fn.isdirectory(expanded_args) ~= 0 and expanded_args or nil
 		local cmd = 'neovide.exe'
 		local msg = { '**[Opening Neovide at dir:]**' }
 		if path then
-			cmd = cmd .. ' ' .. path
-			local shortpath = require('util.path').shorten(path, { keep_last = 4 })
-			msg[#msg + 1] = '**[' .. shortpath .. ']**'
+			cmd = cmd .. ' -- -c "cd ' .. path .. '"'
+			msg[#msg + 1] = '**[' .. path:gsub('^' .. vim.env.HOME, '~') .. ']**'
 		end
 
 		vim.fn.jobstart(cmd, { cwd = vim.env.HOME, detach = true })
 		Snacks.notify(msg)
 	end)
-end, { desc = 'Open New Neovide Instance' })
+end, {
+	desc = 'Open New Neovide Instance',
+	nargs = '?', -- ⬅️ allow zero or one argument
+	complete = 'dir', -- ⬅️ optional: enables directory completion
+})
 
 -- Keymaps  BUG: Ctrl+Alt doesn't work on Windows -> https://github.com/neovide/neovide/issues/2899
 require('util.keymap').map {

@@ -38,7 +38,10 @@ return {
 						},
 					},
 					actions = {
-						new_neovide_window = function(_, item) vim.cmd('OpenNewNeovide ' .. Snacks.picker.util.path(item) or error()) end,
+						new_neovide_window = function(_, item)
+							local path = Snacks.picker.util.path(item) or error()
+							vim.cmd('OpenNewNeovide "' .. path .. '"')
+						end,
 					},
 				},
 			},
