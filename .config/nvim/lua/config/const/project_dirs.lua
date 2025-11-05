@@ -45,7 +45,7 @@ end
 
 M.notes = {
 	main = val_dir(vim.env.RH_NOTE),
-	old = val_dir(M.DOC_DIR .. '/notes'),
+	old = val_dir(M.DOC_DIR .. '/notes/notes'),
 }
 
 local all = {}

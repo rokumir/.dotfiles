@@ -38,7 +38,7 @@ end
 function M.is_matches(paths)
 	local pwd = vim.fn.getcwd()
 	for _, path in ipairs(paths) do
-		local realpath = vim.fn.expand(path)
+		local realpath = vim.uv.fs_realpath(vim.fn.expand(path)) or error('Invalid path ' .. path)
 		if realpath == pwd then return true end
 	end
 	return false
