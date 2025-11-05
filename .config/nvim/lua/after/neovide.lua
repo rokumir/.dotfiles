@@ -31,7 +31,7 @@ vim.api.nvim_create_user_command('OpenNewNeovide', function(opts)
 		local expanded_args = vim.fn.expand(opts.args)
 		local path = vim.fn.isdirectory(expanded_args) ~= 0 and expanded_args or nil
 		local cmd = 'neovide.exe'
-		local msg = { '**[Opening Neovide at dir:]**' }
+		local msg = { '**[Opening Neovide]**' }
 		if path then
 			cmd = cmd .. ' -- -c "cd ' .. path .. '"'
 			msg[#msg + 1] = '**[' .. path:gsub('^' .. vim.env.HOME, '~') .. ']**'

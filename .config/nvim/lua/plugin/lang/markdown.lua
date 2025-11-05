@@ -1,6 +1,7 @@
 ---@diagnostic disable: missing-fields
 local ft_util = require 'config.const.filetype'
 local note_dirs = require('config.const.project_dirs').notes
+local map_key = require('util.keymap').map
 
 local DATE_FORMAT = '%Y-%m-%d'
 local TIME_FORMAT = '%H:%M:%S'
@@ -9,7 +10,12 @@ local function is_note_pwd() return require('util.path').is_matches { note_dirs.
 vim.api.nvim_create_autocmd('DirChanged', {
 	group = require('util.autocmd').augroup 'enable_obsidian_dir',
 	callback = function()
-		if is_note_pwd() then require('lazy').load { plugins = { 'obsidian.nvim' } } end
+		if is_note_pwd() then
+			require('lazy').load { plugins = { 'obsidian.nvim' } }
+			map_key { '<c-e>', '<cmd>SnacksNotesQuickSwitcher <cr>', desc = 'Quick Switch' }
+		else
+			map_key { '<c-e>', function() Snacks.picker.files() end, desc = 'Find Files' }
+		end
 	end,
 })
 
@@ -141,19 +147,21 @@ return {
 		},
 	},
 
-	{
+	{ -- Obsdiian
 		'obsidian-nvim/obsidian.nvim',
 		version = false,
 		lazy = not is_note_pwd(),
 		dependencies = {
 			{ 'goropikari/front-matter.nvim', build = 'make setup', lazy = true, config = true },
 		},
+		---@module 'obsidian'
+		---@type obsidian.config
 		opts = {
 			workspaces = {
 				{ name = 'nihil', path = note_dirs.main },
 				{ name = 'notes', path = note_dirs.old },
 			},
-			frontmatter = { enabled = false },
+			frontmatter = { enabled = true, sort = false, },
 			checkbox = {
 				enabled = true,
 				create_new = true,
@@ -164,6 +172,15 @@ return {
 				enable = false,
 				enabled = false,
 				ignore_conceal_warn = true,
+			},
+			statusline = { format = '{{backlinks}} backlinks' },
+
+			daily_notes = {
+				folder = 'journal',
+				date_format = DATE_FORMAT,
+				alias_format = '%A %B %-d, %Y',
+				default_tags = { 'journal' },
+				workdays_only = false,
 			},
 
 			templates = {
@@ -211,70 +228,80 @@ return {
 							{ '<leader>oL', action 'link_new', desc = 'Link to Selection In A New Note' },
 							{ '<leader>oe', action 'extract_node', desc = 'Put Selection In New Note & Link to it' },
 						},
-						{
-							'<c-e>',
-							function()
-								local snacks_format = require 'snacks.picker.format'
-								local ok, front_matter = pcall(require, 'front-matter')
-								local get_fm = ok and front_matter.get or error '**[front-matter.nvim]** plugin not found!'
-
-								Snacks.picker.files {
-									source = 'markdown_notes',
-									title = '󱀂 Notes',
-									layout = 'vscode_focus',
-									ft = { 'markdown', 'mdx', 'md' },
-									transform = function(item)
-										vim.defer_fn(function()
-											local fm_result = get_fm { item.file } or {}
-											local fm = fm_result[item._path] -- front-matter keys are fullpaths
-
-											item.has_frontmatter = fm ~= nil
-											if not item.has_frontmatter then return end
-
-											item.icon = fm.icon
-											item.title = fm.title or (fm.aliases and fm.aliases[1]) or nil
-											item.tags = #(fm.tags or {}) > 0 and table.concat(fm.tags, '') or nil
-											item.text = Snacks.picker.util.text(item, { 'title', 'tags' })
-										end, 0)
-									end,
-									---@type snacks.picker.format
-									format = function(item, picker)
-										if not item.has_frontmatter then return snacks_format.filename(item, picker) end
-
-										local ret = {}
-
-										local ft_icon = Snacks.picker.util.align(item.icon or '󰍔', 3)
-										table.insert(ret, { ft_icon, 'MiniIconsGrey', virtual = true })
-
-										if item.title then
-											vim.list_extend(ret, {
-												{ item.title, 'SnacksPickerFile', field = 'file' },
-												{ ' ' },
-												{ item.file, 'SnacksPickerDir', field = 'file' },
-											})
-										else
-											local base_filename = vim.fn.fnamemodify(item.file, ':t')
-											vim.list_extend(ret, {
-												{ base_filename, 'SnacksPickerFile', field = 'file' },
-												{ ' ' },
-												{ item.file:gsub('/' .. base_filename, ''), 'SnacksPickerDir', field = 'file' },
-											})
-										end
-
-										if item.tags then vim.list_extend(ret, {
-											{ ' ' },
-											{ item.tags, 'SnacksPickerDir', field = 'tags' },
-										}) end
-
-										return ret
-									end,
-								}
-							end,
-							desc = 'Quick Switch',
-						},
 					}
 				end,
 			},
 		},
+		config = function(_, opts)
+			require('obsidian').setup(opts)
+
+			vim.api.nvim_create_user_command('SnacksNotesQuickSwitcher', function()
+				local snacks_format = require 'snacks.picker.format'
+				local obsidian_ok, obsidian_note = pcall(require, 'obsidian.note')
+				local get_note_info = obsidian_ok and obsidian_note.from_file or error '**[Obsidian.nvim]** plugin not found!'
+
+				Snacks.picker.files {
+					source = 'markdown_notes',
+					title = '󱀂 Notes',
+					layout = 'vscode_focus',
+					ft = { 'markdown', 'mdx', 'md' },
+					transform = function(item)
+						vim.defer_fn(function()
+							local note = get_note_info(item.file, { collect_anchor_links = false, collect_blocks = false, load_contents = false, max_lines = 100 })
+							if not note.has_frontmatter then return end
+							vim.validate('note.aliases', note.aliases, 'table')
+							vim.validate('note.tags', note.tags, 'table')
+
+							item.fm = {
+								icon = note.metadata.icon,
+								title = type(note.metadata.title) == 'string' and note.metadata.title or note.aliases[1] or nil,
+								aliases = #note.aliases > 0 and table.concat(note.aliases, '') or nil,
+								tags = #note.tags > 0 and table.concat(note.tags, '') or nil,
+							}
+							item.text = Snacks.picker.util.text(item.fm, { 'title', 'tags', 'aliases' })
+						end, 0)
+					end,
+					---@type snacks.picker.format
+					format = function(item, picker)
+						local fm = item.fm
+						if not fm then return snacks_format.filename(item, picker) end
+
+						local ret = {}
+
+						local ft_icon = Snacks.picker.util.align(fm.icon or '󰍔', 3)
+						table.insert(ret, { ft_icon, 'MiniIconsGrey', virtual = true })
+
+						if not _G.nihil then _G.nihil = item.title end
+
+						if fm.title then
+							vim.list_extend(ret, {
+								{ fm.title, 'SnacksPickerFile', field = 'file' },
+								{ ' ' },
+								{ item.file, 'SnacksPickerDir', field = 'file' },
+							})
+						else
+							local base_filename = vim.fn.fnamemodify(item.file, ':t')
+							vim.list_extend(ret, {
+								{ base_filename, 'SnacksPickerFile', field = 'file' },
+								{ ' ' },
+								{ item.file:gsub('/' .. base_filename, ''), 'SnacksPickerDir', field = 'file' },
+							})
+						end
+
+						if fm.tags then vim.list_extend(ret, {
+							{ ' ' },
+							{ fm.tags, 'SnacksPickerDir', field = 'tags' },
+						}) end
+
+						if fm.aliases then vim.list_extend(ret, {
+							{ ' ' },
+							{ fm.aliases, 'SnacksPickerDir', field = 'aliases' },
+						}) end
+
+						return ret
+					end,
+				}
+			end, { desc = 'Open Notes Quick Switcher (Snacks)' })
+		end,
 	},
 }

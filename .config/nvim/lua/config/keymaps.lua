@@ -170,6 +170,7 @@ map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File E
 --#endregion
 
 --#region --- TERMINAL
+map { '<a-~>', '<cmd>term <cr>', desc = 'New Terminal' }
 map { '<c-s-space>', '<c-\\><c-n>', mode = 't', desc = 'Escape Terminal' }
 map { '<c-;>', '<a-|>', mode = 't', desc = 'Sendkey alt-|' }
 -- map { '<c-tab>', '<c-tab>', mode = 't', desc = 'Sendkey ctrl-tab' }
@@ -189,7 +190,6 @@ map {
 	mode = 't',
 	desc = 'Mimic CTRL-R in Terminal',
 }
-map { '<a-~>', function() Snacks.terminal.get(nil, { win = { position = 'current' } }) end, desc = 'New Terminal' }
 --#endregion
 
 --#region --- LSP & DIAGNOSTICS
