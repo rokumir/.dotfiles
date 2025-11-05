@@ -38,12 +38,7 @@ return {
 						},
 					},
 					actions = {
-						new_neovide_window = vim.schedule_wrap(function(_, item)
-							local path = Snacks.picker.util.path(item) or error()
-							local shortpath = require('util.path').shorten(path, { keep_last = 4 })
-							vim.fn.jobstart('neovide.exe -- -c "cd ' .. path .. '" > /dev/null 2>&1 &')
-							Snacks.notify { '[Opening]', '**[' .. shortpath .. ']**' }
-						end),
+						new_neovide_window = function(_, item) vim.cmd('OpenNewNeovide ' .. Snacks.picker.util.path(item) or error()) end,
 					},
 				},
 			},

@@ -23,19 +23,29 @@ vim.g.neovide_opacity = 1
 vim.g.neovide_background_color = hl_color('Normal', 'bg')
 vim.g.neovide_title_text_color = hl_color('Identifier', 'fg')
 vim.g.neovide_title_background_color = vim.g.neovide_background_color
-vim.g.neovide_background_image = '/mnt/r/images/wallpapers/xianyu-hao-YKVLhmbz81w-unsplash.jpg'
-vim.g.neovide_background_image_transparency = 0.5
+-- vim.g.neovide_background_image = '/mnt/r/images/wallpapers/xianyu-hao-YKVLhmbz81w-unsplash.jpg'
+-- vim.g.neovide_background_image_transparency = 0.5
+
+vim.api.nvim_create_user_command('OpenNewNeovide', function(opts)
+	local expanded_args = vim.fn.expand(opts.nargs)
+	local path = vim.fn.isdirectory(expanded_args) ~= 0 and expanded_args or nil
+	vim.schedule(function()
+		local cmd = 'neovide.exe'
+		local msg = { '**[Opening Neovide at dir:]**' }
+		if path then
+			cmd = cmd .. ' ' .. path
+			local shortpath = require('util.path').shorten(path, { keep_last = 4 })
+			msg[#msg + 1] = '**[' .. shortpath .. ']**'
+		end
+
+		vim.fn.jobstart(cmd, { cwd = vim.env.HOME, detach = true })
+		Snacks.notify(msg)
+	end)
+end, { desc = 'Open New Neovide Instance' })
 
 -- Keymaps  BUG: Ctrl+Alt doesn't work on Windows -> https://github.com/neovide/neovide/issues/2899
 require('util.keymap').map {
-	{
-		'<f2>N',
-		vim.schedule_wrap(function()
-			vim.fn.jobstart 'neovide.exe > /dev/null 2>&1 &'
-			Snacks.notify '[Opening a new Neovide instance...]'
-		end),
-		desc = 'New Neovide Instance',
-	},
+	{ '<f2>N', '<cmd>OpenNewNeovide<cr>', desc = 'New Neovide Instance' },
 }
 
 vim.api.nvim_create_autocmd('VimEnter', {
@@ -43,8 +53,8 @@ vim.api.nvim_create_autocmd('VimEnter', {
 	callback = function()
 		local cmd_flag_index = require('util.list').index_of(vim.v.argv or {}, function(v) return v == '-c' or v == '--cmd' end)
 		if not cmd_flag_index or not string.find(vim.v.argv[cmd_flag_index + 1] or '', '%f[%a]cd%f[%A]') then
-			local cd_home = 'cd ' .. (vim.g.neovide_working_dir or '~')
-			vim.cmd(cd_home)
+			local pwd = (vim.g.neovide_working_dir or '~')
+			vim.cmd('cd ' .. pwd)
 		end
 	end,
 })
