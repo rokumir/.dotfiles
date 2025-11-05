@@ -3,6 +3,7 @@
 local sep_line_text = { { ('─'):rep(20), hl = 'WinSeparator', align = 'center' } }
 local projects_exist_fn = function() return #Snacks.dashboard.sections.projects { session = true } > 0 end
 local recents_exist_fn = function() return #Snacks.dashboard.sections.recent_files { cwd = true }() > 0 end
+local note_dir = require('config.const.project_dirs').notes.main ---@type string?
 
 return {
 	'folke/snacks.nvim',
@@ -18,7 +19,8 @@ return {
 				---@type snacks.dashboard.Item[]
 				keys = {
 					{ icon = '󰑏 ', key = 's', desc = 'Restore Session', section = 'session' },
-					{ icon = ' ', key = 'c', desc = 'Open Config', action = ":cd `=stdpath('config')` | lua Snacks.picker.files()" },
+					{ icon = ' ', key = 'c', desc = 'Open Config', action = ":cd `=stdpath('config')`" },
+					{ icon = ' ', key = 'n', desc = 'Open Note', action = ':cd ' .. note_dir, enabled = note_dir ~= nil },
 					{ icon = ' ', key = 'Q', desc = 'Quit', action = 'ZZ' },
 				},
 			},

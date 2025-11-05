@@ -39,7 +39,7 @@ require('util.keymap').map {
 }
 
 vim.api.nvim_create_autocmd('VimEnter', {
-	group = vim.api.nvim_create_augroup('nihil_neovide_init_cd', { clear = true }),
+	group = require('util.autocmd').augroup 'neovide_init_cd',
 	callback = function()
 		local cmd_flag_index = require('util.list').index_of(vim.v.argv or {}, function(v) return v == '-c' or v == '--cmd' end)
 		if not cmd_flag_index or not string.find(vim.v.argv[cmd_flag_index + 1] or '', '%f[%a]cd%f[%A]') then

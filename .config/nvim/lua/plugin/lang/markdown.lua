@@ -7,7 +7,7 @@ local TIME_FORMAT = '%H:%M:%S'
 local function is_note_dirs() return require('util.path').is_matches { note_dir.main, note_dir.old } end
 
 vim.api.nvim_create_autocmd('DirChanged', {
-	group = vim.api.nvim_create_augroup('nihil_enable_obsidian_dir', { clear = true }),
+	group = require('util.autocmd').augroup 'enable_obsidian_dir',
 	callback = function()
 		if is_note_dirs() then require('lazy').load { plugins = { 'obsidian.nvim' } } end
 	end,
@@ -216,8 +216,7 @@ return {
 							function()
 								local snacks_format = require 'snacks.picker.format'
 								local ok, front_matter = pcall(require, 'front-matter')
-								local get_fm = ok and front_matter.get
-								if not get_fm then return Snacks.notify.error '**[front-matter.nvim]** plugin not found!' end
+								local get_fm = ok and front_matter.get or error '**[front-matter.nvim]** plugin not found!'
 
 								Snacks.picker.files {
 									source = 'markdown_notes',
@@ -228,29 +227,28 @@ return {
 										vim.defer_fn(function()
 											local fm_result = get_fm { item.file } or {}
 											local fm = fm_result[item._path] -- front-matter keys are fullpaths
-											if not fm then return end
-											item.frontmatter = {
-												icon = fm.icon,
-												title = fm.title or (fm.aliases and fm.aliases[1]) or nil,
-												tags = #(fm.tags or {}) > 0 and table.concat(fm.tags, '') or nil,
-											}
-											item.text = Snacks.picker.util.text(item.frontmatter, { 'title', 'tags' })
+
+											item.has_frontmatter = fm ~= nil
+											if not item.has_frontmatter then return end
+
+											item.icon = fm.icon
+											item.title = fm.title or (fm.aliases and fm.aliases[1]) or nil
+											item.tags = #(fm.tags or {}) > 0 and table.concat(fm.tags, '') or nil
+											item.text = Snacks.picker.util.text(item, { 'title', 'tags' })
 										end, 0)
-										return true
 									end,
 									---@type snacks.picker.format
 									format = function(item, picker)
-										local fm = item.frontmatter
-										if not fm then return snacks_format.filename(item, picker) end
+										if not item.has_frontmatter then return snacks_format.filename(item, picker) end
 
 										local ret = {}
 
-										local ft_icon = Snacks.picker.util.align(fm.icon or '󰍔', 3)
+										local ft_icon = Snacks.picker.util.align(item.icon or '󰍔', 3)
 										table.insert(ret, { ft_icon, 'MiniIconsGrey', virtual = true })
 
-										if fm.title then
+										if item.title then
 											vim.list_extend(ret, {
-												{ fm.title, 'SnacksPickerFile', field = 'file' },
+												{ item.title, 'SnacksPickerFile', field = 'file' },
 												{ ' ' },
 												{ item.file, 'SnacksPickerDir', field = 'file' },
 											})
@@ -263,9 +261,9 @@ return {
 											})
 										end
 
-										if fm.tags then vim.list_extend(ret, {
+										if item.tags then vim.list_extend(ret, {
 											{ ' ' },
-											{ fm.tags, 'SnacksPickerDir', field = 'tags' },
+											{ item.tags, 'SnacksPickerDir', field = 'tags' },
 										}) end
 
 										return ret

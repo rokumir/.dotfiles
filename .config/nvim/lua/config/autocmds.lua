@@ -1,7 +1,6 @@
 local map = require('util.keymap').map
 local ft_config = require 'config.const.filetype'
-
-local function augroup(name) return vim.api.nvim_create_augroup('nihil_' .. name, { clear = true }) end
+local augroup = require('util.autocmd').augroup
 
 -- close some filetypes with <q>
 vim.api.nvim_create_autocmd('FileType', {
@@ -110,4 +109,9 @@ vim.api.nvim_create_autocmd('FileType', {
 		vim.opt_local.foldenable = false
 		vim.opt_local.foldcolumn = '0'
 	end,
+})
+
+vim.api.nvim_create_autocmd('DirChanged', {
+	group = augroup 'notify_dir_changed',
+	callback = function() Snacks.notify { '**Changed Directory:**', '**[' .. vim.uv.cwd() .. ']**' } end,
 })
