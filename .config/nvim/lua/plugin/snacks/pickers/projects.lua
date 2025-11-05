@@ -33,8 +33,17 @@ return {
 								['<c-.>'] = { 'tcd', mode = { 'n', 'i' } },
 								['<c-l>'] = { 'confirm', mode = { 'n', 'i' } },
 								['<c-w>'] = { '<cmd>normal! diw<cr><right>', mode = 'i', expr = true, desc = 'Delete Word' },
+								['<a-n>'] = { 'new_neovide_window', mode = { 'n', 'i' }, desc = 'New Project' },
 							},
 						},
+					},
+					actions = {
+						new_neovide_window = vim.schedule_wrap(function(_, item)
+							local path = Snacks.picker.util.path(item) or error()
+							local shortpath = require('util.path').shorten(path, { keep_last = 4 })
+							vim.fn.jobstart('neovide.exe -- -c "cd ' .. path .. '" > /dev/null 2>&1 &')
+							Snacks.notify { '[Opening]', '**[' .. shortpath .. ']**' }
+						end),
 					},
 				},
 			},

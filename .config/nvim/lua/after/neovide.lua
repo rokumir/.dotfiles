@@ -31,7 +31,7 @@ require('util.keymap').map {
 	{
 		'<f2>N',
 		vim.schedule_wrap(function()
-			vim.fn.jobstart 'neovide.exe ~ > /dev/null 2>&1 &'
+			vim.fn.jobstart 'neovide.exe > /dev/null 2>&1 &'
 			Snacks.notify '[Opening a new Neovide instance...]'
 		end),
 		desc = 'New Neovide Instance',

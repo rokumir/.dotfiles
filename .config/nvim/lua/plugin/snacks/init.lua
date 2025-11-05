@@ -31,9 +31,7 @@ return {
 				max_height = 40,
 			},
 
-			quickfile = {
-				exclude = { 'latex', 'lua' },
-			},
+			-- quickfile = { exclude = { 'latex', 'lua' }, },
 			bigfile = {
 				enabled = true,
 				notify = true, -- show notification when big file detected

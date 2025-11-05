@@ -2,8 +2,8 @@ return {
 	'folke/snacks.nvim',
 	keys = {
 		{ '<c-e>', function() Snacks.picker.files() end, desc = 'Find Files' },
-		{ ';ff', function() pcall(Snacks.picker.files, { layout = 'default' }) end, desc = 'Files (with preview)' },
-		{ ';fc', function() Snacks.picker.files { cwd = vim.fn.stdpath 'config' } end, desc = 'Config File' },
+		{ ';ff', function() Snacks.picker.files() end, desc = 'Find Files' },
+		{ ';fF', function() Snacks.picker.files { layout = 'default' } end, desc = 'Files (with preview)' },
 		{ ';r', function() Snacks.picker.recent { filter = { cwd = true } } end, desc = 'Recent' },
 	},
 	---@type snacks.Config

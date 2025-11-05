@@ -31,7 +31,6 @@ return {
 		opts = function(_, opts)
 			-- Settings for the greatest script of all time
 			vim.api.nvim_create_autocmd({ 'FileType' }, {
-				group = vim.api.nvim_create_augroup('nihil_tmux_harpoon', { clear = true }),
 				pattern = 'tmux-harpoon', -- in config.filetype
 				callback = function(ev)
 					vim.opt_local.showmode = false
@@ -215,7 +214,6 @@ return {
 		},
 		opts = function()
 			vim.api.nvim_create_autocmd('User', {
-				group = vim.api.nvim_create_augroup('nihil_snacks_oil_rename', { clear = true }),
 				pattern = 'OilActionsPost',
 				callback = function(event)
 					if event.data.actions.type == 'move' then Snacks.rename.on_rename_file(event.data.actions.src_url, event.data.actions.dest_url) end
