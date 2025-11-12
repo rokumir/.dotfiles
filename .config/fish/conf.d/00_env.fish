@@ -25,12 +25,13 @@ set -gx EDITOR vi
 set -gx PAGER bat
 
 ## ---------------------------------------
+set -l DOC_DIR ~/documents
 
 # Rokumir Home
-set -gx RH_NOTE ~/documents/nihil
-set -gx RH_PROJECT ~/documents/projects
-set -gx RH_WORK ~/documents/works
-set -gx RH_THROWAWAY ~/documents/throwaways
+set -gx RH_NOTE $DOC_DIR/notes/cortex
+set -gx RH_PROJECT $DOC_DIR/projects
+set -gx RH_WORK $DOC_DIR/works
+set -gx RH_THROWAWAY $DOC_DIR/throwaways
 set -gx RH_SCRIPT ~/.scripts
 
 fish_add_path -g $RH_SCRIPT
@@ -41,7 +42,7 @@ set -gx RH_VAULT \
     $RH_THROWAWAY \
     $RH_SCRIPT \
     $XDG_CONFIG_HOME \
-    ~/documents
+    $DOC_DIR
 
 set -gx GTRASH_HOME_TRASH_DIR "$XDG_DATA_HOME/trash"
 
