@@ -10,7 +10,7 @@ begin
     else
         sudo pacman -Syu
     end
-end; or return
+end
 
 # Rust package manager
 rustup update; or return

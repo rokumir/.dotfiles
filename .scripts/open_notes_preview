@@ -1,0 +1,9 @@
+#!/usr/bin/env fish
+
+if not set -q RH_NOTE
+    echo '$RH_NOTE env not found!'
+    return
+end
+
+cd ~/documents/throwaways/quartz/
+npm run quartz-start
