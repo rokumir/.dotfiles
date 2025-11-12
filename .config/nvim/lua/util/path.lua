@@ -34,12 +34,16 @@ function M.relative(path, opts)
 end
 
 ---@param paths string[]
+---@param opts? {exact?: boolean}
 ---@return boolean
-function M.is_matches(paths)
+function M.is_matches(paths, opts)
+	opts = opts or {}
+	opts.exact = opts.exact ~= false
 	local pwd = vim.fn.getcwd()
 	for _, path in ipairs(paths) do
 		local realpath = vim.uv.fs_realpath(vim.fn.expand(path)) or error('Invalid path ' .. path)
-		if realpath == pwd then return true end
+		local is_matched = opts.exact and realpath == pwd or pwd:match('^' .. realpath)
+		if is_matched then return true end
 	end
 	return false
 end

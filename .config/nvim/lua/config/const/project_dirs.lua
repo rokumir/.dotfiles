@@ -27,6 +27,7 @@ local devs = {}
 function M.devs()
 	if #devs == 0 then devs = no_falties {
 		M.DOC_DIR,
+		M.DOC_DIR .. '/notes',
 		M.config(),
 		M.throwaway(),
 		M.script(),
@@ -43,10 +44,9 @@ function M.works()
 	return works
 end
 
-M.notes = {
-	main = val_dir(vim.env.RH_NOTE),
-	old = val_dir(M.DOC_DIR .. '/notes/notes'),
-}
+--- Main note directory
+M.second_brain = val_dir(vim.env.RH_NOTE)
+M.second_brain_OLD = val_dir(M.DOC_DIR .. '/notes/notes')
 
 local all = {}
 function M.all()

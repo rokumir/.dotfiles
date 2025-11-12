@@ -159,6 +159,8 @@ return {
 
 	{ -- best color picker (including oklch)
 		'eero-lehtinen/oklch-color-picker.nvim',
+		version = false,
+		priority = 4000,
 		event = 'BufReadPre',
 		cmd = { 'ColorPickOklch' },
 		keys = {
@@ -216,19 +218,14 @@ return {
 		keys = {
 			{ ';E', function() require('oil').toggle_float() end, desc = 'Oil' },
 		},
-		opts = function()
-			vim.api.nvim_create_autocmd('User', {
-				group = require('util.autocmd').augroup 'oil_on_move',
-				pattern = 'OilActionsPost',
-				callback = function(event)
-					if event.data.actions.type == 'move' then Snacks.rename.on_rename_file(event.data.actions.src_url, event.data.actions.dest_url) end
-				end,
-			})
+		config = function()
+			local Oil = require 'oil'
 
-			---@type oil.SetupOpts
-			return {
+			Oil.setup {
 				cleanup_delay_ms = 2000,
 				skip_confirm_for_simple_edits = false,
+				-- Send deleted files to the trash instead of permanently deleting them (:help oil-trash)
+				delete_to_trash = true,
 				confirmation = {
 					border = 'rounded',
 					win_options = { winblend = 0 },
@@ -253,30 +250,47 @@ return {
 				keymaps_help = { border = 'rounded' },
 				keymaps = {
 					['?'] = { 'actions.show_help', mode = 'n' },
+					['<c-q>'] = { 'actions.close', mode = { 'n', 'i' } },
+
 					['<c-l>'] = 'actions.select',
-					['<c-s>'] = { function() require('oil').save() end, mode = { 'n', 'i' } },
 					['l'] = { 'actions.select', mode = 'n' },
+					['h'] = { 'actions.parent', mode = 'n' },
+					['<right>'] = { 'actions.select', mode = 'n' },
+					['<left>'] = { 'actions.parent', mode = 'n' },
 					['v'] = { 'actions.select', opts = { vertical = true }, mode = 'n' },
 					['s'] = { 'actions.select', opts = { horizontal = true }, mode = 'n' },
-					['<c-q>'] = { 'actions.close', mode = { 'n', 'i' } },
-					['<c-c>'] = { 'actions.close', mode = { 'n', 'i' } },
+
+					['<c-s>'] = { Oil.save, mode = { 'n', 'i' } },
+					['<c-c>'] = { Oil.discard_all_changes, mode = { 'n', 'i' } },
+
 					['<a-p>'] = 'actions.preview',
 					['<a-r>'] = 'actions.refresh',
 					['<a-y>'] = 'actions.yank_entry',
-					['<a-<>'] = { 'actions.parent', mode = 'n' },
-					['<a->>'] = { 'actions.select', mode = 'n' },
-					['o'] = { 'actions.open_cwd', mode = 'n' }, -- goto active working project dir
+					['o'] = { 'actions.open_cwd', mode = 'n' }, -- go to/back active working project dir
 					['<c-.>'] = 'actions.cd',
 					['<a-s>'] = { 'actions.change_sort', mode = 'n' },
 					['<a-h>'] = { 'actions.toggle_hidden', mode = 'n' },
 					['<a-T>'] = { 'actions.toggle_trash', mode = 'n' },
+					['g\\'] = { 'actions.toggle_trash', mode = 'n' },
 					['gx'] = { 'actions.open_external', mode = { 'n', 'v' } },
 					['g.'] = { 'actions.toggle_hidden', mode = 'n' },
-					['g\\'] = { 'actions.toggle_trash', mode = 'n' },
-					['gd'] = function() require('oil').set_columns { 'icon', 'permissions', 'size', 'mtime' } end,
-					['J'] = { '', mode = 'n' },
+					['gd'] = function() Oil.set_columns { 'icon', 'permissions', 'size', 'mtime' } end,
+					['J'] = false,
 				},
 			}
+
+			vim.api.nvim_create_autocmd('User', {
+				group = require('util.autocmd').augroup 'oil_on_move',
+				pattern = 'OilActionsPost',
+				callback = function(event)
+					local actions = event.data.actions
+					if actions.type == 'move' then
+						local src_url = actions.src_url
+						local dest_url = actions.dest_url
+						Snacks.rename.on_rename_file(src_url, dest_url)
+					end
+				end,
+			})
 		end,
 	},
 

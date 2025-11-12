@@ -1,11 +1,13 @@
 ---@diagnostic disable: missing-fields
 local ft_util = require 'config.const.filetype'
-local note_dirs = require('config.const.project_dirs').notes
-local map_key = require('util.keymap').map
+local project_dir = require 'config.const.project_dirs'
 
 local DATE_FORMAT = '%Y-%m-%d'
 local TIME_FORMAT = '%H:%M:%S'
-local function is_note_pwd() return require('util.path').is_matches { note_dirs.main, note_dirs.old } end
+
+local map_key = require('util.keymap').map
+local function is_note_pwd() return require('util.path').is_matches { project_dir.second_brain, project_dir.second_brain_OLD } end
+local function get_time_now_fn(template, offset_hours) return tostring(os.date(template, os.time() - (offset_hours or 0) * 60 * 60)) end
 
 vim.api.nvim_create_autocmd('DirChanged', {
 	group = require('util.autocmd').augroup 'enable_obsidian_dir',
@@ -46,7 +48,10 @@ return {
 			html = { enabled = true },
 			yaml = { enabled = true },
 			quote = { repeat_linebreak = true, icon = '│ ' },
-			completions = { lsp = { enabled = true } },
+			completions = {
+				lsp = { enabled = true },
+				blink = { enabled = true },
+			},
 
 			heading = {
 				enabled = true,
@@ -151,17 +156,22 @@ return {
 		'obsidian-nvim/obsidian.nvim',
 		version = false,
 		lazy = not is_note_pwd(),
-		dependencies = {
-			{ 'goropikari/front-matter.nvim', build = 'make setup', lazy = true, config = true },
-		},
 		---@module 'obsidian'
 		---@type obsidian.config
 		opts = {
 			workspaces = {
-				{ name = 'nihil', path = note_dirs.main },
-				{ name = 'notes', path = note_dirs.old },
+				{ name = 'nihil', path = project_dir.second_brain },
+				{ name = 'notes', path = project_dir.second_brain_OLD },
 			},
-			frontmatter = { enabled = true, sort = false, },
+			frontmatter = { enabled = true, sort = {
+				'icon',
+				'title',
+				'aliases',
+				'categories',
+				'tags',
+				'created',
+				'id',
+			} },
 			checkbox = {
 				enabled = true,
 				create_new = true,
@@ -173,14 +183,18 @@ return {
 				enabled = false,
 				ignore_conceal_warn = true,
 			},
-			statusline = { format = '{{backlinks}} backlinks' },
+			statusline = {
+				enabled = true,
+				format = '{{backlinks}} backlinks',
+			},
 
 			daily_notes = {
 				folder = 'journal',
-				date_format = DATE_FORMAT,
+				date_format = DATE_FORMAT .. '-%A',
 				alias_format = '%A %B %-d, %Y',
 				default_tags = { 'journal' },
 				workdays_only = false,
+				template = '.meta/templates/Daily.md',
 			},
 
 			templates = {
@@ -188,12 +202,13 @@ return {
 				date_format = DATE_FORMAT,
 				time_format = TIME_FORMAT,
 				substitutions = {
-					-- yesterday = function() return tostring(os.date('%Y-%m-%d', os.time() - 86400)) end,
-					datetime = function() return tostring(os.date(DATE_FORMAT .. 'T' .. TIME_FORMAT, os.time())) end,
-					now = function() return tostring(os.date(DATE_FORMAT .. 'T' .. TIME_FORMAT, os.time())) end,
+					yesterday = get_time_now_fn(DATE_FORMAT, 86400),
+					datetime = get_time_now_fn(DATE_FORMAT .. 'T' .. TIME_FORMAT),
+					now = get_time_now_fn(DATE_FORMAT .. 'T' .. TIME_FORMAT),
+					today = get_time_now_fn '%A %B %-d, %Y',
 				},
-				------@type table<string, obsidian.config.CustomTemplateOpts>
-				---customizations = {},
+				-----@type table<string, obsidian.config.CustomTemplateOpts>
+				--customizations = {},
 			},
 
 			callbacks = {
@@ -232,23 +247,30 @@ return {
 				end,
 			},
 		},
+		---@param opts obsidian.config
 		config = function(_, opts)
 			require('obsidian').setup(opts)
 
+			-- stylua: ignore
+			local function is_in_template_dir(file) ---@param file string
+				return opts.templates
+					and opts.templates.folder
+					and file:match('^' .. opts.templates.folder) ~= nil
+			end
+
 			vim.api.nvim_create_user_command('SnacksNotesQuickSwitcher', function()
-				local snacks_format = require 'snacks.picker.format'
 				local obsidian_ok, obsidian_note = pcall(require, 'obsidian.note')
 				local get_note_info = obsidian_ok and obsidian_note.from_file or error '**[Obsidian.nvim]** plugin not found!'
 
 				Snacks.picker.files {
-					source = 'markdown_notes',
+					source = 'markdown_notes_quick_switcher',
 					title = '󱀂 Notes',
 					layout = 'vscode_focus',
 					ft = { 'markdown', 'mdx', 'md' },
 					transform = function(item)
 						vim.defer_fn(function()
 							local note = get_note_info(item.file, { collect_anchor_links = false, collect_blocks = false, load_contents = false, max_lines = 100 })
-							if not note.has_frontmatter then return end
+							if not note.has_frontmatter or is_in_template_dir(item.file) then return end
 							vim.validate('note.aliases', note.aliases, 'table')
 							vim.validate('note.tags', note.tags, 'table')
 
@@ -264,14 +286,12 @@ return {
 					---@type snacks.picker.format
 					format = function(item, picker)
 						local fm = item.fm
-						if not fm then return snacks_format.filename(item, picker) end
+						if not fm then return require('snacks.picker.format').filename(item, picker) end
 
 						local ret = {}
 
 						local ft_icon = Snacks.picker.util.align(fm.icon or '󰍔', 3)
-						table.insert(ret, { ft_icon, 'MiniIconsGrey', virtual = true })
-
-						if not _G.nihil then _G.nihil = item.title end
+						table.insert(ret, { ft_icon, 'SnacksPickerIcon', virtual = true })
 
 						if fm.title then
 							vim.list_extend(ret, {
@@ -301,7 +321,7 @@ return {
 						return ret
 					end,
 				}
-			end, { desc = 'Open Notes Quick Switcher (Snacks)' })
+			end, { desc = 'Open Notes Quick Switcher' })
 		end,
 	},
 }

@@ -1,4 +1,6 @@
+---@module 'blink-cmp'
 ---@diagnostic disable: missing-fields
+
 local M = {}
 
 local cmp_items = {} ---@type blink.cmp.CompletionItem[]
@@ -33,7 +35,7 @@ function M.get_todo_comments_cmp_items()
 	return cmp_items
 end
 
-local ts_reject_nodes = {
+local ts_valid_nodes = {
 	comment = true,
 	line_comment = true,
 	block_comment = true,
@@ -41,15 +43,18 @@ local ts_reject_nodes = {
 	doc = true,
 	doc_comment = true,
 }
+
 --- Check if the treesitter context is not a comment (if detectable)
+---@param ctx blink.cmp.Context
 ---@return boolean
-function M.should_show_items()
-	local row, column = unpack(vim.api.nvim_win_get_cursor(0))
-	local node = vim.treesitter.get_node {
-		bufnr = 0,
+function M.should_show_items(ctx)
+	local bufnr = ctx.bufnr
+	local row, column = ctx.cursor[1], ctx.cursor[2]
+	local success, node = pcall(vim.treesitter.get_node, {
+		bufnr = bufnr or 0,
 		pos = { row - 1, math.max(0, column - 1) }, -- seems to be necessary...
-	}
-	return node ~= nil and ts_reject_nodes[node:type()]
+	})
+	return success and node ~= nil and ts_valid_nodes[node:type()]
 end
 
 return M

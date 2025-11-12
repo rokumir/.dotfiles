@@ -10,7 +10,19 @@ vim.schedule(function()
 	end))
 end)
 
+require('util.keymap').map {
+	'<leader><leader>`',
+	function()
+		local is_vesper = vim.g.colors_name == 'vesper'
+		local scheme = is_vesper and 'rose-pine' or 'vesper'
+		vim.cmd.colorscheme(scheme)
+		Snacks.notify('Swapping over to colorscheme: **[' .. scheme .. ']**')
+	end,
+	desc = 'Swapping Colorschemes',
+}
+
 return {
+	{ 'catppuccin', optional = true, enabled = false },
 	{ 'tokyonight.nvim', optional = true, enabled = false },
 	{ import = 'plugin.colorscheme' },
 }

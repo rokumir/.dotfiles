@@ -5,7 +5,7 @@ vim.g.neovide_working_dir = '~'
 vim.g.neovide_no_custom_clipboard = false
 vim.opt.linespace = 8
 vim.g.neovide_scale_factor = 1
-vim.g.neovide_confirm_quit = false
+vim.g.neovide_confirm_quit = true
 vim.g.neovide_hide_mouse_when_typing = false
 vim.g.neovide_underline_stroke_scale = 2
 vim.g.neovide_no_idle = false
@@ -50,6 +50,13 @@ end, {
 require('util.keymap').map {
 	{ '<f2>N', '<cmd>OpenNewNeovide<cr>', desc = 'New Neovide Instance' },
 }
+Snacks.toggle
+	.new({
+		name = 'Neovide Profiler',
+		get = function() return vim.g.neovide_profiler == true end,
+		set = function(state) vim.g.neovide_profiler = state end,
+	})
+	:map '<leader><leader>pP'
 
 vim.api.nvim_create_autocmd('VimEnter', {
 	group = require('util.autocmd').augroup 'neovide_init_cd',

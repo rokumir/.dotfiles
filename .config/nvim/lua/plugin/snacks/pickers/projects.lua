@@ -1,8 +1,8 @@
 return {
 	'folke/snacks.nvim',
 	keys = {
-		{ ';d', function() Snacks.picker.projects { patterns = { '*' } } end, desc = 'Vaults' },
-		{ ';D', function() Snacks.picker.projects() end, desc = 'Projects' },
+		{ ';d', function() Snacks.picker.projects() end, desc = 'Projects' },
+		{ ';D', function() Snacks.picker.projects { patterns = { '*' } } end, desc = 'Vaults' },
 	},
 	---@type snacks.Config
 	opts = {
@@ -40,7 +40,7 @@ return {
 					actions = {
 						new_neovide_window = function(_, item)
 							local path = Snacks.picker.util.path(item) or error()
-							vim.cmd('OpenNewNeovide "' .. path .. '"')
+							vim.cmd.OpenNewNeovide(path)
 						end,
 					},
 				},

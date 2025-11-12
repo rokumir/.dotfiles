@@ -2,13 +2,19 @@ local snacks_actions = require 'snacks.explorer.actions'
 local snacks_const = require 'config.const.snacks'
 local snacks_tree = require 'snacks.explorer.tree'
 
---- NOTE: Explorer doesn't use the `.ignore` file. So have to manually add it to the explorer exclude
+---Get explorer excludes.
+---@return string[]
+---@note Explorer doesn't use the `.ignore` file, so it has to be manually
+---@note added to the explorer exclude list.
 local function get_excludes()
+	if vim.g.snacks_ignored then return snacks_const.excludes end
+
 	local root_excludes = require('util.path').root_dir.ignored_list()
-	local excludes = vim.list_extend(root_excludes, snacks_const.excludes)
-	return vim.g.snacks_ignored and snacks_const.excludes or excludes
+	return vim.list_extend(root_excludes, snacks_const.excludes)
 end
 
+---@param picker snacks.Picker
+---@param path string
 local function unfold_dir(picker, path)
 	snacks_tree:open(path)
 	snacks_actions.update(picker, { refresh = false })
@@ -76,29 +82,46 @@ return {
 								['<a-O>'] = 'explorer_open', -- open with system application
 								['<a-P>'] = 'explorer_paste',
 								['<a-D>'] = 'explorer_del',
-								['<a-L>'] = 'cd',
+								['<c-enter>'] = 'cd',
+
+								['<a-H>'] = false,
+								['<a-J>'] = false,
+								['<a-K>'] = false,
+								['<a-L>'] = false,
 							}),
 						},
 					},
 
 					actions = {
+						-- Toggle ignored files, and persist the setting globally.
 						toggle_ignored_persist = function(picker)
 							vim.g.snacks_ignored = not vim.g.snacks_ignored
 							picker.opts.exclude = get_excludes()
 							picker:action 'toggle_ignored'
 						end,
 
+						---Delete selected files or directories.
 						explorer_del = function(picker)
 							local selected_items = picker:selected { fallback = true }
 
 							---@type string[]
 							local paths = vim.tbl_map(function(snacks_item)
-								return snacks_item.parent and Snacks.picker.util.path(snacks_item) or error 'Root included!' -- Protect root folder
+								-- Protect root folder from being deleted
+								if not snacks_item.parent then error 'Root deletion is not allowed!' end
+								return Snacks.picker.util.path(snacks_item)
 							end, selected_items)
 
-							local what = #paths == 1 and vim.fn.fnamemodify(paths[1], ':p:~:.') or #paths .. ' files'
-							Snacks.picker.util.confirm('Put to the trash ' .. what .. '?', function()
-								picker.list:set_selected()
+							if vim.tbl_isempty(paths) then return end
+
+							local message
+							if #paths == 1 then
+								message = 'Move ' .. vim.fn.fnamemodify(paths[1], ':p:~:.') .. ' to trash?'
+							else
+								message = 'Move ' .. #paths .. ' files to trash?'
+							end
+
+							Snacks.picker.util.confirm(message, function()
+								picker.list:set_selected() -- clear selection
 								for _, file in ipairs(paths) do
 									require('util.file').delete(file, {
 										on_exit = function() picker:action 'explorer_update' end,
@@ -108,10 +131,11 @@ return {
 							end)
 						end,
 
-						--- Explorer open all (recursive toggle)
+						---Recursively open all subdirectories.
 						explorer_open_all_sub = function(picker, item)
 							local curr_node = snacks_tree:node(item.file)
 							if not (curr_node and curr_node.dir) then return end
+
 							local function unfold(node) ---@param node snacks.picker.explorer.Node
 								unfold_dir(picker, node.path)
 
@@ -121,10 +145,12 @@ return {
 									end
 								end)
 							end
+
 							unfold(curr_node)
 						end,
 
-						-- Better confirm action
+						---Open a directory or jump to a file.
+						---If a directory is already open, do nothing.
 						confirm = function(picker, item)
 							local selected_node = snacks_tree:node(item.file)
 							if not selected_node or (selected_node.dir and selected_node.open) then return end

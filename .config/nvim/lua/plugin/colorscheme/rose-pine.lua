@@ -58,6 +58,8 @@ return {
 
 			PmenuThumb = { bg = 'subtle', blend = 20 },
 			PmenuSel = { bg = 'muted', fg = 'none', blend = 15 },
+			PmenuKind = vim.empty_dict(),
+
 			Conceal = { blend = 15, force = true, link = 'NonText' },
 			MsgArea = { fg = 'subtle' },
 			Comment = { fg = 'muted' },
@@ -88,7 +90,7 @@ return {
 			GitSignsAdd = { fg = 'pine' },
 			-- GitSignsChange = { fg = 'rose' },
 			-- GitSignsDelete = { fg = 'pine' },
-			  InclineNormal = { bg = 'none', fg = 'muted' },
+			InclineNormal = { bg = 'none', fg = 'muted' },
 			InclineNormalNC = { bg = 'none', fg = 'muted' },
 			--#endregion
 

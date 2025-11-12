@@ -3,6 +3,8 @@
 return {
 	{ -- Treesitter
 		'nvim-treesitter/nvim-treesitter',
+		version = false,
+		optional = true,
 		opts = function(_, opts)
 			vim.list_extend(opts.ensure_installed, {
 				'css',
@@ -48,6 +50,7 @@ return {
 	{ -- cool context
 		'nvim-treesitter/nvim-treesitter-context',
 		priority = 1000,
+		version = false,
 		keys = {
 			{ '<leader>ut', function() require('treesitter-context').toggle() end, desc = 'Toggle Treesitter Context' },
 		},

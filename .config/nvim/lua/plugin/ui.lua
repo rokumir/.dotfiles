@@ -1,4 +1,5 @@
 local hl_color = require('snacks.util').color
+local Icons = LazyVim.config.icons
 
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
@@ -46,7 +47,6 @@ return {
 		optional = true,
 		lazy = false,
 		opts = function()
-			local icons = LazyVim.config.icons
 			local opts = {
 				options = {
 					disabled_filetypes = {
@@ -66,9 +66,9 @@ return {
 						{
 							'diff',
 							symbols = {
-								added = icons.git.added,
-								modified = icons.git.modified,
-								removed = icons.git.removed,
+								added = Icons.git.added,
+								modified = Icons.git.modified,
+								removed = Icons.git.removed,
 							},
 							source = function()
 								local gitsigns = vim.b.gitsigns_status_dict
@@ -91,17 +91,17 @@ return {
 								modified_hl = 'Error',
 								directory_hl = 'Comment',
 								filename_hl = 'Conditional',
-								modified_sign = icons.misc.modified,
-								readonly_icon = icons.misc.readonly,
+								modified_sign = Icons.misc.modified,
+								readonly_icon = Icons.misc.readonly,
 							},
 						},
 						{
 							'diagnostics',
 							symbols = {
-								error = icons.diagnostics.Error,
-								warn = icons.diagnostics.Warn,
-								info = icons.diagnostics.Info,
-								hint = icons.diagnostics.Hint,
+								error = Icons.diagnostics.Error,
+								warn = Icons.diagnostics.Warn,
+								info = Icons.diagnostics.Info,
+								hint = Icons.diagnostics.Hint,
 							},
 						},
 					},
@@ -109,13 +109,13 @@ return {
 					lualine_x = {
 						require('snacks.profiler').status(),
 						{ -- shows key typing
-							function() return require('noice').api.status.command.get() end,
-							cond = function() return package.loaded['noice'] and require('noice').api.status.command.has() end,
+							function() return require('noice').api.status.command['get']() end,
+							cond = function() return package.loaded['noice'] and require('noice').api.status.command['has']() end,
 							color = { fg = hl_color 'Statement' },
 						},
 						{
-							function() return require('noice').api.status.mode.get() end,
-							cond = function() return package.loaded['noice'] and require('noice').api.status.mode.has() end,
+							function() return require('noice').api.status.mode['get']() end,
+							cond = function() return package.loaded['noice'] and require('noice').api.status.mode['has']() end,
 							color = { fg = hl_color 'Constant' },
 						},
 						{ -- Dap
@@ -181,14 +181,15 @@ return {
 
 			-- Transparent lualine fill bg
 			local theme = require 'lualine.themes.auto'
-			local lualine_modes = { 'insert', 'normal', 'visual', 'command', 'replace', 'inactive', 'terminal' }
-			for _, mode in ipairs(lualine_modes) do
+			local colors = {
+				muted = hl_color 'MutedText',
+			}
+			for _, mode in ipairs { 'insert', 'normal', 'visual', 'command', 'replace', 'inactive', 'terminal' } do
 				if theme[mode] then
 					if theme[mode].c then
 						theme[mode].c.bg = 'NONE'
-						theme[mode].c.fg = hl_color 'MutedText'
+						theme[mode].c.fg = colors.muted
 					end
-					-- if theme[mode].x then theme[mode].x.bg = 'NONE' end
 				end
 			end
 			opts.options.theme = theme
@@ -274,19 +275,21 @@ return {
 					mode = 'buffers',
 					indicator = { style = 'underline' },
 					separator_style = { '', '' },
-					modified_icon = LazyVim.config.icons.misc.modified,
+					modified_icon = Icons.misc.modified,
 					sort_by = 'insert_at_end',
 					hover = { enabled = true, delay = 200 },
 					diagnostics = 'nvim_lsp',
 					diagnostics_indicator = function(_, _, diag)
-						local icons = LazyVim.config.icons.diagnostics
-						local ret = (diag.error and icons.Error .. diag.error .. ' ' or '') .. (diag.warning and icons.Warn .. diag.warning or '')
-						return vim.trim(ret)
+						local icons = Icons.diagnostics
+						local ret = {}
+						if diag.error then ret[#ret + 1] = icons.Error .. diag.error end
+						if diag.warning then ret[#ret + 1] = icons.Warn .. diag.warning end
+						return table.concat(ret, ' ')
 					end,
 					offsets = {
 						{ filetype = 'snacks_layout_box' },
 					},
-					get_element_icon = function(opts) return LazyVim.config.icons.ft[opts.filetype] end,
+					get_element_icon = function(opts) return Icons.ft[opts.filetype] end,
 
 					close_command = function(n) Snacks.bufdelete(n) end,
 					middle_mouse_command = function(n) Snacks.bufdelete(n) end,
@@ -301,6 +304,7 @@ return {
 
 			local _, indicator_color = pcall(({
 				['rose-pine'] = function() return require('rose-pine.palette').love end,
+				['vesper'] = function() return require('vesper.colors').red end,
 			})[vim.g.colors_name] or function() return '#E84D4F' end)
 			for _, hl in pairs(config.underline_highlights) do
 				opts.highlights[hl] = vim.tbl_extend('force', opts.highlights[hl] or {}, { sp = indicator_color })
@@ -332,7 +336,7 @@ return {
 					local ft_icon, ft_color = require('nvim-web-devicons').get_icon_color(filename)
 
 					if vim.bo[props.buf].modified then
-						local modified_icon = LazyVim.config.icons.misc.modified or '[+]'
+						local modified_icon = Icons.misc.modified or '[+]'
 						filename = filename .. ' ' .. modified_icon
 					end
 

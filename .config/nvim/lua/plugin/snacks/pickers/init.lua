@@ -11,7 +11,6 @@ local default_keys = vim.tbl_extend('keep', {
 	['<c-u>'] = false,
 	['<c-d>'] = false,
 
-	['l'] = 'confirm',
 	['🔥'] = { 'confirm', mode = { 'n', 'i' } },
 	['<c-.>'] = { 'confirm', mode = { 'n', 'i' } },
 	['<c-l>'] = { 'confirm', mode = { 'n', 'i' } },

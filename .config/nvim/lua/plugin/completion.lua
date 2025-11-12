@@ -9,7 +9,11 @@ local source_priorities = {
 	path = 40,
 	lazydev = 50,
 	snippets = -10,
-	todo_comments = -100,
+
+	obsidian = 100,
+	obsidian_new = 100,
+	obsidian_tags = 100,
+	todo_comments = 50,
 }
 
 ---@module 'lazy'
@@ -56,6 +60,7 @@ return { -- Blink.cmp
 						friendly_snippets = true,
 					},
 				},
+				-- TODO: weird fuzzy matching, sorting
 				todo_comments = {
 					name = 'TodoComments',
 					module = 'util.todo-comments.blink',
@@ -68,7 +73,9 @@ return { -- Blink.cmp
 
 			per_filetype = {
 				['rip-substitute'] = { 'buffer' },
-				gitcommit = {},
+				gitcommit = { 'buffer' },
+				markdown = { 'lsp', 'snippets', 'path', 'buffer' },
+				mdx = { 'lsp', 'snippets', 'path', 'buffer' },
 			},
 		},
 
@@ -134,7 +141,7 @@ return { -- Blink.cmp
 		appearance = {
 			-- supported: tokyonight
 			-- not supported: nightfox, gruvbox-material
-			use_nvim_cmp_as_default = false,
+			use_nvim_cmp_as_default = true,
 
 			nerd_font_variant = 'normal',
 			kind_icons = {

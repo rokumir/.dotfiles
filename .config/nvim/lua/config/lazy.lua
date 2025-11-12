@@ -16,7 +16,7 @@ require('lazy').setup {
 			version = false,
 			import = 'lazyvim.plugins',
 			opts = {
-				colorscheme = 'rose-pine',
+				colorscheme = 'vesper',
 				defaults = { keymaps = false, autocmds = false },
 				news = { lazyvim = true, neovim = true },
 			},
