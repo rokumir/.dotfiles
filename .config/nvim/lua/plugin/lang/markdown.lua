@@ -9,18 +9,6 @@ local map_key = require('util.keymap').map
 local function is_note_pwd() return require('util.path').is_matches { project_dir.second_brain, project_dir.second_brain_OLD } end
 local function get_time_now_fn(template, offset_hours) return tostring(os.date(template, os.time() - (offset_hours or 0) * 60 * 60)) end
 
-vim.api.nvim_create_autocmd('DirChanged', {
-	group = require('util.autocmd').augroup 'enable_obsidian_dir',
-	callback = function()
-		if is_note_pwd() then
-			require('lazy').load { plugins = { 'obsidian.nvim' } }
-			map_key { '<c-e>', '<cmd>SnacksNotesQuickSwitcher <cr>', desc = 'Quick Switch' }
-		else
-			map_key { '<c-e>', function() Snacks.picker.files() end, desc = 'Find Files' }
-		end
-	end,
-})
-
 ---@type LazyPluginSpec[]
 return {
 	{ 'davidmh/mdx.nvim', ft = 'mdx' }, -- Treesitter for MDX files
@@ -29,7 +17,7 @@ return {
 		'MeanderingProgrammer/render-markdown.nvim',
 		ft = ft_util.document_list,
 		keys = function()
-			require('util.keymap').map {
+			map_key {
 				{ '<leader>ur', group = 'Render Markdown' },
 				{ '<leader>urm', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
 				{ '<leader>urM', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
@@ -207,15 +195,15 @@ return {
 					now = get_time_now_fn(DATE_FORMAT .. 'T' .. TIME_FORMAT),
 					today = get_time_now_fn '%A %B %-d, %Y',
 				},
-				-----@type table<string, obsidian.config.CustomTemplateOpts>
-				--customizations = {},
 			},
 
 			callbacks = {
 				post_setup = function()
 					local function action(a) return '<cmd>Obsidian ' .. a .. ' <cr>' end
-					require('util.keymap').map {
-						{ '<leader>o', group = 'Obsidian', icon = '💎', mode = { 'n', 'v' } },
+					map_key {
+						'<leader>o',
+						group = 'Obsidian',
+						icon = '💎',
 						{ '<leader>on', action 'new', desc = 'New Note', icon = '󰎜' },
 						{ '<c-n>', action 'new', desc = 'Obsidian New Note', icon = '󰎜' },
 						{ '<leader>oN', action 'new_from_template', desc = 'New Note From Template', icon = '' },
@@ -235,7 +223,8 @@ return {
 						{ '<leader>oW', action 'workspace', desc = 'Switch Workspace', icon = '' },
 						{ '<leader>fr', action 'rename', desc = 'Obsidian Rename', icon = '' },
 						{ '<leader>oR', action 'rename', desc = 'Rename', icon = '' },
-						{ '<c-enter>', action 'toggle_checkbox', desc = 'Obsidian Cycle Through Checkbox Options', icon = '' },
+						{ '<c-enter>', action 'toggle_checkbox', mode = { 'n', 'v' }, desc = 'Obsidian Cycle Through Checkbox Options', icon = '' },
+						{ '<c-e>', '<cmd>SnacksNotesQuickSwitcher <cr>', desc = 'Quick Switch' },
 						{
 							mode = 'v',
 							icon = '',
@@ -251,8 +240,8 @@ return {
 		config = function(_, opts)
 			require('obsidian').setup(opts)
 
-			-- stylua: ignore
 			local function is_in_template_dir(file) ---@param file string
+				-- stylua: ignore
 				return opts.templates
 					and opts.templates.folder
 					and file:match('^' .. opts.templates.folder) ~= nil
@@ -289,6 +278,7 @@ return {
 						if not fm then return require('snacks.picker.format').filename(item, picker) end
 
 						local ret = {}
+						local sep = { ' ' }
 
 						local ft_icon = Snacks.picker.util.align(fm.icon or '󰍔', 3)
 						table.insert(ret, { ft_icon, 'SnacksPickerIcon', virtual = true })
@@ -296,25 +286,25 @@ return {
 						if fm.title then
 							vim.list_extend(ret, {
 								{ fm.title, 'SnacksPickerFile', field = 'file' },
-								{ ' ' },
+								sep,
 								{ item.file, 'SnacksPickerDir', field = 'file' },
 							})
 						else
 							local base_filename = vim.fn.fnamemodify(item.file, ':t')
 							vim.list_extend(ret, {
 								{ base_filename, 'SnacksPickerFile', field = 'file' },
-								{ ' ' },
+								sep,
 								{ item.file:gsub('/' .. base_filename, ''), 'SnacksPickerDir', field = 'file' },
 							})
 						end
 
 						if fm.tags then vim.list_extend(ret, {
-							{ ' ' },
+							sep,
 							{ fm.tags, 'SnacksPickerDir', field = 'tags' },
 						}) end
 
 						if fm.aliases then vim.list_extend(ret, {
-							{ ' ' },
+							sep,
 							{ fm.aliases, 'SnacksPickerDir', field = 'aliases' },
 						}) end
 

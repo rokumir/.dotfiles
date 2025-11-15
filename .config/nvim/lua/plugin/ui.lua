@@ -1,5 +1,4 @@
 local hl_color = require('snacks.util').color
-local Icons = LazyVim.config.icons
 
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
@@ -43,10 +42,11 @@ return {
 	},
 
 	{ -- Statusline
-		'nvim-lualine/lualine.nvim',
+		'lualine.nvim',
 		optional = true,
 		lazy = false,
 		opts = function()
+			local Icons = LazyVim.config.icons
 			local opts = {
 				options = {
 					disabled_filetypes = {
@@ -91,8 +91,8 @@ return {
 								modified_hl = 'Error',
 								directory_hl = 'Comment',
 								filename_hl = 'Conditional',
-								modified_sign = Icons.misc.modified,
-								readonly_icon = Icons.misc.readonly,
+								modified_sign = ' ' .. Icons.misc.modified,
+								readonly_icon = ' ' .. Icons.misc.readonly,
 							},
 						},
 						{
@@ -198,6 +198,7 @@ return {
 		end,
 	},
 
+	---@module 'bufferline'
 	{ -- Tabs
 		'akinsho/bufferline.nvim',
 		keys = function()
@@ -261,7 +262,8 @@ return {
 			}
 		end,
 		opts = function()
-			---@module 'bufferline'
+			local Icons = LazyVim.config.icons
+
 			---@type bufferline.UserConfig
 			local opts = {
 				options = {
@@ -336,13 +338,13 @@ return {
 					local ft_icon, ft_color = require('nvim-web-devicons').get_icon_color(filename)
 
 					if vim.bo[props.buf].modified then
-						local modified_icon = Icons.misc.modified or '[+]'
+						local modified_icon = LazyVim.config.icons.misc.modified or '[+]'
 						filename = filename .. ' ' .. modified_icon
 					end
 
 					return {
 						{ ft_icon, guifg = ft_color },
-						{ ' ' },
+						{ '  ' },
 						{ filename },
 					}
 				end,

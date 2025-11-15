@@ -56,4 +56,7 @@ return {
 			{ '<leader>qQ', function() require('persistence').save() end, desc = 'Save Session' },
 		},
 	},
+
+	{ 'catppuccin', optional = true, enabled = false },
+	{ 'tokyonight.nvim', optional = true, enabled = false },
 }

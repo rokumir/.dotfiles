@@ -9,14 +9,27 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then vim.fn.system {
 } end
 vim.opt.rtp:prepend(lazypath)
 
+_G.nihil = {}
 require('lazy').setup {
 	spec = {
 		{
 			'LazyVim/LazyVim',
 			version = false,
 			import = 'lazyvim.plugins',
+			---@type LazyVimConfig
 			opts = {
-				colorscheme = 'vesper',
+				colorscheme = function()
+					if not vim.g.nihil_colorscheme then vim.g.nihil_colorscheme = 'rose-pine' end
+					if not pcall(require, vim.g.nihil_colorscheme) then
+						Snacks.notify.error {
+							'**`vim.g.nihil_colorscheme`** not found!!',
+							'Or **[' .. vim.g.nihil_colorscheme .. ']** colorscheme not found!!',
+						}
+						return
+					end
+					require('lazy').load { plugins = { vim.g.nihil_colorscheme } }
+					vim.cmd.colorscheme(vim.g.nihil_colorscheme)
+				end,
 				defaults = { keymaps = false, autocmds = false },
 				news = { lazyvim = true, neovim = true },
 			},

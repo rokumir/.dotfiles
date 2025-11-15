@@ -14,6 +14,7 @@ return {
 				'http',
 				'scss',
 				'sql',
+				'html',
 			})
 
 			--- Registers filetypes/files/path_to_file to langs

@@ -2,20 +2,19 @@
 return {
 	'datsfilipe/vesper.nvim',
 	name = 'vesper',
+	lazy = true,
 	priority = 4000,
 	config = function()
-		local bg = '#080808'
-		local util = require 'vesper.utils'
-		local mix = util.mix
-		local blend = function(color, value) return util.shade(color, value, bg) end
-
-		-- TODO: refactor this
 		---@class VesperPalette Palette overrides
 		local cp = {}
+		local util = require 'vesper.utils'
+		local mix = util.mix
+		local blend = function(color, value) return util.shade(color, value, cp.bg or '#000000') end
+
 		-- background colors
 		cp.white = '#E8ECF0'
 		cp.black = '#050505'
-		cp.bg = bg
+		cp.bg = '#080808'
 		cp.bgDark = '#0c0c0c'
 		cp.bgDarker = '#1F1F1F'
 		cp.bgFloat = cp.bgDark
@@ -171,8 +170,9 @@ return {
 				BlinkCmpDoc = { bg = cp.bgDark },
 				BlinkCmpDocBorder = { link = 'FloatBorder' },
 				BlinkCmpDocSeparator = { bg = cp.bgDark, fg = cp.borderDarker },
+				BlinkCmpLabel = { fg = cp.green },
 
-				-- CmpItemKindText = { fg = c.comment },
+				BlinkCmpMenu = { fg = cp.fgInactive, link = 'Pmenu' },
 				--#endregion
 
 				--#region render markdown
@@ -210,6 +210,10 @@ return {
 				WhichKeySeparator = { fg = cp.fgAlt },
 				WhichKeyTitle = { link = 'FloatTitle' },
 				WhichKeyValue = { fg = cp.yellowDark },
+				--#endregion
+
+				--#region Treesitter
+				['@symbol'] = { fg = cp.symbol, italic = true },
 				--#endregion
 			},
 		}

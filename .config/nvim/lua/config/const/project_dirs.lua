@@ -22,6 +22,7 @@ M.throwaway = get_env_fn 'RH_THROWAWAY'
 M.work = get_env_fn 'RH_WORK'
 M.config = get_env_fn 'XDG_CONFIG_HOME'
 M.script = get_env_fn 'RH_SCRIPT'
+M.note = get_env_fn 'RH_NOTE'
 
 local devs = {}
 function M.devs()
@@ -31,6 +32,7 @@ function M.devs()
 		M.config(),
 		M.throwaway(),
 		M.script(),
+		M.note(),
 	} end
 	return devs
 end
@@ -45,7 +47,7 @@ function M.works()
 end
 
 --- Main note directory
-M.second_brain = val_dir(vim.env.RH_NOTE)
+M.second_brain = val_dir(vim.env.RH_BRAIN)
 M.second_brain_OLD = val_dir(M.DOC_DIR .. '/notes/notes')
 
 local all = {}

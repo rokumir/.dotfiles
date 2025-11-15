@@ -60,7 +60,6 @@ return { -- Blink.cmp
 						friendly_snippets = true,
 					},
 				},
-				-- TODO: weird fuzzy matching, sorting
 				todo_comments = {
 					name = 'TodoComments',
 					module = 'util.todo-comments.blink',
@@ -110,11 +109,12 @@ return { -- Blink.cmp
 						},
 						kind_icon = {
 							text = function(ctx)
-								local source, client = ctx.item.source_id, ctx.item.client_id
-								local lspName = client and vim.lsp.get_client_by_id(client).name
-
-								-- detect emmet-ls
-								if lspName == 'emmet_language_server' then source = 'emmet' end
+								local source, client_id = ctx.item.source_id, ctx.item.client_id
+								local client = client_id and vim.lsp.get_client_by_id(client_id) or nil
+								if client then
+									local lspName = client.name
+									if lspName == 'emmet_language_server' then source = 'emmet' end
+								end
 
 								return source_icons[source] or ctx.kind_icon
 							end,
