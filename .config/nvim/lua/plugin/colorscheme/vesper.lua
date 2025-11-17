@@ -170,7 +170,6 @@ return {
 				BlinkCmpDoc = { bg = cp.bgDark },
 				BlinkCmpDocBorder = { link = 'FloatBorder' },
 				BlinkCmpDocSeparator = { bg = cp.bgDark, fg = cp.borderDarker },
-				BlinkCmpLabel = { fg = cp.green },
 
 				BlinkCmpMenu = { fg = cp.fgInactive, link = 'Pmenu' },
 				--#endregion

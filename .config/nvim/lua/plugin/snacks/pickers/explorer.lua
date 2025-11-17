@@ -34,7 +34,7 @@ return {
 				explorer = {
 					layout = {
 						preset = 'default',
-						hidden = { 'input' },
+						-- hidden = { 'input' },
 						layout = {
 							position = 'right',
 							width = 0.26,
@@ -43,11 +43,11 @@ return {
 							border = 'top',
 							title = '{title} {live} {flags}',
 							title_pos = 'left',
-							{ win = 'input', height = 1, border = 'bottom' },
+							-- { win = 'input', height = 1, border = 'bottom' },
 							{
 								box = 'horizontal',
 								{ win = 'list', border = 'none' },
-								{ win = 'preview', title = '{preview}', height = 0.4, border = 'left' },
+								-- { win = 'preview', title = '{preview}', height = 0.4, border = 'left' },
 							},
 						},
 					},

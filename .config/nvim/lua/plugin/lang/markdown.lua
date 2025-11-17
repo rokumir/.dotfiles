@@ -9,7 +9,6 @@ local map_key = require('util.keymap').map
 local function is_note_pwd() return require('util.path').is_matches { project_dir.second_brain, project_dir.second_brain_OLD } end
 local function get_time_now_fn(template, offset_hours) return tostring(os.date(template, os.time() - (offset_hours or 0) * 60 * 60)) end
 
----@type LazyPluginSpec[]
 return {
 	{ 'davidmh/mdx.nvim', ft = 'mdx' }, -- Treesitter for MDX files
 
@@ -32,10 +31,17 @@ return {
 			render_modes = { 'n', 'c', 't' },
 			anti_conceal = { enabled = false }, -- disable anticursor-based unconceal so cursor row doesn't reveal
 
-			link = { enabled = true },
 			html = { enabled = true },
 			yaml = { enabled = true },
 			quote = { repeat_linebreak = true, icon = '│ ' },
+
+			link = {
+				enabled = true,
+				custom = {
+					pdf = { kind = 'suffix', pattern = '. pdf', icon = ' ' },
+				},
+			},
+
 			completions = {
 				lsp = { enabled = true },
 				blink = { enabled = true },
@@ -176,6 +182,11 @@ return {
 				format = '{{backlinks}} backlinks',
 			},
 
+			attachments = {
+				img_folder = '.assets/imgs',
+				confirm_img_paste = true,
+			},
+
 			daily_notes = {
 				folder = 'journal',
 				date_format = DATE_FORMAT .. '-%A',
@@ -249,7 +260,7 @@ return {
 
 			vim.api.nvim_create_user_command('SnacksNotesQuickSwitcher', function()
 				local obsidian_ok, obsidian_note = pcall(require, 'obsidian.note')
-				local get_note_info = obsidian_ok and obsidian_note.from_file or error '**[Obsidian.nvim]** plugin not found!'
+				if not obsidian_ok then error '**[Obsidian.nvim]** plugin not found!' end
 
 				Snacks.picker.files {
 					source = 'markdown_notes_quick_switcher',
@@ -258,7 +269,7 @@ return {
 					ft = { 'markdown', 'mdx', 'md' },
 					transform = function(item)
 						vim.defer_fn(function()
-							local note = get_note_info(item.file, { collect_anchor_links = false, collect_blocks = false, load_contents = false, max_lines = 100 })
+							local note = obsidian_note.from_file(item.file, { collect_anchor_links = false, collect_blocks = false, load_contents = false, max_lines = 100 })
 							if not note.has_frontmatter or is_in_template_dir(item.file) then return end
 							vim.validate('note.aliases', note.aliases, 'table')
 							vim.validate('note.tags', note.tags, 'table')

@@ -15,6 +15,8 @@ return {
 				'scss',
 				'sql',
 				'html',
+				'markdown',
+				'markdown_inline',
 			})
 
 			--- Registers filetypes/files/path_to_file to langs
