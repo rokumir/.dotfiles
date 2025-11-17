@@ -28,7 +28,8 @@ set -gx PAGER bat
 set -l DOC_DIR ~/documents
 
 # Rokumir Home
-set -gx RH_NOTE $DOC_DIR/notes/cortex
+set -gx RH_NOTE $DOC_DIR/notes
+set -gx RH_BRAIN $RH_NOTE/cortex
 set -gx RH_PROJECT $DOC_DIR/projects
 set -gx RH_WORK $DOC_DIR/works
 set -gx RH_THROWAWAY $DOC_DIR/throwaways
@@ -37,6 +38,7 @@ set -gx RH_SCRIPT ~/.scripts
 fish_add_path -g $RH_SCRIPT
 
 set -gx RH_VAULT \
+    $RH_NOTE \
     $RH_WORK \
     $RH_PROJECT \
     $RH_THROWAWAY \
