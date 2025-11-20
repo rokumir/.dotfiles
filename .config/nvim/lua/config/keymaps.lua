@@ -216,19 +216,18 @@ map { '<leader>ui', vim.show_pos, desc = 'Inspect highlight under cursor' }
 map { '<leader>um', '<cmd>delm! | delm A-Z0-9 | redraw <cr>', desc = 'Clear Marks' }
 
 -- Clear visual noise
+vim.api.nvim_create_user_command('ClearUI', function()
+	pcall(Snacks.words.clear)
+	vim.cmd.nohlsearch()
+	vim.cmd.diffupdate()
+	vim.cmd.redraw()
+	pcall(function() require('noice.view.backend.snacks'):dismiss() end)
+end, { desc = 'Clear UI Noises' })
 map {
-	group = 'Clear Visual Noises',
+	nowait = true,
 	mode = { 'n', 'x' },
-	{
-		'<leader>uu',
-		function()
-			Snacks.words.clear()
-			vim.cmd.nohlsearch()
-			vim.cmd.diffupdate()
-			vim.cmd.redraw()
-		end,
-	},
-	{ '<c-l>', '<leader>uu', mode = 'i', nowait = true },
+	{ '<leader>uu', '<cmd>ClearUI<cr>', desc = 'Clear Visual Noises' },
+	{ '<c-l>', '<cmd>ClearUI<cr>', desc = 'Clear Visual Noises' },
 }
 --#endregion
 

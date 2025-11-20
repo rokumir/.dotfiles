@@ -4,10 +4,13 @@ local project_dir = require 'config.const.project_dirs'
 
 local DATE_FORMAT = '%Y-%m-%d'
 local TIME_FORMAT = '%H:%M:%S'
+local DATETIME_FORMAT = DATE_FORMAT .. 'T' .. TIME_FORMAT
 
 local map_key = require('util.keymap').map
 local function is_note_pwd() return require('util.path').is_matches { project_dir.second_brain, project_dir.second_brain_OLD } end
-local function get_time_now_fn(template, offset_hours) return tostring(os.date(template, os.time() - (offset_hours or 0) * 60 * 60)) end
+local function get_time_now_fn(template, offset_hours)
+	return function() return tostring(os.date(template, os.time() - (offset_hours or 0) * 60 * 60)) end
+end
 
 return {
 	{ 'davidmh/mdx.nvim', ft = 'mdx' }, -- Treesitter for MDX files
@@ -157,15 +160,24 @@ return {
 				{ name = 'nihil', path = project_dir.second_brain },
 				{ name = 'notes', path = project_dir.second_brain_OLD },
 			},
-			frontmatter = { enabled = true, sort = {
-				'icon',
-				'title',
-				'aliases',
-				'categories',
-				'tags',
-				'created',
-				'id',
-			} },
+			frontmatter = {
+				enabled = true,
+				func = function(note)
+					local out = require('obsidian.builtin').frontmatter(note)
+					out.modified = get_time_now_fn(DATETIME_FORMAT)()
+					return out
+				end,
+				sort = {
+					'icon',
+					'title',
+					'aliases',
+					'categories',
+					'tags',
+					'created',
+					'modified',
+					'id',
+				},
+			},
 			checkbox = {
 				enabled = true,
 				create_new = true,
@@ -202,8 +214,8 @@ return {
 				time_format = TIME_FORMAT,
 				substitutions = {
 					yesterday = get_time_now_fn(DATE_FORMAT, 86400),
-					datetime = get_time_now_fn(DATE_FORMAT .. 'T' .. TIME_FORMAT),
-					now = get_time_now_fn(DATE_FORMAT .. 'T' .. TIME_FORMAT),
+					datetime = get_time_now_fn(DATETIME_FORMAT),
+					now = get_time_now_fn(DATETIME_FORMAT),
 					today = get_time_now_fn '%A %B %-d, %Y',
 				},
 			},

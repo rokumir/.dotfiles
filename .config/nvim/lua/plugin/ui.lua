@@ -44,14 +44,24 @@ return {
 	{ -- Statusline
 		'lualine.nvim',
 		optional = true,
-		lazy = false,
+		event = 'VeryLazy',
+		init = function()
+			vim.g.lualine_laststatus = vim.o.laststatus
+			if vim.fn.argc(-1) > 0 then
+				vim.o.statusline = ' ' -- set an empty statusline till lualine loads
+			else
+				vim.o.laststatus = 0 -- hide the statusline on the starter page
+			end
+		end,
+
 		opts = function()
+			require('lualine_require').require = require -- PERF: we don't need this lualine require madness 🤷
+			vim.o.laststatus = vim.g.lualine_laststatus
+
 			local Icons = LazyVim.config.icons
 			local opts = {
 				options = {
-					disabled_filetypes = {
-						statusline = require('config.const.filetype').ignored_list,
-					},
+					disabled_filetypes = { statusline = { 'dashboard', 'alpha', 'ministarter', 'snacks_dashboard' } },
 					globalstatus = true,
 					always_show_tabline = false,
 					always_divide_middle = true,
@@ -161,23 +171,23 @@ return {
 				},
 			}
 
-			-- -- do not add trouble symbols if aerial is enabled
-			-- -- And allow it to be overriden for some buffer types (see autocmds)
-			-- if vim.g.trouble_lualine and LazyVim.has 'trouble.nvim' then
-			-- 	local trouble = require 'trouble'
-			-- 	local symbols = trouble.statusline {
-			-- 		mode = 'symbols',
-			-- 		groups = {},
-			-- 		title = false,
-			-- 		filter = { range = true },
-			-- 		format = '{kind_icon}{symbol.name:Normal}',
-			-- 		hl_group = 'lualine_c_normal',
-			-- 	}
-			-- 	table.insert(opts.sections.lualine_c, {
-			-- 		symbols and symbols.get,
-			-- 		cond = function() return vim.b.trouble_lualine ~= false and symbols.has() end,
-			-- 	})
-			-- end
+			-- do not add trouble symbols if aerial is enabled
+			-- And allow it to be overriden for some buffer types (see autocmds)
+			if vim.g.trouble_lualine and LazyVim.has 'trouble.nvim' then
+				local trouble = require 'trouble'
+				local symbols = trouble.statusline {
+					mode = 'symbols',
+					groups = {},
+					title = false,
+					filter = { range = true },
+					format = '{kind_icon}{symbol.name:Normal}',
+					hl_group = 'lualine_c_normal',
+				}
+				table.insert(opts.sections.lualine_c, {
+					symbols and symbols.get,
+					cond = function() return vim.b.trouble_lualine ~= false and symbols.has() end,
+				})
+			end
 
 			-- Transparent lualine fill bg
 			local theme = require 'lualine.themes.auto'
@@ -320,38 +330,35 @@ return {
 		'b0o/incline.nvim',
 		event = 'BufReadPre',
 		priority = 1200,
-		opts = function()
-			local opts = {
-				window = {
-					margin = { vertical = 0, horizontal = 1 },
-				},
-				hide = {
-					cursorline = true,
-				},
-				ignore = {
-					filetypes = require('config.const.filetype').ignored_list,
-					floating_wins = true,
-					unlisted_buffers = true,
-				},
-				render = function(props)
-					local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ':t')
-					local ft_icon, ft_color = require('nvim-web-devicons').get_icon_color(filename)
+		opts = {
+			window = {
+				margin = { vertical = 0, horizontal = 1 },
+				zindex = 1,
+			},
+			hide = {
+				cursorline = true,
+			},
+			ignore = {
+				filetypes = require('config.const.filetype').ignored_list,
+				floating_wins = true,
+				unlisted_buffers = true,
+			},
+			render = function(props)
+				local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ':t')
+				local ft_icon, ft_color = require('nvim-web-devicons').get_icon_color(filename)
 
-					if vim.bo[props.buf].modified then
-						local modified_icon = LazyVim.config.icons.misc.modified or '[+]'
-						filename = filename .. ' ' .. modified_icon
-					end
+				if vim.bo[props.buf].modified then
+					local modified_icon = LazyVim.config.icons.misc.modified or '[+]'
+					filename = filename .. ' ' .. modified_icon
+				end
 
-					return {
-						{ ft_icon, guifg = ft_color },
-						{ '  ' },
-						{ filename },
-					}
-				end,
-			}
-
-			return opts
-		end,
+				return {
+					{ ft_icon, guifg = ft_color },
+					{ '  ' },
+					{ filename },
+				}
+			end,
+		},
 	},
 
 	{ -- Git status in line number
@@ -444,6 +451,9 @@ return {
 			enable_get_fold_virt_text = true,
 			fold_virt_text_handler = require('util.ufo').make_fold_handler {
 				icon = '',
+				pad_right = '   ',
+				pad_left = '  ',
+				fill_char = '─',
 			},
 		},
 	},

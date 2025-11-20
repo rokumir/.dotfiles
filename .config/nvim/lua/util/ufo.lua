@@ -42,7 +42,7 @@ function M.make_fold_handler(opts)
 
 		-- Build suffix once; keep it a single chunk so styling is easy to change.
 		local count = endLnum - lnum
-		local suffix = string.format('%s%s %d%s', opts.pad_left, opts.icon, count, opts.pad_right)
+		local suffix = string.format('%s%s  %d%s', opts.pad_left, opts.icon, count, opts.pad_right)
 		local suf_w = strwidth(suffix)
 		local target = width - suf_w
 

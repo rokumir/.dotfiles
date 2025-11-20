@@ -19,6 +19,31 @@ vim.api.nvim_create_autocmd('FileType', {
 	end,
 })
 
+vim.api.nvim_create_autocmd('FileType', {
+	group = augroup 'strip_of_unneccessary_features',
+	pattern = { 'json', 'jsonc', 'json5', 'markdown', 'mdx' },
+	command = [[
+		set conceallevel=0
+		set nowrap
+		set nospell
+	]],
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+	group = augroup 'plugin_ft_oil',
+	pattern = 'oil',
+	command = 'set signcolumn=yes:2',
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+	group = augroup 'disable_folding',
+	pattern = ft_config.ignored_list,
+	command = [[
+		set nofoldenable
+		set foldcolumn=0
+	]],
+})
+
 -- Check if we need to reload the file when it changed
 vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
 	group = augroup 'checktime',
@@ -30,23 +55,6 @@ vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave' }, {
 vim.api.nvim_create_autocmd('TermOpen', {
 	group = augroup 'term_startinsert',
 	command = 'startinsert',
-})
-
--- Fix conceallevel for json files
-vim.api.nvim_create_autocmd({ 'FileType' }, {
-	group = augroup 'conceal',
-	pattern = { 'markdown', 'mdx', 'json', 'jsonc', 'json5' },
-	command = 'set conceallevel=0',
-})
-
--- Resize splits if window got resized
-vim.api.nvim_create_autocmd('VimResized', {
-	group = augroup 'resize_splits',
-	callback = function()
-		local current_tab = vim.fn.tabpagenr()
-		vim.cmd 'tabdo wincmd ='
-		vim.cmd('tabnext ' .. current_tab)
-	end,
 })
 
 -- Go to last loc when opening a buffer
@@ -62,22 +70,6 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 		local lcount = vim.api.nvim_buf_line_count(bufnr)
 		if mark[1] > 0 and mark[1] <= lcount then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
 	end,
-})
-
-vim.api.nvim_create_autocmd('FileType', {
-	group = augroup 'lang_json',
-	pattern = { 'json', 'jsonc', 'json5' },
-	callback = function()
-		vim.opt_local.conceallevel = 0
-		vim.opt_local.wrap = false
-		vim.opt_local.spell = false
-	end,
-})
-
-vim.api.nvim_create_autocmd('FileType', {
-	group = augroup 'plugin_ft_oil',
-	pattern = 'oil',
-	callback = function() vim.opt.signcolumn = 'yes:2' end,
 })
 
 -- Auto create dir when saving a file, in case some intermediate directory does not exist
@@ -102,15 +94,6 @@ vim.api.nvim_create_autocmd('BufDelete', {
 	end,
 })
 
-vim.api.nvim_create_autocmd('FileType', {
-	group = augroup 'disable_folding',
-	pattern = ft_config.ignored_list,
-	callback = function()
-		vim.opt_local.foldenable = false
-		vim.opt_local.foldcolumn = '0'
-	end,
-})
-
 vim.api.nvim_create_autocmd('DirChanged', {
 	group = augroup 'notify_dir_changed',
 	callback = function()
@@ -118,3 +101,14 @@ vim.api.nvim_create_autocmd('DirChanged', {
 		Snacks.notify { '**Changed Directory:**', '**[' .. cwd .. ']**' }
 	end,
 })
+
+-- Resize splits if window got resized
+vim.api.nvim_create_autocmd('VimResized', {
+	group = augroup 'resize_splits',
+	callback = function()
+		local current_tab = vim.fn.tabpagenr()
+		vim.cmd 'tabdo wincmd ='
+		vim.cmd('tabnext ' .. current_tab)
+	end,
+})
+

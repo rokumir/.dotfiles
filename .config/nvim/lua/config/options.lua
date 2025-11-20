@@ -33,9 +33,9 @@ opt.linebreak = true
 opt.showbreak = ''
 opt.smartindent = true
 opt.smarttab = true
-opt.spell = false
 -- opt.tabstop = 2
 opt.wrap = false
+opt.spell = false
 
 --- UI & Appearance
 opt.background = 'dark'
