@@ -15,6 +15,9 @@ local source_priorities = {
 	obsidian_tags = 100,
 	todo_comments = 50,
 }
+local better_hl_source_exclude = {
+	snippets = true,
+}
 
 ---@module 'lazy'
 ---@type LazyPluginSpec
@@ -100,12 +103,19 @@ return { -- Blink.cmp
 					padding = 2,
 					align_to = 'none', -- keep in place
 					treesitter = { 'lsp' },
+					-- kind_icon, kind, label, label_description, source_name, source_id
 					columns = { { 'kind_icon' }, { 'label', 'label_description', gap = 1 } },
 					components = {
 						label = {
 							width = { max = 35 },
-							text = function(ctx) return require('colorful-menu').blink_components_text(ctx) end,
-							highlight = function(ctx) return require('colorful-menu').blink_components_highlight(ctx) end,
+							text = function(ctx)
+								if better_hl_source_exclude[ctx.source_id] then return require('blink.cmp.config.completion.menu').default.draw.components.label.text(ctx) end
+								return require('colorful-menu').blink_components_text(ctx)
+							end,
+							highlight = function(ctx, text)
+								if better_hl_source_exclude[ctx.source_id] then return require('blink.cmp.config.completion.menu').default.draw.components.label.highlight(ctx, text) end
+								return require('colorful-menu').blink_components_highlight(ctx)
+							end,
 						},
 						kind_icon = {
 							text = function(ctx)

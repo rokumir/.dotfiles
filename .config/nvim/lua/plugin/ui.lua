@@ -436,7 +436,7 @@ return {
 		keys = {
 			-- { 'zO', function() require('ufo').openAllFolds() end, nowait = true, desc = 'Unfold All' },
 			-- { 'zC', function() require('ufo').closeAllFolds() end, nowait = true, desc = 'Fold All' },
-			{ 'zO', '<cmd>set foldlevel=99 <cr>', nowait = true, desc = 'Unfold All' },
+			{ 'zO', '<cmd>set foldlevel=10 <cr>', nowait = true, desc = 'Unfold All' },
 			{ 'zC', '<cmd>set foldlevel=0  <cr>', nowait = true, desc = 'Fold All' },
 			{ ']u', function() require('ufo').goNextClosedFold() end, nowait = true, desc = 'Fold: Next' },
 			{ '[u', function() require('ufo').goPreviousClosedFold() end, nowait = true, desc = 'Fold: Prev' },

@@ -49,6 +49,8 @@ return {
 		cp.red = '#FD7CA0'
 		cp.redDark = mix(cp.red, '#f38e54', 0.9)
 		cp.yellowDark = '#FFC799'
+		cp.blue = '#45c6d2'
+		cp.blueLight = '#76b1bb'
 
 		-- diagnostic colors
 		cp.error = cp.redDark
@@ -88,7 +90,7 @@ return {
 				Folded = { fg = cp.green, bg = mix(cp.bgDark, cp.white, 0.96) },
 				VertSplit = { fg = cp.borderDarker },
 				Search = { bg = blend(cp.redDark, 0.35) },
-				IncSearch = { bg = blend(cp.green, 0.35), underline = true },
+				IncSearch = { bg = blend(cp.green, 0.35) },
 				CurSearch = { link = 'IncSearch' },
 				Visual = { bg = blend(cp.bgDarker, 0.9) },
 				Terminal = { bg = cp.bgDark },
@@ -126,6 +128,7 @@ return {
 				MiniMapSymbolView = { bg = cp.fgDisabled },
 				InclineNormal = { bg = 'none', fg = mix(cp.comment, cp.white, 0.8) },
 				InclineNormalNC = { link = 'InclineNormal' },
+				MiniIconsAzure = { fg = cp.blueLight },
 				--#endregion
 
 				--#region lsp
@@ -163,6 +166,8 @@ return {
 				SnacksDashboardDesc = { link = 'SnacksDashboardTitle' },
 				SnacksDashboardDir = { link = 'NonText' },
 				SnacksDashboardFile = { link = 'Special', bold = true },
+
+				SnacksPickerLspEnabled = { link = 'DiagnosticInfo' },
 				--#endregion
 
 				--#region blink/cmp
@@ -170,6 +175,7 @@ return {
 				BlinkCmpDoc = { bg = cp.bgDark },
 				BlinkCmpDocBorder = { link = 'FloatBorder' },
 				BlinkCmpDocSeparator = { bg = cp.bgDark, fg = cp.borderDarker },
+				BlinkCmpLabel = { fg = cp.fgInactive },
 
 				BlinkCmpMenu = { fg = cp.fgInactive, link = 'Pmenu' },
 				--#endregion
@@ -213,6 +219,7 @@ return {
 
 				--#region Treesitter
 				['@symbol'] = { fg = cp.symbol, italic = true },
+				Constant = { fg = mix(cp.blue, cp.white, 0.4), italic = true, bold = true },
 				--#endregion
 			},
 		}

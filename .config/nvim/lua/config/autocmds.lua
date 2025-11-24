@@ -61,13 +61,25 @@ vim.api.nvim_create_autocmd('TermOpen', {
 vim.api.nvim_create_autocmd('BufReadPost', {
 	group = augroup 'last_loc',
 	callback = function(ev)
-		local bufnr = ev.buf
-		local filetype = vim.bo[bufnr].filetype
-		if ft_config.ignored_map[filetype] or vim.b[bufnr].nihil_last_loc then return end
+		local buf = ev.buf
+		local ft = vim.bo[buf].filetype
+		if ft_config.ignored_map[ft] or vim.b[buf].lazyvim_last_loc then return end
 
-		vim.b[bufnr].nihil_last_loc = true
-		local mark = vim.api.nvim_buf_get_mark(bufnr, '"')
-		local lcount = vim.api.nvim_buf_line_count(bufnr)
+		vim.b[buf].lazyvim_last_loc = true
+		local mark = vim.api.nvim_buf_get_mark(buf, '"')
+		local lcount = vim.api.nvim_buf_line_count(buf)
+		if mark[1] > 0 and mark[1] <= lcount then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
+	end,
+})
+
+vim.api.nvim_create_autocmd('BufReadPost', {
+	callback = function(event)
+		local exclude = { 'gitcommit' }
+		local buf = event.buf
+		if vim.tbl_contains(exclude, vim.bo[buf].filetype) or vim.b[buf].lazyvim_last_loc then return end
+		vim.b[buf].lazyvim_last_loc = true
+		local mark = vim.api.nvim_buf_get_mark(buf, '"')
+		local lcount = vim.api.nvim_buf_line_count(buf)
 		if mark[1] > 0 and mark[1] <= lcount then pcall(vim.api.nvim_win_set_cursor, 0, mark) end
 	end,
 })
@@ -85,12 +97,12 @@ vim.api.nvim_create_autocmd('BufWritePre', {
 vim.api.nvim_create_autocmd('BufDelete', {
 	group = augroup 'track_closed_buffers',
 	callback = function(ev)
-		local bufnr = ev.buf
-		local bo = vim.bo[bufnr]
-		local buf_path = vim.api.nvim_buf_get_name(bufnr)
+		local buf = ev.buf
+		local bo = vim.bo[buf]
+		local path = vim.api.nvim_buf_get_name(buf)
 
-		local is_buffer_valid = vim.api.nvim_buf_is_valid(bufnr) and bo.modifiable and #buf_path > 0 and not ft_config.ignored_map[bo.filetype]
-		if is_buffer_valid then require('util.buffer').history:store(buf_path) end
+		local is_buffer_valid = vim.api.nvim_buf_is_valid(buf) and bo.modifiable and #path > 0 and not ft_config.ignored_map[bo.filetype]
+		if is_buffer_valid then require('util.buffer').history:store(path) end
 	end,
 })
 
@@ -111,4 +123,3 @@ vim.api.nvim_create_autocmd('VimResized', {
 		vim.cmd('tabnext ' .. current_tab)
 	end,
 })
-
