@@ -6,7 +6,8 @@ set -U fish_cursor_default block blink
 set -U fish_prompt_pwd_dir_length 1
 set -U fish_prompt_pwd_full_dirs 3
 
-# plugins
+## --------------------------------------------------
+## plugins
 if functions -q fundle
     fundle plugin IlanCosman/tide@v6
     fundle init
@@ -14,7 +15,8 @@ else
     eval (curl -sfL https://git.io/fundle-install)
 end
 
-## aliases
+## --------------------------------------------------
+## aliases/functions
 alias cp 'cp -iv'
 alias mv 'mv -iv'
 alias rm 'rm -iv'
@@ -25,14 +27,9 @@ alias ls 'eza -laU --icons --no-user --group-directories-first --color always'
 alias l ls
 alias g git
 alias gd 'git --git-dir $HOME/.dotfiles -C $HOME --work-tree $HOME'
+alias trash gtrash
 
-type -q gtrash && alias trash gtrash
-
-function mkcd
-    mkdir $argv[1]
-    cd $argv[1]
-end
-
+## --------------------------------------------------
 ## keymaps
 function fish_user_key_bindings
     fish_vi_key_bindings
