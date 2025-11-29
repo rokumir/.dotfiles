@@ -34,7 +34,7 @@ return { -- Blink.cmp
 	---@module 'blink.cmp'
 	---@type blink.cmp.Config | {}
 	opts = {
-		enabled = function() return not require('config.const.filetype').ignored_map[vim.bo.filetype] end,
+		enabled = function() return not Nihil.config.exclude.filetype[vim.bo.filetype] end,
 
 		keymap = {
 			preset = 'enter',
@@ -65,10 +65,10 @@ return { -- Blink.cmp
 				},
 				todo_comments = {
 					name = 'TodoComments',
-					module = 'util.todo-comments.blink',
+					module = 'nihil.plugin.todo-comments.blink',
 					score_offset = -100,
 					async = true,
-					should_show_items = require('util.todo-comments.util').should_show_items,
+					should_show_items = require('nihil.plugin.todo-comments.util').should_show_items,
 					min_keyword_length = 3,
 				},
 			},

@@ -34,12 +34,14 @@ function M.relative(path, opts)
 end
 
 ---@param paths string[]
----@param opts? {exact?: boolean}
+---@param opts? {exact?: boolean, winnr?:number, tabnr?:number}
 ---@return boolean
 function M.is_matches(paths, opts)
 	opts = opts or {}
 	opts.exact = opts.exact ~= false
-	local pwd = vim.fn.getcwd()
+	opts.winnr = opts.winnr or 0
+	opts.tabnr = opts.tabnr or vim.api.nvim_get_current_tabpage()
+	local pwd = vim.fn.getcwd(opts.winnr, opts.tabnr)
 	for _, path in ipairs(paths) do
 		local realpath = vim.uv.fs_realpath(vim.fn.expand(path)) or error('Invalid path ' .. path)
 		local is_matched = opts.exact and realpath == pwd or pwd:match('^' .. realpath)

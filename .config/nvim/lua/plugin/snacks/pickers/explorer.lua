@@ -1,23 +1,22 @@
-local snacks_actions = require 'snacks.explorer.actions'
-local snacks_const = require 'config.const.snacks'
-local snacks_tree = require 'snacks.explorer.tree'
+local ExplorerActions = require 'snacks.explorer.actions'
+local Settings = require('nihil.plugin.snacks').settings
+local ExplorerTree = require 'snacks.explorer.tree'
 
----Get explorer excludes.
+--- Get explorer excludes (.ignore file)
 ---@return string[]
----@note Explorer doesn't use the `.ignore` file, so it has to be manually
----@note added to the explorer exclude list.
+--- NOTE: Explorer doesn't use the `.ignore` file, so it has to be manually
+--- added to the explorer exclude list.
 local function get_excludes()
-	if vim.g.snacks_ignored then return snacks_const.excludes end
-
-	local root_excludes = require('util.path').root_dir.ignored_list()
-	return vim.list_extend(root_excludes, snacks_const.excludes)
+	if vim.g.snacks_ignored then return Settings.excludes end
+	local root_excludes = Nihil.path.root_dir.ignored_list()
+	return vim.list_extend(root_excludes, Settings.excludes)
 end
 
 ---@param picker snacks.Picker
 ---@param path string
 local function unfold_dir(picker, path)
-	snacks_tree:open(path)
-	snacks_actions.update(picker, { refresh = false })
+	ExplorerTree:open(path)
+	ExplorerActions.update(picker, { refresh = false })
 end
 
 return {
@@ -34,7 +33,6 @@ return {
 				explorer = {
 					layout = {
 						preset = 'default',
-						-- hidden = { 'input' },
 						layout = {
 							position = 'right',
 							width = 0.26,
@@ -43,20 +41,16 @@ return {
 							border = 'top',
 							title = '{title} {live} {flags}',
 							title_pos = 'left',
-							-- { win = 'input', height = 1, border = 'bottom' },
-							{
-								box = 'horizontal',
-								{ win = 'list', border = 'none' },
-								-- { win = 'preview', title = '{preview}', height = 0.4, border = 'left' },
-							},
+							{ box = 'horizontal', { win = 'list', border = 'none' } },
 						},
 					},
 
+					exclude = Settings.excludes,
 					config = function(config) config.exclude = get_excludes() end,
 
 					win = {
 						list = {
-							keys = vim.tbl_extend('force', {}, require('config.const.snacks').disabled_default_keys, {
+							keys = vim.tbl_extend('force', {}, require('nihil.plugin.snacks').settings.disabled_default_keys, {
 								['<bs>'] = 'explorer_up',
 								['h'] = 'explorer_close', -- close directory
 								['U'] = 'explorer_update',
@@ -123,7 +117,7 @@ return {
 							Snacks.picker.util.confirm(message, function()
 								picker.list:set_selected() -- clear selection
 								for _, file in ipairs(paths) do
-									require('util.file').delete(file, {
+									Nihil.file.delete(file, {
 										on_exit = function() picker:action 'explorer_update' end,
 										no_prompt = true,
 									})
@@ -133,7 +127,7 @@ return {
 
 						---Recursively open all subdirectories.
 						explorer_open_all_sub = function(picker, item)
-							local curr_node = snacks_tree:node(item.file)
+							local curr_node = ExplorerTree:node(item.file)
 							if not (curr_node and curr_node.dir) then return end
 
 							local function unfold(node) ---@param node snacks.picker.explorer.Node
@@ -152,7 +146,7 @@ return {
 						---Open a directory or jump to a file.
 						---If a directory is already open, do nothing.
 						confirm = function(picker, item)
-							local selected_node = snacks_tree:node(item.file)
+							local selected_node = ExplorerTree:node(item.file)
 							if not selected_node or (selected_node.dir and selected_node.open) then return end
 
 							if selected_node.dir then

@@ -3,22 +3,13 @@ local M = {}
 M.obsidian = {}
 M.obsidian.util = {}
 
----@param file string
----@param opts obsidian.config
-function M.obsidian.util.is_in_template_dir(file, opts)
-	-- stylua: ignore
-	return opts.templates
-		and opts.templates.folder
-		and file:match('^' .. opts.templates.folder) ~= nil
-end
-
 ---@param obsidian_note_util obsidian.Note
 ---@param item snacks.picker.finder.Item
----@param opts obsidian.config
-function M.obsidian.util.snacks_note_transform(obsidian_note_util, item, opts)
+function M.obsidian.util.snacks_note_transform(obsidian_note_util, item)
 	vim.defer_fn(function()
 		local note = obsidian_note_util.from_file(item.file, { collect_anchor_links = false, collect_blocks = false, load_contents = false, max_lines = 100 })
-		if not note.has_frontmatter or M.obsidian.util.is_in_template_dir(item.file, opts) then return end
+		if not note.has_frontmatter then return end
+
 		item.has_frontmatter = note.has_frontmatter
 		item.icon = note.metadata.icon or nil
 		item.title = type(note.metadata.title) == 'string' and note.metadata.title or note.aliases[1] or nil
@@ -60,8 +51,7 @@ function M.obsidian.util.snacks_note_format(item, picker)
 	return ret
 end
 
----@param opts obsidian.config
-function M.obsidian.quick_switcher(opts)
+function M.obsidian.quick_switcher()
 	local obsidian_exist, obsidian_note_util = pcall(require, 'obsidian.note')
 	if not obsidian_exist then error '**[Obsidian.nvim]** plugin not found!' end
 
@@ -70,7 +60,7 @@ function M.obsidian.quick_switcher(opts)
 		title = '󱀂 Notes',
 		layout = 'vscode_focus',
 		ft = { 'markdown', 'mdx', 'md' },
-		transform = function(item) return M.obsidian.util.snacks_note_transform(obsidian_note_util, item, opts) end,
+		transform = function(item) return M.obsidian.util.snacks_note_transform(obsidian_note_util, item) end,
 		format = M.obsidian.util.snacks_note_format,
 	}
 end

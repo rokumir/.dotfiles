@@ -1,4 +1,4 @@
-local excluded_filetypes = require('config.const.filetype').ignored_list
+local exclude_filetypes = Nihil.config.exclude.filetype_list
 
 ---@diagnostic disable: no-unknown, missing-fields, missing-parameter
 ---@type LazyPluginSpec[]
@@ -31,8 +31,8 @@ return {
 		opts = function(_, opts)
 			-- Settings for the greatest script of all time
 			vim.api.nvim_create_autocmd({ 'FileType' }, {
-				group = require('util.autocmd').augroup 'ft_tmux-harpoon',
-				pattern = 'tmux-harpoon', -- in config.filetype
+				group = Nihil.augroup 'ft_tmux-harpoon',
+				pattern = 'tmux-harpoon', -- in config.exclude
 				callback = function(ev)
 					vim.opt_local.showmode = false
 					vim.opt_local.ruler = false
@@ -40,7 +40,7 @@ return {
 					vim.opt_local.showcmd = false
 					vim.opt_local.wrap = false
 
-					require('util.keymap').map { '<c-s>', '<cmd>write | quit <cr>', buffer = ev.buf }
+					Nihil.keymap { '<c-s>', '<cmd>write | quit <cr>', buffer = ev.buf }
 				end,
 			})
 
@@ -125,7 +125,7 @@ return {
 		'tpope/vim-sleuth',
 		init = function()
 			-- 1: true, 0: false
-			for _, ft in ipairs(excluded_filetypes) do
+			for _, ft in ipairs(exclude_filetypes) do
 				vim.g['sleuth_' .. ft .. '_heuristics'] = 0
 			end
 		end,
@@ -184,7 +184,7 @@ return {
 				style = 'virtual_left',
 				bold = true,
 				italic = true,
-				ignore_ft = excluded_filetypes,
+				ignore_ft = exclude_filetypes,
 				disable_builtin_lsp_colors = vim.version().minor == 12,
 			},
 
@@ -280,7 +280,7 @@ return {
 			}
 
 			vim.api.nvim_create_autocmd('User', {
-				group = require('util.autocmd').augroup 'oil_on_move',
+				group = Nihil.augroup 'oil_on_move',
 				pattern = 'OilActionsPost',
 				callback = function(event)
 					local actions = event.data.actions
@@ -298,8 +298,13 @@ return {
 		'johmsalas/text-case.nvim',
 		priority = 1000,
 		keys = {
-			{ ';C', function() require('util.text-case'):picker() end, desc = 'Change Text Case', mode = { 'n', 's', 'x' } },
+			{ ';C', function() require('nihil.plugin.text-case'):picker() end, desc = 'Change Text Case', mode = { 'n', 's', 'x' } },
 		},
 		opts = { default_keymappings_enabled = false },
+	},
+
+	{
+		'tiagovla/scope.nvim',
+		config = true,
 	},
 }

@@ -55,7 +55,7 @@ return {
 		priority = 1000,
 		version = false,
 		keys = {
-			{ '<leader>ut', function() require('treesitter-context').toggle() end, desc = 'Toggle Treesitter Context' },
+			{ '<leader><leader>ut', function() require('treesitter-context').toggle() end, desc = 'Toggle Treesitter Context' },
 		},
 		opts = {
 			enable = false,

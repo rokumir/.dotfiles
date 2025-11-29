@@ -29,7 +29,7 @@ return {
 					q = false,
 					delete_file = {
 						'<a-D>',
-						function(self) require('util.file').delete(self.buf) end,
+						function(self) Nihil.file.delete(self.buf) end,
 						desc = 'Delete Scratch File',
 						mode = { 'i', 'n' },
 					},

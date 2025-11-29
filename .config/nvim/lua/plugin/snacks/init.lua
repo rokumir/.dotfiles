@@ -5,10 +5,8 @@
 return {
 	{
 		'folke/snacks.nvim',
-		keys = function()
-			require('util.keymap').map { ';', '', desc = 'Snacks/Pickers' }
-			return {}
-		end,
+		priority = 10000,
+		keys = function() return {} end,
 
 		---@type snacks.Config
 		opts = {
@@ -63,7 +61,7 @@ return {
 			},
 
 			zen = {
-				-- You can add any `Snacks.toggle` id here.
+				-- You can add any `Snacks.toggle` id/key here.
 				-- Toggle state is restored when the window is closed.
 				-- Toggle config options are NOT merged.
 				---@type table<string, boolean>

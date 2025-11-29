@@ -85,7 +85,7 @@ return {
 			},
 
 			on_attach = function(client, bufnr)
-				require('util.keymap').map {
+				Nihil.keymap {
 					buffer = bufnr,
 					{ '<leader>cM', '<cmd>TSToolsAddMissingImports<cr>', desc = 'TSTools: Add missing imports' },
 					{ '<leader>cD', '<cmd>TSToolsFixAll<cr>', desc = 'TSTools: Fix all diagnostics' },

@@ -1,12 +1,11 @@
 ---@diagnostic disable: missing-parameter
 ---@type snacks.dashboard.Item[]
 local sep_line_text = { { ('─'):rep(20), hl = 'WinSeparator', align = 'center' } }
-local note_dir = require('config.const.project_dirs').second_brain or ''
 
 return {
 	'folke/snacks.nvim',
 	keys = {
-		{ '<f2><f2>', '<cmd>lua Snacks.dashboard.open() <cr><cmd>stopinsert <cr>', desc = 'Open Snacks Dashboard' },
+		{ '<f2><f2>', '<cmd>lua Snacks.dashboard(); vim.cmd.stopinsert() <cr>', desc = 'Open Snacks Dashboard' },
 	},
 	---@module 'snacks'
 	---@type snacks.Config
@@ -18,7 +17,7 @@ return {
 				keys = {
 					{ icon = '󰑏 ', key = 's', desc = 'Restore Session', section = 'session' },
 					{ icon = ' ', key = 'c', desc = 'Open Config', action = ":cd `=stdpath('config')`" },
-					{ icon = ' ', key = 'n', desc = 'Open Note', action = ':cd ' .. note_dir .. ' | lua require("lazy").load { plugins = { "obsidian.nvim" } }', enabled = note_dir ~= '' },
+					{ icon = ' ', key = 'n', desc = 'Open Note', action = ':cd ' .. Nihil.config.vault.second_brain },
 					{ icon = ' ', key = 'Q', desc = 'Quit', action = 'ZZ' },
 				},
 			},

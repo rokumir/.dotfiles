@@ -1,8 +1,8 @@
+local M = setmetatable({}, {
+	__call = function(t, ...) return t.map(...) end,
+})
+
 ---@module 'which-key'
-
-local M = {}
-
-local wk_exist, wk = pcall(require, 'which-key')
 
 local takes = {
 	callback = true,
@@ -38,6 +38,7 @@ end
 ---@param mappings wk.Spec
 ---@param opts wk.Parse?
 function M.map(mappings, opts)
+	local wk_exist, wk = pcall(require, 'which-key')
 	if not wk_exist then error({ '"which-key" plugin is not found!', 'Use `legacy_map` func instead!' }, 4) end
 	wk.add(mappings, opts)
 end
@@ -54,6 +55,17 @@ function M.unmap(mappings)
 			pcall(vim.keymap.del, mode, lhs)
 		end
 	end
+end
+
+---@param lhs string
+---@param mode? string
+---@return vim.keymap.set.Opts|{[1]:string,[2]:string|function}
+function M.get_exist_keymap(lhs, mode)
+	mode = mode or 'n'
+	local maparg = vim.fn.maparg(lhs, mode, false, true)
+	local rhs = maparg.rhs or maparg.callback
+	vim.validate('lhs', lhs, { 'string', 'callable' }, 'Invalid lhs for keymap ' .. rhs)
+	return vim.tbl_extend('force', { lhs, rhs }, get_opts(maparg))
 end
 
 return M

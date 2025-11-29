@@ -1,3 +1,20 @@
+---@class BufferHistoryState
+---@field nodes table <string?, BufferHistoryEntry>
+---@field head? string
+---@field tail? string
+---@field size number
+---
+---@class BufferHistoryEntry
+---@field _path string
+---@field cwd string
+---@field file string
+---@field text string
+---@field next? string
+---@field prev? string
+---
+---@class BufferDeleteOptions : snacks.bufdelete.Opts
+---@field ft_passthru? false  Ignored filetypes/buffertypes
+
 local M = {}
 
 ---@param file? string
@@ -12,9 +29,69 @@ function M.get_buf_from_file(file)
 	end
 end
 
+---@param file_or_buf? string|integer?
+---@param opts? {no_prompt:boolean?, job_opts?: vim.fn.jobstart.Opts}
+function M.delete(file_or_buf, opts)
+	file_or_buf = file_or_buf or 0 ---@type string|integer? default to current buffer
+	opts = opts or {}
+	opts.job_opts = opts.job_opts or {}
+
+	local file_path ---@type string
+	local bufnr ---@type number?
+	if type(file_or_buf) == 'number' then
+		file_path = vim.api.nvim_buf_get_name(file_or_buf)
+		bufnr = file_or_buf
+	elseif type(file_or_buf) == 'string' then
+		file_path = file_or_buf
+		bufnr = M.get_buf_from_file(file_or_buf)
+	else
+		Snacks.notify.error { 'Buffer/file not found:', '**[' .. file_or_buf .. ']**' }
+		return
+	end
+
+	if not file_path or file_path == '' then
+		Snacks.notify.error 'Cannot delete unnamed buffer!'
+		return
+	end
+
+	local rel_file_path = require('nihil.util.path').relative(file_path)
+	local file_id = '**[' .. rel_file_path .. ']**'
+
+	-- Confirmations
+	if opts.no_prompt ~= true then
+		local c = vim.fn.confirm
+		-- stylua: ignore
+		if c('Do want to delete ' .. rel_file_path .. '?', '&Yes\n&No', 2) ~= 1
+			or (bufnr and vim.bo[bufnr].modified
+			and c('This file is modified! Continue to delete ' .. rel_file_path .. '?', '&Yes\n&No', 2) ~= 1)
+		then return end
+	end
+
+	Snacks.notify.info('Deleting ' .. file_id, { id = file_id })
+
+	-- Close buffer before deleting file
+	if bufnr then Snacks.bufdelete.delete(bufnr) end
+
+	-- Delete file via cli
+	vim.fn.jobstart(
+		'trash put --debug ' .. vim.fn.shellescape(file_path),
+		vim.tbl_extend('keep', {
+			detach = true,
+			on_exit = function(_, code)
+				local success = code == 0
+				local message = success and 'Successfully deleted' or 'Failed to delete'
+				Snacks.notify({ message, file_id }, {
+					level = success and 'info' or 'error',
+					id = file_id,
+				})
+				pcall(opts.job_opts.on_exit or 0) ---@diagnostic disable-line: param-type-mismatch
+			end,
+		}, opts.job_opts)
+	)
+end
+
 --#region Buffer History -------------------------
--- NOTE: Cross session tab restore is not supported.
-M.history = {
+M.buf_history = {
 	MAX_ENTRIES = 30,
 	---@type BufferHistoryState
 	_state = {
@@ -26,7 +103,7 @@ M.history = {
 }
 
 --- Clears the entire history.
-function M.history:clear()
+function M.buf_history:clear()
 	self._state.nodes = {}
 	self._state.head = nil
 	self._state.tail = nil
@@ -36,7 +113,7 @@ end
 
 --- Adds (or moves) a buffer path to the front of history.
 ---@param path string
-function M.history:put(path)
+function M.buf_history:put(path)
 	local state = self._state
 	-- No-op if already at front
 	if path == state.head then return end
@@ -59,6 +136,7 @@ function M.history:put(path)
 			cwd = cwd,
 			text = file_rel_path,
 			file = file_rel_path,
+			idx = state.size,
 		}
 		nodes[path] = node
 
@@ -86,7 +164,7 @@ end
 
 --- Pops and reopens the most recent buffer, or a specific one if `path` is provided.
 ---@param path? string
-function M.history:pop(path)
+function M.buf_history:pop(path)
 	local state = self._state
 	local target = path or state.head
 	if not target then
@@ -134,15 +212,16 @@ function M.history:pop(path)
 end
 
 --- Launches a Snacks.nvim picker for buffer history.
-function M.history:picker()
+function M.buf_history:picker()
 	if not Snacks then return Snacks.notify.error '**[Snacks.nvim]** picker not found!' end
 	if self._state.size == 0 then return Snacks.notify 'Empty!' end
 
 	Snacks.picker.pick {
-		source = 'buffer_history',
 		title = 'Buffer History',
-		layout = 'vscode_focus_min',
+		source = 'buffer_history',
+		layout = 'vscode_min',
 		format = 'file',
+		sort = { fields = { 'idx' } },
 		items = vim.tbl_values(self._state.nodes),
 		confirm = function(picker)
 			local selections = picker:selected { fallback = true }
@@ -169,94 +248,9 @@ function M.history:picker()
 	}
 end
 
-M.history.restore = M.history.pop
-M.history.store = M.history.put
-M.history.snacks = M.history.picker
---#endregion
-
---#region Shada -------------------------
-M.shada = {}
-
---- Clears shada entries for specific files using the provided regex pattern.
----
---- This function improves on the original script by combining all file paths
---- into a single regex for a more efficient one-pass substitution. It operates
---- on a temporary, in-memory buffer to avoid any UI disruption.
----
----@param items table<{file: string}> A list of tables, where each table has a `file` key
----
-function M.shada.clear_shada_entries_with_regex(items)
-	-- Collect and escape file paths for the Vim regex engine.
-	local file_patterns = {}
-	for _, item in ipairs(items) do
-		if item.file and item.file ~= '' then
-			-- Escape characters that are special in Vim's regex, like '.', '*', '[', etc.
-			-- This is critical for ensuring file paths with such characters don't break the regex.
-			local pattern = vim.fn.escape(item.file, [[\.*^$[]])
-			table.insert(file_patterns, pattern)
-		end
-	end
-
-	if #file_patterns == 0 then
-		vim.notify('No valid file paths provided to clear.', vim.log.levels.WARN)
-		return
-	end
-
-	-- Construct the full regex using the provided template.
-	local files_regex_part = '\\(' .. table.concat(file_patterns, '\\|') .. '\\)'
-	local full_regex = '^\\S\\(\\n\\s\\|[^\\n]\\)\\{-}' .. files_regex_part .. '\\_.\\{-}\\n*\\ze\\(^\\S\\|\\%$\\)'
-
-	-- check for shada
-	local shada_path = vim.fn.stdpath 'state' .. '/shada/main.shada'
-	local file, err = io.open(shada_path, 'r')
-	if not file then return Snacks.notify.info 'Shada file not found, nothing to clear.' end
-	local content = file:read '*a'
-	file:close()
-
-	local buf = vim.api.nvim_create_buf(false, true)
-	vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(content, '\n'))
-
-	-- Find a safe separator for the substitute command that does not appear anywhere in the regex itself.
-	local sep = (vim.tbl_filter(function(char) return not full_regex:find(char, 1, true) end, { '#', '@', '!', '%', '&', ';' }))[1]
-	if not sep then
-		vim.api.nvim_buf_delete(buf, { force = true })
-		return Snacks.notify.error 'Could not find a safe separator for regex substitution.'
-	end
-
-	-- Execute the substitution command within the context of the temporary buffer.
-	local substitute_cmd = string.format('%%s%s%s%s%sg', sep, full_regex, sep, sep)
-	vim.api.nvim_buf_call(buf, function() vim.cmd(substitute_cmd) end)
-
-	-- Get the modified content and clean up the temporary buffer.
-	local new_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-	vim.api.nvim_buf_delete(buf, { force = true })
-
-	-- Write the cleaned content back to the shada file and reload.
-	file, err = io.open(shada_path, 'w')
-	if not file then return Snacks.notify.error('Could not write to shada file: ' .. tostring(err)) end
-	file:write(table.concat(new_lines, '\n'))
-	file:close()
-
-	vim.cmd 'rshada!'
-	Snacks.notify.info 'Shada cache cleared of specified entries using regex.'
-end
+M.buf_history.restore = M.buf_history.pop
+M.buf_history.store = M.buf_history.put
+M.buf_history.snacks = M.buf_history.picker
 --#endregion
 
 return M
-
----@class BufferHistoryState
----@field nodes table <string?, BufferHistoryEntry>
----@field head? string
----@field tail? string
----@field size number
----
----@class BufferHistoryEntry
----@field _path string
----@field cwd string
----@field file string
----@field text string
----@field next? string
----@field prev? string
----
----@class BufferDeleteOptions : snacks.bufdelete.Opts
----@field ft_passthru? false  Ignored filetypes/buffertypes

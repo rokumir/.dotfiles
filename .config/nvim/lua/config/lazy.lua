@@ -1,3 +1,5 @@
+_G.Nihil = require 'nihil'
+
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not (vim.uv or vim.loop).fs_stat(lazypath) then vim.fn.system {
 	'git',
@@ -9,7 +11,6 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then vim.fn.system {
 } end
 vim.opt.rtp:prepend(lazypath)
 
-_G.nihil = {}
 require('lazy').setup {
 	spec = {
 		{
@@ -18,18 +19,20 @@ require('lazy').setup {
 			import = 'lazyvim.plugins',
 			---@type LazyVimConfig
 			opts = {
+				-- NOTE: the colorschemes in the `lua/plugin/colorscheme` folder need to have `lazy=true`
+				-- then activate them with this function. And setting the color via `vim.g.nihil_colorscheme` variable.
 				colorscheme = function()
 					if not vim.g.nihil_colorscheme then vim.g.nihil_colorscheme = 'rose-pine' end
 					if not pcall(require, vim.g.nihil_colorscheme) then
-						Snacks.notify.error {
+						return Snacks.notify.error {
 							'**`vim.g.nihil_colorscheme`** not found!!',
 							'Or **[' .. vim.g.nihil_colorscheme .. ']** colorscheme not found!!',
 						}
-						return
 					end
 					require('lazy').load { plugins = { vim.g.nihil_colorscheme } }
 					vim.cmd.colorscheme(vim.g.nihil_colorscheme)
 				end,
+
 				defaults = { keymaps = false, autocmds = false },
 				news = { lazyvim = true, neovim = true },
 			},
@@ -64,7 +67,7 @@ require('lazy').setup {
 
 		-- { import = 'lazyvim.plugins.extras.ui.edgy' },
 
-		{ import = 'lazyvim.plugins.extras.ai.sidekick' },
+		-- { import = 'lazyvim.plugins.extras.ai.sidekick' },
 		--#endregion
 
 		-- user settings

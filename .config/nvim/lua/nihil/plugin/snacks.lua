@@ -1,6 +1,7 @@
 local M = {}
 
-M.disabled_default_keys = {
+M.settings = {}
+M.settings.disabled_default_keys = {
 	a = false,
 	d = false,
 	r = false,
@@ -15,7 +16,7 @@ M.disabled_default_keys = {
 	H = false,
 	Z = false,
 }
-M.excludes = {
+M.settings.excludes = {
 	'**/.git/*',
 	'**/node_modules/*',
 }

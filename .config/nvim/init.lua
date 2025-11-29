@@ -1,2 +1,2 @@
 require 'config.lazy'
-require 'after'
+require 'nihil.lazy'

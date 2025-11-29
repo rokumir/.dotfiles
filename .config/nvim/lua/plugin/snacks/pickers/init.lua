@@ -1,4 +1,4 @@
-local snacks_const = require 'config.const.snacks'
+local Settings = require('nihil.plugin.snacks').settings
 
 local INPUT_TITLE = '{title} {live} {flags}'
 
@@ -41,7 +41,7 @@ local default_keys = vim.tbl_extend('keep', {
 	['<c-w>i'] = 'focus_input',
 	['<c-w>l'] = 'focus_list',
 	['<c-w>p'] = 'focus_preview',
-}, snacks_const.disabled_default_keys)
+}, Settings.disabled_default_keys)
 
 ---@type table<string, PickerYankAction>
 local picker_yank_actions = {
@@ -51,17 +51,28 @@ local picker_yank_actions = {
 		predicate = function(i) return Snacks.picker.util.path(i) end,
 		callback = function(paths, copy)
 			local path_opts = {
-				{ key = 'Relative Path', format = ':.' },
-				{ key = 'File Name', format = ':t' },
-				{ key = 'Full Path', format = ':p' },
-				{ key = 'Base Name', format = ':t:r' },
-				{ key = 'Extension', format = ':e' },
+				{ idx = 1, text = 'Relative Path', format = ':.' },
+				{ idx = 2, text = 'File Name', format = ':t' },
+				{ idx = 3, text = 'Full Path', format = ':p' },
+				{ idx = 4, text = 'Base Name', format = ':t:r' },
+				{ idx = 5, text = 'Extension', format = ':e' },
 			}
-			local prompt_otps = {
+			Snacks.picker.select(path_opts, {
 				prompt = 'Choose to copy to clipboard:',
-				format_item = function(option) return option.key end,
-			}
-			Snacks.picker.select(path_opts, prompt_otps, function(choice) ---@param choice {key:string;format:string}?
+				snacks = {
+					layout = 'select_min_short',
+					format = function(_item)
+						local item = _item.item
+						local ret = {}
+						ret[#ret + 1] = { item.idx, 'Character' }
+						ret[#ret + 1] = { ' ' }
+						ret[#ret + 1] = { item.text, 'Character' }
+						ret[#ret + 1] = { ' ' }
+						ret[#ret + 1] = { item.format, 'Comment' }
+						return ret
+					end,
+				},
+			}, function(choice) ---@param choice {key:string;format:string}?
 				if not choice then return end
 				local formatted_paths = vim.tbl_map(function(p) return vim.fn.fnamemodify(p, choice.format) end, paths)
 				copy(formatted_paths)
@@ -79,7 +90,7 @@ return {
 	---@type snacks.Config
 	opts = {
 		picker = {
-			exclude = snacks_const.excludes,
+			exclude = Settings.excludes,
 
 			matcher = {
 				fuzzy = true,
@@ -213,12 +224,27 @@ return {
 						{ win = 'list', border = 'none' },
 					},
 				},
-				select_min = {
+				select_min_short = {
 					layout = {
 						backdrop = false,
-						width = 0.4,
+						width = 0.35,
 						min_width = 50,
-						height = 0.4,
+						height = 0.3,
+						min_height = 3,
+						title = '{title}',
+						title_pos = 'center',
+						box = 'vertical',
+						border = 'rounded',
+						{ win = 'input', height = 1, border = 'bottom' },
+						{ win = 'list', border = 'none' },
+					},
+				},
+				select_min_long = {
+					layout = {
+						backdrop = false,
+						width = 0.35,
+						min_width = 50,
+						height = 0.5,
 						min_height = 3,
 						title = '{title}',
 						title_pos = 'center',

@@ -6,7 +6,7 @@ local M = {}
 function M.new() return setmetatable({}, { __index = M }) end
 
 function M:get_completions(_, callback)
-	local items = require('util.todo-comments.util').get_todo_comments_cmp_items()
+	local items = require('nihil.plugin.todo-comments.util').get_todo_comments_cmp_items()
 	callback {
 		items = items,
 		is_incomplete_forward = true,

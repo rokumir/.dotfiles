@@ -1,6 +1,5 @@
-local keymap_util = require 'util.keymap'
-local map = keymap_util.map
-local unmap = keymap_util.unmap
+local map = Nihil.keymap
+local unmap = Nihil.keymap.unmap
 
 -- Which-key groups register
 map {
@@ -8,7 +7,7 @@ map {
 	{ '[', group = 'prev' },
 	{ ']', group = 'next' },
 	{ 'g', group = 'goto' },
-	{ '<leader><leader>', group = 'toggle' },
+	{ ';', group = 'Snacks/Pickers', icon = '⛏️' },
 	{ '<leader>!', group = 'shell', icon = '' },
 	{ '<leader>;', group = 'dropbar', icon = '' },
 	{ '<leader>a', group = 'ai', icon = '🤖' },
@@ -22,7 +21,12 @@ map {
 	{ '<leader>f', group = 'file', icon = '' },
 	{ '<leader>x', group = 'diagnostics/quickfix' },
 	{ '<leader>y', group = 'yanky', icon = '' },
+	{ '<leader><leader>', group = 'toggle' },
 	{ '<leader><leader>p', group = 'profiler' },
+	{ '<leader><leader>u', group = 'ui' },
+	{ '<leader><leader>r', group = 'ui [Render Markdown]' },
+	{ '<leader><leader>l', group = 'lsp/format' },
+	{ '<leader><leader>o', group = 'option' },
 }
 
 unmap {
@@ -128,17 +132,11 @@ map { '<c-a-down>', ':resize -1 <cr>', desc = 'Decrease Window Height' }
 map { '<c-a-left>', ':vertical resize -1 <cr>', desc = 'Decrease Window Width' }
 map { '<c-a-right>', ':vertical resize +1 <cr>', desc = 'Increase Window Width' }
 
--- Tab navigation
-map { '<leader>td', '<cmd>tabclose<cr>', desc = 'Tab: Close' }
-map { '<leader>tN', '<cmd>tabnew<cr>', desc = 'Tab: New' }
-map { '<leader>tn', '<cmd>tabnext<cr>', desc = 'Tab: Next' }
-map { '<leader>tp', '<cmd>tabprevious<cr>', desc = 'Tab: Previous' }
-
 -- Buffer history
-map { '<leader>tX', function() require('util.buffer').history:clear() end, desc = 'Clear Buffer History' }
-map { '<leader>ts', function() require('util.buffer').history:restore() end, desc = 'Restore Buffer History' }
-map { '<c-s-t>', function() require('util.buffer').history:restore() end, desc = 'Restore Buffer History' }
-map { ';S', function() require('util.buffer').history:picker() end, desc = 'Buffer History Search' }
+map { '<leader>tX', function() Nihil.file.buf_history:clear() end, desc = 'Clear Buffer History' }
+map { '<leader>ts', function() Nihil.file.buf_history:restore() end, desc = 'Restore Buffer History' }
+map { '<c-s-t>', function() Nihil.file.buf_history:restore() end, desc = 'Restore Buffer History' }
+map { ';S', function() Nihil.file.buf_history:picker() end, desc = 'Buffer History Search' }
 map { '<leader>`', ':b# <cr>', desc = 'Alternate buffer' }
 
 -- Pane Navigation
@@ -163,7 +161,7 @@ map { '<c-s>', '<cmd>write<cr>', mode = { 'i', 'n', 'x', 's' }, desc = 'Save Fil
 
 -- New / Delete
 map { '<leader>fn', '<cmd>enew<cr>', desc = 'New File' }
-map { '<leader>fd', function() require('util.file').delete() end, desc = 'Delete File' }
+map { '<leader>fd', function() Nihil.file.delete() end, desc = 'Delete File' }
 
 -- Make file executable
 map { '<leader>!x', ':write | !chmod +x %<cr><cmd>e! % <cr>', desc = 'Set File Executable' }
@@ -226,7 +224,7 @@ end, { desc = 'Clear UI Noises' })
 map {
 	nowait = true,
 	mode = { 'n', 'x' },
-	{ '<leader>uu', '<cmd>ClearUI<cr>', desc = 'Clear Visual Noises' },
+	{ '<leader>uc', '<cmd>ClearUI<cr>', desc = 'Clear Visual Noises' },
 	{ '<c-l>', '<cmd>ClearUI<cr>', desc = 'Clear Visual Noises' },
 }
 --#endregion
@@ -234,82 +232,78 @@ map {
 if not LazyVim and not Snacks then return end
 
 --#region --- TOGGLES
-LazyVim.format.snacks_toggle():map '<leader><leader>f'
-LazyVim.format.snacks_toggle(true):map '<leader><leader>F'
-Snacks.toggle.option('spell'):map '<leader><leader>s'
-Snacks.toggle.option('wrap'):map '<a-z>'
-Snacks.toggle.line_number():map '<leader><leader>n'
-Snacks.toggle.option('relativenumber'):map '<leader><leader>r'
+LazyVim.format.snacks_toggle():map '<leader><leader>lf'
+LazyVim.format.snacks_toggle(true):map '<leader><leader>lF'
+Snacks.toggle.diagnostics():map '<leader><leader>ld'
+Snacks.toggle.treesitter():map '<leader><leader>lt'
+Snacks.toggle.inlay_hints():map '<leader><leader>lh'
+
+Snacks.toggle.option('spell'):map '<leader><leader>os'
+Snacks.toggle.option('wrap'):map('<leader><leader>ow'):map '<a-z>'
+Snacks.toggle.line_number():map '<leader><leader>on'
+Snacks.toggle.option('relativenumber'):map '<leader><leader>oN'
 Snacks.toggle
 	.option('conceallevel', {
 		off = 0,
 		on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2,
 		name = 'Conceal Level',
 	})
-	:map('<leader>uc')
-	:map '<leader><leader>c'
-Snacks.toggle.treesitter():map '<leader><leader>T'
-Snacks.toggle.dim():map '<leader><leader>D'
-Snacks.toggle.diagnostics():map '<leader><leader>d'
-Snacks.toggle.indent():map '<leader><leader>g'
-Snacks.toggle.scroll():map '<leader><leader>S'
-Snacks.toggle.zoom():map '<leader><leader>w'
-Snacks.toggle.zen():map '<leader><leader>z'
-Snacks.toggle.inlay_hints():map '<leader><leader>H'
-Snacks.toggle.profiler():map '<leader><leader>pp'
-Snacks.toggle.profiler_highlights():map '<leader><leader>ph'
+	:map '<leader><leader>oc'
 Snacks.toggle
 	.new({
 		name = 'Rulers',
 		get = function() return #vim.o.colorcolumn > 0 end,
 		set = function(state) vim.opt_local.colorcolumn = state and '80,120' or '' end,
 	})
-	:map '<leader><leader>R'
+	:map '<leader><leader>or'
+
+Snacks.toggle.dim():map '<leader><leader>ud'
+Snacks.toggle.indent():map '<leader><leader>ui'
+Snacks.toggle.scroll():map '<leader><leader>us'
+Snacks.toggle.zen():map '<leader><leader>uz'
+Snacks.toggle.zoom():map '<leader><leader>uZ'
+
+Snacks.toggle.profiler():map '<leader><leader>pp'
+Snacks.toggle.profiler_highlights():map '<leader><leader>ph'
 Snacks.toggle
 	.new({
-		name = 'Inline Completion',
-		get = function() return vim.lsp.inline_completion.is_enabled() end,
-		set = function(state) vim.lsp.inline_completion.enable(state) end,
+		name = 'Lualine Expand DateTime',
+		get = function() return vim.g.nihil_lualine_time_expanded == true end,
+		set = function(state) vim.g.nihil_lualine_time_expanded = state end,
 	})
-	:map '<leader><leader>I'
+	:map '<leader><leader>ud'
 --#endregion
 
 --#region --- SYSTEM
-map { '<f2>', group = 'Menu' }
-map { '<f2>l', '<cmd>Lazy <cr>', desc = 'Lazy', icon = '' }
-map { '<f2>E', '<cmd>LazyExtra <cr>', desc = 'Lazy Extras', icon = '' }
-map { '<f2>I', '<cmd>LspInfo <cr>', desc = 'LSP Info', icon = '' }
-map { '<f2>i', function() Snacks.picker.lsp_config() end, desc = 'Lsp Info [Snacks]', icon = '' }
-map { '<f2>r', '<cmd>LspRestart <cr>', desc = 'Restart LSP', icon = '' }
-map { '<f2>m', '<cmd>Mason <cr>', desc = 'Mason', icon = '' }
-map { '<f2>f', '<cmd>ConformInfo <cr>', desc = 'Conform', icon = '' }
-map { '<f2>h', '<cmd>checkhealth <cr>', desc = 'Check Health', icon = '' }
-map { '<f2>L', LazyVim.news.changelog, desc = 'LazyVim Changelog', icon = '' }
 map {
-	'<f2>b',
-	function()
-		Snacks.terminal.get('btop', {
-			cwd = vim.env.HOME,
-			win = {
-				ft = 'term_btop',
-				minimal = true,
-				position = 'float',
-				relative = 'editor',
-				keys = { ['<c-q>'] = { 'close', expr = true, mode = 't' } },
-			},
-		})
-	end,
-	desc = 'BTOP',
-	icon = '',
-}
-map {
-	'<f2>U',
-	function()
-		vim.cmd 'TSUpdate'
-		vim.cmd 'Lazy update'
-		vim.cmd 'MasonUpdate'
-	end,
-	desc = 'BIG Update',
-	icon = '',
+	'<f2>',
+	group = 'Menu',
+	{ '<f2>l', '<cmd>Lazy <cr>', desc = 'Lazy', icon = '' },
+	{ '<f2>E', '<cmd>LazyExtra <cr>', desc = 'Lazy Extras', icon = '' },
+	{ '<f2>I', '<cmd>LspInfo <cr>', desc = 'LSP Info', icon = '' },
+	{ '<f2>i', function() Snacks.picker.lsp_config() end, desc = 'Lsp Info [Snacks]', icon = '' },
+	{ '<f2>r', '<cmd>LspRestart <cr>', desc = 'Restart LSP', icon = '' },
+	{ '<f2>m', '<cmd>Mason <cr>', desc = 'Mason', icon = '' },
+	{ '<f2>f', '<cmd>ConformInfo <cr>', desc = 'Conform', icon = '󰃢' },
+	{ '<f2>h', '<cmd>checkhealth <cr>', desc = 'Check Health', icon = '' },
+	{ '<f2>L', LazyVim.news.changelog, desc = 'LazyVim Changelog', icon = '' },
+	{ '<f2>U', '<cmd>TSUpdate | Lazy update | MasonUpdate <cr>', desc = 'BIG Update', icon = '' },
+	{
+		'<f2>b',
+		function()
+			Snacks.terminal.get('btop', {
+				cwd = vim.env.HOME,
+				win = {
+					ft = 'term_btop',
+					minimal = true,
+					position = 'float',
+					relative = 'editor',
+					keys = { ['<c-q>'] = { 'close', expr = true, mode = 't' } },
+				},
+			})
+		end,
+		desc = 'BTOP',
+		icon = '',
+	},
 }
 --#endregion

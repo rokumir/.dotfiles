@@ -18,12 +18,12 @@ vim.g.neovide_cursor_animate_command_line = false
 vim.g.neovide_cursor_smooth_blink = true
 
 -- Themes
-local hl_color = require('snacks.util').color
+local hl_color = Snacks.util.color
 vim.g.neovide_opacity = 1
 vim.g.neovide_background_color = hl_color('Normal', 'bg')
 vim.g.neovide_title_text_color = hl_color('Identifier', 'fg')
 vim.g.neovide_title_background_color = vim.g.neovide_background_color
--- vim.g.neovide_background_image = '/mnt/r/images/wallpapers/xianyu-hao-YKVLhmbz81w-unsplash.jpg'
+-- vim.g.neovide_background_image_path = '/mnt/r/images/wallpapers/xianyu-hao-YKVLhmbz81w-unsplash.jpg'
 -- vim.g.neovide_background_image_transparency = 0.5
 
 vim.api.nvim_create_user_command('OpenNewNeovide', function(opts)
@@ -47,8 +47,8 @@ end, {
 })
 
 -- Keymaps  BUG: Ctrl+Alt doesn't work on Windows -> https://github.com/neovide/neovide/issues/2899
-require('util.keymap').map {
-	{ '<f2>N', '<cmd>OpenNewNeovide<cr>', desc = 'New Neovide Instance' },
+Nihil.keymap {
+	{ '<f2>N', '<cmd>OpenNewNeovide<cr>', desc = 'New Neovide Instance', icon = '' },
 }
 Snacks.toggle
 	.new({
@@ -59,9 +59,9 @@ Snacks.toggle
 	:map '<leader><leader>pP'
 
 vim.api.nvim_create_autocmd('VimEnter', {
-	group = require('util.autocmd').augroup 'neovide_init_cd',
+	group = Nihil.augroup 'neovide_init_cd',
 	callback = function()
-		local cmd_flag_index = require('util.list').index_of(vim.v.argv or {}, function(v) return v == '-c' or v == '--cmd' end)
+		local cmd_flag_index = Nihil.table.index_of(vim.v.argv or {}, function(v) return v == '-c' or v == '--cmd' end)
 		if not cmd_flag_index or not string.find(vim.v.argv[cmd_flag_index + 1] or '', '%f[%a]cd%f[%A]') then
 			local pwd = (vim.g.neovide_working_dir or '~')
 			vim.cmd('cd ' .. pwd)

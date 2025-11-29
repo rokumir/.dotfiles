@@ -1,34 +1,30 @@
----@diagnostic disable: missing-fields
-local ft_util = require 'config.const.filetype'
-local project_dir = require 'config.const.project_dirs'
+local Mapkey = Nihil.keymap
+local Vault = Nihil.config.vault
 
 local DATE_FORMAT = '%Y-%m-%d'
 local TIME_FORMAT = '%H:%M:%S'
 local DATETIME_FORMAT = DATE_FORMAT .. 'T' .. TIME_FORMAT
+local TEMPLATES_DIR = '.meta/templates'
 
-local map_key = require('util.keymap').map
-local function is_note_pwd() return require('util.path').is_matches { project_dir.second_brain, project_dir.second_brain_OLD } end
-local function get_time_now_fn(template, offset_hours)
-	return function() return tostring(os.date(template, os.time() - (offset_hours or 0) * 60 * 60)) end
+local function is_note_dir_matches() return Nihil.path.is_matches { Vault.note } end
+local function get_time_now_fn(format, offset_hours)
+	return function() return tostring(os.date(format, os.time() - (offset_hours or 0) * 60 * 60)) end
 end
 
+---@module 'lazy'
+---@type LazyPluginSpec[]
 return {
 	{ 'davidmh/mdx.nvim', ft = 'mdx' }, -- Treesitter for MDX files
 
 	{ -- Prettify markdown in neovim
 		'MeanderingProgrammer/render-markdown.nvim',
-		ft = ft_util.document_list,
-		keys = function()
-			map_key {
-				{ '<leader>ur', group = 'Render Markdown' },
-				{ '<leader>urm', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
-				{ '<leader>urM', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
-				{ '<leader><leader>m', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown Locally' },
-				{ '<leader><leader>M', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown Globally' },
-			}
-			return {}
-		end,
-		---@type render.md.Config
+		ft = Nihil.config.exclude.document_filetype_list,
+		init = function() vim.g.markdown_folding = 1 end,
+		keys = {
+			{ '<leader><leader>rr', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown [Local]', ft = { 'markdown', 'mdx' } },
+			{ '<leader><leader>rR', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown [Global]', ft = { 'markdown', 'mdx' } },
+		},
+		---@type render.md.Config|table<string, unknown|{}>
 		opts = {
 			file_types = { 'markdown', 'norg', 'rmd', 'org', 'codecompanion', 'copilot-chat' },
 			render_modes = { 'n', 'c', 't' },
@@ -144,7 +140,7 @@ return {
 			},
 
 			win_options = {
-				showbreak = { rendered = '  ' },
+				showbreak = { default = '  ', rendered = '  ' },
 			},
 		},
 	},
@@ -152,13 +148,13 @@ return {
 	{ -- Obsdiian
 		'obsidian-nvim/obsidian.nvim',
 		version = false,
-		lazy = not is_note_pwd(),
+		cond = is_note_dir_matches,
 		---@module 'obsidian'
 		---@type obsidian.config
 		opts = {
 			workspaces = {
-				{ name = 'nihil', path = project_dir.second_brain },
-				{ name = 'notes', path = project_dir.second_brain_OLD },
+				{ name = 'cortex', path = Vault.second_brain },
+				{ name = 'notes', path = Vault.note .. '/notes' },
 			},
 			frontmatter = {
 				enabled = true,
@@ -181,7 +177,7 @@ return {
 			checkbox = {
 				enabled = true,
 				create_new = true,
-				order = { ' ', '/', '-', 'x' },
+				order = { ' ', '/', 'x', '-' },
 			},
 			comment = { enabled = true },
 			ui = {
@@ -209,7 +205,7 @@ return {
 			},
 
 			templates = {
-				folder = '.meta/templates',
+				folder = TEMPLATES_DIR,
 				date_format = DATE_FORMAT,
 				time_format = TIME_FORMAT,
 				substitutions = {
@@ -223,21 +219,20 @@ return {
 			callbacks = {
 				post_setup = function()
 					local function action(a) return '<cmd>Obsidian ' .. a .. ' <cr>' end
-					map_key {
+					Mapkey {
 						'<leader>o',
 						group = 'Obsidian',
 						icon = '💎',
+						{ '<leader>of', Nihil.markdown.obsidian.quick_switcher, desc = 'Quick Switcher' },
 						{ '<leader>on', action 'new', desc = 'New Note', icon = '󰎜' },
-						{ '<c-n>', action 'new', desc = 'Obsidian New Note', icon = '󰎜' },
 						{ '<leader>oN', action 'new_from_template', desc = 'New Note From Template', icon = '' },
-						{ '<c-s-n>', action 'new_from_template', desc = 'Obsidian New Note', icon = '' },
+						{ '<c-s-n>', action 'new_from_template', desc = 'New Note From Template', icon = '' },
 						{ '<leader>op', group = 'Open Note', icon = '󱙓' },
 						{ '<leader>opp', action 'search', desc = 'Search', icon = '󰍉' },
 						{ '<leader>opt', action 'today', desc = 'Today', icon = '󰃶' },
 						{ '<leader>opT', action 'tomorrow', desc = 'Tomorrow', icon = '' },
 						{ '<leader>opy', action 'yesterday', desc = 'Yesterday', icon = '' },
 						{ '<leader>ot', action 'tags', desc = 'Tags', icon = '' },
-						{ ';T', action 'tags', desc = 'Obsidian Tags', icon = '' },
 						{ '<leader>ol', action 'links', desc = 'links', icon = '' },
 						{ '<leader>ob', action 'backlinks', desc = 'Backlinks', icon = '' },
 						{ 'gr', action 'backlinks', desc = 'Obsidian Backlinks', icon = '' },
@@ -247,7 +242,6 @@ return {
 						{ '<leader>fr', action 'rename', desc = 'Obsidian Rename', icon = '' },
 						{ '<leader>oR', action 'rename', desc = 'Rename', icon = '' },
 						{ '<c-enter>', action 'toggle_checkbox', mode = { 'n', 'v' }, desc = 'Obsidian Cycle Through Checkbox Options', icon = '' },
-						{ '<c-e>', '<cmd>SnacksNotesQuickSwitcher <cr>', desc = 'Quick Switch' },
 						{
 							mode = 'v',
 							icon = '',
@@ -259,12 +253,5 @@ return {
 				end,
 			},
 		},
-		---@param opts obsidian.config
-		config = function(_, opts)
-			require('obsidian').setup(opts)
-
-			local _opts = vim.deepcopy(opts, true)
-			vim.api.nvim_create_user_command('SnacksNotesQuickSwitcher', function() require('util.markdown').obsidian.quick_switcher(_opts) end, { desc = 'Open Notes Quick Switcher' })
-		end,
 	},
 }

@@ -1,6 +1,19 @@
-local M = {}
+---@class PrettyDateOpts
+---@field weekday? 'short'|'long'|false weekday e.g., Mon, Monday, Sun, or Sunday
+---@field month? 'short'|'long' month name style
+---@field use_ordinal? boolean append st/nd/rd/th
 
-M.format = {}
+---@class PrettyTimeOpts
+---@field hour12? boolean 12-hour if true, 24-hour if false
+---@field pad_hour? boolean left-pad hour with 0
+---@field show_seconds? boolean include :ss
+---@field ampm_uppercase? boolean AM/PM upper-case
+
+---@class PrettyOpts
+---@field date? PrettyDateOpts
+---@field time? PrettyTimeOpts
+
+local M = {}
 
 --- Convert input into a timestamp:
 ---@param t? number|table|osdate|string
@@ -44,7 +57,7 @@ end
 ---@param t? table|number
 ---@param opts? PrettyDateOpts
 ---@return string
-function M.format.pretty_date(t, opts)
+function M.pretty_date(t, opts)
 	opts = vim.tbl_extend('force', {
 		weekday = 'short',
 		month = 'short',
@@ -71,7 +84,7 @@ end
 ---@param t? table|number
 ---@param opts? PrettyTimeOpts
 ---@return string
-function M.format.pretty_time(t, opts)
+function M.pretty_time(t, opts)
 	opts = vim.tbl_extend('force', {
 		hour12 = true,
 		pad_hour = false,
@@ -110,7 +123,7 @@ end
 ---@param t? table|number
 ---@param opts? PrettyOpts
 ---@return string
-function M.format.pretty(t, opts)
+function M.pretty(t, opts)
 	local ts = to_timestamp(t)
 	opts = opts or {}
 	local date = M.format.prettify_date(ts, opts.date)
@@ -119,19 +132,3 @@ function M.format.pretty(t, opts)
 end
 
 return M
-
--- -------
----@class PrettyDateOpts
----@field weekday? 'short'|'long'|false weekday e.g., Mon, Monday, Sun, or Sunday
----@field month? 'short'|'long' month name style
----@field use_ordinal? boolean append st/nd/rd/th
-
----@class PrettyTimeOpts
----@field hour12? boolean 12-hour if true, 24-hour if false
----@field pad_hour? boolean left-pad hour with 0
----@field show_seconds? boolean include :ss
----@field ampm_uppercase? boolean AM/PM upper-case
-
----@class PrettyOpts
----@field date? PrettyDateOpts
----@field time? PrettyTimeOpts

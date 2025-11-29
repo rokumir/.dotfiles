@@ -3,7 +3,6 @@ return {
 	'datsfilipe/vesper.nvim',
 	name = 'vesper',
 	lazy = true,
-	priority = 4000,
 	config = function()
 		---@class VesperPalette Palette overrides
 		local cp = {}
@@ -122,7 +121,7 @@ return {
 				YankyPut = { bg = blend(cp.green, 0.25) },
 				YankyYanked = { bg = blend(cp.redDark, 0.25) },
 				UfoFoldVirtText = { fg = cp.green, italic = true },
-				UfoFoldVirtFillerText = { fg = blend(cp.green, 0.6) },
+				UfoFoldVirtFillerText = { fg = cp.comment },
 				MiniMapNormal = vim.empty_dict(),
 				MiniMapSymbolLine = { fg = cp.green },
 				MiniMapSymbolView = { bg = cp.fgDisabled },
@@ -153,7 +152,7 @@ return {
 
 				SnacksIndent = { fg = cp.bgDarker },
 				SnacksIndentScope = { fg = cp.bgDarker },
-				SnacksIndentChunk = { fg = cp.bgDarker },
+				SnacksIndentChunk = { fg = mix(cp.bgDarker, cp.white, 0.85) },
 
 				SnacksPicker = { bg = cp.bgDark },
 				SnacksPickerTree = { fg = cp.bgDarker },
@@ -220,6 +219,7 @@ return {
 				--#region Treesitter
 				['@symbol'] = { fg = cp.symbol, italic = true },
 				Constant = { fg = mix(cp.blue, cp.white, 0.4), italic = true, bold = true },
+				['@variable.builtin'] = { fg = cp.blue },
 				--#endregion
 			},
 		}

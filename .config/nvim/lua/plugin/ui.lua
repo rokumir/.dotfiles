@@ -1,9 +1,10 @@
 local hl_color = require('snacks.util').color
+local snacks_tabpages = require('nihil.plugin.bufferline').picker.tabpages
 
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
-	{ ---@module 'noice' Better general UI (should be deprecated soon)
+	{ ---@module 'noice' Better general UI
 		'folke/noice.nvim',
 		keys = function() return {} end,
 		---@module 'noice'
@@ -133,6 +134,9 @@ return {
 							cond = function() return package.loaded['dap'] and require('dap').status() ~= '' end,
 							color = { fg = hl_color 'Debug' },
 						},
+					},
+
+					lualine_y = {
 						{ -- word count
 							function()
 								local wc = vim.fn.wordcount()
@@ -140,7 +144,7 @@ return {
 							end,
 							color = 'PreCondit',
 							separator = '',
-							cond = function() return require('config.const.filetype').document_map[vim.bo.ft] end,
+							cond = function() return Nihil.config.exclude.filetype[vim.bo.ft] end,
 						},
 						{
 							'encoding',
@@ -155,15 +159,15 @@ return {
 							separator = '',
 							cond = function() return vim.bo.ff ~= 'unix' end,
 						},
-					},
-
-					lualine_y = {
 						'location',
-						{ function() return require('util.datetime').format.pretty_date() end },
 					},
 					lualine_z = {
+						{
+							function() return Nihil.datetime.pretty_date() end,
+							cond = function() return vim.g.nihil_lualine_time_expanded end,
+						},
 						{ function()
-							return require('util.datetime').format.pretty_time(nil, {
+							return Nihil.datetime.pretty_time(nil, {
 								hour12 = false,
 							})
 						end },
@@ -190,122 +194,83 @@ return {
 		end,
 	},
 
-	---@module 'bufferline'
-	{ -- Tabs
+	{ ---@module 'bufferline' Tabs
 		'akinsho/bufferline.nvim',
 		keys = function()
-			--stylua: ignore
-			local cycle_keys = vim.g.neovide
-				and { next = '<c-tab>', prev = '<c-s-tab>' }
-				or { next = '<tab>', prev = '<s-tab>' }
 			return {
-				{ cycle_keys.next, '<cmd>BufferLineCycleNext<cr>', desc = 'Tab: Next' },
-				{ cycle_keys.prev, '<cmd>BufferLineCyclePrev<cr>', desc = 'Tab: Prev' },
-				{ '<c-s-right>', '<cmd>BufferLineMoveNext<cr>', desc = 'Tab: Move Right' },
-				{ '<c-s-left>', '<cmd>BufferLineMovePrev<cr>', desc = 'Tab: Move Left' },
+				{ '<tab>', '<cmd>BufferLineCycleNext <cr>', desc = 'Next Buffer' },
+				{ '<s-tab>', '<cmd>BufferLineCyclePrev <cr>', desc = 'Prev Buffer' },
+				{ '<c-tab>', '<cmd>tabnext <cr>', desc = 'Next Tab' },
+				{ '<c-s-tab>', '<cmd>tabprevious <cr>', desc = 'Prev Tab' },
+				{ '<c-s-right>', '<cmd>BufferLineMoveNext <cr>', desc = 'Move Tab to Right' },
+				{ '<c-s-left>', '<cmd>BufferLineMovePrev <cr>', desc = 'Move Tab to Left' },
 
-				{ '<a-1>', '<cmd>BufferLineGoToBuffer 1<cr>', desc = 'Tab: Go To 1' },
-				{ '<a-2>', '<cmd>BufferLineGoToBuffer 2<cr>', desc = 'Tab: Go To 2' },
-				{ '<a-3>', '<cmd>BufferLineGoToBuffer 3<cr>', desc = 'Tab: Go To 3' },
-				{ '<a-4>', '<cmd>BufferLineGoToBuffer 4<cr>', desc = 'Tab: Go To 4' },
-				{ '<a-5>', '<cmd>BufferLineGoToBuffer 5<cr>', desc = 'Tab: Go To 5' },
-				{ '<a-6>', '<cmd>BufferLineGoToBuffer 6<cr>', desc = 'Tab: Go To 6' },
-				{ '<a-7>', '<cmd>BufferLineGoToBuffer 7<cr>', desc = 'Tab: Go To 7' },
-				{ '<a-8>', '<cmd>BufferLineGoToBuffer 8<cr>', desc = 'Tab: Go To 8' },
-				{ '<a-9>', '<cmd>BufferLineGoToBuffer 9<cr>', desc = 'Tab: Go To 9' },
-				{ '<a-0>', '<cmd>BufferLineGoToBuffer -1<cr>', desc = 'Tab: Go To Last' },
+				{ '<a-1>', '<cmd>BufferLineGoToBuffer 1 <cr>', desc = 'Go To Buffer 1' },
+				{ '<a-2>', '<cmd>BufferLineGoToBuffer 2 <cr>', desc = 'Go To Buffer 2' },
+				{ '<a-3>', '<cmd>BufferLineGoToBuffer 3 <cr>', desc = 'Go To Buffer 3' },
+				{ '<a-4>', '<cmd>BufferLineGoToBuffer 4 <cr>', desc = 'Go To Buffer 4' },
+				{ '<a-5>', '<cmd>BufferLineGoToBuffer 5 <cr>', desc = 'Go To Buffer 5' },
+				{ '<a-6>', '<cmd>BufferLineGoToBuffer 6 <cr>', desc = 'Go To Buffer 6' },
+				{ '<a-7>', '<cmd>BufferLineGoToBuffer 7 <cr>', desc = 'Go To Buffer 7' },
+				{ '<a-8>', '<cmd>BufferLineGoToBuffer 8 <cr>', desc = 'Go To Buffer 8' },
+				{ '<a-9>', '<cmd>BufferLineGoToBuffer 9 <cr>', desc = 'Go To Buffer 9' },
+				{ '<a-0>', '<cmd>BufferLineGoToBuffer -1 <cr>', desc = 'Go To Last Buffer' },
 
-				{ '<leader>b', '', desc = 'buffer/tab' },
-				{ '<leader>bp', '<cmd>BufferLineTogglePin<cr>', desc = 'Pin/Unpin' },
-				{ '<leader>bb', '<cmd>BufferLinePick<cr>', desc = 'Pick' },
-				{ '<leader>bB', '<cmd>BufferLinePickClose<cr>', desc = 'Delete Pick' },
+				{ '<leader>b', '', desc = 'buffer' },
+				{ '<leader>bp', '<cmd>BufferLineTogglePin <cr>', desc = 'Pin/Unpin' },
+				{ '<leader>bb', '<cmd>BufferLinePick <cr>', desc = 'Pick' },
+				{ '<leader>bB', '<cmd>BufferLinePickClose <cr>', desc = 'Delete Pick' },
 
+				{ '<leader>bs', function() require('nihil.plugin.bufferline').picker.sort_actions() end, desc = 'Sort Actions' },
+
+				{ ';T', snacks_tabpages, desc = 'Tabpages' },
+				{ '<leader>tt', snacks_tabpages, desc = 'Picker' },
+				{ '<leader>td', '<cmd>tabclose<cr>', desc = 'Close' },
 				{
-					desc = 'Sort',
-					'<leader>bs',
+					'<leader>tr',
+					function() Snacks.input.input({ icon = '󰓪 ', prompt = 'Rename tab' }, vim.cmd.BufferLineTabRename) end,
+					desc = 'Rename',
+				},
+				{
+					'<leader>tN',
 					function()
-						Snacks.picker.pick {
-							source = 'tabs_sort_actions',
-							title = 'Sort tabs by',
-							layout = 'vscode_focus',
-							-- stylua: ignore
-							items = {
-								{ icon = '󰥨 ', text = 'Directory'         , cmd = 'BufferLineSortByDirectory'        , hl = 'DiagnosticInfo' },
-								{ icon = '󰥨 ', text = 'Relative Directory', cmd = 'BufferLineSortByRelativeDirectory', hl = '@namespace'     },
-								{ icon = ' ', text = 'Extension'         , cmd = 'BufferLineSortByExtension'        , hl = 'Error'     },
-								{ icon = '󱎅 ', text = 'Tabs'              , cmd = 'BufferLineSortByTabs'             , hl = 'DiagnosticHint' },
-							},
-							format = function(item)
-								return {
-									{ item.icon, item.hl },
-									{ ' ' .. item.text .. ' ', item.hl },
-									{ item.cmd, 'Comment' },
-								}
-							end,
-							confirm = function(picker, item)
-								picker:close()
-								if not item then Snacks.notify.error('Picker "' .. picker.opts.source .. '":\nItem not found!') end
-								vim.cmd[item.cmd]()
-								Snacks.notify('Bufferline sort by ' .. item.text)
-							end,
-						}
+						Snacks.input.input({ icon = '󰓪 ', prompt = 'New tab' }, function(new_name)
+							vim.cmd.tabnew()
+							vim.cmd.BufferLineTabRename(new_name)
+						end)
 					end,
+					desc = 'New with Name',
 				},
 			}
 		end,
-		opts = function()
-			local Icons = LazyVim.config.icons
+		---@type bufferline.UserConfig
+		opts = {
+			options = {
+				show_close_icon = false,
+				always_show_bufferline = false,
+				auto_toggle_bufferline = true,
+				show_buffer_close_icons = false,
+				show_buffer_icons = true,
+				show_tab_indicators = true,
+				enforce_regular_tabs = false,
 
-			---@type bufferline.UserConfig
-			local opts = {
-				options = {
-					show_close_icon = false,
-					always_show_bufferline = false,
-					show_buffer_close_icons = false,
-					show_buffer_icons = true,
-					show_tab_indicators = true,
-					enforce_regular_tabs = true,
+				mode = 'buffers',
+				indicator = { style = 'underline' },
+				separator_style = { '', '' },
+				sort_by = 'insert_at_end',
+				hover = { enabled = true, delay = 200 },
 
-					mode = 'buffers',
-					indicator = { style = 'underline' },
-					separator_style = { '', '' },
-					modified_icon = Icons.misc.modified,
-					sort_by = 'insert_at_end',
-					hover = { enabled = true, delay = 200 },
-					diagnostics = 'nvim_lsp',
-					diagnostics_indicator = function(_, _, diag)
-						local icons = Icons.diagnostics
-						local ret = {}
-						if diag.error then ret[#ret + 1] = icons.Error .. diag.error end
-						if diag.warning then ret[#ret + 1] = icons.Warn .. diag.warning end
-						return table.concat(ret, ' ')
-					end,
-					offsets = {
-						{ filetype = 'snacks_layout_box' },
-					},
-					get_element_icon = function(opts) return Icons.ft[opts.filetype] end,
-
-					close_command = function(n) Snacks.bufdelete(n) end,
-					middle_mouse_command = function(n) Snacks.bufdelete(n) end,
-				},
-				highlights = {},
-			}
-
-			local config = require 'config.const.bufferline'
-			for _, hl in pairs(config.transparent_bg_highlights) do
-				opts.highlights[hl] = vim.tbl_extend('force', opts.highlights[hl] or {}, { bg = 'none' })
-			end
-
-			local _, indicator_color = pcall(({
-				['rose-pine'] = function() return require('rose-pine.palette').love end,
-				['vesper'] = function() return require('vesper.colors').red end,
-			})[vim.g.colors_name] or function() return '#E84D4F' end)
-			for _, hl in pairs(config.underline_highlights) do
-				opts.highlights[hl] = vim.tbl_extend('force', opts.highlights[hl] or {}, { sp = indicator_color })
-			end
-
-			return opts
-		end,
+				close_command = function(n) Snacks.bufdelete(n) end,
+				middle_mouse_command = function(n) Snacks.bufdelete(n) end,
+			},
+			highlights = function()
+				local settings = {}
+				local hl = require('nihil.plugin.bufferline').highlights
+				hl.set_bg_transparent(settings)
+				hl.style_underline(settings)
+				return settings
+			end,
+		},
 	},
 
 	{ -- filename
@@ -321,7 +286,7 @@ return {
 				cursorline = true,
 			},
 			ignore = {
-				filetypes = require('config.const.filetype').ignored_list,
+				filetypes = Nihil.config.exclude.filetype_list,
 				floating_wins = true,
 				unlisted_buffers = true,
 			},
@@ -356,7 +321,7 @@ return {
 			opts.signs.untracked.text = char_bar
 
 			opts.on_attach = function(buffer)
-				require('util.keymap').map {
+				Nihil.keymap {
 					buffer = buffer,
 					{ ']h', '<cmd>Gitsigns nav_hunk next<cr>', desc = 'Next Hunk' },
 					{ '[h', '<cmd>Gitsigns nav_hunk prev<cr>', desc = 'Prev Hunk' },
@@ -431,7 +396,7 @@ return {
 				c = { 'comment', 'region' },
 			},
 			enable_get_fold_virt_text = true,
-			fold_virt_text_handler = require('util.ufo').make_fold_handler {
+			fold_virt_text_handler = require('nihil.plugin.ufo').make_fold_handler {
 				icon = '',
 				pad_right = '   ',
 				pad_left = '  ',
