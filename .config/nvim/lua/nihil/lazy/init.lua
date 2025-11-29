@@ -1,1 +1,1 @@
-require 'after.neovide'
+require 'nihil.lazy.neovide'
