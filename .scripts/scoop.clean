@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-pwsh.exe -WorkingDirectory "~" -c "scoop cleanup *; scoop cache rm *"

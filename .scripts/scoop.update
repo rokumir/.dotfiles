@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-pwsh.exe -WorkingDirectory "~" -c "scoop update | scoop list | foreach { scoop update \$_.Name }"
