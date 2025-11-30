@@ -31,6 +31,19 @@ return {
 		end,
 	},
 
+	{
+		'nvim-mini/mini.pairs',
+		optional = true,
+		opts = {
+			modes = { insert = true, command = false, terminal = false },
+			skip_next = [=[[%w%%%'%[%"%.%`%$]]=],
+			skip_ts = { 'string' },
+			skip_unbalanced = true,
+			markdown = true,
+		},
+		config = function(_, opts) require('nihil.plugin.mini-pairs').setup(opts) end,
+	},
+
 	{ -- Delimiter pairs surroundability
 		'mini.surround',
 		lazy = true,
