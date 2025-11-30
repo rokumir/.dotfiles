@@ -123,4 +123,14 @@ return {
 			},
 		},
 	},
+
+	{ ---@module 'lazydev'
+		'lazydev.nvim',
+		optional = true,
+		opts = function(_, opts)
+			vim.list_extend(opts.library, {
+				{ path = 'which-key.nvim', words = { 'Nihil%.keymap', 'Nihil%.keymap%.map' } },
+			})
+		end,
+	},
 }

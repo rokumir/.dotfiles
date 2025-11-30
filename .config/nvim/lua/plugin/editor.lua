@@ -1,4 +1,4 @@
-local exclude_filetypes = Nihil.config.exclude.filetype_list
+local exclude_filetypes = Nihil.config.exclude.filetypes
 
 ---@diagnostic disable: no-unknown, missing-fields, missing-parameter
 ---@type LazyPluginSpec[]

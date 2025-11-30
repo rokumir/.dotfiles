@@ -5,7 +5,7 @@ local augroup = Nihil.augroup
 -- close some filetypes with <q>
 vim.api.nvim_create_autocmd('FileType', {
 	group = augroup 'close_with_q',
-	pattern = excludes.filetype_list,
+	pattern = excludes.filetypes,
 	callback = function(event)
 		vim.bo[event.buf].buflisted = false
 		local function quit_fn()
@@ -37,7 +37,7 @@ vim.api.nvim_create_autocmd('FileType', {
 
 vim.api.nvim_create_autocmd('FileType', {
 	group = augroup 'disable_folding',
-	pattern = excludes.filetype_list,
+	pattern = excludes.filetypes,
 	command = [[
 		set nofoldenable
 		set foldcolumn=0
@@ -63,7 +63,7 @@ vim.api.nvim_create_autocmd('BufReadPost', {
 	callback = function(ev)
 		local buf = ev.buf
 		local ft = vim.bo[buf].filetype
-		if excludes.filetype[ft] or vim.b[buf].lazyvim_last_loc then return end
+		if excludes.filetypes_map[ft] or vim.b[buf].lazyvim_last_loc then return end
 
 		vim.b[buf].lazyvim_last_loc = true
 		local mark = vim.api.nvim_buf_get_mark(buf, '"')
@@ -101,7 +101,7 @@ vim.api.nvim_create_autocmd('BufDelete', {
 		local bo = vim.bo[buf]
 		local path = vim.api.nvim_buf_get_name(buf)
 
-		local is_buffer_valid = vim.api.nvim_buf_is_valid(buf) and bo.modifiable and #path > 0 and not excludes.filetype[bo.filetype]
+		local is_buffer_valid = vim.api.nvim_buf_is_valid(buf) and bo.modifiable and #path > 0 and not excludes.filetypes_map[bo.filetype]
 		if is_buffer_valid then Nihil.file.buf_history:store(path) end
 	end,
 })
@@ -110,7 +110,10 @@ vim.api.nvim_create_autocmd('DirChanged', {
 	group = augroup 'notify_dir_changed',
 	callback = function()
 		local cwd = vim.uv.cwd():gsub('^' .. vim.env.HOME, '~')
-		Snacks.notify { '**Changed Directory:**', '**[' .. cwd .. ']**' }
+		Snacks.notify({ '**Changed Directory: [' .. cwd .. ']**' }, {
+			id = 'autocmd__notify_dir_changed',
+			timeout = 400,
+		})
 	end,
 })
 

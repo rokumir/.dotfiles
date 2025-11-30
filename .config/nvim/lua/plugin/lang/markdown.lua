@@ -11,6 +11,13 @@ local function get_time_now_fn(format, offset_hours)
 	return function() return tostring(os.date(format, os.time() - (offset_hours or 0) * 60 * 60)) end
 end
 
+vim.api.nvim_create_autocmd('DirChanged', {
+	group = Nihil.augroup 'obsidian_lazy_load',
+	callback = function()
+		if is_note_dir_matches() then vim.cmd 'Lazy load obsidian.nvim' end
+	end,
+})
+
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
@@ -18,7 +25,7 @@ return {
 
 	{ -- Prettify markdown in neovim
 		'MeanderingProgrammer/render-markdown.nvim',
-		ft = Nihil.config.exclude.document_filetype_list,
+		ft = Nihil.config.exclude.document_filetypes,
 		init = function() vim.g.markdown_folding = 1 end,
 		keys = {
 			{ '<leader><leader>rr', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown [Local]', ft = { 'markdown', 'mdx' } },
@@ -148,7 +155,7 @@ return {
 	{ -- Obsdiian
 		'obsidian-nvim/obsidian.nvim',
 		version = false,
-		cond = is_note_dir_matches,
+		lazy = not is_note_dir_matches(),
 		---@module 'obsidian'
 		---@type obsidian.config
 		opts = {

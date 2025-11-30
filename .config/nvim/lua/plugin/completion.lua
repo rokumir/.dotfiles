@@ -34,7 +34,7 @@ return { -- Blink.cmp
 	---@module 'blink.cmp'
 	---@type blink.cmp.Config | {}
 	opts = {
-		enabled = function() return not Nihil.config.exclude.filetype[vim.bo.filetype] end,
+		enabled = function() return not Nihil.config.exclude.filetypes_map[vim.bo.filetype] end,
 
 		keymap = {
 			preset = 'enter',

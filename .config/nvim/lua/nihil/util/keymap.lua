@@ -1,42 +1,12 @@
+---@alias NihilUtilKeymapFunc fun(mappings: wk.Spec, opts?: wk.Parse)
+
+---@type table | fun(mappings: wk.Spec, opts?: wk.Parse)
 local M = setmetatable({}, {
 	__call = function(t, ...) return t.map(...) end,
 })
 
----@module 'which-key'
-
-local takes = {
-	callback = true,
-	buffer = true,
-	desc = true,
-	expr = true,
-	noremap = true,
-	nowait = true,
-	remap = true,
-	replace_keycodes = true,
-	script = true,
-	silent = true,
-	unique = true,
-}
-local function get_opts(keys)
-	vim.validate('keys', keys, 'table')
-	local opts = {} ---@type vim.keymap.set.Opts
-	for k, v in pairs(keys) do
-		if type(k) == 'string' and takes[k] then opts[k] = v end
-	end
-	return opts
-end
-
-function M.legacy_map(args)
-	vim.validate('args', args, 'table')
-	if args.disabled then return end
-	local opts = get_opts(args)
-	opts.silent = opts.silent ~= false
-	opts.noremap = opts.noremap ~= false
-	vim.keymap.set(args.mode or 'n', args[1], args[2], opts)
-end
-
 ---@param mappings wk.Spec
----@param opts wk.Parse?
+---@param opts? wk.Parse
 function M.map(mappings, opts)
 	local wk_exist, wk = pcall(require, 'which-key')
 	if not wk_exist then error({ '"which-key" plugin is not found!', 'Use `legacy_map` func instead!' }, 4) end
@@ -55,17 +25,6 @@ function M.unmap(mappings)
 			pcall(vim.keymap.del, mode, lhs)
 		end
 	end
-end
-
----@param lhs string
----@param mode? string
----@return vim.keymap.set.Opts|{[1]:string,[2]:string|function}
-function M.get_exist_keymap(lhs, mode)
-	mode = mode or 'n'
-	local maparg = vim.fn.maparg(lhs, mode, false, true)
-	local rhs = maparg.rhs or maparg.callback
-	vim.validate('lhs', lhs, { 'string', 'callable' }, 'Invalid lhs for keymap ' .. rhs)
-	return vim.tbl_extend('force', { lhs, rhs }, get_opts(maparg))
 end
 
 return M

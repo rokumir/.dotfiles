@@ -144,7 +144,7 @@ return {
 							end,
 							color = 'PreCondit',
 							separator = '',
-							cond = function() return Nihil.config.exclude.filetype[vim.bo.ft] end,
+							cond = function() return Nihil.config.exclude.filetypes_map[vim.bo.ft] end,
 						},
 						{
 							'encoding',
@@ -286,7 +286,7 @@ return {
 				cursorline = true,
 			},
 			ignore = {
-				filetypes = Nihil.config.exclude.filetype_list,
+				filetypes = Nihil.config.exclude.filetypes,
 				floating_wins = true,
 				unlisted_buffers = true,
 			},

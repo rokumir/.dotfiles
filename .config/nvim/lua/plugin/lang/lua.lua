@@ -10,6 +10,7 @@ return {
 		},
 		dependencies = {
 			'lazydev.nvim',
+			optional = true,
 			opts = function(_, opts)
 				table.insert(opts.library, {
 					path = 'wezterm-types',

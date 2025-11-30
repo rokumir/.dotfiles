@@ -1,16 +1,16 @@
 ---@class NihilConfigExclude
 local M = {}
 
-M.buffertype = {
+M.buffertypes_map = {
 	[''] = true,
 	nofile = true,
 	terminal = true,
 	help = true,
 	prompt = true,
 }
-M.buffertype_list = vim.tbl_keys(M.buffertype) ---@type string[]
+M.buffertypes = vim.tbl_keys(M.buffertypes_map) ---@type string[]
 
-M.filetype = {
+M.filetypes_map = {
 	notify = true, -- LazyVim notifications
 	noice = true, -- Noice UI
 	mason = true,
@@ -54,9 +54,9 @@ M.filetype = {
 	['cmp_menu'] = true,
 	prompt = true,
 }
-M.filetype_list = vim.tbl_keys(M.filetype) ---@type string[]
+M.filetypes = vim.tbl_keys(M.filetypes_map) ---@type string[]
 
-M.document_filetype = {
+M.document_filetypes_map = {
 	markdown = true,
 	gitcommit = true,
 	mdx = true,
@@ -71,6 +71,6 @@ M.document_filetype = {
 	codecompanion = true,
 	['copilot-chat'] = true,
 }
-M.document_filetype_list = vim.tbl_keys(M.document_filetype)
+M.document_filetypes = vim.tbl_keys(M.document_filetypes_map) ---@type string[]
 
 return M
