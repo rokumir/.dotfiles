@@ -21,7 +21,6 @@ map {
 	{ '<leader>f', group = 'file', icon = '' },
 	{ '<leader>x', group = 'diagnostics/quickfix' },
 	{ '<leader>y', group = 'yanky', icon = '' },
-	{ '<f1>', group = 'toggle' },
 	{ '<leader><leader>', group = 'toggle' },
 	{ '<leader><leader>p', group = 'profiler' },
 	{ '<leader><leader>u', group = 'ui' },
@@ -31,7 +30,7 @@ map {
 }
 
 unmap {
-	{ '<f1>', mode = { 'n', 'i' }, nop = true },
+	{ '<f1>', nop = true, mode = { 'n', 'i' } },
 	{ 'gra', mode = { 'n', 'x' } },
 	'grr',
 	'grn',
@@ -233,7 +232,6 @@ map {
 if not LazyVim and not Snacks then return end
 
 --#region --- TOGGLES
-map { '<f1>', '<leader><leader>', mode = { 'n', 'x' } }
 LazyVim.format.snacks_toggle():map '<leader><leader>lf'
 LazyVim.format.snacks_toggle(true):map '<leader><leader>lF'
 Snacks.toggle.diagnostics():map '<leader><leader>ld'
