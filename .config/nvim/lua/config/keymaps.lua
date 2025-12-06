@@ -21,6 +21,7 @@ map {
 	{ '<leader>f', group = 'file', icon = '' },
 	{ '<leader>x', group = 'diagnostics/quickfix' },
 	{ '<leader>y', group = 'yanky', icon = '' },
+	{ '<f1>', '<leader><leader>', remap = true, mode = { 'n', 'i' }, group = 'toggle' },
 	{ '<leader><leader>', group = 'toggle' },
 	{ '<leader><leader>p', group = 'profiler' },
 	{ '<leader><leader>u', group = 'ui' },
@@ -30,7 +31,7 @@ map {
 }
 
 unmap {
-	{ '<f1>', nop = true, mode = { 'n', 'i' } },
+	-- { '<f1>', nop = true, mode = { 'n', 'i' } },
 	{ 'gra', mode = { 'n', 'x' } },
 	'grr',
 	'grn',

@@ -84,6 +84,7 @@ return {
 				PmenuSel = { bg = cp.bgOption, fg = 'none' },
 				-- PmenuKind = vim.empty_dict(),
 
+				Title = { fg = cp.greenLight, bold = true },
 				Conceal = { blend = 15, force = true, link = 'NonText' },
 				MsgArea = { fg = cp.fgAlt },
 				Folded = { fg = cp.green, bg = mix(cp.bgDark, cp.white, 0.96) },

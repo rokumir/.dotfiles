@@ -11,10 +11,19 @@ local function get_time_now_fn(format, offset_hours)
 	return function() return tostring(os.date(format, os.time() - (offset_hours or 0) * 60 * 60)) end
 end
 
+local note_dir_visited = false
 vim.api.nvim_create_autocmd('DirChanged', {
 	group = Nihil.augroup 'obsidian_lazy_load',
 	callback = function()
-		if is_note_dir_matches() then vim.cmd 'Lazy load obsidian.nvim' end
+		if not note_dir_visited and is_note_dir_matches() then
+			note_dir_visited = true
+			vim.cmd 'Lazy load obsidian.nvim'
+			Nihil.keymap.mapper.set('<c-e>', 'n')
+			Mapkey { '<c-e>', Nihil.markdown.obsidian.quick_switcher, desc = 'Quick Switcher' }
+		elseif note_dir_visited then
+			note_dir_visited = false
+			Mapkey(Nihil.keymap.mapper.get('<c-e>', 'n'))
+		end
 	end,
 })
 
@@ -234,11 +243,11 @@ return {
 						{ '<leader>on', action 'new', desc = 'New Note', icon = '󰎜' },
 						{ '<leader>oN', action 'new_from_template', desc = 'New Note From Template', icon = '' },
 						{ '<c-s-n>', action 'new_from_template', desc = 'New Note From Template', icon = '' },
-						{ '<leader>op', group = 'Open Note', icon = '󱙓' },
-						{ '<leader>opp', action 'search', desc = 'Search', icon = '󰍉' },
-						{ '<leader>opt', action 'today', desc = 'Today', icon = '󰃶' },
-						{ '<leader>opT', action 'tomorrow', desc = 'Tomorrow', icon = '' },
-						{ '<leader>opy', action 'yesterday', desc = 'Yesterday', icon = '' },
+						{ '<leader>oo', group = 'Open Note', icon = '󱙓' },
+						{ '<leader>oop', action 'search', desc = 'Search', icon = '󰍉' },
+						{ '<leader>oot', action 'today', desc = 'Today', icon = '󰃶' },
+						{ '<leader>ooT', action 'tomorrow', desc = 'Tomorrow', icon = '' },
+						{ '<leader>ooy', action 'yesterday', desc = 'Yesterday', icon = '' },
 						{ '<leader>ot', action 'tags', desc = 'Tags', icon = '' },
 						{ '<leader>ol', action 'links', desc = 'links', icon = '' },
 						{ '<leader>ob', action 'backlinks', desc = 'Backlinks', icon = '' },
