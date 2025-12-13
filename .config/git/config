@@ -1,9 +1,6 @@
 [user]
     name = Lopt
     email = lopt.loptr@proton.me
-    signingkey = 6F1A20A919C21712
-[gpg]
-	program = gpg
 
 [core]
     autocrlf = false
@@ -21,14 +18,12 @@
     defaultBranch = dev
 
 [commit]
-    gpgSign = true
     template = ~/.config/git/template
 
 [push]
     autoSetupRemote = true  # easier to push new branches
     default = current  # push only current branch by default
     followTags = true  # push also tags
-    gpgSign = false  # my remotes doesn't support sign pushes
 
 [pull]
     rebase = true
@@ -120,9 +115,9 @@
 
 # Credentials
 [credential "https://github.com"]
-	helper =
+	helper = 
 	helper = !/usr/bin/gh auth git-credential
 
 [credential "https://gist.github.com"]
-	helper =
+	helper = 
 	helper = !/usr/bin/gh auth git-credential
