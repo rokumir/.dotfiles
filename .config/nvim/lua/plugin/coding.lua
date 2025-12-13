@@ -17,8 +17,8 @@ return {
 		keys = function()
 			return {
 				{ '<leader>yc', function() require('yanky').history.clear() end, desc = 'Clear Yank History' },
-				{ '<leader>yp', function() pcall(Snacks.picker['yanky']) end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
-				{ ';sy', function() pcall(Snacks.picker['yanky']) end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
+				{ '<leader>yp', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
+				{ ';sy', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
 
 				{ '<a-<>', function() require('yanky').cycle(1) end, mode = { 'n', 'i' }, desc = 'Next Entry' },
 				{ '<a->>', function() require('yanky').cycle(-1) end, mode = { 'n', 'i' }, desc = 'Prev Entry' },
