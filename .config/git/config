@@ -1,6 +1,7 @@
 [user]
     name = Lopt
     email = lopt.loptr@proton.me
+	signingkey = /home/rokumir/.ssh/id_ed25519
 
 [core]
     autocrlf = false
@@ -19,6 +20,7 @@
 
 [commit]
     template = ~/.config/git/template
+	gpgsign = true
 
 [push]
     autoSetupRemote = true  # easier to push new branches
@@ -121,3 +123,5 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
+[gpg]
+	format = ssh
