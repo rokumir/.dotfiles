@@ -236,9 +236,9 @@ return {
 				post_setup = function()
 					local function action(a) return '<cmd>Obsidian ' .. a .. ' <cr>' end
 					Mapkey {
-						'<leader>o',
-						group = 'Obsidian',
-						icon = '💎',
+						{ '<c-e>', Nihil.markdown.obsidian.quick_switcher, desc = 'Quick Switcher' },
+
+						{ '<leader>o', group = 'Obsidian', icon = '💎' },
 						{ '<leader>of', Nihil.markdown.obsidian.quick_switcher, desc = 'Quick Switcher' },
 						{ '<leader>on', action 'new', desc = 'New Note', icon = '󰎜' },
 						{ '<leader>oN', action 'new_from_template', desc = 'New Note From Template', icon = '' },
