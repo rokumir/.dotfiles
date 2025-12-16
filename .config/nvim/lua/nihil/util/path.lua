@@ -33,18 +33,21 @@ function M.relative(path, opts)
 	return path:gsub('^' .. cwd .. '/', '')
 end
 
----@param paths string[]
----@param opts? {exact?: boolean, winnr?:number, tabnr?:number}
+---@param paths string|string[]
+---@param opts? {exact?: boolean, realpath?:boolean, winnr?:number, tabnr?:number}
 ---@return boolean
-function M.is_matches(paths, opts)
+function M.is_current_matches(paths, opts)
 	opts = opts or {}
+	paths = type(paths) == 'string' and { paths } or paths ---@cast paths string[]
 	opts.exact = opts.exact ~= false
+	opts.realpath = opts.realpath ~= false
 	opts.winnr = opts.winnr or 0
 	opts.tabnr = opts.tabnr or vim.api.nvim_get_current_tabpage()
 	local pwd = vim.fn.getcwd(opts.winnr, opts.tabnr)
 	for _, path in ipairs(paths) do
-		local realpath = vim.uv.fs_realpath(vim.fn.expand(path)) or error('Invalid path ' .. path)
-		local is_matched = opts.exact and realpath == pwd or pwd:match('^' .. realpath)
+		path = vim.fn.expand(path)
+		if opts.realpath then path = vim.uv.fs_realpath(path) or error('Invalid path ' .. path) end
+		local is_matched = opts.exact and path == pwd or pwd:match('^' .. path)
 		if is_matched then return true end
 	end
 	return false

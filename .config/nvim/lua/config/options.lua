@@ -6,8 +6,9 @@ vim.g.mapleader = ' '
 vim.g.trouble_lualine = true -- disable navic in lualine
 
 vim.g.nihil_colorscheme = 'vesper'
-vim.g.nihil_lualine_time_expanded = false
 vim.g.nihil_coding_keyboard_layout_enabled = false
+vim.g.nihil_lualine_time_expanded = false
+vim.g.nihil_lualine_unhide = true
 
 local opt = vim.opt
 
@@ -50,6 +51,7 @@ opt.cursorlineopt = 'number'
 opt.guicursor:append { 'n-i-r:blinkwait700-blinkon500-blinkoff500' }
 opt.inccommand = 'split'
 opt.laststatus = 3
+opt.statusline = ' '
 opt.pumblend = 0
 opt.relativenumber = true
 opt.scrolloff = 6

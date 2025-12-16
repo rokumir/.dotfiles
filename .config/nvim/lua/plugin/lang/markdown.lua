@@ -6,7 +6,7 @@ local TIME_FORMAT = '%H:%M:%S'
 local DATETIME_FORMAT = DATE_FORMAT .. 'T' .. TIME_FORMAT
 local TEMPLATES_DIR = '.meta/templates'
 
-local function is_note_dir_matches() return Nihil.path.is_matches { Vault.note } end
+local function is_note_dir_matches() return Nihil.path.is_current_matches(Vault.second_brain) end
 local function get_time_now_fn(format, offset_hours)
 	return function() return tostring(os.date(format, os.time() - (offset_hours or 0) * 60 * 60)) end
 end
@@ -170,7 +170,6 @@ return {
 		opts = {
 			workspaces = {
 				{ name = 'cortex', path = Vault.second_brain },
-				{ name = 'notes', path = Vault.note .. '/notes' },
 			},
 			frontmatter = {
 				enabled = true,

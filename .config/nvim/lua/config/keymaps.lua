@@ -209,8 +209,8 @@ map { --- SYSTEM
 					minimal = true,
 					position = 'float',
 					relative = 'editor',
-					height = 1,
-					width = 1,
+					height = 0,
+					width = 0.98,
 					keys = { ['<c-q>'] = { 'close', expr = true, mode = 't' } },
 				},
 			})

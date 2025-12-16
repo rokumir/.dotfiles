@@ -46,10 +46,12 @@ return {
 		cp.purple = cp.orange
 		cp.purpleDark = blend(cp.purple, 0.92)
 		cp.red = '#FD7CA0'
-		cp.redDark = mix(cp.red, '#f38e54', 0.9)
+		cp.redDark = mix(cp.red, '#f38e54', 0.6)
 		cp.yellowDark = '#FFC799'
 		cp.blue = '#45c6d2'
 		cp.blueLight = '#76b1bb'
+		cp.cyan = '#3af0df'
+		cp.cyanDark = mix(cp.cyan, cp.black, 0.8)
 
 		-- diagnostic colors
 		cp.error = cp.redDark
@@ -193,6 +195,7 @@ return {
 				['@punctuation.special.markdown'] = { fg = cp.fgAlt },
 				['@markup.raw.markdown_inline'] = { link = 'RenderMarkdownCodeInline' },
 				['@markup.link.label'] = { fg = cp.greenLight, underdashed = true },
+				['@markup.hashtag'] = { fg = cp.cyanDark, bg = blend(cp.cyanDark, 0.13), bold = true },
 				--#endregion
 
 				--#region which-key

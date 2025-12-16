@@ -1,4 +1,4 @@
-local hl_color = require('snacks.util').color
+local function hl_color(groups, prop) return require('snacks.util').color(groups, prop) end
 local snacks_tabpages = require('nihil.plugin.bufferline').picker.tabpages
 
 ---@module 'lazy'
@@ -46,24 +46,32 @@ return {
 		'lualine.nvim',
 		optional = true,
 		event = 'VeryLazy',
-		init = function()
-			vim.g.lualine_laststatus = vim.o.laststatus
-			if vim.fn.argc(-1) > 0 then
-				vim.o.statusline = ' ' -- set an empty statusline till lualine loads
-			else
-				vim.o.laststatus = 0 -- hide the statusline on the starter page
-			end
-		end,
+
+		keys = {
+			{
+				'<leader><leader>ul',
+				function()
+					vim.g.nihil_lualine_unhide = not vim.g.nihil_lualine_unhide
+					require('lualine').hide { place = { 'statusline' }, unhide = vim.g.nihil_lualine_unhide }
+					Snacks.notify((vim.g.nihil_lualine_unhide and 'Enable' or 'Disable') .. ' Lualine Statusline')
+				end,
+				desc = 'Toggle Lualine Statusline',
+			},
+		},
 
 		opts = function()
 			require('lualine_require').require = require -- PERF: we don't need this lualine require madness 🤷
 			vim.o.laststatus = vim.g.lualine_laststatus
 
+			local function color_fn(group)
+				return function() return { fg = hl_color(group, 'fg') } end
+			end
+
 			local Icons = LazyVim.config.icons
 			local opts = {
 				options = {
 					disabled_filetypes = { statusline = { 'dashboard', 'alpha', 'ministarter', 'snacks_dashboard' } },
-					globalstatus = true,
+					globalstatus = vim.o.laststatus == 3,
 					always_show_tabline = false,
 					always_divide_middle = true,
 					component_separators = { left = '', right = '' },
@@ -73,7 +81,7 @@ return {
 				sections = {
 					lualine_a = { 'mode' },
 					lualine_b = {
-						'branch',
+						{ 'branch', color = color_fn 'SnacksPickerGitBranch' },
 						{
 							'diff',
 							symbols = {
@@ -94,7 +102,14 @@ return {
 
 					lualine_c = {
 						LazyVim.lualine.root_dir(),
-						{ 'filetype', icon_only = true, separator = '', padding = { left = 1, right = 0 } },
+						{
+							'filetype',
+							colored = true,
+							icon_only = true,
+							separator = '',
+							padding = { left = 1, right = 0 },
+							color = color_fn 'Attribute',
+						},
 						{
 							LazyVim.lualine.pretty_path {
 								length = 3,
@@ -118,21 +133,21 @@ return {
 					},
 
 					lualine_x = {
-						require('snacks.profiler').status(),
+						Snacks.profiler.status(),
 						{ -- shows key typing
 							function() return require('noice').api.status.command['get']() end,
 							cond = function() return package.loaded['noice'] and require('noice').api.status.command['has']() end,
-							color = { fg = hl_color 'Statement' },
+							color = color_fn 'Statement',
 						},
 						{
 							function() return require('noice').api.status.mode['get']() end,
 							cond = function() return package.loaded['noice'] and require('noice').api.status.mode['has']() end,
-							color = { fg = hl_color 'Constant' },
+							color = color_fn 'Constant',
 						},
 						{ -- Dap
 							function() return '  ' .. require('dap').status() end,
 							cond = function() return package.loaded['dap'] and require('dap').status() ~= '' end,
-							color = { fg = hl_color 'Debug' },
+							color = color_fn 'Debug',
 						},
 					},
 
@@ -142,53 +157,48 @@ return {
 								local wc = vim.fn.wordcount()
 								return wc.words .. 'w ' .. wc.chars .. 'c'
 							end,
-							color = 'PreCondit',
-							separator = '',
-							cond = function() return Nihil.config.exclude.filetypes_map[vim.bo.ft] end,
+							cond = function() return Nihil.config.exclude.document_filetypes_map[vim.bo.ft] end,
+							color = color_fn 'PreCondit',
 						},
 						{
 							'encoding',
-							color = 'PreCondit',
-							separator = '',
 							cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-8' end,
+							color = color_fn 'PreCondit',
 						},
 						{
 							'fileformat',
 							symbols = { unix = 'lf', dos = 'crlf', mac = 'cr' },
-							color = 'PreCondit',
-							separator = '',
 							cond = function() return vim.bo.ff ~= 'unix' end,
+							color = color_fn 'PreCondit',
 						},
-						'location',
+						{
+							'location',
+							separator = ' ',
+							padding = { left = 1, right = 0 },
+							color = color_fn 'Type',
+						},
+						{
+							'progress',
+							padding = { left = 0, right = 1 },
+							color = color_fn 'Type',
+						},
 					},
 					lualine_z = {
-						{
-							function() return Nihil.datetime.pretty_date() end,
-							cond = function() return vim.g.nihil_lualine_time_expanded end,
-						},
-						{ function()
-							return Nihil.datetime.pretty_time(nil, {
-								hour12 = false,
-							})
-						end },
+						{ function() return Nihil.datetime.pretty_date() end, cond = function() return vim.g.nihil_lualine_time_expanded end },
+						{ function() return Nihil.datetime.pretty_time(nil, { hour12 = false }) end },
 					},
 				},
 			}
 
-			-- Transparent lualine fill bg
-			local theme = require 'lualine.themes.auto'
-			local colors = {
-				muted = hl_color 'MutedText',
-			}
-			for _, mode in ipairs { 'insert', 'normal', 'visual', 'command', 'replace', 'inactive', 'terminal' } do
-				if theme[mode] then
-					if theme[mode].c then
-						theme[mode].c.bg = 'NONE'
-						theme[mode].c.fg = colors.muted
-					end
-				end
+			-- Overriding theme
+			local override_theme = {}
+			local color_separtor = hl_color 'WinSeparator'
+			for _, mode in ipairs { 'insert', 'normal', 'visual', 'command', 'replace', 'terminal' } do
+				override_theme[mode] = {}
+				override_theme[mode].b = { fg = color_separtor }
+				override_theme[mode].c = { fg = color_separtor }
 			end
-			opts.options.theme = theme
+			opts.options.theme = vim.tbl_deep_extend('force', {}, require 'lualine.themes.auto', override_theme)
 
 			return opts
 		end,
@@ -383,7 +393,7 @@ return {
 		keys = {
 			-- { 'zO', function() require('ufo').openAllFolds() end, nowait = true, desc = 'Unfold All' },
 			-- { 'zC', function() require('ufo').closeAllFolds() end, nowait = true, desc = 'Fold All' },
-			{ 'zO', '<cmd>set foldlevel=10 <cr>', nowait = true, desc = 'Unfold All' },
+			{ 'zO', '<cmd>set foldlevel=30 <cr>', nowait = true, desc = 'Unfold All' },
 			{ 'zC', '<cmd>set foldlevel=0  <cr>', nowait = true, desc = 'Fold All' },
 			{ ']u', function() require('ufo').goNextClosedFold() end, nowait = true, desc = 'Fold: Next' },
 			{ '[u', function() require('ufo').goPreviousClosedFold() end, nowait = true, desc = 'Fold: Prev' },
