@@ -12,7 +12,7 @@ M.work = env 'RH_WORK'
 M.config = env 'XDG_CONFIG_HOME'
 M.script = env 'RH_SCRIPT'
 M.note = env 'RH_NOTE'
-M.second_brain = env 'RH_BRAIN'
+M.second_brain = vim.uv.fs_realpath(env 'RH_BRAIN' or '')
 
 M.devs = {
 	DOC_DIR,

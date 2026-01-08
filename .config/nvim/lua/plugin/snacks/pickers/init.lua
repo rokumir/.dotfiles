@@ -291,7 +291,7 @@ return {
 		{ ';gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
 
 		-- Search
-		{ ';s', '', desc = 'search' },
+		{ ';s', '', desc = 'search', mode = { 'n', 'v' } },
 		-- grep
 		{ '<a-/>', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
 		{ ';sb', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },

@@ -14,7 +14,7 @@ function M.obsidian.util.snacks_note_transform(obsidian_note_util, item)
 		item.has_frontmatter = note.has_frontmatter
 		item.icon = note.metadata.icon or nil
 		item.title = type(note.metadata.title) == 'string' and note.metadata.title or note.aliases[1] or nil
-		item.aliases = #note.aliases > 0 and table.concat(note.aliases, '') or nil
+		item.aliases = #note.aliases > 0 and table.concat(note.aliases, '|') or nil
 		item.tags = #note.tags > 0 and table.concat(note.tags, '') or nil
 		item.text = Snacks.picker.util.text(item, { 'title', 'tags', 'aliases' })
 	end, 0)

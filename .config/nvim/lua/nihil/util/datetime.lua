@@ -131,4 +131,31 @@ function M.pretty(t, opts)
 	return date .. ' ' .. time
 end
 
+local parse_field = { Y = 'year', m = 'month', d = 'day', H = 'hour', M = 'min', S = 'sec' }
+
+---@param date_str string
+---@param pattern string
+function M.parse(date_str, pattern)
+	local order = {}
+	pattern = pattern:gsub('([%^%$%(%)%.%[%]%*%+%-%?])', '%%%1')
+	pattern = pattern:gsub('%%([YmdHMS])', function(s)
+		order[#order + 1] = s
+		return (s == 'Y') and '(%d%d%d%d)' or '(%d%d)'
+	end)
+
+	local captures = { date_str:match('^' .. pattern .. '$') }
+	if #captures == 0 then return nil, 'Format mismatch!' end
+
+	local tm = {}
+	for i, spec in ipairs(order) do
+		tm[parse_field[spec]] = tonumber(captures[i])
+	end
+
+	vim.validate('year', tm.year, 'number')
+	vim.validate('month', tm.month, 'number')
+	vim.validate('day', tm.day, 'number')
+
+	return os.time(tm)
+end
+
 return M

@@ -4,7 +4,7 @@ return {
 	---@type snacks.Config
 	opts = {
 		image = {
-			enabled = false,
+			enabled = true,
 			force = true, -- try displaying the image, even if the terminal does not support it
 
 			cache = vim.fn.stdpath 'cache' .. '/snacks/image',

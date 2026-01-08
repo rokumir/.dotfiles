@@ -22,7 +22,7 @@ return {
 				},
 			},
 			sections = {
-				{ pane = 2, section = 'terminal', cmd = 'macchina', align = 'center', height = 12, padding = 1 },
+				{ pane = 2, section = 'terminal', cmd = 'tarts', align = 'center', height = 18, padding = 1 },
 				{ section = 'keys' },
 				{ text = sep_line_text },
 				{ section = 'projects', icon = ' ', title = 'Projects', indent = 4, limit = 5, session = true },

@@ -6,24 +6,16 @@ local TIME_FORMAT = '%H:%M:%S'
 local DATETIME_FORMAT = DATE_FORMAT .. 'T' .. TIME_FORMAT
 local TEMPLATES_DIR = '.meta/templates'
 
-local function is_note_dir_matches() return Nihil.path.is_current_matches(Vault.second_brain) end
+-- local function is_note_dir_matches() return Nihil.path.is_current_matches(Vault.second_brain) end
 local function get_time_now_fn(format, offset_hours)
 	return function() return tostring(os.date(format, os.time() - (offset_hours or 0) * 60 * 60)) end
 end
 
-local note_dir_visited = false
 vim.api.nvim_create_autocmd('DirChanged', {
 	group = Nihil.augroup 'obsidian_lazy_load',
-	callback = function()
-		if not note_dir_visited and is_note_dir_matches() then
-			note_dir_visited = true
-			vim.cmd 'Lazy load obsidian.nvim'
-			Nihil.keymap.mapper.set('<c-e>', 'n')
-			Mapkey { '<c-e>', Nihil.markdown.obsidian.quick_switcher, desc = 'Quick Switcher' }
-		elseif note_dir_visited then
-			note_dir_visited = false
-			Mapkey(Nihil.keymap.mapper.get('<c-e>', 'n'))
-		end
+	once = true,
+	callback = function(ev)
+		if not package.loaded['obsidian.nvim'] and ev.file == Nihil.config.vault.second_brain then vim.cmd 'Lazy load obsidian.nvim' end
 	end,
 })
 
@@ -163,31 +155,45 @@ return {
 
 	{ -- Obsdiian
 		'obsidian-nvim/obsidian.nvim',
-		version = false,
-		lazy = not is_note_dir_matches(),
+		version = '3.14.6',
+		lazy = true,
 		---@module 'obsidian'
 		---@type obsidian.config
 		opts = {
 			workspaces = {
-				{ name = 'cortex', path = Vault.second_brain },
+				{ name = 'Cortex', path = Vault.second_brain },
 			},
+
 			frontmatter = {
 				enabled = true,
 				func = function(note)
+					local now = os.time()
 					local out = require('obsidian.builtin').frontmatter(note)
-					out.modified = get_time_now_fn(DATETIME_FORMAT)()
+					local last_modified = vim.b.nihil_obsidian_fm_last_modified
+					if not last_modified or (os.difftime(now, last_modified) > 5 * 60) then
+						vim.b.nihil_obsidian_fm_last_modified = now
+						out.modified = tostring(os.date(DATETIME_FORMAT, now))
+						if out.aliases and (#out.aliases == 0 or not vim.tbl_contains(out.aliases, out.title)) then table.insert(out.aliases, out.title) end
+					end
 					return out
 				end,
 				sort = {
 					'icon',
 					'title',
 					'aliases',
-					'categories',
+					'up', --> upstream -> parent node
+					'down', --> downstream -> children node
 					'tags',
 					'created',
 					'modified',
 					'id',
 				},
+			},
+			footer = {
+				enabled = true,
+				format = '{{backlinks}} backlinks  {{properties}} properties',
+				hl_group = 'Comment',
+				separator = string.rep('-', 80),
 			},
 			checkbox = {
 				enabled = true,
@@ -235,18 +241,16 @@ return {
 				post_setup = function()
 					local function action(a) return '<cmd>Obsidian ' .. a .. ' <cr>' end
 					Mapkey {
-						{ '<c-e>', Nihil.markdown.obsidian.quick_switcher, desc = 'Quick Switcher' },
-
-						{ '<leader>o', group = 'Obsidian', icon = '💎' },
-						{ '<leader>of', Nihil.markdown.obsidian.quick_switcher, desc = 'Quick Switcher' },
-						{ '<leader>on', action 'new', desc = 'New Note', icon = '󰎜' },
-						{ '<leader>oN', action 'new_from_template', desc = 'New Note From Template', icon = '' },
+						{ '<c-e>', function() Nihil.markdown.obsidian.quick_switcher() end, desc = 'Quick Switcher' },
+						{ '<c-n>', action 'new', desc = 'New Note', icon = '󰎜' },
 						{ '<c-s-n>', action 'new_from_template', desc = 'New Note From Template', icon = '' },
+
+						-- { '<leader>o', group = 'Obsidian', icon = '💎' },
 						{ '<leader>oo', group = 'Open Note', icon = '󱙓' },
-						{ '<leader>oop', action 'search', desc = 'Search', icon = '󰍉' },
 						{ '<leader>oot', action 'today', desc = 'Today', icon = '󰃶' },
 						{ '<leader>ooT', action 'tomorrow', desc = 'Tomorrow', icon = '' },
 						{ '<leader>ooy', action 'yesterday', desc = 'Yesterday', icon = '' },
+
 						{ '<leader>ot', action 'tags', desc = 'Tags', icon = '' },
 						{ '<leader>ol', action 'links', desc = 'links', icon = '' },
 						{ '<leader>ob', action 'backlinks', desc = 'Backlinks', icon = '' },

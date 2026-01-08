@@ -189,13 +189,15 @@ return {
 				RenderMarkdownCheckboxCanceled = { fg = cp.fgDisabled, strikethrough = true, italic = true },
 				RenderMarkdownCode = { bg = cp.bgDark },
 				RenderMarkdownDash = { fg = cp.bgDarker },
-				RenderMarkdownCodeInline = { fg = cp.red, bg = blend(cp.red, 0.1) },
+				RenderMarkdownCodeInline = { fg = cp.orange, bg = blend(cp.orange, 0.1) },
+				-- ['@markup.hashtag'] = { fg = cp.cyanDark, bg = blend(cp.cyanDark, 0.13), bold = true },
 				['@markup.quote.markdown'] = { fg = cp.fgAlt },
 				['@markup.raw.block.markdown'] = { fg = cp.fgAlt },
 				['@punctuation.special.markdown'] = { fg = cp.fgAlt },
 				['@markup.raw.markdown_inline'] = { link = 'RenderMarkdownCodeInline' },
 				['@markup.link.label'] = { fg = cp.greenLight, underdashed = true },
-				['@markup.hashtag'] = { fg = cp.cyanDark, bg = blend(cp.cyanDark, 0.13), bold = true },
+				['@markup.italic'] = { fg = mix(cp.red, cp.white, 0.6), italic = true, cterm = { italic = true } },
+				['@markup.strong'] = { fg = mix(cp.red, cp.white, 0.6), bold = true, cterm = { bold = true } },
 				--#endregion
 
 				--#region which-key

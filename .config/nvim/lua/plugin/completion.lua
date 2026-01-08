@@ -76,8 +76,6 @@ return { -- Blink.cmp
 			per_filetype = {
 				['rip-substitute'] = { 'buffer' },
 				gitcommit = { 'buffer' },
-				markdown = { 'lsp', 'snippets', 'path', 'buffer' },
-				mdx = { 'lsp', 'snippets', 'path', 'buffer' },
 			},
 		},
 

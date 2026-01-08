@@ -1,5 +1,3 @@
-local exclude_filetypes = Nihil.config.exclude.filetypes
-
 ---@diagnostic disable: no-unknown, missing-fields, missing-parameter
 ---@type LazyPluginSpec[]
 return {
@@ -121,15 +119,8 @@ return {
 		end,
 	},
 
-	{ -- better indent guessing
-		'tpope/vim-sleuth',
-		init = function()
-			-- 1: true, 0: false
-			for _, ft in ipairs(exclude_filetypes) do
-				vim.g['sleuth_' .. ft .. '_heuristics'] = 0
-			end
-		end,
-	},
+	-- best indent guessing
+	{ 'tpope/vim-sleuth', event = 'VeryLazy' },
 
 	{ -- Fugit2
 		'SuperBo/fugit2.nvim',
@@ -137,9 +128,10 @@ return {
 		opts = { width = 100 },
 		cmd = { 'Fugit2', 'Fugit2Diff', 'Fugit2Graph' },
 		keys = {
-			{ ';gF', '<cmd>Fugit2<cr>', desc = 'Open Fugit2' },
-			{ ';gFd', '<cmd>Fugit2Diff<cr>', desc = 'Fugit2 Diff' },
-			{ ';gg', '<cmd>Fugit2Graph<cr>', desc = 'Fugit2 Graph' },
+			{ ';F', '', desc = 'Fugit2' },
+			{ ';Ff', '<cmd>Fugit2<cr>', desc = 'Open Fugit2' },
+			{ ';Fd', '<cmd>Fugit2Diff<cr>', desc = 'Fugit2 Diff' },
+			{ ';Fg', '<cmd>Fugit2Graph<cr>', desc = 'Fugit2 Graph' },
 		},
 	},
 	{ -- diffview
@@ -184,7 +176,7 @@ return {
 				style = 'virtual_left',
 				bold = true,
 				italic = true,
-				ignore_ft = exclude_filetypes,
+				ignore_ft = Nihil.config.exclude.filetypes,
 				disable_builtin_lsp_colors = vim.version().minor == 12,
 			},
 
@@ -297,14 +289,37 @@ return {
 	{ -- Change text case
 		'johmsalas/text-case.nvim',
 		priority = 1000,
-		keys = {
-			{ ';C', function() require('nihil.plugin.text-case'):picker() end, desc = 'Change Text Case', mode = { 'n', 's', 'x' } },
-		},
 		opts = { default_keymappings_enabled = false },
+		keys = function()
+			local prefix = ';c'
+			local keys = {
+				{ prefix, '', desc = 'Change Text Case', mode = { 'n', 'x' } },
+				{ prefix .. 'o', '', desc = 'Operator' },
+			}
+
+			local function setup_textcase_keymaps(key, case, desc)
+				vim.list_extend(keys, {
+					{ prefix .. key, function() require('textcase').current_word(case) end, desc = 'Convert to ' .. desc }, -- Convert current word
+					{ prefix .. 'o' .. key, function() require('textcase').operator(case) end, desc = 'Convert to ' .. desc }, -- Operator
+					{ prefix .. key, function() require('textcase').operator(case) end, desc = 'Convert to ' .. desc, mode = 'x' }, -- Operator
+				})
+			end
+
+			setup_textcase_keymaps('_', 'to_snake_case', 'to_snake')
+			setup_textcase_keymaps('-', 'to_dash_case', 'to-dash')
+			setup_textcase_keymaps('C', 'to_constant_case', 'TO_CONSTANT')
+			setup_textcase_keymaps('p', 'to_pascal_case', 'ToCamel')
+			setup_textcase_keymaps('c', 'to_camel_case', 'toCamel')
+			setup_textcase_keymaps('<space>', 'to_phrase_case', 'To phrase')
+			setup_textcase_keymaps('t', 'to_title_case', 'To Title')
+			setup_textcase_keymaps('/', 'to_path_case', 'to/path')
+			setup_textcase_keymaps(',', 'to_comma_case', 'to,comma')
+			setup_textcase_keymaps('.', 'to_dot_case', 'to.dot')
+
+			return keys
+		end,
 	},
 
-	{
-		'tiagovla/scope.nvim',
-		config = true,
-	},
+	-- Better tab management; makes tabs into workspaces
+	{ 'tiagovla/scope.nvim', config = true },
 }
