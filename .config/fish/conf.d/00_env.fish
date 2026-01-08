@@ -21,6 +21,7 @@ end
 set -gx TERMINFO $XDG_CONFIG_HOME/terminfo
 set -gx TERM wezterm # enable undercurl .terminfo/w/wezterm
 set -gx GIT_EDITOR nvim
+set -gx GIT_CONFIG_GLOBAL ~/.config/git/config
 set -gx EDITOR vi
 set -gx PAGER bat
 

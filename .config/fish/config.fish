@@ -6,6 +6,8 @@ set -U fish_cursor_default block blink
 set -U fish_prompt_pwd_dir_length 1
 set -U fish_prompt_pwd_full_dirs 3
 
+fish_config theme choose rose-pine
+
 ## --------------------------------------------------
 ## plugins
 if functions -q fundle
