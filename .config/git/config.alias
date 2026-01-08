@@ -23,18 +23,16 @@
     s = status --short --branch
     su = status --short --branch --untracked-files
 
-    status-prettify = !git.status-prettify
     sp = status-prettify
-
-    l = log-prettify
-
-    o = open-web
+    status-prettify = !git.status-prettify
 
     # -----------------------------------------------------------
     # Syntax breaking aliases
 
+    o = open-web
     open-web = "!xdg-open $(git remote get-url origin | sed -e 's#^git@\\([^:]*\\):#https://\\1/#' -e 's#\\.git$##') >& /dev/null &"
 
+    l = log-prettify
     log-prettify = "!f() { \
         git log --all --graph \
             --abbrev-commit --decorate --color=always \
