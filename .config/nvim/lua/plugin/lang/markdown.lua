@@ -155,7 +155,7 @@ return {
 
 	{ -- Obsdiian
 		'obsidian-nvim/obsidian.nvim',
-		version = '3.14.6',
+		version = false,
 		lazy = true,
 		---@module 'obsidian'
 		---@type obsidian.config
@@ -175,6 +175,8 @@ return {
 						out.modified = tostring(os.date(DATETIME_FORMAT, now))
 						if out.aliases and (#out.aliases == 0 or not vim.tbl_contains(out.aliases, out.title)) then table.insert(out.aliases, out.title) end
 					end
+
+					out.modified = tostring(os.date(DATETIME_FORMAT, now))
 					return out
 				end,
 				sort = {
@@ -212,12 +214,12 @@ return {
 			},
 
 			attachments = {
-				img_folder = '.assets/imgs',
+				img_folder = 'Assets/imgs',
 				confirm_img_paste = true,
 			},
 
 			daily_notes = {
-				folder = 'journal',
+				folder = 'Journal',
 				date_format = DATE_FORMAT .. '-%A',
 				alias_format = '%A %B %-d, %Y',
 				default_tags = { 'journal' },
@@ -243,7 +245,7 @@ return {
 					Mapkey {
 						{ '<c-e>', function() Nihil.markdown.obsidian.quick_switcher() end, desc = 'Quick Switcher' },
 						{ '<c-n>', action 'new', desc = 'New Note', icon = '󰎜' },
-						{ '<c-s-n>', action 'new_from_template', desc = 'New Note From Template', icon = '' },
+						{ '<c-s-n>', function() Nihil.markdown.obsidian.better_new_from_template() end, desc = 'New Note From Template', icon = '' },
 
 						-- { '<leader>o', group = 'Obsidian', icon = '💎' },
 						{ '<leader>oo', group = 'Open Note', icon = '󱙓' },

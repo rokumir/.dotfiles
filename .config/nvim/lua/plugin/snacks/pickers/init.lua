@@ -50,33 +50,33 @@ local picker_yank_actions = {
 	explorer = {
 		predicate = function(i) return Snacks.picker.util.path(i) end,
 		callback = function(paths, copy)
-			local path_opts = {
-				{ idx = 1, text = 'Relative Path', format = ':.' },
-				{ idx = 2, text = 'File Name', format = ':t' },
-				{ idx = 3, text = 'Full Path', format = ':p' },
-				{ idx = 4, text = 'Base Name', format = ':t:r' },
-				{ idx = 5, text = 'Extension', format = ':e' },
-			}
-			Snacks.picker.select(path_opts, {
-				prompt = 'Choose to copy to clipboard:',
-				snacks = {
-					layout = 'select_min_short',
-					format = function(_item)
-						local item = _item.item
-						local ret = {}
-						ret[#ret + 1] = { item.idx, 'Character' }
-						ret[#ret + 1] = { ' ' }
-						ret[#ret + 1] = { item.text, 'Character' }
-						ret[#ret + 1] = { ' ' }
-						ret[#ret + 1] = { item.format, 'Comment' }
-						return ret
-					end,
+			Snacks.picker.pick {
+				title = 'Choose to copy to clipboard:',
+				layout = 'select_thin_short',
+				win = { input = { keys = { ['<c-space>'] = false, ['<tab>'] = false, ['<s-tab>'] = false } } },
+				items = {
+					{ idx = 1, text = 'Relative Path', format = ':.' },
+					{ idx = 2, text = 'File Name', format = ':t' },
+					{ idx = 3, text = 'Full Path', format = ':p' },
+					{ idx = 4, text = 'Base Name', format = ':t:r' },
+					{ idx = 5, text = 'Extension', format = ':e' },
 				},
-			}, function(choice) ---@param choice {key:string;format:string}?
-				if not choice then return end
-				local formatted_paths = vim.tbl_map(function(p) return vim.fn.fnamemodify(p, choice.format) end, paths)
-				copy(formatted_paths)
-			end)
+				format = function(item)
+					local ret = {}
+					ret[#ret + 1] = { item.idx, 'Character' }
+					ret[#ret + 1] = { ' ' }
+					ret[#ret + 1] = { item.text, 'Character' }
+					ret[#ret + 1] = { ' ' }
+					ret[#ret + 1] = { item.format, 'Comment' }
+					return ret
+				end,
+				confirm = function(picker, choice)
+					if not choice then return end
+					local formatted_paths = vim.tbl_map(function(p) return vim.fn.fnamemodify(p, choice.format) end, paths)
+					copy(formatted_paths)
+					picker:close()
+				end,
+			}
 		end,
 	},
 }
@@ -224,7 +224,7 @@ return {
 						{ win = 'list', border = 'none' },
 					},
 				},
-				select_min_short = {
+				select_thin_short = {
 					layout = {
 						backdrop = false,
 						width = 0.35,
@@ -239,7 +239,7 @@ return {
 						{ win = 'list', border = 'none' },
 					},
 				},
-				select_min_long = {
+				select_thin_long = {
 					layout = {
 						backdrop = false,
 						width = 0.35,

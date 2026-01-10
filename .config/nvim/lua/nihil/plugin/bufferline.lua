@@ -127,7 +127,7 @@ function M.picker.sort_actions()
 	local opts = {
 		prompt = 'Sort tabs by:',
 		snacks = {
-			layout = 'select_min_short',
+			layout = 'select_thin_short',
 			format = function(_item)
 				local item = _item.item
 				return {
@@ -169,7 +169,7 @@ function M.picker.tabpages()
 		prompt = 'Tabs',
 		title = 'Tabs',
 		snacks = {
-			layout = 'select_min_short',
+			layout = 'select_thin_short',
 			format = function(item)
 				local a = Snacks.picker.util.align
 				return {
