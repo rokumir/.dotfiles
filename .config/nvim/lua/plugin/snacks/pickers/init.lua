@@ -254,6 +254,21 @@ return {
 						{ win = 'list', border = 'none' },
 					},
 				},
+				select_extra_small = {
+					layout = {
+						backdrop = false,
+						width = 0.15,
+						min_width = 35,
+						height = 0.5,
+						min_height = 4,
+						title = '{title}',
+						title_pos = 'center',
+						box = 'vertical',
+						border = 'rounded',
+						{ win = 'input', height = 1, border = 'bottom' },
+						{ win = 'list', border = 'none' },
+					},
+				},
 			},
 
 			sources = {

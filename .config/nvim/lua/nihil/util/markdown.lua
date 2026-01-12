@@ -57,7 +57,7 @@ function M.obsidian.util.snacks_note_format(item, picker)
 end
 
 function M.obsidian.quick_switcher()
-	if not Obsidian or not Snacks then error '**[Obsidian.nvim]** plugin not found!' end
+	if not pcall(require, 'obsidian') or not pcall(require, 'snacks') then error '**[Obsidian.nvim]** plugin not found!' end
 	Snacks.picker.files {
 		source = 'markdown_notes_quick_switcher',
 		title = '󱀂 Notes',
@@ -68,6 +68,26 @@ function M.obsidian.quick_switcher()
 	}
 end
 
+---@param callback fun(choice?:snacks.picker.Item)
+function M.obsidian.util.select_dir(callback)
+	Snacks.picker {
+		title = 'Pick a Directory',
+		layout = 'select_extra_small',
+		confirm = function(picker, item)
+			picker:close()
+			callback(item)
+		end,
+		format = function(item) return { { vim.fs.basename(item.text:gsub('/+$', '')), 'SnacksPickerDirectory' } } end,
+		finder = function(_, ctx)
+			local opts = ctx:opts {
+				cmd = 'fd',
+				args = { '--no-hidden', '--follow', '--absolute-path', '--type', 'directory', '--max-depth', '1' },
+			}
+			return require('snacks.picker.source.proc').proc(opts, ctx)
+		end,
+	}
+end
+
 function M.obsidian.better_new_from_template()
 	local Util = require 'obsidian.util'
 	local Note = require 'obsidian.note'
@@ -75,65 +95,29 @@ function M.obsidian.better_new_from_template()
 	local templates_dir = require('obsidian.api').templates_dir()
 	if not templates_dir then return Snacks.notify.error 'Templates folder is not defined or does not exist' end
 
-	Obsidian.picker.find_files {
-		prompt_title = 'Templates',
-		dir = templates_dir,
-		no_default_mappings = true,
-		callback = function(template_name)
-			Snacks.picker.select({
-				{ text = 'Alas', desc = 'Knowledge' },
-				{ text = 'Opus', desc = 'Projects' },
-				{ text = 'Journal', desc = 'Daily insights' },
-				{ text = '[root]', desc = 'Root' },
-			}, {
-				prompt = 'Pick a Directory for Note',
-				snacks = {
-					layout = {
-						layout = {
-							backdrop = false,
-							width = 0.15,
-							min_width = 35,
-							height = 0.3,
-							min_height = 3,
-							title = '{title}',
-							title_pos = 'center',
-							box = 'vertical',
-							border = 'rounded',
-							{ win = 'input', height = 1, border = 'bottom' },
-							{ win = 'list', border = 'none' },
-						},
-					},
-					format = function(_item)
-						local item = _item.item
-						local ret = {}
-						ret[#ret + 1] = { Snacks.picker.util.align(item.text, 12) }
-						ret[#ret + 1] = { ' ' }
-						ret[#ret + 1] = { item.desc, 'Comment' }
-						return ret
-					end,
-				},
-			}, function(choice)
-				local dir = choice.text
-				if not dir then return Snacks.notify.warn 'Aborted' end
-				if dir == '[root]' then dir = nil end
+	Snacks.picker.files {
+		title = 'Templates',
+		layout = 'select_extra_small',
+		format = function(item) return { { vim.fn.fnamemodify(item.text, ':t:r') } } end,
+		dirs = { tostring(templates_dir) },
+		confirm = function(picker, item)
+			if not item then return end
+			picker:close()
 
+			local template_name = item._path ---@type string
+
+			M.obsidian.util.select_dir(function(choice)
+				if not choice then return end
 				local success, safe_title = pcall(Util.input, 'Enter title or path (optional): ', { completion = 'file' })
 				if not success or not safe_title then return Snacks.notify.warn 'Aborted' end
-				if template_name == nil or template_name == '' then return Snacks.notify.warn 'Aborted' end
 
-				Note.create({
-					template = template_name,
-					should_write = true,
-					dir = dir,
-				}):open {
-					sync = false,
-					callback = function(buf)
-						if safe_title == '' then return end
-						local note = Note.from_buffer(buf)
-						note:add_field('title', safe_title)
-						note:update_frontmatter(buf)
-					end,
-				}
+				local dir = choice.text
+				local id, path = Note._resolve_id_path { dir = dir } ---@diagnostic disable-line: invisible
+
+				local note = Note.new(id, { safe_title }, {}, path)
+				note:add_field('title', safe_title)
+				note:write { template = template_name }
+				note:open { sync = false }
 			end)
 		end,
 	}
