@@ -4,7 +4,7 @@
 	signingkey = /home/rokumir/.ssh/id_ed25519
 
 [core]
-	autocrlf = false
+	autocrlf = input
     askpass = # disable credential manager
     compression = 9
     whitespace = error
