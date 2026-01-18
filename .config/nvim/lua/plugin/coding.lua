@@ -17,7 +17,12 @@ return {
 		keys = function()
 			return {
 				{ '<leader>yc', function() require('yanky').history.clear() end, desc = 'Clear Yank History' },
-				{ '<leader>yp', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
+				{
+					'<leader>yp',
+					function() Snacks.picker['yanky']() end,
+					mode = { 'n', 'x' },
+					desc = 'Open Yank History',
+				},
 				{ ';sy', function() Snacks.picker['yanky']() end, mode = { 'n', 'x' }, desc = 'Open Yank History' },
 
 				{ '<a-<>', function() require('yanky').cycle(1) end, mode = { 'n', 'i' }, desc = 'Next Entry' },
@@ -70,9 +75,23 @@ return {
 		'ThePrimeagen/refactoring.nvim',
 		keys = function()
 			return {
-				{ '<leader>rr', function() require('refactoring').select_refactor() end, mode = { 'n', 'v' }, desc = 'Options' },
-				{ '<leader>rp', function() require('refactoring').debug.print_var { normal = true } end, desc = 'Print Debug Variable' },
-				{ '<leader>rp', function() require('refactoring').debug.print_var {} end, mode = 'v', desc = 'Print Debug Variable' },
+				{
+					'<leader>rr',
+					function() require('refactoring').select_refactor() end,
+					mode = { 'n', 'v' },
+					desc = 'Options',
+				},
+				{
+					'<leader>rp',
+					function() require('refactoring').debug.print_var { normal = true } end,
+					desc = 'Print Debug Variable',
+				},
+				{
+					'<leader>rp',
+					function() require('refactoring').debug.print_var {} end,
+					mode = 'v',
+					desc = 'Print Debug Variable',
+				},
 				{ '<leader>rc', function() require('refactoring').debug.cleanup {} end, desc = 'Cleanup Debug Code' },
 			}
 		end,

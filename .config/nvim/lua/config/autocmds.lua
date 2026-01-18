@@ -111,7 +111,10 @@ vim.api.nvim_create_autocmd('BufDelete', {
 		local bo = vim.bo[buf]
 		local path = vim.api.nvim_buf_get_name(buf)
 
-		local is_buffer_valid = vim.api.nvim_buf_is_valid(buf) and bo.modifiable and #path > 0 and not Excludes.filetypes_map[bo.filetype]
+		local is_buffer_valid = vim.api.nvim_buf_is_valid(buf)
+			and bo.modifiable
+			and #path > 0
+			and not Excludes.filetypes_map[bo.filetype]
 		if is_buffer_valid then Nihil.file.buf_history:store(path) end
 	end,
 })

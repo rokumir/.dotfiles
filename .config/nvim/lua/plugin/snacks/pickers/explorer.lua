@@ -50,39 +50,44 @@ return {
 
 					win = {
 						list = {
-							keys = vim.tbl_extend('force', {}, require('nihil.plugin.snacks').settings.disabled_default_keys, {
-								['<bs>'] = 'explorer_up',
-								['h'] = 'explorer_close', -- close directory
-								['U'] = 'explorer_update',
-								['<c-.>'] = 'explorer_focus',
+							keys = vim.tbl_extend(
+								'force',
+								{},
+								require('nihil.plugin.snacks').settings.disabled_default_keys,
+								{
+									['<bs>'] = 'explorer_up',
+									['h'] = 'explorer_close', -- close directory
+									['U'] = 'explorer_update',
+									['<c-.>'] = 'explorer_focus',
 
-								['zc'] = 'explorer_close',
-								['zo'] = 'confirm',
-								['zC'] = 'explorer_close_all',
-								['zO'] = 'explorer_open_all_sub',
-								[']g'] = 'explorer_git_next',
-								['[g'] = 'explorer_git_prev',
-								[']d'] = 'explorer_diagnostic_next',
-								['[d'] = 'explorer_diagnostic_prev',
-								[']w'] = 'explorer_warn_next',
-								['[w'] = 'explorer_warn_prev',
-								[']e'] = 'explorer_error_next',
-								['[e'] = 'explorer_error_prev',
+									['zc'] = 'explorer_close',
+									['zo'] = 'confirm',
+									['zC'] = 'explorer_close_all',
+									['zO'] = 'explorer_open_all_sub',
+									[']g'] = 'explorer_git_next',
+									['[g'] = 'explorer_git_prev',
+									[']d'] = 'explorer_diagnostic_next',
+									['[d'] = 'explorer_diagnostic_prev',
+									[']w'] = 'explorer_warn_next',
+									['[w'] = 'explorer_warn_prev',
+									[']e'] = 'explorer_error_next',
+									['[e'] = 'explorer_error_prev',
 
-								['<a-N>'] = 'explorer_add',
-								['<a-R>'] = 'explorer_rename',
-								['<a-C>'] = 'explorer_copy',
-								['<a-M>'] = 'explorer_move',
-								['<a-O>'] = 'explorer_open', -- open with system application
-								['<a-P>'] = 'explorer_paste',
-								['<a-D>'] = 'explorer_del',
-								['<c-enter>'] = 'cd',
+									['<a-N>'] = 'explorer_add',
+									['<a-R>'] = 'explorer_rename',
+									['<a-C>'] = 'explorer_copy',
+									['<a-M>'] = 'explorer_move',
+									['<a-O>'] = 'explorer_open', -- open with system application
+									['<a-P>'] = 'explorer_paste',
+									['<a-D>'] = 'explorer_del',
+									['<c-enter>'] = 'cd',
 
-								['<a-H>'] = false,
-								['<a-J>'] = false,
-								['<a-K>'] = false,
-								['<a-L>'] = false,
-							}),
+									['<a-H>'] = false,
+									['<a-J>'] = false,
+									['<a-K>'] = false,
+									['<a-L>'] = false,
+								}
+							),
 						},
 					},
 

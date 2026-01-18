@@ -7,13 +7,35 @@ return {
 			enabled = true,
 			force = true, -- try displaying the image, even if the terminal does not support it
 
+			preferred_protocol = 'wezterm', -- or "kitty"
+			fallback_protocol = 'chafa',
+			inline_in_docs = true,
+			max_width = 80,
+			max_height = 40,
+
 			cache = vim.fn.stdpath 'cache' .. '/snacks/image',
 			icons = { math = '󰪚 ', chart = '󰄧 ', image = ' ' },
 			debug = { request = false, convert = false, placement = false },
 			env = {},
 
 			img_dirs = { 'img', 'images', 'assets', 'static', 'public', 'media', 'attachments', '__assets', 'banners' },
-			formats = { 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'tiff', 'heic', 'avif', 'mp4', 'mov', 'avi', 'mkv', 'webm', 'pdf' },
+			formats = {
+				'png',
+				'jpg',
+				'jpeg',
+				'gif',
+				'bmp',
+				'webp',
+				'tiff',
+				'heic',
+				'avif',
+				'mp4',
+				'mov',
+				'avi',
+				'mkv',
+				'webm',
+				'pdf',
+			},
 
 			doc = {
 				enabled = true,

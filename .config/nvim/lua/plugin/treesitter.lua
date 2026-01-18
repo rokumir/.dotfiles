@@ -48,7 +48,11 @@ return {
 		'nvim-treesitter/nvim-treesitter-context',
 		version = false,
 		keys = {
-			{ '<leader><leader>ut', function() require('treesitter-context').toggle() end, desc = 'Toggle Treesitter Context' },
+			{
+				'<leader><leader>ut',
+				function() require('treesitter-context').toggle() end,
+				desc = 'Toggle Treesitter Context',
+			},
 		},
 		opts = {
 			enable = false,

@@ -107,11 +107,20 @@ return { -- Blink.cmp
 						label = {
 							width = { max = 35 },
 							text = function(ctx)
-								if better_hl_source_exclude[ctx.source_id] then return require('blink.cmp.config.completion.menu').default.draw.components.label.text(ctx) end
+								if better_hl_source_exclude[ctx.source_id] then
+									return require('blink.cmp.config.completion.menu').default.draw.components.label.text(
+										ctx
+									)
+								end
 								return require('colorful-menu').blink_components_text(ctx)
 							end,
 							highlight = function(ctx, text)
-								if better_hl_source_exclude[ctx.source_id] then return require('blink.cmp.config.completion.menu').default.draw.components.label.highlight(ctx, text) end
+								if better_hl_source_exclude[ctx.source_id] then
+									return require('blink.cmp.config.completion.menu').default.draw.components.label.highlight(
+										ctx,
+										text
+									)
+								end
 								return require('colorful-menu').blink_components_highlight(ctx)
 							end,
 						},

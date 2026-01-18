@@ -32,7 +32,12 @@ return {
 							keys = {
 								['<c-.>'] = { 'tcd', mode = { 'n', 'i' } },
 								['<c-l>'] = { 'confirm', mode = { 'n', 'i' } },
-								['<c-w>'] = { '<cmd>normal! diw<cr><right>', mode = 'i', expr = true, desc = 'Delete Word' },
+								['<c-w>'] = {
+									'<cmd>normal! diw<cr><right>',
+									mode = 'i',
+									expr = true,
+									desc = 'Delete Word',
+								},
 								['<a-n>'] = { 'new_neovide_window', mode = { 'n', 'i' }, desc = 'New Project' },
 							},
 						},

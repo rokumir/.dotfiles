@@ -72,7 +72,10 @@ local picker_yank_actions = {
 				end,
 				confirm = function(picker, choice)
 					if not choice then return end
-					local formatted_paths = vim.tbl_map(function(p) return vim.fn.fnamemodify(p, choice.format) end, paths)
+					local formatted_paths = vim.tbl_map(
+						function(p) return vim.fn.fnamemodify(p, choice.format) end,
+						paths
+					)
 					copy(formatted_paths)
 					picker:close()
 				end,
@@ -134,7 +137,9 @@ return {
 			},
 
 			actions = {
-				trouble_open_selected = function(...) return require('trouble.sources.snacks').actions.trouble_open_selected.action(...) end,
+				trouble_open_selected = function(...)
+					return require('trouble.sources.snacks').actions.trouble_open_selected.action(...)
+				end,
 				toggle_hidden_persist = function(picker)
 					vim.g.snacks_hidden = not vim.g.snacks_hidden
 					picker:action 'toggle_hidden'
@@ -259,7 +264,7 @@ return {
 						backdrop = false,
 						width = 0.15,
 						min_width = 35,
-						height = 0.5,
+						height = 0.35,
 						min_height = 4,
 						title = '{title}',
 						title_pos = 'center',
@@ -333,8 +338,16 @@ return {
 		{ ';su', function() Snacks.picker.undo() end, desc = 'Undo History' },
 		{ ';sT', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
 		-- lsp
-		{ ';ss', function() Snacks.picker.lsp_symbols { filter = LazyVim.config.kind_filter } end, desc = 'LSP Symbols' },
-		{ ';sS', function() Snacks.picker.lsp_workspace_symbols { filter = LazyVim.config.kind_filter } end, desc = 'LSP Workspace Symbols' },
+		{
+			';ss',
+			function() Snacks.picker.lsp_symbols { filter = LazyVim.config.kind_filter } end,
+			desc = 'LSP Symbols',
+		},
+		{
+			';sS',
+			function() Snacks.picker.lsp_workspace_symbols { filter = LazyVim.config.kind_filter } end,
+			desc = 'LSP Workspace Symbols',
+		},
 	},
 }
 

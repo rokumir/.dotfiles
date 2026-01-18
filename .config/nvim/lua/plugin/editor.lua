@@ -8,7 +8,11 @@ return {
 		keys = function()
 			return {
 				{ ';h', '', desc = 'harpoon' },
-				{ ';hh', function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end, desc = 'List' },
+				{
+					';hh',
+					function() require('harpoon').ui:toggle_quick_menu(require('harpoon'):list()) end,
+					desc = 'List',
+				},
 				{ ';hp', function() require('harpoon'):list():prepend() end, desc = 'Prepend' },
 				{ ';ha', function() require('harpoon'):list():add() end, desc = 'Add' },
 				{ '<c-a-]>', function() require('harpoon'):list():next() end, desc = 'Harpoon next' },
@@ -19,11 +23,37 @@ return {
 				{ '<c-a-o>', function() require('harpoon'):list():select(3) end, desc = 'Harpoon 3rd entry' },
 				{ '<c-a-p>', function() require('harpoon'):list():select(4) end, desc = 'Harpoon 4th entry' },
 
-				{ '<c-q>', function() require('harpoon').ui:close_menu() end, mode = { 'n', 'i' }, ft = 'harpoon', desc = 'Harpoon Quit' },
-				{ '<c-l>', function() require('harpoon').ui:select_menu_item {} end, ft = 'harpoon', desc = 'Harpoon Open' },
-				{ 's', function() require('harpoon').ui:select_menu_item { split = true } end, ft = 'harpoon', desc = 'Harpoon Split' },
-				{ 'v', function() require('harpoon').ui:select_menu_item { vsplit = true } end, ft = 'harpoon', desc = 'Harpoon V Split' },
-				{ 't', function() require('harpoon').ui:select_menu_item { tabedit = true } end, ft = 'harpoon', desc = 'Harpoon New Tab' },
+				{
+					'<c-q>',
+					function() require('harpoon').ui:close_menu() end,
+					mode = { 'n', 'i' },
+					ft = 'harpoon',
+					desc = 'Harpoon Quit',
+				},
+				{
+					'<c-l>',
+					function() require('harpoon').ui:select_menu_item {} end,
+					ft = 'harpoon',
+					desc = 'Harpoon Open',
+				},
+				{
+					's',
+					function() require('harpoon').ui:select_menu_item { split = true } end,
+					ft = 'harpoon',
+					desc = 'Harpoon Split',
+				},
+				{
+					'v',
+					function() require('harpoon').ui:select_menu_item { vsplit = true } end,
+					ft = 'harpoon',
+					desc = 'Harpoon V Split',
+				},
+				{
+					't',
+					function() require('harpoon').ui:select_menu_item { tabedit = true } end,
+					ft = 'harpoon',
+					desc = 'Harpoon New Tab',
+				},
 			}
 		end,
 		opts = function(_, opts)
@@ -113,7 +143,11 @@ return {
 		keys = function()
 			return {
 				{ '<leader>xt', '<cmd>Trouble todo toggle<cr>', desc = 'Todo (Trouble)' },
-				{ '<leader>xT', '<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>', desc = 'Todo/Fix/Fixme (Trouble)' },
+				{
+					'<leader>xT',
+					'<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>',
+					desc = 'Todo/Fix/Fixme (Trouble)',
+				},
 				{ ';t', function() Snacks.picker['todo_comments']() end, desc = 'Todo Trouble' },
 			}
 		end,
@@ -158,7 +192,9 @@ return {
 		keys = {
 			{
 				'<leader>cp',
-				function() require('oklch-color-picker').pick_under_cursor { fallback_open = { initial_color = '#000' } } end,
+				function()
+					require('oklch-color-picker').pick_under_cursor { fallback_open = { initial_color = '#000' } }
+				end,
 				desc = 'Open color picker under cursor',
 			},
 		},
@@ -299,9 +335,22 @@ return {
 
 			local function setup_textcase_keymaps(key, case, desc)
 				vim.list_extend(keys, {
-					{ prefix .. key, function() require('textcase').current_word(case) end, desc = 'Convert to ' .. desc }, -- Convert current word
-					{ prefix .. 'o' .. key, function() require('textcase').operator(case) end, desc = 'Convert to ' .. desc }, -- Operator
-					{ prefix .. key, function() require('textcase').operator(case) end, desc = 'Convert to ' .. desc, mode = 'x' }, -- Operator
+					{
+						prefix .. key,
+						function() require('textcase').current_word(case) end,
+						desc = 'Convert to ' .. desc,
+					}, -- Convert current word
+					{
+						prefix .. 'o' .. key,
+						function() require('textcase').operator(case) end,
+						desc = 'Convert to ' .. desc,
+					}, -- Operator
+					{
+						prefix .. key,
+						function() require('textcase').operator(case) end,
+						desc = 'Convert to ' .. desc,
+						mode = 'x',
+					}, -- Operator
 				})
 			end
 

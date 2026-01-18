@@ -1,4 +1,4 @@
-column_width = 200
+column_width = 125
 indent_width = 4
 indent_type = 'Tabs'                  # Tabs, Spaces
 quote_style = 'AutoPreferSingle'      # AutoPreferDouble, AutoPreferSingle, ForceDouble, ForceSingle

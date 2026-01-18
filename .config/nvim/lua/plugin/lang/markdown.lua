@@ -1,11 +1,6 @@
 local Mapkey = Nihil.keymap
 local Vault = Nihil.config.vault
 
-local DATE_FORMAT = '%Y-%m-%d'
-local TIME_FORMAT = '%H:%M:%S'
-local DATETIME_FORMAT = DATE_FORMAT .. 'T' .. TIME_FORMAT
-local TEMPLATES_DIR = '.meta/templates'
-
 -- local function is_note_dir_matches() return Nihil.path.is_current_matches(Vault.second_brain) end
 local function get_time_now_fn(format, offset_hours)
 	return function() return tostring(os.date(format, os.time() - (offset_hours or 0) * 60 * 60)) end
@@ -15,7 +10,9 @@ vim.api.nvim_create_autocmd('DirChanged', {
 	group = Nihil.augroup 'obsidian_lazy_load',
 	once = true,
 	callback = function(ev)
-		if not package.loaded['obsidian.nvim'] and ev.file == Nihil.config.vault.second_brain then vim.cmd 'Lazy load obsidian.nvim' end
+		if not package.loaded['obsidian.nvim'] and ev.file == Nihil.config.vault.second_brain then
+			vim.cmd 'Lazy load obsidian.nvim'
+		end
 	end,
 })
 
@@ -29,8 +26,18 @@ return {
 		ft = Nihil.config.exclude.document_filetypes,
 		init = function() vim.g.markdown_folding = 1 end,
 		keys = {
-			{ '<leader><leader>rr', function() require('render-markdown').buf_toggle() end, desc = 'Toggle Render Markdown [Local]', ft = { 'markdown', 'mdx' } },
-			{ '<leader><leader>rR', function() require('render-markdown').toggle() end, desc = 'Toggle Render Markdown [Global]', ft = { 'markdown', 'mdx' } },
+			{
+				'<leader><leader>rr',
+				function() require('render-markdown').buf_toggle() end,
+				desc = 'Toggle Render Markdown [Local]',
+				ft = { 'markdown', 'mdx' },
+			},
+			{
+				'<leader><leader>rR',
+				function() require('render-markdown').toggle() end,
+				desc = 'Toggle Render Markdown [Global]',
+				ft = { 'markdown', 'mdx' },
+			},
 		},
 		---@type render.md.Config|table<string, unknown|{}>
 		opts = {
@@ -75,7 +82,12 @@ return {
 				checked = { icon = ' ', highlight = 'RenderMarkdownCheckboxDone' },
 				custom = {
 					todo = { raw = '[ ]', rendered = ' ', highlight = 'RenderMarkdownCheckboxTodo' }, -- override default
-					canceled = { raw = '[-]', rendered = ' ', highlight = 'RenderMarkdownCheckboxCanceled', scope_highlight = 'RenderMarkdownCheckboxCanceled' },
+					canceled = {
+						raw = '[-]',
+						rendered = ' ',
+						highlight = 'RenderMarkdownCheckboxCanceled',
+						scope_highlight = 'RenderMarkdownCheckboxCanceled',
+					},
 					in_progress = { raw = '[/]', rendered = ' ', highlight = 'RenderMarkdownCheckboxInProgress' },
 				},
 			},
@@ -157,23 +169,30 @@ return {
 		'obsidian-nvim/obsidian.nvim',
 		version = false,
 		lazy = true,
-		---@module 'obsidian'
-		---@type obsidian.config
-		opts = {
-			workspaces = {
-				{ name = 'Cortex', path = Vault.second_brain },
-			},
+		opts = function()
+			local DATE_FORMAT = '%Y-%m-%d'
+			local TIME_FORMAT = '%H:%M:%S'
+			local DATETIME_FORMAT = DATE_FORMAT .. 'T' .. TIME_FORMAT
 
-			frontmatter = {
+			---@type obsidian.config|{}
+			local opts = {}
+
+			opts.workspaces = {
+				{ name = 'Cortex', path = Vault.second_brain },
+			}
+
+			opts.frontmatter = {
 				enabled = true,
 				func = function(note)
 					local now = os.time()
 					local out = require('obsidian.builtin').frontmatter(note)
-					local last_modified = vim.b.nihil_obsidian_fm_last_modified
+					local last_modified = vim.b.nihil_obsidian_frontmatter_last_modified
 					if not last_modified or (os.difftime(now, last_modified) > 5 * 60) then
-						vim.b.nihil_obsidian_fm_last_modified = now
+						vim.b.nihil_obsidian_frontmatter_last_modified = now
 						out.modified = tostring(os.date(DATETIME_FORMAT, now))
-						if out.aliases and (#out.aliases == 0 or not vim.tbl_contains(out.aliases, out.title)) then table.insert(out.aliases, out.title) end
+						if out.aliases and (#out.aliases == 0 or not vim.tbl_contains(out.aliases, out.title)) then
+							table.insert(out.aliases, out.title)
+						end
 					end
 
 					out.modified = tostring(os.date(DATETIME_FORMAT, now))
@@ -190,45 +209,42 @@ return {
 					'modified',
 					'id',
 				},
-			},
-			footer = {
+			}
+
+			opts.footer = {
 				enabled = true,
 				format = '{{backlinks}} backlinks  {{properties}} properties',
 				hl_group = 'Comment',
 				separator = string.rep('-', 80),
-			},
-			checkbox = {
+			}
+
+			opts.checkbox = {
 				enabled = true,
 				create_new = true,
 				order = { ' ', '/', 'x', '-' },
-			},
-			comment = { enabled = true },
-			ui = {
+			}
+			opts.comment = {
+				enabled = true,
+			}
+
+			opts.ui = {
 				enable = false,
 				enabled = false,
 				ignore_conceal_warn = true,
-			},
-			statusline = {
+			}
+
+			opts.statusline = {
 				enabled = true,
 				format = '{{backlinks}} backlinks',
-			},
+			}
 
-			attachments = {
+			opts.attachments = {
 				img_folder = 'Assets/imgs',
 				confirm_img_paste = true,
-			},
+			}
 
-			daily_notes = {
-				folder = 'Journal',
-				date_format = DATE_FORMAT .. '-%A',
-				alias_format = '%A %B %-d, %Y',
-				default_tags = { 'journal' },
-				workdays_only = false,
-				template = '.meta/templates/Daily.md',
-			},
-
-			templates = {
-				folder = TEMPLATES_DIR,
+			opts.templates = {
+				folder = '.meta/templates',
 				date_format = DATE_FORMAT,
 				time_format = TIME_FORMAT,
 				substitutions = {
@@ -237,18 +253,33 @@ return {
 					now = get_time_now_fn(DATETIME_FORMAT),
 					today = get_time_now_fn '%A %B %-d, %Y',
 				},
-			},
+			}
 
-			callbacks = {
+			opts.daily_notes = {
+				folder = 'Journal',
+				date_format = DATE_FORMAT .. '-%A',
+				alias_format = '%A %B %-d, %Y',
+				default_tags = { 'journal' },
+				workdays_only = false,
+				template = opts.templates.folder .. '/Daily.md',
+			}
+
+			opts.callbacks = {
 				post_setup = function()
 					local function action(a) return '<cmd>Obsidian ' .. a .. ' <cr>' end
 					Mapkey {
 						{ '<c-e>', function() Nihil.markdown.obsidian.quick_switcher() end, desc = 'Quick Switcher' },
 						{ '<c-n>', action 'new', desc = 'New Note', icon = '󰎜' },
-						{ '<c-s-n>', function() Nihil.markdown.obsidian.better_new_from_template() end, desc = 'New Note From Template', icon = '' },
+						{
+							'<c-s-n>',
+							function() Nihil.markdown.obsidian.new_from_template() end,
+							desc = 'New Note From Template',
+							icon = '',
+						},
 
 						-- { '<leader>o', group = 'Obsidian', icon = '💎' },
 						{ '<leader>oo', group = 'Open Note', icon = '󱙓' },
+						{ '<a-o>', action 'today', desc = 'Today', icon = '󰃶' },
 						{ '<leader>oot', action 'today', desc = 'Today', icon = '󰃶' },
 						{ '<leader>ooT', action 'tomorrow', desc = 'Tomorrow', icon = '' },
 						{ '<leader>ooy', action 'yesterday', desc = 'Yesterday', icon = '' },
@@ -259,10 +290,20 @@ return {
 						{ 'gr', action 'backlinks', desc = 'Obsidian Backlinks', icon = '' },
 						{ 'gd', action 'follow_link', desc = 'Obsidian Follow Link', icon = '' },
 						{ '<leader>oT', action 'toc', desc = 'TOC', icon = '' },
+						{
+							'<leader>oT',
+							function() Nihil.markdown.obsidian.toc() end,
+							desc = 'TOC',
+							icon = '',
+						},
 						{ '<leader>oW', action 'workspace', desc = 'Switch Workspace', icon = '' },
-						{ '<leader>fr', action 'rename', desc = 'Obsidian Rename', icon = '' },
-						{ '<leader>oR', action 'rename', desc = 'Rename', icon = '' },
-						{ '<c-enter>', action 'toggle_checkbox', mode = { 'n', 'v' }, desc = 'Obsidian Cycle Through Checkbox Options', icon = '' },
+						{
+							'<c-enter>',
+							action 'toggle_checkbox',
+							mode = { 'n', 'v' },
+							desc = 'Obsidian Cycle Through Checkbox Options',
+							icon = '',
+						},
 						{
 							mode = 'v',
 							icon = '',
@@ -272,7 +313,9 @@ return {
 						},
 					}
 				end,
-			},
-		},
+			}
+
+			return opts
+		end,
 	},
 }

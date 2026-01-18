@@ -91,11 +91,13 @@ return {
 							},
 							source = function()
 								local gitsigns = vim.b.gitsigns_status_dict
-								if gitsigns then return {
-									added = gitsigns.added,
-									modified = gitsigns.changed,
-									removed = gitsigns.removed,
-								} end
+								if gitsigns then
+									return {
+										added = gitsigns.added,
+										modified = gitsigns.changed,
+										removed = gitsigns.removed,
+									}
+								end
 							end,
 						},
 					},
@@ -136,7 +138,9 @@ return {
 						Snacks.profiler.status(),
 						{ -- shows key typing
 							function() return require('noice').api.status.command['get']() end,
-							cond = function() return package.loaded['noice'] and require('noice').api.status.command['has']() end,
+							cond = function()
+								return package.loaded['noice'] and require('noice').api.status.command['has']()
+							end,
 							color = color_fn 'Statement',
 						},
 						{
@@ -184,7 +188,10 @@ return {
 						},
 					},
 					lualine_z = {
-						{ function() return Nihil.datetime.pretty_date() end, cond = function() return vim.g.nihil_lualine_time_expanded end },
+						{
+							function() return Nihil.datetime.pretty_date() end,
+							cond = function() return vim.g.nihil_lualine_time_expanded end,
+						},
 						{ function() return Nihil.datetime.pretty_time(nil, { hour12 = false }) end },
 					},
 				},
@@ -208,8 +215,8 @@ return {
 		'akinsho/bufferline.nvim',
 		keys = function()
 			return {
-				{ '<tab>', '<cmd>BufferLineCycleNext <cr>', desc = 'Next Buffer' },
-				{ '<s-tab>', '<cmd>BufferLineCyclePrev <cr>', desc = 'Prev Buffer' },
+				{ '<tab>', '<cmd>BufferLineCycleNext <cr>', desc = 'Next Buffer', mode = { 'n', 't' } },
+				{ '<s-tab>', '<cmd>BufferLineCyclePrev <cr>', desc = 'Prev Buffer', mode = { 'n', 't' } },
 				{ '<c-tab>', '<cmd>tabnext <cr>', desc = 'Next Tab' },
 				{ '<c-s-tab>', '<cmd>tabprevious <cr>', desc = 'Prev Tab' },
 				{ '<c-s-right>', '<cmd>BufferLineMoveNext <cr>', desc = 'Move Tab to Right' },
@@ -231,7 +238,11 @@ return {
 				{ '<leader>bb', '<cmd>BufferLinePick <cr>', desc = 'Pick' },
 				{ '<leader>bB', '<cmd>BufferLinePickClose <cr>', desc = 'Delete Pick' },
 
-				{ '<leader>bs', function() require('nihil.plugin.bufferline').picker.sort_actions() end, desc = 'Sort Actions' },
+				{
+					'<leader>bs',
+					function() require('nihil.plugin.bufferline').picker.sort_actions() end,
+					desc = 'Sort Actions',
+				},
 
 				{ ';T', snacks_tabpages, desc = 'Tabpages' },
 				{ '<leader>tt', snacks_tabpages, desc = 'Picker' },
@@ -354,7 +365,11 @@ return {
 		lazy = false,
 		keys = {
 			{ '<leader>;', function() require('dropbar.api').pick() end, desc = 'Pick symbols in winbar' },
-			{ '[;', function() require('dropbar.api').goto_context_start() end, desc = 'Go to start of current c }ontext' },
+			{
+				'[;',
+				function() require('dropbar.api').goto_context_start() end,
+				desc = 'Go to start of current c }ontext',
+			},
 			{ '];', function() require('dropbar.api').select_next_context() end, desc = 'Select next context' },
 		},
 		opts = function()
@@ -363,12 +378,15 @@ return {
 			---@type dropbar_configs_t
 			return {
 				sources = {
-					path = { max_depth = 1, modified = function(sym)
-						return sym:merge {
-							name = sym.name,
-							name_hl = 'Error',
-						}
-					end },
+					path = {
+						max_depth = 1,
+						modified = function(sym)
+							return sym:merge {
+								name = sym.name,
+								name_hl = 'Error',
+							}
+						end,
+					},
 				},
 				bar = {
 					padding = { left = 2, right = 2 },

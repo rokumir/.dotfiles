@@ -168,7 +168,12 @@ map { --- TERMINAL
 }
 
 map { --- LSP & DIAGNOSTICS
-	{ '<a-F>', function() LazyVim.format.format { force = true } end, mode = { 'n', 'v', 'i' }, desc = 'Format Buffer' },
+	{
+		'<a-F>',
+		function() LazyVim.format.format { force = true } end,
+		mode = { 'n', 'v', 'i' },
+		desc = 'Format Buffer',
+	},
 	{ ']d', Nihil.diag_jump(1), desc = 'Next Diagnostic' },
 	{ '[d', Nihil.diag_jump(-1), desc = 'Prev Diagnostic' },
 	{ ']w', Nihil.diag_jump(1, 'WARN'), desc = 'Next Warning Diagnostic' },

@@ -20,15 +20,6 @@ return {
 				refresh = 50, --ms
 			},
 
-			image = {
-				enabled = true,
-				preferred_protocol = 'wezterm', -- or "kitty"
-				fallback_protocol = 'chafa',
-				inline_in_docs = true,
-				max_width = 80,
-				max_height = 40,
-			},
-
 			-- quickfile = { exclude = { 'latex', 'lua' }, },
 			bigfile = {
 				enabled = true,
