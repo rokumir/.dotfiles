@@ -10,7 +10,7 @@ return {
 		local mix = util.mix
 		local blend = function(color, value) return util.shade(color, value, cp.bg or '#000000') end
 
-		-- background colors
+		-- -------------------------------------------------------------------
 		cp.white = '#E8ECF0'
 		cp.black = '#050505'
 		cp.bg = '#080808'
@@ -59,6 +59,191 @@ return {
 		cp.info = mix(cp.green, '#7DDEDA', 0.94)
 		cp.hint = '#A5A1EA'
 
+		-- -------------------------------------------------------------------
+		---@type table<string, vim.api.keyset.set_hl_info>
+		local overrides = {
+			--#region builtins
+			ColorColumn = { bg = cp.bg },
+			CursorLineNr = { fg = cp.greenLight, bold = true, italic = true },
+			FloatBorder = { fg = cp.borderDarker, bg = 'none' },
+			WinSeparator = { fg = cp.borderDarker },
+			Tabline = { bg = 'none' },
+			TabLineFill = { bg = 'none' },
+			TabLineSel = { bg = 'none' },
+			StatusLineTerm = { bg = 'none' },
+			StatusLineTermNC = { bg = 'none' },
+
+			PmenuThumb = { bg = cp.fgInactive },
+			PmenuSel = { bg = cp.bgOption, fg = 'none' },
+			-- PmenuKind = vim.empty_dict(),
+
+			Title = { fg = cp.greenLight, bold = true },
+			Conceal = { blend = 15, force = true, link = 'NonText' },
+			MsgArea = { fg = cp.fgAlt },
+			Folded = { fg = cp.green, bg = mix(cp.bgDark, cp.white, 0.96) },
+			VertSplit = { fg = cp.borderDarker },
+			Search = { bg = blend(cp.redDark, 0.35) },
+			IncSearch = { bg = blend(cp.green, 0.35) },
+			CurSearch = { link = 'IncSearch' },
+			Visual = { bg = blend(cp.bgDarker, 0.9) },
+			Terminal = { bg = cp.bgDark },
+			MutedText = { fg = cp.fgInactive },
+			NonText = { fg = blend(cp.fg, 0.4) },
+			Special = { fg = blend(cp.fg, 0.8) },
+			Directory = { fg = mix(cp.green, cp.fg, 0.8), bold = true },
+
+			DiagnosticOk = { ctermfg = 2, fg = cp.greenLight },
+			DiagnosticUnderlineError = { sp = cp.error, undercurl = true },
+			DiagnosticUnderlineHint = { sp = cp.hint, undercurl = true },
+			DiagnosticUnderlineInfo = { sp = cp.info, undercurl = true },
+			DiagnosticUnderlineWarn = { sp = cp.warn, undercurl = true },
+			DiagnosticUnderlineOk = { sp = mix(cp.green, '#5f7370', 0.7), undercurl = true },
+
+			DiffAdd = { bg = cp.bg, fg = blend(cp.green, 0.7) },
+			DiffChange = { bg = cp.bg, fg = blend(cp.orange, 0.7) },
+			DiffDelete = { bg = cp.bg, fg = blend(cp.red, 0.7) },
+			DiffText = { bg = cp.bg, fg = blend(cp.symbol, 0.7) },
+			--#endregion
+
+			--#region misc
+			TreesitterContext = { bg = cp.bg },
+			TreesitterContextLineNumber = { bg = cp.bg },
+			TreesitterContextBottom = { bg = cp.bg },
+			TreesitterContextSeparator = { fg = cp.bgDarker },
+			EdgyWinBar = { bg = cp.bgDark },
+			DropBarMenuHoverEntry = { bg = cp.bgDark },
+			YankyPut = { bg = blend(cp.green, 0.25) },
+			YankyYanked = { bg = blend(cp.redDark, 0.25) },
+			UfoFoldVirtText = { fg = cp.green, italic = true },
+			UfoFoldVirtFillerText = { fg = cp.comment },
+			MiniMapNormal = vim.empty_dict(),
+			MiniMapSymbolLine = { fg = cp.green },
+			MiniMapSymbolView = { bg = cp.fgDisabled },
+			InclineNormal = { bg = 'none', fg = mix(cp.comment, cp.white, 0.8) },
+			InclineNormalNC = { link = 'InclineNormal' },
+			MiniIconsAzure = { fg = cp.blueLight },
+			--#endregion
+
+			--#region lsp
+			LspReferenceText = { bg = cp.bgDarker, fg = 'none' },
+			LspReferenceRead = { bg = cp.bgDarker, fg = 'none' },
+			LspReferenceWrite = { bg = cp.bgDarker, fg = 'none' },
+			--#endregion
+
+			--#region Lazy stuffs (Noice, WhichKey)
+			TroubleNormal = { bg = 'none' },
+
+			LazyGitBorder = { link = 'FloatBorder' },
+			LazyBackdrop = { bg = cp.bg },
+			LazyCommit = { fg = cp.redDark },
+			LazyButton = { fg = cp.fgAlt, bg = cp.bgDarker },
+			LazySpecial = { fg = cp.greenLight },
+			LazyH1 = { fg = cp.black, bg = cp.green },
+			--#endregion
+
+			--#region Snacks.nvim
+			SnacksTitle = { fg = cp.green, bg = cp.bgDark },
+
+			SnacksIndent = { fg = cp.bgDarker },
+			SnacksIndentScope = { fg = cp.bgDarker },
+			SnacksIndentChunk = { fg = mix(cp.bgDarker, cp.white, 0.85) },
+
+			SnacksPicker = { bg = cp.bgDark },
+			SnacksPickerTree = { fg = cp.bgDarker },
+			SnacksPickerBorder = { fg = cp.bgDarker, bg = cp.bgDark },
+			SnacksPickerListCursorLine = { bg = cp.bgDarker },
+			SnacksPickerMatch = { fg = cp.redDark, underline = true },
+			SnacksPickerIcon = { fg = cp.greenLight },
+
+			SnacksDashboardIcon = { link = 'SnacksDashboardTitle', bold = true },
+			SnacksDashboardDesc = { link = 'SnacksDashboardTitle' },
+			SnacksDashboardDir = { link = 'NonText' },
+			SnacksDashboardFile = { link = 'Special', bold = true },
+
+			SnacksPickerLspEnabled = { link = 'DiagnosticInfo' },
+			--#endregion
+
+			--#region blink/cmp
+			BlinkCmpMenuBorder = { link = 'FloatBorder' },
+			BlinkCmpDoc = { bg = cp.bgDark },
+			BlinkCmpDocBorder = { link = 'FloatBorder' },
+			BlinkCmpDocSeparator = { bg = cp.bgDark, fg = cp.borderDarker },
+			BlinkCmpLabel = { fg = cp.fgInactive },
+
+			BlinkCmpMenu = { fg = cp.fgInactive, link = 'Pmenu' },
+			--#endregion
+
+			--#region render markdown
+			RenderMarkdownCheckboxTodo = { fg = cp.fgInactive },
+			RenderMarkdownCheckboxDone = { fg = cp.green },
+			RenderMarkdownCheckboxInProgress = { fg = cp.yellowDark },
+			RenderMarkdownCheckboxCanceled = { fg = cp.fgDisabled, strikethrough = true, italic = true },
+			RenderMarkdownCode = { bg = cp.bgDark },
+			RenderMarkdownDash = { fg = cp.bgDarker },
+			RenderMarkdownCodeInline = { fg = cp.orange, bg = blend(cp.orange, 0.1) },
+			markdownH1 = { bold = true, fg = cp.green },
+			markdownH2 = { bold = true, fg = cp.hint },
+			markdownH3 = { bold = true, fg = cp.warn },
+			markdownH4 = { bold = true, fg = cp.error },
+			markdownH5 = { bold = true, fg = cp.green },
+			markdownH6 = { bold = true, fg = cp.hint },
+			markdownH7 = { bold = true, fg = cp.warn },
+			markdownH8 = { bold = true, fg = cp.error },
+			-- ['@markup.hashtag'] = { fg = cp.cyanDark, bg = blend(cp.cyanDark, 0.13), bold = true },
+			['@markup.quote.markdown'] = { fg = cp.fgAlt },
+			['@markup.raw.block.markdown'] = { fg = cp.fgAlt },
+			['@punctuation.special.markdown'] = { fg = cp.fgAlt },
+			['@markup.raw.markdown_inline'] = { link = 'RenderMarkdownCodeInline' },
+			['@markup.link.label'] = { fg = cp.greenLight, underdashed = true },
+			['@markup.italic'] = { fg = mix(cp.red, cp.white, 0.6), italic = true, cterm = { italic = true } },
+			['@markup.strong'] = { fg = mix(cp.red, cp.white, 0.6), bold = true, cterm = { bold = true } },
+			['@markup.heading.1.markdown'] = { link = 'markdownH1' },
+			['@markup.heading.2.markdown'] = { link = 'markdownH2' },
+			['@markup.heading.3.markdown'] = { link = 'markdownH3' },
+			['@markup.heading.4.markdown'] = { link = 'markdownH4' },
+			['@markup.heading.5.markdown'] = { link = 'markdownH5' },
+			['@markup.heading.6.markdown'] = { link = 'markdownH6' },
+			['@markup.heading.7.markdown'] = { link = 'markdownH7' },
+			['@markup.heading.8.markdown'] = { link = 'markdownH8' },
+			--#endregion
+
+			--#region which-key
+			WhichKey = { fg = cp.purple },
+			WhichKeyBorder = { link = 'FloatBorder' },
+			WhichKeyDesc = { fg = cp.fgCommand },
+			WhichKeyFloat = { link = 'NormalFloat' },
+			WhichKeyGroup = { fg = cp.greenLight },
+			WhichKeyIcon = { fg = cp.green },
+			WhichKeyIconAzure = { fg = cp.green },
+			WhichKeyIconBlue = { fg = cp.green },
+			WhichKeyIconCyan = { fg = cp.greenLight },
+			WhichKeyIconGreen = { fg = mix(cp.green, cp.white, 0.95) },
+			WhichKeyIconGrey = { fg = cp.fgAlt },
+			WhichKeyIconOrange = { fg = cp.yellowDark },
+			WhichKeyIconPurple = { fg = cp.purple },
+			WhichKeyIconRed = { fg = cp.red },
+			WhichKeyIconYellow = { fg = cp.orange },
+			WhichKeyNormal = { link = 'NormalFloat' },
+			WhichKeySeparator = { fg = cp.fgAlt },
+			WhichKeyTitle = { link = 'FloatTitle' },
+			WhichKeyValue = { fg = cp.yellowDark },
+			--#endregion
+
+			--#region Treesitter
+			Constant = { fg = mix(cp.blue, cp.white, 0.4), italic = true, bold = true },
+			['@symbol'] = { fg = cp.symbol, italic = true },
+			['@variable.builtin'] = { fg = cp.blue },
+			--#endregion
+		}
+
+		for lvl = 1, 8, 1 do
+			local md_hl = vim.deepcopy(overrides['markdownH' .. lvl], true)
+			overrides['RenderMarkdownH' .. lvl] = md_hl
+			overrides['RenderMarkdownH' .. lvl .. 'Bg'] = md_hl
+			overrides['RenderMarkdownH' .. lvl .. 'Bg'].bg = blend(md_hl.fg, 0.1)
+		end
+
+		-- -------------------------------------------------------------------
 		require('vesper').setup {
 			transparent = false,
 			italics = {
@@ -69,181 +254,7 @@ return {
 				variables = true,
 			},
 			palette_overrides = cp,
-			---@type table<string, vim.api.keyset.set_hl_info>
-			overrides = {
-				--#region builtins
-				ColorColumn = { bg = cp.bg },
-				CursorLineNr = { fg = cp.greenLight, bold = true, italic = true },
-				FloatBorder = { fg = cp.borderDarker, bg = 'none' },
-				WinSeparator = { fg = cp.borderDarker },
-				Tabline = { bg = 'none' },
-				TabLineFill = { bg = 'none' },
-				TabLineSel = { bg = 'none' },
-				StatusLineTerm = { bg = 'none' },
-				StatusLineTermNC = { bg = 'none' },
-
-				PmenuThumb = { bg = cp.fgInactive },
-				PmenuSel = { bg = cp.bgOption, fg = 'none' },
-				-- PmenuKind = vim.empty_dict(),
-
-				Title = { fg = cp.greenLight, bold = true },
-				Conceal = { blend = 15, force = true, link = 'NonText' },
-				MsgArea = { fg = cp.fgAlt },
-				Folded = { fg = cp.green, bg = mix(cp.bgDark, cp.white, 0.96) },
-				VertSplit = { fg = cp.borderDarker },
-				Search = { bg = blend(cp.redDark, 0.35) },
-				IncSearch = { bg = blend(cp.green, 0.35) },
-				CurSearch = { link = 'IncSearch' },
-				Visual = { bg = blend(cp.bgDarker, 0.9) },
-				Terminal = { bg = cp.bgDark },
-				MutedText = { fg = cp.fgInactive },
-				NonText = { fg = blend(cp.fg, 0.4) },
-				Special = { fg = blend(cp.fg, 0.8) },
-				Directory = { fg = mix(cp.green, cp.fg, 0.8), bold = true },
-
-				DiagnosticOk = { ctermfg = 2, fg = cp.greenLight },
-				DiagnosticUnderlineError = { sp = cp.error, undercurl = true },
-				DiagnosticUnderlineHint = { sp = cp.hint, undercurl = true },
-				DiagnosticUnderlineInfo = { sp = cp.info, undercurl = true },
-				DiagnosticUnderlineWarn = { sp = cp.warn, undercurl = true },
-				DiagnosticUnderlineOk = { sp = mix(cp.green, '#5f7370', 0.7), undercurl = true },
-
-				DiffAdd = { bg = cp.bg, fg = blend(cp.green, 0.7) },
-				DiffChange = { bg = cp.bg, fg = blend(cp.orange, 0.7) },
-				DiffDelete = { bg = cp.bg, fg = blend(cp.red, 0.7) },
-				DiffText = { bg = cp.bg, fg = blend(cp.symbol, 0.7) },
-				--#endregion
-
-				--#region misc
-				TreesitterContext = { bg = cp.bg },
-				TreesitterContextLineNumber = { bg = cp.bg },
-				TreesitterContextBottom = { bg = cp.bg },
-				TreesitterContextSeparator = { fg = cp.bgDarker },
-				EdgyWinBar = { bg = cp.bgDark },
-				DropBarMenuHoverEntry = { bg = cp.bgDark },
-				YankyPut = { bg = blend(cp.green, 0.25) },
-				YankyYanked = { bg = blend(cp.redDark, 0.25) },
-				UfoFoldVirtText = { fg = cp.green, italic = true },
-				UfoFoldVirtFillerText = { fg = cp.comment },
-				MiniMapNormal = vim.empty_dict(),
-				MiniMapSymbolLine = { fg = cp.green },
-				MiniMapSymbolView = { bg = cp.fgDisabled },
-				InclineNormal = { bg = 'none', fg = mix(cp.comment, cp.white, 0.8) },
-				InclineNormalNC = { link = 'InclineNormal' },
-				MiniIconsAzure = { fg = cp.blueLight },
-				--#endregion
-
-				--#region lsp
-				LspReferenceText = { bg = cp.bgDarker, fg = 'none' },
-				LspReferenceRead = { bg = cp.bgDarker, fg = 'none' },
-				LspReferenceWrite = { bg = cp.bgDarker, fg = 'none' },
-				--#endregion
-
-				--#region Lazy stuffs (Noice, WhichKey)
-				TroubleNormal = { bg = 'none' },
-
-				LazyGitBorder = { link = 'FloatBorder' },
-				LazyBackdrop = { bg = cp.bg },
-				LazyCommit = { fg = cp.redDark },
-				LazyButton = { fg = cp.fgAlt, bg = cp.bgDarker },
-				LazySpecial = { fg = cp.greenLight },
-				LazyH1 = { fg = cp.black, bg = cp.green },
-				--#endregion
-
-				--#region Snacks.nvim
-				SnacksTitle = { fg = cp.green, bg = cp.bgDark },
-
-				SnacksIndent = { fg = cp.bgDarker },
-				SnacksIndentScope = { fg = cp.bgDarker },
-				SnacksIndentChunk = { fg = mix(cp.bgDarker, cp.white, 0.85) },
-
-				SnacksPicker = { bg = cp.bgDark },
-				SnacksPickerTree = { fg = cp.bgDarker },
-				SnacksPickerBorder = { fg = cp.bgDarker, bg = cp.bgDark },
-				SnacksPickerListCursorLine = { bg = cp.bgDarker },
-				SnacksPickerMatch = { fg = cp.redDark, underline = true },
-				SnacksPickerIcon = { fg = cp.greenLight },
-
-				SnacksDashboardIcon = { link = 'SnacksDashboardTitle', bold = true },
-				SnacksDashboardDesc = { link = 'SnacksDashboardTitle' },
-				SnacksDashboardDir = { link = 'NonText' },
-				SnacksDashboardFile = { link = 'Special', bold = true },
-
-				SnacksPickerLspEnabled = { link = 'DiagnosticInfo' },
-				--#endregion
-
-				--#region blink/cmp
-				BlinkCmpMenuBorder = { link = 'FloatBorder' },
-				BlinkCmpDoc = { bg = cp.bgDark },
-				BlinkCmpDocBorder = { link = 'FloatBorder' },
-				BlinkCmpDocSeparator = { bg = cp.bgDark, fg = cp.borderDarker },
-				BlinkCmpLabel = { fg = cp.fgInactive },
-
-				BlinkCmpMenu = { fg = cp.fgInactive, link = 'Pmenu' },
-				--#endregion
-
-				--#region render markdown
-				RenderMarkdownCheckboxTodo = { fg = cp.fgInactive },
-				RenderMarkdownCheckboxDone = { fg = cp.green },
-				RenderMarkdownCheckboxInProgress = { fg = cp.yellowDark },
-				RenderMarkdownCheckboxCanceled = { fg = cp.fgDisabled, strikethrough = true, italic = true },
-				RenderMarkdownCode = { bg = cp.bgDark },
-				RenderMarkdownDash = { fg = cp.bgDarker },
-				RenderMarkdownCodeInline = { fg = cp.orange, bg = blend(cp.orange, 0.1) },
-				RenderMarkdownH1 = { link = 'markdownH1' },
-				RenderMarkdownH2 = { link = 'markdownH2' },
-				RenderMarkdownH3 = { link = 'markdownH3' },
-				RenderMarkdownH4 = { link = 'markdownH4' },
-				RenderMarkdownH5 = { link = 'markdownH5' },
-				RenderMarkdownH6 = { link = 'markdownH6' },
-				RenderMarkdownH7 = { link = 'markdownH7' },
-				RenderMarkdownH8 = { link = 'markdownH8' },
-				-- ['@markup.hashtag'] = { fg = cp.cyanDark, bg = blend(cp.cyanDark, 0.13), bold = true },
-				['@markup.quote.markdown'] = { fg = cp.fgAlt },
-				['@markup.raw.block.markdown'] = { fg = cp.fgAlt },
-				['@punctuation.special.markdown'] = { fg = cp.fgAlt },
-				['@markup.raw.markdown_inline'] = { link = 'RenderMarkdownCodeInline' },
-				['@markup.link.label'] = { fg = cp.greenLight, underdashed = true },
-				['@markup.italic'] = { fg = mix(cp.red, cp.white, 0.6), italic = true, cterm = { italic = true } },
-				['@markup.strong'] = { fg = mix(cp.red, cp.white, 0.6), bold = true, cterm = { bold = true } },
-				markdownH1 = { bold = true, fg = cp.green },
-				markdownH2 = { bold = true, fg = cp.hint },
-				markdownH3 = { bold = true, fg = cp.warn },
-				markdownH4 = { bold = true, fg = cp.error },
-				markdownH5 = { bold = true, fg = cp.green },
-				markdownH6 = { bold = true, fg = cp.hint },
-				markdownH7 = { bold = true, fg = cp.warn },
-				markdownH8 = { bold = true, fg = cp.error },
-				--#endregion
-
-				--#region which-key
-				WhichKey = { fg = cp.purple },
-				WhichKeyBorder = { link = 'FloatBorder' },
-				WhichKeyDesc = { fg = cp.fgCommand },
-				WhichKeyFloat = { link = 'NormalFloat' },
-				WhichKeyGroup = { fg = cp.greenLight },
-				WhichKeyIcon = { fg = cp.green },
-				WhichKeyIconAzure = { fg = cp.green },
-				WhichKeyIconBlue = { fg = cp.green },
-				WhichKeyIconCyan = { fg = cp.greenLight },
-				WhichKeyIconGreen = { fg = mix(cp.green, cp.white, 0.95) },
-				WhichKeyIconGrey = { fg = cp.fgAlt },
-				WhichKeyIconOrange = { fg = cp.yellowDark },
-				WhichKeyIconPurple = { fg = cp.purple },
-				WhichKeyIconRed = { fg = cp.red },
-				WhichKeyIconYellow = { fg = cp.orange },
-				WhichKeyNormal = { link = 'NormalFloat' },
-				WhichKeySeparator = { fg = cp.fgAlt },
-				WhichKeyTitle = { link = 'FloatTitle' },
-				WhichKeyValue = { fg = cp.yellowDark },
-				--#endregion
-
-				--#region Treesitter
-				['@symbol'] = { fg = cp.symbol, italic = true },
-				Constant = { fg = mix(cp.blue, cp.white, 0.4), italic = true, bold = true },
-				['@variable.builtin'] = { fg = cp.blue },
-				--#endregion
-			},
+			overrides = overrides,
 		}
 	end,
 }

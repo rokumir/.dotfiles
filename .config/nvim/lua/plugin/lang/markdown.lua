@@ -61,18 +61,31 @@ return {
 				blink = { enabled = true },
 			},
 
+			indent = {
+				enabled = true,
+				per_level = 2,
+				skip_level = 0, -- Use 0 to begin indenting from the very first level.
+				icon = ' ',
+			},
+
+			document = {
+				enabled = true,
+			},
+
 			heading = {
 				enabled = true,
-				sign = false,
-				backgrounds = {},
-				left_margin = 2,
-				width = 'full',
 				atx = true,
-				icons = function(ctx) -- { 'H1', 'H2', 'H3', 'H4', 'H5', 'H6' },
+				setext = true,
+				sign = false,
+				width = 'full',
+				border = true,
+				border_prefix = false,
+				border_virtual = true,
+				left_margin = 2,
+				icons = function(ctx) -- or { 'H1', 'H2', 'H3', 'H4', 'H5', 'H6' },
 					local sep = '  '
 					if #ctx.sections == 0 then return 'H' .. ctx.level .. sep end
 					local header_no = table.concat(ctx.sections, '.')
-					if ctx.level > 1 then header_no = string.rep(' ', ctx.level) .. header_no end
 					return header_no .. sep
 				end,
 			},
