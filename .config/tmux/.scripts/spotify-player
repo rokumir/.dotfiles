@@ -1,0 +1,22 @@
+#!/usr/bin/env fish
+
+if not type -q spotify_player
+    echo -- "Error: spotify_player command not found."
+    return 1
+end
+
+set BASE_PATH '~/.config/spotify-player/'
+set SNAME "✨🎸 Spotify 🎸✨"
+
+# init new tmux session
+if not tmux has-session -t $SNAME 2>/dev/null
+    tmux new-session -c $BASE_PATH -s $SNAME -d
+    tmux send-keys -t "$SNAME".1 spotify_player ENTER
+end
+
+# Goto session
+if [ -n "$TMUX" ]
+    tmux switch-client -t $SNAME
+else
+    tmux attach-session -t $SNAME
+end

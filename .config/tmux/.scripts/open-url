@@ -1,0 +1,10 @@
+#!/usr/bin/env fish
+
+# More verbose version: \b(?:https?://|git@|git://|ssh://|ftp://|file:///|www\.)(?:localhost|[a-zA-Z0-9.-]+)(?::[0-9]{1,5})?(?:/[\w@:%\+.~#?&/=/-]*)?\b
+set -l REGEX '\b(?:https?://|git@|git://|ssh://|ftp://|file:///|www\.)[\w@:%\+.~#?&/=/-]+\b'
+
+tmux capture-pane -J -p \
+    | rg -ao "$REGEX" \
+    | sort -u \
+    | fzf --multi --reverse \
+    | xargs -I {} open {}
