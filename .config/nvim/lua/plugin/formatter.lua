@@ -21,6 +21,7 @@ return {
 			log_level = vim.log.levels.WARN,
 			formatters_by_ft = {
 				dataviewjs = { 'prettier' },
+				kdl = { 'kdlfmt' },
 			},
 		},
 	},

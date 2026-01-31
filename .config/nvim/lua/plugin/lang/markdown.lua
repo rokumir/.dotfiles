@@ -1,21 +1,6 @@
 local Mapkey = Nihil.keymap
 local Vault = Nihil.config.vault
 
--- local function is_note_dir_matches() return Nihil.path.is_current_matches(Vault.second_brain) end
-local function get_time_now_fn(format, offset_hours)
-	return function() return tostring(os.date(format, os.time() - (offset_hours or 0) * 60 * 60)) end
-end
-
-vim.api.nvim_create_autocmd('DirChanged', {
-	group = Nihil.augroup 'obsidian_lazy_load',
-	once = true,
-	callback = function(ev)
-		if not package.loaded['obsidian.nvim'] and ev.file == Nihil.config.vault.second_brain then
-			vim.cmd 'Lazy load obsidian.nvim'
-		end
-	end,
-})
-
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
@@ -81,12 +66,12 @@ return {
 				border = true,
 				border_prefix = false,
 				border_virtual = true,
-				left_margin = 2,
+				left_margin = 0,
 				icons = function(ctx) -- or { 'H1', 'H2', 'H3', 'H4', 'H5', 'H6' },
 					local sep = '  '
 					if #ctx.sections == 0 then return 'H' .. ctx.level .. sep end
 					local header_no = table.concat(ctx.sections, '.')
-					return header_no .. sep
+					return ' ' .. header_no .. sep
 				end,
 			},
 			checkbox = {
@@ -181,14 +166,28 @@ return {
 	{ -- Obsdiian
 		'obsidian-nvim/obsidian.nvim',
 		version = false,
-		lazy = true,
+		lazy = not Nihil.path.is_current_matches(Nihil.config.vault.second_brain),
+		init = function()
+			vim.api.nvim_create_autocmd('DirChanged', {
+				group = Nihil.augroup 'obsidian_lazy_load',
+				once = true,
+				callback = function(ev)
+					if not package.loaded['obsidian.nvim'] and ev.file == Nihil.config.vault.second_brain then
+						vim.cmd 'Lazy load obsidian.nvim'
+					end
+				end,
+			})
+		end,
 		opts = function()
 			local DATE_FORMAT = '%Y-%m-%d'
 			local TIME_FORMAT = '%H:%M:%S'
 			local DATETIME_FORMAT = DATE_FORMAT .. 'T' .. TIME_FORMAT
 
 			---@type obsidian.config|{}
-			local opts = {}
+			local opts = {
+				comment = { enabled = true },
+				legacy_commands = false
+			}
 
 			opts.workspaces = {
 				{ name = 'Cortex', path = Vault.second_brain },
@@ -225,7 +224,7 @@ return {
 			}
 
 			opts.footer = {
-				enabled = true,
+				enabled = false,
 				format = '{{backlinks}} backlinks  {{properties}} properties',
 				hl_group = 'Comment',
 				separator = string.rep('-', 80),
@@ -236,9 +235,6 @@ return {
 				create_new = true,
 				order = { ' ', '/', 'x', '-' },
 			}
-			opts.comment = {
-				enabled = true,
-			}
 
 			opts.ui = {
 				enable = false,
@@ -246,15 +242,14 @@ return {
 				ignore_conceal_warn = true,
 			}
 
-			opts.statusline = {
-				enabled = true,
-				format = '{{backlinks}} backlinks',
-			}
-
 			opts.attachments = {
-				img_folder = 'Assets/imgs',
+				folder = 'Assets/images',
 				confirm_img_paste = true,
 			}
+
+			local function get_time_now_fn(format, offset_hours)
+				return function() return tostring(os.date(format, os.time() - (offset_hours or 0) * 60 * 60)) end
+			end
 
 			opts.templates = {
 				folder = '.meta/templates',
