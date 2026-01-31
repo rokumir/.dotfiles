@@ -18,11 +18,13 @@ if type -q go
     fish_add_path -g $GOPATH/bin
 end
 
+set -gx DISPLAY ':0.0'
+
 set -gx TERMINFO $XDG_CONFIG_HOME/terminfo
 set -gx TERM wezterm # enable undercurl .terminfo/w/wezterm
 set -gx GIT_EDITOR nvim
 set -gx GIT_CONFIG_GLOBAL ~/.config/git/config
-set -gx EDITOR vi
+set -gx EDITOR nvim
 set -gx PAGER bat
 
 ## ---------------------------------------
@@ -57,4 +59,15 @@ set -gx FX_THEME 2
 # GEMINI CLI
 set -gx GEMINI_CLI_SYSTEM_SETTINGS_PATH ~/.config/gemini/settings.json
 
-set -gx DISPLAY ':0.0'
+# MCAT
+set -gx MCAT_ENCODER sixel # Options: kitty,iterm,sixel,ascii
+set -gx MCAT_THEME catppuccin # <str> possible options: catppuccin, nord, monokai, dracula, gruvbox, one_dark, solarized, tokyo_night, makurai_light, makurai_dark, ayu, ayu_mirage, github, synthwave, material, rose_pine, kanagawa, vscode, everforest, autumn
+set -gx MCAT_INLINE_OPTS # <str> same as the --opts flag
+# set -gx MCAT_LS_OPTS 'x_padding=4c,y_padding=2c,min_width=4c,max_width=16c,height=8%,items_per_row=12' # <str> same as the --ls-opts flag
+set -gx MCAT_SILENT false # <bool> same as the --silent flag
+set -gx MCAT_HYPRLINK true # <bool> same as the --hyprlink flag
+set -gx MCAT_NO_LINENUMBERS true # <bool> same as the --no-linenumbers flag
+# set -gx MCAT_MD_IMAGE false # <bool> same as the --no-images flag
+# set -gx MCAT_PAGER # <str> the full command mcat will try to pipe into.
+
+set -gx TAPLO_CONFIG ~/.config/taplo/config.toml

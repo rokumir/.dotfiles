@@ -1,4 +1,4 @@
-## fish options
+## options
 set -U fish_greeting ''
 set -U fish_vi_force_cursor true
 set -U fish_cursor_insert line blink
@@ -62,8 +62,8 @@ function fish_user_key_bindings
     bind --preset -M insert \cp '[ -z "$fish_private_mode" ] && fish --private || echo -e \n(set_color yellow)Private mode is active!!'$_sc
 
     if not set -q TMUX
-        bind --preset -M insert \e\; 'tmuxizer'$_sc
-        bind --preset -M insert \e\: 'tmux attach-session'$_sc
+        bind --preset -M insert \e\;\en 'tmuxizer'$_sc
+        bind --preset -M insert \e\;\e\; 'tmux attach-session'$_sc
     end
 
     # extenal scripts needed to be sourced, otherwise it won't work as expected
