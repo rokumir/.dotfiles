@@ -64,7 +64,7 @@ return {
 					inlay_hints = false,
 				},
 				show = {
-					statusline = true,
+					statusline = false,
 					tabline = true,
 				},
 				win = {

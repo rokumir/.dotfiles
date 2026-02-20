@@ -70,6 +70,25 @@ return {
 				},
 			},
 
+			lua_ls = {
+				settings = {
+					Lua = {
+						workspace = {
+							checkThirdParty = false,
+							library = {
+								vim.env.VIMRUNTIME,
+								{ path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+								{ path = 'LazyVim', words = { 'LazyVim' } },
+								{ path = 'snacks.nvim', words = { 'Snacks' } },
+								{ path = 'lazy.nvim', words = { 'LazyVim' } },
+								{ path = 'which-key.nvim', words = { 'Nihil%.keymap', 'Nihil%.keymap%.map' } },
+							},
+						},
+						telemetry = { enable = false },
+					},
+				},
+			},
+
 			html = true,
 			biome = true,
 

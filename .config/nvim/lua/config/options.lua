@@ -8,7 +8,7 @@ vim.g.trouble_lualine = true -- disable navic in lualine
 vim.g.nihil_colorscheme = 'vesper'
 vim.g.nihil_coding_keyboard_layout_enabled = false
 vim.g.nihil_lualine_time_expanded = false
-vim.g.nihil_lualine_unhide = true
+vim.g.nihil_lualine_show = true
 
 local opt = vim.opt
 

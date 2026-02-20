@@ -3,12 +3,17 @@ local M = {}
 
 ---@param opts table
 function M.setup(opts)
+	vim.api.nvim_create_autocmd('RecordingEnter', { callback = function() vim.b.minipairs_disable = true end })
+	vim.api.nvim_create_autocmd('RecordingLeave', { callback = function() vim.b.minipairs_disable = false end })
+
 	Snacks.toggle({
+		id = 'mini_pairs',
 		name = 'Mini Pairs',
 		get = function() return not vim.g.minipairs_disable end,
 		set = function(state) vim.g.minipairs_disable = not state end,
 	}):map '<leader><leader>up'
 
+	-- -------------------------------------
 	local pairs = require 'mini.pairs'
 	pairs.setup(opts)
 

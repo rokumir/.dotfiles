@@ -35,17 +35,25 @@ function M.obsidian.new_from_template()
 
 			M.obsidian.util.select_dir(function(choice)
 				if not choice then return end
+				local dir = choice.text
+
 				local success, safe_title = pcall(Util.input, 'Enter title or path (optional): ', {
 					completion = 'file',
 				})
 				if not success or not safe_title then return Snacks.notify.warn 'Aborted' end
 
-				local dir = choice.text
-				local id, path = Note._resolve_id_path { dir = dir } ---@diagnostic disable-line: invisible
+				local note = Note.create {
+					id = safe_title,
+					dir = dir,
+					template = template_name,
+					should_write = true,
+				}
 
-				local note = Note.new(id, { safe_title }, {}, path)
-				note:add_field('title', safe_title)
-				note:write { template = template_name }
+				--local id, path = Note._resolve_id_path { dir = dir } ---@diagnostic disable-line: invisible
+				--local note = Note.new(id, { safe_title }, {}, path)
+				--note:add_field('title', safe_title)
+				--note:write { template = template_name }
+
 				note:open { sync = false }
 			end)
 		end,
@@ -60,8 +68,7 @@ function M.obsidian.toc()
 				items = t.items,
 				layout = 'ivy',
 				transform = function(item)
-					item.file =
-						svim.fs.normalize(item.filename, { _fast = true, expand_env = false }):gsub('^' .. cwd .. '/', '')
+					item.file = svim.fs.normalize(item.filename, { _fast = true, expand_env = false }):gsub('^' .. cwd .. '/', '')
 
 					local title_text = item.text:gsub('^%[File%]%s*', '')
 					local hashes, title = title_text:match '^(#+)%s*(.*)$'

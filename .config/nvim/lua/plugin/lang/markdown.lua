@@ -165,7 +165,7 @@ return {
 
 	{ -- Obsdiian
 		'obsidian-nvim/obsidian.nvim',
-		version = false,
+		version = '*',
 		lazy = not Nihil.path.is_current_matches(Nihil.config.vault.second_brain),
 		init = function()
 			vim.api.nvim_create_autocmd('DirChanged', {
@@ -186,7 +186,7 @@ return {
 			---@type obsidian.config|{}
 			local opts = {
 				comment = { enabled = true },
-				legacy_commands = false
+				legacy_commands = false,
 			}
 
 			opts.workspaces = {

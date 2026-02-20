@@ -79,6 +79,7 @@ map { --- EDITOR
 	-- Paste from system clipboard
 	{ '<c-s-v>', '"+P', mode = { 'n', 'v' }, desc = 'Paste from System Clipboard' },
 	{ '<c-s-v>', '<c-r>+', mode = { 'i', 'c' }, desc = 'Paste from System Clipboard' },
+	-- { '<c-v>', '<c-r>+', mode = { 'i', 'c' }, desc = 'Paste' },
 	{ -- terminal
 		'<c-s-v>',
 		function()
@@ -246,6 +247,7 @@ if type(LazyVim) ~= 'nil' and type(Snacks) ~= 'nil' then
 		:map '<leader><leader>oc'
 	Snacks.toggle
 		.new({
+			id = 'vim_rulers',
 			name = 'Rulers',
 			get = function() return #vim.o.colorcolumn > 0 end,
 			set = function(state) vim.opt_local.colorcolumn = state and '80,120' or '' end,
@@ -260,11 +262,25 @@ if type(LazyVim) ~= 'nil' and type(Snacks) ~= 'nil' then
 
 	Snacks.toggle.profiler():map '<leader><leader>pp'
 	Snacks.toggle.profiler_highlights():map '<leader><leader>ph'
+
 	Snacks.toggle
 		.new({
+			id = 'lualine_statusline_time_expansion',
 			name = 'Lualine Expand DateTime',
 			get = function() return vim.g.nihil_lualine_time_expanded == true end,
 			set = function(state) vim.g.nihil_lualine_time_expanded = state end,
 		})
 		:map '<leader><leader>ud'
+	Snacks.toggle
+		.new({
+			id = 'lualine_statusline',
+			name = 'Lualine Statusline',
+			get = function() return vim.g.nihil_lualine_show ~= false end,
+			set = function(state)
+				require('lualine').hide { place = { 'statusline' }, unhide = state }
+				vim.o.laststatus = state and 3 or 0
+				vim.g.nihil_lualine_show = state
+			end,
+		})
+		:map '<leader><leader>ul'
 end

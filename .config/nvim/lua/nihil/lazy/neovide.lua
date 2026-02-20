@@ -3,15 +3,18 @@ if not vim.g.neovide then return end
 -- Settings
 vim.g.neovide_working_dir = '~'
 vim.g.neovide_no_custom_clipboard = false
-vim.opt.linespace = 9
-vim.g.neovide_scale_factor = 1
 vim.g.neovide_confirm_quit = true
 vim.g.neovide_hide_mouse_when_typing = false
-vim.g.neovide_underline_stroke_scale = 2
 vim.g.neovide_no_idle = false
 vim.g.neovide_refresh_rate_idle = 3
 vim.g.neovide_theme = 'auto'
 vim.g.neovide_hide_mouse_when_typing = true
+
+-- Font
+vim.o.guifont = 'Maple Mono NF CN,IosevkaWizard Nerd Font,Segoe UI Emoji:h9:#e-subpixelantialias'
+vim.opt.linespace = 9
+vim.g.neovide_scale_factor = 1
+vim.g.neovide_underline_stroke_scale = 2
 
 -- Animations
 vim.g.neovide_cursor_animate_command_line = false
@@ -52,6 +55,7 @@ Nihil.keymap {
 }
 Snacks.toggle
 	.new({
+		id = 'neovide_profiler',
 		name = 'Neovide Profiler',
 		get = function() return vim.g.neovide_profiler == true end,
 		set = function(state) vim.g.neovide_profiler = state end,

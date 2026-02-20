@@ -47,18 +47,6 @@ return {
 		optional = true,
 		event = 'VeryLazy',
 
-		keys = {
-			{
-				'<leader><leader>ul',
-				function()
-					vim.g.nihil_lualine_unhide = not vim.g.nihil_lualine_unhide
-					require('lualine').hide { place = { 'statusline' }, unhide = vim.g.nihil_lualine_unhide }
-					Snacks.notify((vim.g.nihil_lualine_unhide and 'Enable' or 'Disable') .. ' Lualine Statusline')
-				end,
-				desc = 'Toggle Lualine Statusline',
-			},
-		},
-
 		opts = function(_, opts)
 			require('lualine_require').require = require -- PERF: we don't need this lualine require madness 🤷
 			vim.o.laststatus = vim.g.lualine_laststatus
