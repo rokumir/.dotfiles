@@ -4,7 +4,7 @@ set -l path
 if test -n "$argv[1]"
     set path "$argv[1]"
 else
-    set path (fuzzy.vault --print --absolute --label ' Open new session ')
+    set path (fuzzy.vault --print --absolute --title ' Open new session ')
     or return 1
 end
 
