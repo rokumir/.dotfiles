@@ -7,4 +7,4 @@ tmux capture-pane -J -p \
     | rg -ao "$REGEX" \
     | sort -u \
     | fzf --multi --reverse \
-    | xargs -I {} open {}
+    | xargs -I{} xdg-open {}
