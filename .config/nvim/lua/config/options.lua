@@ -66,6 +66,3 @@ opt.hlsearch = true
 opt.ignorecase = true -- case insensitive searching UNLESS /C or capital in search
 opt.path:append { '**' } -- Finding files - Search down into subfolders
 opt.wildignore:append { '*/node_modules/*' }
-
---- ENV
-vim.env.NEOVIM_TERM = 1

@@ -192,9 +192,7 @@ return {
 		keys = {
 			{
 				'<leader>cp',
-				function()
-					require('oklch-color-picker').pick_under_cursor { fallback_open = { initial_color = '#000' } }
-				end,
+				function() require('oklch-color-picker').pick_under_cursor { fallback_open = { initial_color = '#000' } } end,
 				desc = 'Open color picker under cursor',
 			},
 		},
@@ -202,7 +200,7 @@ return {
 		opts = {
 			register_cmds = false,
 			auto_download = false,
-			wsl_use_windows_app = true,
+			wsl_use_windows_app = vim.loop.os_uname().release:lower():match 'microsoft',
 
 			highlight = {
 				enabled = true,

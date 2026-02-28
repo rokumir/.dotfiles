@@ -10,7 +10,7 @@ unmap {
 	'grt',
 }
 
-map { --- GROUPS
+map { --- WHICH-KEY GROUPS
 	mode = { 'n', 'v' },
 	{ '[', group = 'prev' },
 	{ ']', group = 'next' },
