@@ -13,7 +13,7 @@
 
 [include]
     path = ~/.config/delta/themes/catppuccin.gitconfig
-    path = ~/.config/git/config.alias
+    path = ~/.config/git/alias
 
 [init]
     defaultBranch = dev
@@ -46,7 +46,6 @@
 [status]
     branch = true
     showStash = true
-    showUntrackedFiles = all
 
 [pager]
     branch = false
