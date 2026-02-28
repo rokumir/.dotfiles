@@ -1,9 +1,3 @@
-set -gx XDG_CONFIG_HOME ~/.config
-set -gx XDG_CACHE_HOME ~/.cache
-set -gx XDG_DATA_HOME ~/.local/share
-set -gx XDG_STATE_HOME ~/.local/state
-set -gx XDG_RUNTIME_DIR /run/user/1000
-
 fish_add_path -g ~/.local/bin # third parties' scripts
 fish_add_path -g ~/.bun/bin ~/.cache/.bun/bin
 fish_add_path -g ~/.cargo/bin
@@ -28,7 +22,7 @@ set -gx EDITOR nvim
 set -gx PAGER bat
 
 ## ---------------------------------------
-set -l DOC_DIR ~/documents
+set -l DOC_DIR ~/Documents
 
 # Rokumir Home
 set -gx RH_NOTE $DOC_DIR/notes

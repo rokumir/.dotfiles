@@ -38,18 +38,19 @@ function fish_user_key_bindings
 
     # unbind keys (run in fish_user_key_bindings to ensure it works)
     for key in \
-        \cd \
-        \cs
+        ctrl-d \
+        ctrl-s
+
         bind --erase --preset $key
         bind --erase --preset -M insert $key
         bind --erase --preset -M visual $key
     end
 
     # actions
-    bind --preset \cq exit
-    bind --preset -M insert -m default jj ''
-    bind --preset -M insert -m default jk ''
-    bind --preset -M insert \cy forward-char # accept inline suggestion
+    bind --preset ctrl-q exit
+    bind --preset -M insert -m default 'j,j' ''
+    bind --preset -M insert -m default 'j,k' ''
+    bind --preset -M insert ctrl-y forward-char # accept inline suggestion
     bind --preset L end-of-line
     bind --preset H beginning-of-line
     bind --preset -M visual L end-of-line
@@ -62,11 +63,30 @@ function fish_user_key_bindings
     bind --preset -M insert \cp '[ -z "$fish_private_mode" ] && fish --private || echo -e \n(set_color yellow)Private mode is active!!'$_sc
 
     if not set -q TMUX
-        bind --preset -M insert \e\;\en 'tmuxizer'$_sc
-        bind --preset -M insert \e\;\e\; 'tmux attach-session'$_sc
+        bind --preset -M insert 'alt-;,alt-n' 'tmuxizer'$_sc
+        bind --preset -M insert 'alt-;,alt-;' 'tmux attach-session'$_sc
     end
 
     # extenal scripts needed to be sourced, otherwise it won't work as expected
-    bind --preset -M insert \ce fuzzy.find
-    bind --preset -M insert \cd fuzzy.vault
+    bind --preset -M insert ctrl-e fuzzy.find
+    bind --preset -M insert ctrl-d fuzzy.vault
+end
+
+## ---------------------------------------
+## CONFIG ENV
+
+begin
+    set -l source_file 'source (dirname (status --current-filename))'
+    switch (uname)
+        case Darwin
+            eval "$source_file/config.darwin.fish"
+        case Linux
+            if set -q WSL_DISTRO_NAME
+                eval "$source_file/config.wsl.fish"
+            else
+                eval "$source_file/config.linux.fish"
+            end
+        case '*'
+            eval "$source_file/config.windows.fish"
+    end
 end

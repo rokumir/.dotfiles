@@ -1,5 +1,3 @@
-not string match 'Linux*WSL*' "$(uname -sr)" >/dev/null; and return
-
 # ----------------------------------
 # Helpers
 function win-home
@@ -12,6 +10,12 @@ end
 
 # ----------------------------------
 # ENV
+
+set -gx XDG_CONFIG_HOME ~/.config
+set -gx XDG_CACHE_HOME ~/.cache
+set -gx XDG_DATA_HOME ~/.local/share
+set -gx XDG_STATE_HOME ~/.local/state
+set -gx XDG_RUNTIME_DIR /run/user/1000
 
 # ----------------------------------
 # Aliases & functions
