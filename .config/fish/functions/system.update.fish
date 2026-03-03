@@ -11,7 +11,7 @@ function system.update
     yay; or sudo pacman -Syu
 
     if type -q cargo
-        __system.update.notice 'UPDATING CARGOS (WSL)'
+        __system.update.notice 'UPDATING CARGOS (LINUX)'
         cargo.update
     end
 
