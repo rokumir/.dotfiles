@@ -9,7 +9,7 @@ return {
 		picker = {
 			sources = {
 				projects = {
-					dev = Nihil.config.vault.all,
+					dev = vim.fn.split(vim.env.RH_VAULT or '', ' ', false),
 					layout = 'vscode_focus',
 					patterns = {
 						'.git',

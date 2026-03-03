@@ -323,6 +323,7 @@ return {
 	{ -- Change text case
 		'johmsalas/text-case.nvim',
 		priority = 1000,
+		enabled = false,
 		opts = { default_keymappings_enabled = false },
 		keys = function()
 			local prefix = ';c'
@@ -364,6 +365,25 @@ return {
 			setup_textcase_keymaps('.', 'to_dot_case', 'to.dot')
 
 			return keys
+		end,
+	},
+
+	{ -- Change text case
+		'gregorias/coerce.nvim',
+		lazy = false,
+		config = function()
+			require('coerce').setup {
+				keymap_registry = require('coerce.keymap').keymap_registry(),
+				default_mode_keymap_prefixes = {
+					normal_mode = ';c',
+					visual_mode = ';c',
+				},
+				default_mode_mask = {
+					normal_mode = true,
+					visual_mode = true,
+					motion_mode = false,
+				},
+			}
 		end,
 	},
 

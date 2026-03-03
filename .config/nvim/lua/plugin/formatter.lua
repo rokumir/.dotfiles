@@ -22,6 +22,7 @@ return {
 			formatters_by_ft = {
 				dataviewjs = { 'prettier' },
 				kdl = { 'kdlfmt' },
+				jsonc = { 'deno_fmt' },
 			},
 		},
 	},
@@ -37,7 +38,6 @@ return {
 				'javascript',
 				'javascriptreact',
 				'json',
-				'jsonc',
 				'css',
 				'graphql',
 				'gritql',

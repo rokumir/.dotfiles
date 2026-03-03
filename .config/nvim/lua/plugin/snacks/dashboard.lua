@@ -17,12 +17,6 @@ return {
 				keys = {
 					{ icon = '󰑏 ', key = 's', desc = 'Restore Session', section = 'session' },
 					{ icon = ' ', key = 'c', desc = 'Open Config', action = ":tcd `=stdpath('config')`" },
-					{
-						icon = ' ',
-						key = 'n',
-						desc = 'Open Note',
-						action = ':tcd ' .. Nihil.config.vault.second_brain,
-					},
 					{ icon = ' ', key = 'Q', desc = 'Quit', action = 'ZZ' },
 				},
 			},

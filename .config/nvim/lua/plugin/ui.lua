@@ -160,12 +160,14 @@ return {
 					symbols = { unix = 'lf', dos = 'crlf', mac = 'cr' },
 					cond = function() return vim.bo.ff ~= 'unix' end,
 				},
+			}
+			for _, mod in ipairs(s.lualine_y) do
+				mod.separator = { left = '', right = ' ' }
+			end
+
+			s.lualine_z = {
 				{ 'location', separator = ' ', padding = { left = 1, right = 0 } },
 				{ 'progress', padding = { left = 0, right = 1 } },
-			}
-			s.lualine_z = {
-				{ function() return Nihil.datetime.pretty_date() end, cond = function() return vim.g.nihil_lualine_time_expanded end },
-				{ function() return Nihil.datetime.pretty_time(nil, { hour12 = false }) end },
 			}
 
 			return opts

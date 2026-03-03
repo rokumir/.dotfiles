@@ -1,6 +1,3 @@
-local Mapkey = Nihil.keymap
-local Vault = Nihil.config.vault
-
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
@@ -166,18 +163,7 @@ return {
 	{ -- Obsdiian
 		'obsidian-nvim/obsidian.nvim',
 		version = '*',
-		lazy = not Nihil.path.is_current_matches(Nihil.config.vault.second_brain),
-		init = function()
-			vim.api.nvim_create_autocmd('DirChanged', {
-				group = Nihil.augroup 'obsidian_lazy_load',
-				once = true,
-				callback = function(ev)
-					if not package.loaded['obsidian.nvim'] and ev.file == Nihil.config.vault.second_brain then
-						vim.cmd 'Lazy load obsidian.nvim'
-					end
-				end,
-			})
-		end,
+		enabled = false,
 		opts = function()
 			local DATE_FORMAT = '%Y-%m-%d'
 			local TIME_FORMAT = '%H:%M:%S'
@@ -189,9 +175,8 @@ return {
 				legacy_commands = false,
 			}
 
-			opts.workspaces = {
-				{ name = 'Cortex', path = Vault.second_brain },
-			}
+			local cortex_dir = vim.uv.fs_realpath(vim.env.RH_BRAIN or '')
+			if cortex_dir then opts.workspaces = { { name = 'Cortex', path = cortex_dir } } end
 
 			opts.frontmatter = {
 				enabled = true,
@@ -275,7 +260,7 @@ return {
 			opts.callbacks = {
 				post_setup = function()
 					local function action(a) return '<cmd>Obsidian ' .. a .. ' <cr>' end
-					Mapkey {
+					Nihil.keymap {
 						{ '<c-e>', function() Nihil.markdown.obsidian.quick_switcher() end, desc = 'Quick Switcher' },
 						{ '<c-n>', action 'new', desc = 'New Note', icon = '󰎜' },
 						{

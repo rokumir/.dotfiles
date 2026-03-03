@@ -132,6 +132,7 @@ return {
 
 			--#region Lazy stuffs (Noice, WhichKey)
 			TroubleNormal = { bg = 'none' },
+			NoiceSplit = { link = 'Normal' },
 
 			LazyGitBorder = { link = 'FloatBorder' },
 			LazyBackdrop = { bg = cp.bg },
@@ -245,7 +246,7 @@ return {
 
 		-- -------------------------------------------------------------------
 		require('vesper').setup {
-			transparent = false,
+			transparent = true,
 			italics = {
 				comments = true,
 				keywords = true,
