@@ -1,3 +1,4 @@
+_G.nihil = {}
 ---@diagnostic disable: no-unknown, missing-fields, missing-parameter
 ---@type LazyPluginSpec[]
 return {
@@ -233,6 +234,17 @@ return {
 
 				-- Allows any digits, dots, commas or whitespace within brackets.
 				numbers_in_brackets = { priority = -10, '%(()[%d.,%s]+()%)' },
+
+				hypr_hex = {
+					priority = 10,
+					custom_parse = function(m)
+						local c = tonumber('0x' .. m)
+						table.insert(_G.nihil, c)
+						return c
+					end,
+					'()%x%x%x%x%x%x%f[%W]()',
+					-- '= %s*()%x%x%x%x%x%x%f[%W]()',
+				},
 			},
 		},
 	},
