@@ -25,6 +25,3 @@ set -gx RH_VAULT \
     ~/Documents/works \
     ~/Documents/projects \
     ~/Documents/throwaways
-
-## ---------------------------------------
-set -gx GTRASH_HOME_TRASH_DIR "$XDG_DATA_HOME/trash"
