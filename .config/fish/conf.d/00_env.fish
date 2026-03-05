@@ -1,5 +1,3 @@
-type -q fnm && fnm env --use-on-cd --shell=fish --version-file-strategy=recursive | source
-
 set -gx GIT_EDITOR nvim
 set -gx GIT_CONFIG_GLOBAL ~/.config/git/config
 set -gx EDITOR nvim
