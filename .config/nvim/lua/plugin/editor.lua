@@ -1,4 +1,3 @@
-_G.nihil = {}
 ---@diagnostic disable: no-unknown, missing-fields, missing-parameter
 ---@type LazyPluginSpec[]
 return {
@@ -237,13 +236,10 @@ return {
 
 				hypr_hex = {
 					priority = 10,
-					custom_parse = function(m)
-						local c = tonumber('0x' .. m)
-						table.insert(_G.nihil, c)
-						return c
-					end,
-					'()%x%x%x%x%x%x%f[%W]()',
-					-- '= %s*()%x%x%x%x%x%x%f[%W]()',
+					format = 'hex',
+					custom_parse = function(m) return tonumber('0x' .. m) end,
+					'= %s*()#%x%x%x+%f[%W]()',
+					'= %s*()%x%x%x%x%x%x+%f[%W]()',
 				},
 			},
 		},
