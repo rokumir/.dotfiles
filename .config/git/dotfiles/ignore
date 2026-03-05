@@ -11,5 +11,7 @@
 !.config/fd
 !.config/terminfo
 !.config/bat
+!.config/hypr
+!.config/caelestia
 
 !.scripts
