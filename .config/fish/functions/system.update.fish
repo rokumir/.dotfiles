@@ -1,14 +1,23 @@
-function __system.update.notice
-    set sep (set_color -o brgreen)(string repeat -n (math $COLUMNS/2) '')
-    set indent (string repeat -n 2 '    ')
-    echo $sep
-    echo (set_color -o green)$indent$argv
-    echo $sep(set_color normal)
+function __system.update.notice -d "Display a stylized system update notification"
+    set -l message "$argv"
+    set -l cols ([ -n "$COLUMNS" ]; and echo $COLUMNS; or echo 80)
+    set -l sep_char ''
+
+    set -l indent_width (math -s0 "$cols / 8")
+    set -l top_sep_width (math -s0 "$cols / 2")
+    set -l bot_sep_width (math -s0 "$cols / 3")
+    set -l indent (string repeat -n $indent_width ' ')
+
+    echo -e \n(set_color -o bryellow)(string repeat -n $top_sep_width $sep_char)
+    echo -e (set_color -o yellow)"$indent$message"
+    echo -e (set_color -o bryellow)(string repeat -n $bot_sep_width $sep_char)\n
+
+    set_color normal
 end
 
 function system.update
     __system.update.notice 'UPDATING SYSTEM PACKAGES'
-    yay; or sudo pacman -Syu
+    paru -Sy; or sudo pacman -Sy
 
     if type -q cargo
         __system.update.notice 'UPDATING CARGOS (LINUX)'
