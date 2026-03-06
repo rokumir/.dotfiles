@@ -12,6 +12,7 @@ set -gx RH_VAULT \
     $XDG_CONFIG_HOME \
     $MY_SCRIPT_DIR \
     ~/Documents \
+    ~/Documents/notes \
     ~/Documents/works \
     ~/Documents/projects \
     ~/Documents/throwaways
