@@ -397,4 +397,26 @@ return {
 
 	-- Better tab management; makes tabs into workspaces
 	{ 'tiagovla/scope.nvim', config = true },
+
+	{
+		'grug-far.nvim',
+		optional = true,
+		keys = {
+			{
+				';sr',
+				function()
+					local grug = require 'grug-far'
+					local ext = vim.bo.buftype == '' and vim.fn.expand '%:e'
+					grug.open {
+						transient = true,
+						prefills = {
+							filesFilter = ext and ext ~= '' and '*.' .. ext or nil,
+						},
+					}
+				end,
+				mode = { 'n', 'x' },
+				desc = 'Search and Replace',
+			},
+		},
+	},
 }

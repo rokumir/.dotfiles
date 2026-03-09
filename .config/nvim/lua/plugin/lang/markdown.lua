@@ -1,3 +1,5 @@
+local note_cortex_dir = vim.env.HOME .. '/Documents/notes/cortex'
+
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
@@ -163,7 +165,7 @@ return {
 	{ -- Obsdiian
 		'obsidian-nvim/obsidian.nvim',
 		version = '*',
-		enabled = false,
+		lazy = vim.fn.getcwd() ~= note_cortex_dir,
 		opts = function()
 			local DATE_FORMAT = '%Y-%m-%d'
 			local TIME_FORMAT = '%H:%M:%S'
@@ -175,8 +177,9 @@ return {
 				legacy_commands = false,
 			}
 
-			local cortex_dir = vim.uv.fs_realpath(vim.env.RH_BRAIN or '')
-			if cortex_dir then opts.workspaces = { { name = 'Cortex', path = cortex_dir } } end
+			opts.workspaces = {
+				{ name = 'Cortex', path = note_cortex_dir },
+			}
 
 			opts.frontmatter = {
 				enabled = true,
