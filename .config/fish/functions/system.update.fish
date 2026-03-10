@@ -17,7 +17,7 @@ end
 
 function system.update
     __system.update.notice 'UPDATING SYSTEM PACKAGES'
-    paru -Sy; or sudo pacman -Sy
+    paru; or yay; or sudo pacman -Sy
 
     if type -q cargo
         __system.update.notice 'UPDATING CARGOS (LINUX)'

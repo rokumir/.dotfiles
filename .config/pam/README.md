@@ -1,4 +1,9 @@
-> [!IMPORTANT] The file `pam_env.conf` has to be put in `/etc/security/pam_env.conf` location for the `pam_env` to read it.
+> [!IMPORTANT] DO NOT SYMLINK `~/.config/pam/pam_env.conf` to `/etc/security/pam_env.conf`
 
-- Install `pam_env` if haven't exist.
-- Then run `sudo cp ~/.config/pam/pam_env.conf /etc/security/pam_env.conf`
+Do the following instead:
+
+```fish
+sudo cp ~/.config/pam_env.conf /etc/security/pam_env.conf
+sudo chown root:root /etc/security/pam_env.conf
+sudo chmod 644 /etc/security/pam_env.conf
+```
