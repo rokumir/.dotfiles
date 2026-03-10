@@ -17,6 +17,17 @@ set -gx XDG_DATA_HOME ~/.local/share
 set -gx XDG_STATE_HOME ~/.local/state
 set -gx XDG_RUNTIME_DIR /run/user/1000
 
+set -ga RH_VAULT $XDG_CONFIG_HOME
+
+# Paths
+fish_add_path -g ~/.local/bin # third parties' scripts
+fish_add_path -g ~/.bun/bin ~/.cache/.bun/bin
+fish_add_path -g ~/.cargo/bin
+fish_add_path -g ~/.deno/bin
+fish_add_path -g $XDG_DATA_HOME/bob/nvim-bin
+fish_add_path -g $XDG_DATA_HOME/fnm
+fish_add_path -g ~/go/bin
+
 # ----------------------------------
 # Aliases & functions
 alias nvi 'neovide.exe'
