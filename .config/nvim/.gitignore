@@ -6,4 +6,5 @@ debug
 *.log
 data
 lazy-lock.json
+lazyvim.json
 .news
