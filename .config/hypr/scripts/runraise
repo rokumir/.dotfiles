@@ -1,0 +1,30 @@
+#!/usr/bin/env fish
+
+# NOTE: runraise: focus an existing Hyprland window matching an app/class/title,
+# or launch the app if none exists. Intended for keybind run-or-raise behavior.
+
+set match $argv[1]
+set launch_cmd $argv[2..-1]
+
+if test -z "$launch_cmd"
+    set launch_cmd $match
+end
+
+# get matching window address (latest focus history)
+set addr (hyprctl clients -j \
+    | jq -r --arg m "$match" '
+        map(select(
+            (.class | ascii_downcase | test($m;"i")) or
+            (.initialClass | ascii_downcase | test($m;"i")) or
+            (.title | ascii_downcase | test($m;"i"))
+        ))
+        | sort_by(.focusHistoryID)
+        | last
+        | .class
+    ')
+
+if test "$addr" != "null" -a -n "$addr"
+    hyprctl dispatch focuswindow class:$addr
+else
+    setsid -f $launch_cmd >/dev/null 2>&1
+end
