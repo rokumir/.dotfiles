@@ -30,6 +30,7 @@ alias l ls
 alias g git
 alias gd 'git --git-dir $HOME/.dotfiles -C $HOME --work-tree $HOME'
 alias trash gtrash
+type -q warp-cli && alias warp warp-cli
 
 ## --------------------------------------------------
 ## keymaps
