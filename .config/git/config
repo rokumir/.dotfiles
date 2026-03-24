@@ -1,15 +1,15 @@
 [user]
-    name = Lopt
-    email = lopt.loptr@proton.me
-	signingkey = /home/rokumir/.ssh/id_ed25519
+    name       = Lopt
+    email      = lopt.loptr@proton.me
+	signingkey = ~/.ssh/id_ed25519.pub
 
 [core]
-	autocrlf = input
-    askpass = # disable credential manager
-    compression = 9
-    whitespace = error
+    autocrlf     = input
+    askpass      =           # disable credential manager
+    compression  = 9
+    whitespace   = error
     preloadindex = true
-    pager = delta
+    pager        = delta
 
 [include]
     path = ~/.config/delta/themes/catppuccin.gitconfig
@@ -18,14 +18,17 @@
 [init]
     defaultBranch = dev
 
+[gpg]
+	format = ssh
+
 [commit]
     template = ~/.config/git/template
-	gpgsign = true
+    gpgsign  = true
 
 [push]
-    autoSetupRemote = true  # easier to push new branches
-    default = current  # push only current branch by default
-    followTags = true  # push also tags
+    autoSetupRemote = true   # easier to push new branches
+    default         = current # push only current branch by default
+    followTags      = true   # push also tags
 
 [pull]
     rebase = true
@@ -38,53 +41,52 @@
 
 [branch]
     autosetuprebase = always # Avoid messy merge commits with autorebase
-    sort = -committerdate
+    sort            = -committerdate
 
 [tag]
     sort = -taggerdate
 
 [status]
-    branch = true
+    branch    = true
     showStash = true
 
 [pager]
     branch = false
-    tag = false
+    tag    = false
 
 [diff]
-    context = 3
-    renames = copies
+    context          = 3
+    renames          = copies
     interHunkContext = 10
 
 [delta]
-    features = catppuccin-mocha
-    navigate = true  # use n and N to move between diff sections
-    dark = true
+    features    = catppuccin-mocha
+    navigate    = true       # use n and N to move between diff sections
+    dark        = true
     side-by-side = true
     line-numbers = true
 
 [blame]
     coloring = highlightRecent
-    date = relative
+    date     = relative
 
 [log]
-    abbrevCommit = true  # short commits
-    graphColors = blue,yellow,cyan,magenta,green,red
+    abbrevCommit = true      # short commits
+    graphColors  = blue,yellow,cyan,magenta,green,red
 
-# Colors
 [color]
-    ui = true
-    branch = auto
-    diff = auto
+    ui          = true
+    branch      = auto
+    diff        = auto
     interactive = auto
-    status = auto
+    status      = auto
 
 [color "diff"]
-    meta = black bold
-    frag = magenta
-    context = white
+    meta       = black bold
+    frag       = magenta
+    context    = white
     whitespace = yellow reverse
-    old = red
+    old        = red
 
 [color "blame"]
     highlightRecent = black bold,1 year ago,white,1 month ago,default,7 days ago,blue
@@ -100,27 +102,24 @@
     diffFilter = delta --color-only
 
 [advice]
-    statusHints = false # Remove usage hints
-    addEmptyPathspec = false
+    statusHints        = false # Remove usage hints
+    addEmptyPathspec   = false
     pushNonFastForward = false
 
-[help] # Guess what you really meant
-    autocorrect = 1
+[help]
+    autocorrect = 1          # Guess what you really meant
 
-# Urls
 [url "https://github.com/"]
     insteadOf = gh:
 
 [url "https://gitlab.com/"]
     insteadOf = gl:
 
-# Credentials
 [credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+    helper = 
+    helper = !/usr/bin/gh auth git-credential
 
 [credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
-[gpg]
-	format = ssh
+    helper = 
+    helper = !/usr/bin/gh auth git-credential
+

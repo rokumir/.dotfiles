@@ -14,5 +14,7 @@
 !.config/hypr
 !.config/caelestia
 !.config/pam
+!.config/ghostty
+!.config/niri
 
 !.scripts
