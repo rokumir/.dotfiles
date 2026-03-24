@@ -1,0 +1,86 @@
+// Global rules
+window-rule {
+    geometry-corner-radius 6
+    clip-to-geometry true
+    draw-border-with-background false
+
+    min-width 355
+    min-height 200
+
+    background-effect {
+        blur true
+        xray false
+        // noise 0.1
+    }
+}
+
+layer-rule {
+    match namespace="^noctalia-wallpaper*"
+    place-within-backdrop true
+}
+
+window-rule {
+    match is-floating=false
+    tiled-state true
+}
+
+// Browsers
+window-rule {
+    match app-id="^([Ff]irefox|org.mozilla.firefox|[Ff]irefox-esr|[Ff]irefox-bin)$"
+    match app-id="^([Gg]oogle-chrome(-beta|-dev|-unstable)?)$"
+    match app-id="^(chrome-.+-Default)$"
+    match app-id="^([Cc]hromium)$"
+    match app-id="^([Mm]icrosoft-edge(-stable|-beta|-dev|-unstable))$"
+    match app-id="^(Brave-browser(-beta|-dev|-unstable)?)$"
+    match app-id="^([Tt]horium-browser|[Cc]achy-browser)$"
+    match app-id="^(zen-alpha|zen)$"
+
+    default-column-width { proportion 0.9; }
+}
+
+// Picture-in-Pictures
+window-rule {
+    match title="Picture(-| )in(-| )[Pp]icture"
+
+    open-floating true
+    open-focused false
+    default-column-width { fixed 355; };
+
+    default-floating-position x=5 y=5 relative-to="bottom-left"
+}
+
+// Terminals
+// window-rule {
+//     match app-id="^(Alacritty|kitty|kitty-dropterm|com.mitchellh.ghostty)$"
+// }
+
+// Popups
+window-rule {
+    match title="Authentication Required"
+    match title="Add Folder to Workspace"
+    match title="Save As"
+    match title="(Open Files)"
+    match title="SDDM Background"
+    match app-id="yad"
+    match app-id="hyprland-donate-screen"
+
+    open-floating true
+    default-window-height { proportion 0.4; }
+    default-column-width { proportion 0.6; }
+}
+window-rule {
+    match title="Oklch Color Picker"
+
+    open-floating true
+    default-window-height { proportion 0.5; }
+    default-column-width { proportion 0.4; }
+}
+
+// Thunar copy progress dialog
+window-rule {
+    match title="^(File Operation Progress)$"
+    match app-id="thunar"
+    open-floating true
+    default-window-height { proportion 0.18; }
+    default-column-width { proportion 0.26; }
+}

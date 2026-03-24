@@ -1,0 +1,31 @@
+layout {
+    gaps 8
+    always-center-single-column
+
+    background-color "transparent"
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    struts {}
+
+    border { off; }
+    focus-ring {
+        on
+        width 2
+        active-gradient from="#67ecadb3" to="#20a1b7b3" angle=135
+        urgent-gradient from="#f1261c" to="#fd396f" angle=135
+    }
+
+    shadow {
+        on
+        softness 30
+        spread 5
+        offset x=0 y=5
+        draw-behind-window true
+        color "#00000070"
+    }
+}
