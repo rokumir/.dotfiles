@@ -199,7 +199,7 @@ return {
 		---@type oklch.Opts
 		opts = {
 			register_cmds = false,
-			auto_download = false,
+			auto_download = true,
 			wsl_use_windows_app = vim.loop.os_uname().release:lower():match 'microsoft',
 
 			highlight = {
