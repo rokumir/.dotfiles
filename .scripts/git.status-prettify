@@ -3,10 +3,15 @@
 set MIN_PADDING 20
 set SEP_CHAR '─'
 
+function pp # preverse print
+    printf '%s\n' $argv
+end
+
 # ----------------------------------------------
 # Get the diff statistics using git diff
 set diff_stats (git diff --color --stat=(tput cols) HEAD | sed -r 's:.+\|\s::')
-if test -z "$diff_stats"
+set untracked_stats (git -c color.status=always status -sbu)
+if [ -z "$diff_stats" ]; or [ "$(pp $untracked_stats | wc -l)" -le 1 ]
     echo (set_color -o brred) There are no changes!
     return 1
 end
@@ -60,5 +65,5 @@ end
 # ----------------------------------------------
 # Output results
 echo (set_color -o bryellow)$summary_line
-printf '%s\n' $output
-git -c color.status=always status -sbu | rg '\?\?' # untracked files status
+pp $output
+pp $untracked_stats | rg '\?\?' # untracked files status
