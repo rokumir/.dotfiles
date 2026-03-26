@@ -1,5 +1,5 @@
-// prefer-no-csd
-screenshot-path null
+prefer-no-csd
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
 environment {
     ELECTRON_OZONE_PLATFORM_HINT "auto"
@@ -12,6 +12,10 @@ environment {
 
 cursor {
     xcursor-theme "capitaine-cursors"
+    xcursor-size 24
+
+    hide-when-typing
+    hide-after-inactive-ms 10000
 }
 
 debug {
@@ -21,4 +25,28 @@ debug {
 
 hotkey-overlay {
     skip-at-startup
+}
+
+overview {
+    workspace-shadow {
+        on
+    }
+}
+
+recent-windows {
+    on
+    debounce-ms 750
+    open-delay-ms 200
+
+    highlight {
+        active-color "#3c3c3c99"
+        urgent-color "#f9556180"
+        padding 12
+        corner-radius 8
+    }
+
+    previews {
+        max-height 480
+        max-scale 0.5
+    }
 }

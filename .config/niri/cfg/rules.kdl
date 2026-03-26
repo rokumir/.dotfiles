@@ -46,7 +46,7 @@ window-rule {
     open-focused false
     default-column-width { fixed 355; };
 
-    default-floating-position x=5 y=5 relative-to="bottom-left"
+    default-floating-position x=10 y=10 relative-to="bottom-left"
 }
 
 // Terminals
@@ -80,7 +80,25 @@ window-rule {
 window-rule {
     match title="^(File Operation Progress)$"
     match app-id="thunar"
+
     open-floating true
     default-window-height { proportion 0.18; }
     default-column-width { proportion 0.26; }
 }
+
+// Discord
+window-rule {
+    match title=".*(Discord).*"
+    match app-id="discord"
+
+    default-column-width { proportion 0.8; }
+}
+
+// Spotify
+window-rule {
+    match title=".*(Spotify).*"
+    match app-id="spotify"
+
+    default-column-width { proportion 0.8; }
+}
+
