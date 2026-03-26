@@ -38,13 +38,14 @@ window-rule {
     default-column-width { proportion 0.9; }
 }
 
-// Picture-in-Pictures
+// Picture-in-Pictures (PIP)
 window-rule {
     match title="Picture(-| )in(-| )[Pp]icture"
 
     open-floating true
     open-focused false
     default-column-width { fixed 355; };
+    default-window-height { fixed 200; };
 
     default-floating-position x=10 y=10 relative-to="bottom-left"
 }

@@ -10,8 +10,6 @@ layout {
         proportion 0.66667
     }
 
-    struts {}
-
     border { off; }
     focus-ring {
         on
@@ -27,5 +25,10 @@ layout {
         offset x=0 y=5
         draw-behind-window true
         color "#00000070"
+    }
+
+    tab-indicator {
+        position "left"
+        place-within-column
     }
 }
