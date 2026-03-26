@@ -27,6 +27,8 @@ return {
 			ui = { border = 'rounded' },
 			ensure_installed = {
 				'stylua',
+				'biome',
+				'tsgo',
 			},
 		},
 	},

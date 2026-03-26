@@ -25,8 +25,6 @@ return {
 		cp.fgInactive = blend(cp.fg, 0.6)
 		cp.fgDisabled = mix(cp.fg, '#4b515a', 0.6)
 		cp.fgLineNr = '#505050'
-		cp.fgSelection = '#343434'
-		cp.fgSelectionInactive = '#505050'
 
 		cp.border = mix(cp.bgDark, cp.white, 0.7)
 		cp.borderFocus = cp.border

@@ -329,58 +329,14 @@ return {
 	},
 
 	{ -- Change text case
-		'johmsalas/text-case.nvim',
-		priority = 1000,
-		enabled = false,
-		opts = { default_keymappings_enabled = false },
-		keys = function()
-			local prefix = ';c'
-			local keys = {
-				{ prefix, '', desc = 'Change Text Case', mode = { 'n', 'x' } },
-				{ prefix .. 'o', '', desc = 'Operator' },
-			}
-
-			local function setup_textcase_keymaps(key, case, desc)
-				vim.list_extend(keys, {
-					{
-						prefix .. key,
-						function() require('textcase').current_word(case) end,
-						desc = 'Convert to ' .. desc,
-					}, -- Convert current word
-					{
-						prefix .. 'o' .. key,
-						function() require('textcase').operator(case) end,
-						desc = 'Convert to ' .. desc,
-					}, -- Operator
-					{
-						prefix .. key,
-						function() require('textcase').operator(case) end,
-						desc = 'Convert to ' .. desc,
-						mode = 'x',
-					}, -- Operator
-				})
-			end
-
-			setup_textcase_keymaps('_', 'to_snake_case', 'to_snake')
-			setup_textcase_keymaps('-', 'to_dash_case', 'to-dash')
-			setup_textcase_keymaps('C', 'to_constant_case', 'TO_CONSTANT')
-			setup_textcase_keymaps('p', 'to_pascal_case', 'ToCamel')
-			setup_textcase_keymaps('c', 'to_camel_case', 'toCamel')
-			setup_textcase_keymaps('<space>', 'to_phrase_case', 'To phrase')
-			setup_textcase_keymaps('t', 'to_title_case', 'To Title')
-			setup_textcase_keymaps('/', 'to_path_case', 'to/path')
-			setup_textcase_keymaps(',', 'to_comma_case', 'to,comma')
-			setup_textcase_keymaps('.', 'to_dot_case', 'to.dot')
-
-			return keys
-		end,
-	},
-
-	{ -- Change text case
 		'gregorias/coerce.nvim',
 		lazy = false,
 		config = function()
-			require('coerce').setup {
+			local coerce = require 'coerce'
+			local case = require 'coerce.case'
+			local cs = require 'coerce.string'
+
+			coerce.setup {
 				keymap_registry = require('coerce.keymap').keymap_registry(),
 				default_mode_keymap_prefixes = {
 					normal_mode = ';c',
@@ -390,6 +346,56 @@ return {
 					normal_mode = true,
 					visual_mode = true,
 					motion_mode = false,
+				},
+				cases = {
+					{ keymap = 'c', case = case.to_camel_case, description = 'camelCase' },
+					{ keymap = 'k', case = case.to_kebab_case, description = 'kebab-case' },
+					{ keymap = 'p', case = case.to_pascal_case, description = 'PascalCase' },
+					{ keymap = '_', case = case.to_snake_case, description = 'snake_case' },
+					{ keymap = 'C', case = case.to_upper_case, description = 'CONSTANT_CASE' },
+					{ keymap = '/', case = case.to_path_case, description = 'path/case' },
+					{ keymap = ' ', case = case.to_space_case, description = 'space case' },
+					{ keymap = 'n', case = case.to_numerical_contraction, description = 'numeronym (n7m)' },
+					{ keymap = '.', case = case.to_dot_case, description = 'dot.case' },
+					{
+						keymap = ',',
+						case = function(str)
+							local parts = case.split_keyword(str)
+							return table.concat(parts, ',')
+						end,
+						description = 'comma.case',
+					},
+					{
+						keymap = 'U',
+						case = function(str)
+							local parts = case.split_keyword(str)
+							parts = vim.tbl_map(vim.fn.toupper, parts)
+							return table.concat(parts, ' ')
+						end,
+						description = 'UPPER CASE',
+					},
+					{
+						keymap = 'u',
+						case = function(str)
+							local parts = case.split_keyword(str)
+							parts = vim.tbl_map(vim.fn.tolower, parts)
+							return table.concat(parts, ' ')
+						end,
+						description = 'lower case',
+					},
+					{
+						keymap = 't',
+						case = function(str)
+							local parts = case.split_keyword(str)
+							for i = 1, #parts, 1 do
+								local part_graphemes = cs.str2graphemelist(parts[i])
+								part_graphemes[1] = vim.fn.toupper(part_graphemes[1])
+								parts[i] = table.concat(part_graphemes, '')
+							end
+							return table.concat(parts, ' ')
+						end,
+						description = 'Title Case',
+					},
 				},
 			}
 		end,
