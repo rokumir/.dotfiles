@@ -7,7 +7,7 @@ window-decoration   = none
 # --- Typography ---
 font-family   = Maple Mono NF CN
 font-family   = Noto Color Emoji
-font-size     = 10
+font-size     = 10.5
 font-thicken  = true
 font-feature  = +calt, +dlig, +clig, +liga, +ss01, +ss02, +ss03, +ss04, +ss05, +ss06, +ss09, +ss10, +ss11, +ss12, +cv03, +cv09, +cv10, +cv42, +cv43, +zero, +onum
 
@@ -19,6 +19,7 @@ grapheme-width-method         = unicode
 
 # --- Mouse & Interaction ---
 mouse-hide-while-typing         = true
+mouse-scroll-multiplier         = 0.2
 clipboard-trim-trailing-spaces  = true
 shell-integration-features      = sudo, cursor, ssh-env, ssh-terminfo, path
 quick-terminal-position         = center
