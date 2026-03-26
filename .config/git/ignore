@@ -40,9 +40,6 @@ Desktop.ini
 node_modules/
 
 # Python virtual environments
-venv/
-ENV/
-env/
 __pycache__/
 
 # Distribution / build directories

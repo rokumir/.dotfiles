@@ -60,9 +60,9 @@
     interHunkContext = 10
 
 [delta]
-    features    = catppuccin-mocha
-    navigate    = true       # use n and N to move between diff sections
-    dark        = true
+    features     = catppuccin-mocha
+    navigate     = true       # use n and N to move between diff sections
+    dark         = true
     side-by-side = true
     line-numbers = true
 
@@ -72,7 +72,7 @@
 
 [log]
     abbrevCommit = true      # short commits
-    graphColors  = blue,yellow,cyan,magenta,green,red
+    graphColors  = blue,yellow,cyan,magenta,brightgreen,brightred
 
 [color]
     ui          = true
@@ -86,7 +86,7 @@
     frag       = magenta
     context    = white
     whitespace = yellow reverse
-    old        = red
+    old        = brightred
 
 [color "blame"]
     highlightRecent = black bold,1 year ago,white,1 month ago,default,7 days ago,blue
