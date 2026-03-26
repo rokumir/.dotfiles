@@ -4,10 +4,10 @@
 # --force-colorization
 --decorations auto --color auto
 
---pager builtin
+--pager 'less -RFK'
 
 # Set the theme to 'TwoDark'
---theme 'Catppuccin Mocha'
+--theme 'ansi'
 
 # Show line numbers, Git modifications and file header (but no grid)
 --style plain # default: numbers,changes,header,grid
