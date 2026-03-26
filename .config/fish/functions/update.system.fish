@@ -1,0 +1,25 @@
+function update.system
+    if type -q yay
+        yay
+    else if type -q paru
+        paru
+    else
+        sudo pacman -Syu
+    end
+
+    if type -q cargo rustup
+        rustup update
+        cargo install-update -a
+        cargo cache -a
+    end
+
+    if type -q bob
+        bob update nightly
+        bob update stable
+    end
+
+    if type -q bun
+        bun upgrade
+        bun update -g --latest
+    end
+end

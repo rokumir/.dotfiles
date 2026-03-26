@@ -69,8 +69,8 @@ function fish_user_key_bindings
     end
 
     # extenal scripts needed to be sourced, otherwise it won't work as expected
-    bind --preset -M insert ctrl-e fuzzy.find
-    bind --preset -M insert ctrl-d fuzzy.vault
+    bind --preset -M insert ctrl-e fzf.find
+    bind --preset -M insert ctrl-d fzf.vault
 end
 
 ## ---------------------------------------
