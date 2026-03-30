@@ -108,7 +108,7 @@ function __fzf.open
             echo '  when:' (date '+%s')
         end >>~/.local/share/fish/fish_history
 
-        history --merge # merge history file with (empty) internal history
+        builtin history --merge # merge history file with (empty) internal history
     end
 
     # execute command

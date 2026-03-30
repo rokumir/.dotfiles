@@ -12,6 +12,7 @@ fish_config theme choose rose-pine
 ## plugins
 if functions -q fundle
     fundle plugin IlanCosman/tide@v6
+    fundle plugin franciscolourenco/done
     fundle init
 else
     eval (curl -sfL https://git.io/fundle-install)
@@ -30,7 +31,20 @@ alias l ls
 alias g git
 alias gd 'git --git-dir $HOME/.dotfiles -C $HOME --work-tree $HOME'
 alias trash gtrash
-type -q warp-cli && alias warp warp-cli
+alias warp warp-cli
+alias tarnow='tar -acf '
+alias untar='tar -zxvf '
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+# Hardware Info
+alias hardware='hwinfo --short | bat'
+# Sort installed packages according to size in MB
+alias big="expac -H M '%m\t%n' | sort -rh | nl | bat"
+# Recent installed packages
+alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl | bat"
 
 ## --------------------------------------------------
 ## keymaps
@@ -77,17 +91,17 @@ end
 ## CONFIG ENV
 
 begin
-    set -l source_file 'source (dirname (status --current-filename))'
+    set -l config 'source (dirname (status --current-filename))'
     switch (uname)
         case Darwin
-            eval "$source_file/config.darwin.fish"
+            eval "$config/config.darwin.fish"
         case Linux
             if set -q WSL_DISTRO_NAME
-                eval "$source_file/config.wsl.fish"
+                eval "$config/config.wsl.fish"
             else
-                eval "$source_file/config.linux.fish"
+                eval "$config/config.linux.fish"
             end
         case '*'
-            eval "$source_file/config.windows.fish"
+            eval "$config/config.windows.fish"
     end
 end
