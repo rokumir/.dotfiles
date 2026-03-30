@@ -329,7 +329,7 @@ return {
 	},
 
 	-- Better tab management; makes tabs into workspaces
-	{ 'tiagovla/scope.nvim', config = true },
+	{ 'tiagovla/scope.nvim', config = true, event = 'TabEnter' },
 
 	{
 		'grug-far.nvim',
