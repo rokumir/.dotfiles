@@ -14,8 +14,8 @@ layout {
     focus-ring {
         on
         width 2
-        active-gradient from="#67ecad80" to="#20a1b780" angle=135
-        urgent-gradient from="#f1261c" to="#fd396f" angle=135
+        active-gradient from="#67ecad4d" to="#20a1b74d" angle=135
+        urgent-gradient from="#f1261c80" to="#fd396f80" angle=135
     }
 
     shadow {

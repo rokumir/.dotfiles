@@ -12,3 +12,7 @@ niri msg action move-window-to-floating
 niri msg action set-column-width $width
 niri msg action set-window-height $height
 niri msg action move-floating-window --x $loc_x --y $loc_y # bottom left
+
+if command -v niri-float-sticky &>/dev/null; then
+	niri-float-sticky -ipc set_sticky
+fi
