@@ -352,4 +352,23 @@ return {
 			},
 		},
 	},
+
+	{
+		'dial.nvim',
+		optional = true,
+		opts = function(_, opts)
+			local augend = require 'dial.augend'
+
+			table.insert(
+				opts.groups.default,
+				augend.constant.new {
+					elements = { 'on', 'off' },
+					word = true,
+					cyclic = true,
+				}
+			)
+
+			return opts
+		end,
+	},
 }
