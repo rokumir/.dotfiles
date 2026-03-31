@@ -20,8 +20,8 @@ binds {
     XF86AudioMicMute        allow-when-locked=true hotkey-overlay-title="Volume Mute Input"  { spawn-sh "qs -c noctalia-shell ipc call volume muteInput"; }
     XF86AudioNext           allow-when-locked=true hotkey-overlay-title="Media Next"        { spawn-sh "qs -c noctalia-shell ipc call media next"; }
     XF86AudioPrev           allow-when-locked=true hotkey-overlay-title="Media Previous"   { spawn-sh "qs -c noctalia-shell ipc call media previous"; }
-    XF86AudioPlay           allow-when-locked=true hotkey-overlay-title="Media Play"   { spawn-sh "qs -c noctalia-shell ipc call media play"; }
-    XF86AudioPause          allow-when-locked=true hotkey-overlay-title="Media Pause"   { spawn-sh "qs -c noctalia-shell ipc call media pause"; }
+    XF86AudioPlay           allow-when-locked=true hotkey-overlay-title="Media Play/Pause" { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
+    XF86AudioPause          allow-when-locked=true hotkey-overlay-title="Media Play/Pause" { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
     // Brightness Controls
     XF86MonBrightnessUp     allow-when-locked=true hotkey-overlay-title="Brightness Increase" { spawn-sh "qs -c noctalia-shell ipc call brightness increase"; }
     XF86MonBrightnessDown   allow-when-locked=true hotkey-overlay-title="Brightness Decrease" { spawn-sh "qs -c noctalia-shell ipc call brightness decrease"; }
@@ -42,17 +42,18 @@ binds {
 
     // -----------------------------------------------
     // #"Window"
-    Mod+Q      { close-window; }
-    Mod+Left   { focus-column-left; }
-    Mod+H      { focus-column-left; }
-    Mod+Right  { focus-column-right; }
-    Mod+L      { focus-column-right; }
-    Mod+Up     { focus-window-or-workspace-up; }
-    Mod+K      { focus-window-or-workspace-up; }
-    Mod+Down   { focus-window-or-workspace-down; }
-    Mod+J      { focus-window-or-workspace-down; }
-    Mod+Home   { focus-column-first; }
-    Mod+End    { focus-column-last; }
+    Mod+Q        { close-window; }
+    Mod+Shift+Q  { spawn-sh "kill -9 $(niri msg -j focused-window | jq '.pid')"; }
+    Mod+Left     { focus-column-left; }
+    Mod+H        { focus-column-left; }
+    Mod+Right    { focus-column-right; }
+    Mod+L        { focus-column-right; }
+    Mod+Up       { focus-window-or-workspace-up; }
+    Mod+K        { focus-window-or-workspace-up; }
+    Mod+Down     { focus-window-or-workspace-down; }
+    Mod+J        { focus-window-or-workspace-down; }
+    Mod+Home     { focus-column-first; }
+    Mod+End      { focus-column-last; }
 
     Mod+Shift+Left   { move-column-left; }
     Mod+Shift+H      { move-column-left; }
@@ -107,5 +108,5 @@ binds {
     Mod+Shift+Minus   { set-window-height "-10%"; }
     Mod+Shift+Equal   { set-window-height "+10%"; }
 
-    Mod+Alt+P   repeat=false hotkey-overlay-title="To PIP" { spawn "$NIRI_SCRIPTS_DIR/win-to-pip.sh"; }
+    Mod+Alt+P   repeat=false hotkey-overlay-title="To PIP" { spawn "~/.config/niri/scripts/win-to-pip.sh"; }
 }

@@ -1,4 +1,3 @@
-include "./cfg/env.kdl"
 include "./cfg/animation.kdl"
 include "./cfg/autostart.kdl"
 include "./cfg/keybinds.kdl"
@@ -8,3 +7,6 @@ include "./cfg/layout.kdl"
 include "./cfg/rules.kdl"
 include "./cfg/workspaces.kdl"
 include "./cfg/misc.kdl"
+
+include "./noctalia.kdl"
+

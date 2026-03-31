@@ -1,6 +1,6 @@
 // Global rules
 window-rule {
-    geometry-corner-radius 6
+    geometry-corner-radius 8
     clip-to-geometry true
     draw-border-with-background false
 
@@ -10,13 +10,25 @@ window-rule {
     background-effect {
         blur true
         xray false
-        // noise 0.2
-        // saturation 5
+    }
+}
+
+layer-rule {
+    match namespace="^window-switcher-parallel$"
+    match namespace="^wallpaper-selector$"
+    match namespace="^app-launcher-parallel$"
+    match namespace="^smarthome$"
+    match namespace="^topbar$"
+
+    background-effect {
+        blur true
+        xray false
     }
 }
 
 layer-rule {
     match namespace="^noctalia-wallpaper*"
+    match namespace="^linux-wallpaperengine$"
     place-within-backdrop true
 }
 
@@ -57,6 +69,10 @@ window-rule {
     match app-id="^(Alacritty|kitty|kitty-dropterm|com.mitchellh.ghostty)$"
     open-on-workspace "Dev"
 }
+window-rule {
+    match title=".*([Bb]top).*" app-id="^(Alacritty|kitty|kitty-dropterm|com.mitchellh.ghostty)$"
+    open-maximized-to-edges true
+}
 
 // Popups
 window-rule {
@@ -95,7 +111,7 @@ window-rule {
     match title=".*(Discord).*"
     match app-id="^(discord|vesktop)$"
 
-    default-column-width { proportion 0.8; }
+    default-column-width { proportion 0.9; }
     open-on-workspace "Comm"
 }
 
