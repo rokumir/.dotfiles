@@ -2,8 +2,9 @@ layout {
     gaps 8
     always-center-single-column
 
-    background-color "transparent"
+    background-color "transparent" // for noctalia background
 
+    default-column-width { proportion 0.5; }
     preset-column-widths {
         proportion 0.33333
         proportion 0.5
@@ -18,10 +19,10 @@ layout {
 
     shadow {
         on
-        softness 30
+        draw-behind-window false
+        softness 40
         spread 5
         offset x=0 y=5
-        draw-behind-window true
     }
 
     tab-indicator {

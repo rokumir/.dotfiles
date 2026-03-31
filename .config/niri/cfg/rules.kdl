@@ -68,10 +68,7 @@ window-rule {
 window-rule {
     match app-id="^(Alacritty|kitty|kitty-dropterm|com.mitchellh.ghostty)$"
     open-on-workspace "Dev"
-}
-window-rule {
-    match title=".*([Bb]top).*" app-id="^(Alacritty|kitty|kitty-dropterm|com.mitchellh.ghostty)$"
-    open-maximized-to-edges true
+    default-column-width { proportion 0.7; };
 }
 
 // Popups
@@ -88,12 +85,35 @@ window-rule {
     default-window-height { proportion 0.4; }
     default-column-width { proportion 0.6; }
 }
+// Oklch color picker popup
 window-rule {
     match title="Oklch Color Picker"
 
     open-floating true
     default-window-height { proportion 0.5; }
     default-column-width { proportion 0.4; }
+}
+// Dialogs window rule
+window-rule {
+    match app-id="confirm"
+    match app-id="pavucontrol"
+    match app-id="blueman"
+    match app-id="nm-connection-editor"
+    match app-id="org.gnome.PowerStats"
+    match app-id="cpupower"
+    match app-id="rog-control-center"
+    match app-id="jamesdsp"
+    match app-id="easyeffects"
+    match app-id="Hello"
+    match app-id="xdg-desktop-portal-gtk"
+    match app-id="system-config-printer"
+    match app-id="ghostty_journalctl"
+    match title=r#".*Extension.*Bitwarden.*"#
+    match app-id="brave-keep"
+
+    open-floating true
+    default-column-width { proportion 0.45; }
+    default-window-height { proportion 0.45; }
 }
 
 // Thunar copy progress dialog
