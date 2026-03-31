@@ -14,8 +14,6 @@ layout {
     focus-ring {
         on
         width 2
-        active-gradient from="#67ecad4d" to="#20a1b74d" angle=135
-        urgent-gradient from="#f1261c80" to="#fd396f80" angle=135
     }
 
     shadow {
@@ -24,7 +22,6 @@ layout {
         spread 5
         offset x=0 y=5
         draw-behind-window true
-        color "#00000070"
     }
 
     tab-indicator {

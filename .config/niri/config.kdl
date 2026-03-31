@@ -7,6 +7,4 @@ include "./cfg/layout.kdl"
 include "./cfg/rules.kdl"
 include "./cfg/workspaces.kdl"
 include "./cfg/misc.kdl"
-
-include "./noctalia.kdl"
-
+include optional=true "./cfg/theme.kdl"
