@@ -45,6 +45,9 @@ alias hardware='hwinfo --short | bat'
 alias big="expac -H M '%m\t%n' | sort -rh | nl | bat"
 # Recent installed packages
 alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl | bat"
+# Get the error messages from journalctl
+alias jctl="journalctl -p 3 -xb"
+
 
 ## --------------------------------------------------
 ## keymaps

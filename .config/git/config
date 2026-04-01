@@ -1,7 +1,7 @@
 [user]
     name       = Lopt
     email      = lopt.loptr@proton.me
-	signingkey = ~/.ssh/id_ed25519.pub
+    signingkey = ~/.ssh/id_ed25519.pub
 
 [core]
     autocrlf     = input
@@ -19,16 +19,16 @@
     defaultBranch = dev
 
 [gpg]
-	format = ssh
+    format = ssh
 
 [commit]
     template = ~/.config/git/template
     gpgsign  = true
 
 [push]
-    autoSetupRemote = true   # easier to push new branches
+    autoSetupRemote = true    # easier to push new branches
     default         = current # push only current branch by default
-    followTags      = true   # push also tags
+    followTags      = true    # push also tags
 
 [pull]
     rebase = true
@@ -40,7 +40,7 @@
     autoStash = true
 
 [branch]
-    autosetuprebase = always # Avoid messy merge commits with autorebase
+    autosetuprebase = always  # Avoid messy merge commits with autorebase
     sort            = -committerdate
 
 [tag]
@@ -54,10 +54,29 @@
     branch = false
     tag    = false
 
+
+# ---------------------------------------------------------------
+# --- Diff & Merge Tools
 [diff]
+    tool             = nvimdiff
     context          = 3
     renames          = copies
     interHunkContext = 10
+
+[difftool]
+    prompt = false
+
+[difftool "nvimdiff"]
+    cmd = nvim -c DiffviewOpen
+
+[merge]
+    tool = diffview # nvimdiff
+
+[mergetool "diffview"]
+    prompt = true
+    keepBackup = false
+    layout = "LOCAL,BASE,REMOTE / MERGED"
+    cmd = nvim -n -c "DiffviewOpen" "$MERGE" -c "DiffviewToggleFiles"
 
 [delta]
     features     = catppuccin-mocha
@@ -66,12 +85,18 @@
     side-by-side = true
     line-numbers = true
 
+[interactive]
+    diffFilter = delta --color-only
+
+
+# ---------------------------------------------------------------
+# --- Visuals & Logging
 [blame]
     coloring = highlightRecent
     date     = relative
 
 [log]
-    abbrevCommit = true      # short commits
+    abbrevCommit = true       # short commits
     graphColors  = blue,yellow,cyan,magenta,brightgreen,brightred
 
 [color]
@@ -98,17 +123,20 @@
     upstream = green
     plain    = blue
 
-[interactive]
-    diffFilter = delta --color-only
 
+# ---------------------------------------------------------------
+# --- Utilities & Help
 [advice]
     statusHints        = false # Remove usage hints
     addEmptyPathspec   = false
     pushNonFastForward = false
 
 [help]
-    autocorrect = 1          # Guess what you really meant
+    autocorrect = 1           # Guess what you really meant
 
+
+# ---------------------------------------------------------------
+# --- Shortcuts & Credentials
 [url "https://github.com/"]
     insteadOf = gh:
 
@@ -122,4 +150,3 @@
 [credential "https://gist.github.com"]
     helper = 
     helper = !/usr/bin/gh auth git-credential
-

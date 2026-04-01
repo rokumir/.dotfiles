@@ -1,13 +1,4 @@
 workspace "Web" {
-    layout {
-        gaps 24
-        struts {
-            left 14
-            right 14
-            bottom 14
-            top 14
-        }
-    }
 }
 workspace "Dev" {
 }

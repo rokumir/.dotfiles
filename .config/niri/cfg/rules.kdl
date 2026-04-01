@@ -48,7 +48,7 @@ window-rule {
     match app-id="^([Tt]horium-browser|[Cc]achy-browser)$"
     match app-id="^(zen-alpha|zen)$"
 
-    default-column-width { proportion 0.9; }
+    open-maximized-to-edges true
     open-on-workspace "Web"
 }
 
@@ -68,7 +68,7 @@ window-rule {
 window-rule {
     match app-id="^(Alacritty|kitty|kitty-dropterm|com.mitchellh.ghostty)$"
     open-on-workspace "Dev"
-    default-column-width { proportion 0.7; };
+    default-column-width { proportion 0.9; };
 }
 
 // Popups

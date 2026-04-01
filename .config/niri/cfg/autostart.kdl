@@ -6,6 +6,11 @@ spawn-sh-at-startup "easyeffects --gapplication-service"
 spawn-sh-at-startup "warp-cli connect"
 spawn-sh-at-startup "sleep 3; amixer -c2 set Master 100% unmute"
 
+// Default Apps
+spawn-sh-at-startup "gsettings set org.gnome.desktop.default-applications.terminal exec ghostty"
+spawn-sh-at-startup "gsettings set org.gnome.desktop.default-applications.terminal exec-arg ''"
+spawn-sh-at-startup "xdg-mime default nemo.desktop inode/directory"
+// UI/UX
 spawn-sh-at-startup "gsettings set org.gnome.desktop.interface color-scheme prefer-dark"
 spawn-sh-at-startup "gsettings set org.gnome.desktop.interface cursor-theme Bibata-Modern-Classic"
 spawn-sh-at-startup "gsettings set org.gnome.desktop.interface cursor-size 20"

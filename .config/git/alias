@@ -19,6 +19,7 @@
     d = diff --output-indicator-new=' ' --output-indicator-old=' '
     ds = diff --stat
     dc = diff --cached
+    dt = "! args=$@; shift $#; nvim -c \"DiffviewOpen $args\""
 
     s = status --short --branch
     su = status --short --branch --untracked-files
