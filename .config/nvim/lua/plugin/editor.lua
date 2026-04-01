@@ -181,6 +181,22 @@ return {
 		keys = {
 			{ ';gD', '<cmd>DiffviewOpen<cr>', desc = 'DiffView' },
 		},
+		opts = {
+			default_args = {
+				DiffviewOpen = { '--imply-local' },
+			},
+			hooks = {
+				diff_buf_read = function(bufnr)
+					local file_path = vim.api.nvim_buf_get_name(bufnr)
+					if file_path:match 'diffview://' then
+						-- Make the buffer read-only
+						vim.opt_local.readonly = true
+						vim.opt_local.modifiable = false
+					end
+				end,
+				diff_buf_win_enter = function() vim.opt.fdl = 99 end,
+			},
+		},
 	},
 
 	{ -- best color picker (including oklch)
