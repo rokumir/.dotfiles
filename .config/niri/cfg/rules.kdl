@@ -25,7 +25,6 @@ layer-rule {
         xray false
     }
 }
-
 layer-rule {
     match namespace="^noctalia-wallpaper*"
     match namespace="^linux-wallpaperengine$"
@@ -35,6 +34,10 @@ layer-rule {
 window-rule {
     match is-floating=false
     tiled-state true
+}
+window-rule {
+    match is-floating=true
+    baba-is-float true  // makes windows floating up and down
 }
 
 // Browsers
@@ -47,6 +50,7 @@ window-rule {
     match app-id="^(Brave-browser(-beta|-dev|-unstable)?)$"
     match app-id="^([Tt]horium-browser|[Cc]achy-browser)$"
     match app-id="^(zen-alpha|zen)$"
+    exclude title="Picture(-| )in(-| )[Pp]icture"
 
     open-maximized-to-edges true
     open-on-workspace "Web"
@@ -56,6 +60,7 @@ window-rule {
 window-rule {
     match title="Picture(-| )in(-| )[Pp]icture"
 
+    open-maximized-to-edges false  // disable from the browsers' rule
     open-floating true
     open-focused false
     default-column-width { fixed 355; };
@@ -67,6 +72,7 @@ window-rule {
 // Terminals
 window-rule {
     match app-id="^(Alacritty|kitty|kitty-dropterm|com.mitchellh.ghostty)$"
+
     open-on-workspace "Dev"
     default-column-width { proportion 0.9; };
 }
@@ -128,8 +134,7 @@ window-rule {
 
 // Discord
 window-rule {
-    match title=".*(Discord).*"
-    match app-id="^(discord|vesktop)$"
+    match title=".*(Discord).*" app-id="^(discord|vesktop)$"
 
     default-column-width { proportion 0.9; }
     open-on-workspace "Comm"
@@ -141,6 +146,20 @@ window-rule {
     match app-id="spotify"
 
     default-column-width { proportion 0.8; }
-    open-on-workspace "Misc"
+    open-on-workspace "Comm"
 }
 
+// Steam
+window-rule {
+    match app-id="steam"
+    match title="^Steam.*"
+
+    default-column-width { proportion 0.75; }
+    open-on-workspace "Comm"
+}
+// Steam Friendlist
+window-rule {
+    match app-id="steam" title="^Friends List$"
+
+    default-column-width { proportion 0.1; }
+}
