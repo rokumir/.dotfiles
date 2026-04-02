@@ -14,5 +14,6 @@
 !.config/env
 !.config/ghostty
 !.config/niri
+!.config/noctalia
 
 !.scripts
