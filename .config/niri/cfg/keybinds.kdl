@@ -6,12 +6,15 @@ binds {
     // -----------------------------------------------
     // #"System & Meta"
     Mod+Escape    cooldown-ms=100 { toggle-overview; }
-    Print         repeat=false cooldown-ms=250 hotkey-overlay-title="Screenshot" { screenshot show-pointer=false; }
-    Ctrl+Print    repeat=false cooldown-ms=250 hotkey-overlay-title="SCREENshot" { screenshot-screen show-pointer=false; }
-    Alt+Print     repeat=false cooldown-ms=250 hotkey-overlay-title="WINDOWshot" { screenshot-window show-pointer=true; }
     Mod+ALT+L     repeat=false cooldown-ms=250 hotkey-overlay-title="Lock Screen"  { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
     Mod+Delete    repeat=false cooldown-ms=250 hotkey-overlay-title="Session Menu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
     Mod+F1        repeat=false cooldown-ms=250 hotkey-overlay-title="Keybind Cheatsheet" { spawn-sh "qs -c noctalia-shell ipc call plugin:keybind-cheatsheet toggle"; }
+
+    // Screenshots
+    Mod+Shift+S   repeat=false cooldown-ms=250 hotkey-overlay-title="Screenshot" { spawn "~/.config/niri/scripts/screenshot"; }
+    Print         repeat=false cooldown-ms=250 hotkey-overlay-title="Screenshot" { spawn "~/.config/niri/scripts/screenshot"; }
+    Ctrl+Print    repeat=false cooldown-ms=250 hotkey-overlay-title="SCREENshot" { spawn-sh "~/.config/niri/scripts/screenshot screen"; }
+    Alt+Print     repeat=false cooldown-ms=250 hotkey-overlay-title="WINDOWshot" { spawn-sh "~/.config/niri/scripts/screenshot window"; }
 
     // Media Controls
     XF86AudioRaiseVolume    allow-when-locked=true hotkey-overlay-title="Volume Increase"   { spawn-sh "qs -c noctalia-shell ipc call volume increase"; }
@@ -108,5 +111,5 @@ binds {
     Mod+Shift+Minus   { set-window-height "-10%"; }
     Mod+Shift+Equal   { set-window-height "+10%"; }
 
-    Mod+Alt+P   repeat=false hotkey-overlay-title="To PIP" { spawn "~/.config/niri/scripts/win-to-pip.sh"; }
+    Mod+Alt+P   repeat=false hotkey-overlay-title="To PIP" { spawn "~/.config/niri/scripts/win-to-pip"; }
 }

@@ -35,10 +35,6 @@ window-rule {
     match is-floating=false
     tiled-state true
 }
-window-rule {
-    match is-floating=true
-    baba-is-float true  // makes windows floating up and down
-}
 
 // Browsers
 window-rule {
@@ -91,13 +87,20 @@ window-rule {
     default-window-height { proportion 0.4; }
     default-column-width { proportion 0.6; }
 }
-// Oklch color picker popup
+// Oklch Color Picker Popup
 window-rule {
     match title="Oklch Color Picker"
 
     open-floating true
     default-window-height { proportion 0.5; }
     default-column-width { proportion 0.4; }
+}
+// Color Picker Popup
+window-rule {
+    match title="^Choose a color$"
+    open-floating true
+    default-window-height { }
+    default-column-width { }
 }
 // Dialogs window rule
 window-rule {
@@ -151,15 +154,25 @@ window-rule {
 
 // Steam
 window-rule {
-    match app-id="steam"
-    match title="^Steam.*"
-
+    match app-id="steam" title="^Steam.*"
     default-column-width { proportion 0.75; }
-    open-on-workspace "Comm"
 }
 // Steam Friendlist
 window-rule {
     match app-id="steam" title="^Friends List$"
-
     default-column-width { proportion 0.1; }
+}
+
+// Screenshot
+window-rule {
+    match app-id="com.gabm.satty"
+    open-floating true
+    default-column-width { proportion 0.65; }
+    default-window-height { proportion 0.7; }
+}
+
+// Browsers
+window-rule {
+    match app-id="nemo"
+    default-column-width { proportion 0.65; }
 }

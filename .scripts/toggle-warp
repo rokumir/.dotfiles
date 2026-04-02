@@ -1,19 +1,23 @@
 #!/usr/bin/env fish
 
-set -l Warp warp-cli
-set -l notify notify-send \
-    --category='network.disconnected' \
-    --app-name='Cloudflare Warp CLI' \
-    --icon='zero-trust-orange'
+set Warp warp-cli
+
+function notify
+    notify-send \
+        --category='network.disconnected' \
+        --app-name='Cloudflare Warp CLI' \
+        --icon='zero-trust-orange' \
+        $argv
+end
 
 if not type -q $Warp
-    $notify "$Warp not found!! ☹ "️
+    notify "$Warp not found!! ☹ "️
     exit 1
 end
 
 if not systemctl is-active warp-svc.service &>/dev/null
     set -l command 'sudo systemctl enable --now warp-svc.service && systemctl status warp-svc.service'
-    set -l action ($notify --urgency=critical "`warp-svc` is DISABLED!" \
+    set -l action (notify --urgency=critical "`warp-svc` is DISABLED!" \
         "Ensure service is running by execute `$command`" \
         --action "copy_cmd=Copy Command" \
 		)
@@ -26,4 +30,4 @@ $Warp status | rg -Sw connected &>/dev/null
 and $Warp disconnect
 or $Warp connect
 
-$notify ($Warp status)
+notify ($Warp status)

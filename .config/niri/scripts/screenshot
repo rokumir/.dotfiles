@@ -1,0 +1,66 @@
+#!/usr/bin/env fish
+
+set required_programs grim satty inotifywait
+
+function set_error_color
+    set_color -o brred
+end
+function notify
+    notify-send \
+        --expire-time 1000 \
+        --app-name='Screenshot Script' \
+        $argv
+end
+function help_msg
+    echo 'Usage: screenshot.sh [option]'
+    echo 'Options:'
+    echo '  help      Show this help'
+    echo '  (no arg)  Capture region'
+    echo '  screen    Capture full screen'
+    echo '  window    Capture active window'
+    echo
+    echo (set_error_color)"Required package: $required_programs"
+end
+
+# -----------------------------------------------------------------------------
+
+if not type -q $required_programs
+    notify --urgency=critical "$required_programs not found!!"
+    help_msg
+    exit 1
+end
+
+set dir "$HOME/Pictures/Screenshots"
+mkdir -p $dir
+
+set app (niri msg --json focused-window | jq -r '.app_id // "unknown"')
+set file "$dir/$app"_(date +%Y-%m-%d_%H-%M-%S).png
+
+set arg $argv[1]
+
+begin
+    [ "$arg" = help ]; and help_msg
+
+    if [ -z "$arg" ]
+        set sc_area slurp \
+            -b '#04040499' \
+            -c (jq -r '.mPrimary' -- ~/.config/noctalia/colors.json | echo '#13b77aa6') \
+
+        # faster pipeline (no temp file write first)
+        grim -g ($sc_area) -t ppm - | satty \
+            --filename - \
+            --output-filename "$file" \
+            --copy-command wl-copy
+    else
+        if not contains $arg -- screen window
+            echo (set_error_color)'Invalid Arguments!'
+            exit 1
+        end
+
+        set niri_sc_action screenshot-$arg
+
+        inotifywait -q -e close_write -t 5 (dirname "$file")
+        satty --filename $file --output-filename $file --copy-command wl-copy
+    end
+end
+or notify "Aborted!"
