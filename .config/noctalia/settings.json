@@ -6,7 +6,7 @@
         "clipboardWrapText": true,
         "customLaunchPrefix": "",
         "customLaunchPrefixEnabled": false,
-        "density": "default",
+        "density": "comfortable",
         "enableClipPreview": true,
         "enableClipboardChips": true,
         "enableClipboardHistory": true,
@@ -18,6 +18,11 @@
         "ignoreMouseInput": false,
         "overviewLayer": true,
         "pinnedApps": [
+            "vesktop",
+            "spotify",
+            "steam",
+            "com.mitchellh.ghostty",
+            "zen"
         ],
         "position": "center",
         "screenshotAnnotationTool": "",
@@ -492,6 +497,7 @@
     },
     "location": {
         "analogClockInCalendar": true,
+        "autoLocate": false,
         "firstDayOfWeek": 1,
         "hideWeatherCityName": true,
         "hideWeatherTimezone": false,

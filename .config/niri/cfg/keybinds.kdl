@@ -16,15 +16,15 @@ binds {
     Ctrl+Print    repeat=false cooldown-ms=250 hotkey-overlay-title="SCREENshot" { spawn-sh "~/.config/niri/scripts/screenshot screen"; }
     Alt+Print     repeat=false cooldown-ms=250 hotkey-overlay-title="WINDOWshot" { spawn-sh "~/.config/niri/scripts/screenshot window"; }
 
-    // Media Controls
-    XF86AudioRaiseVolume    allow-when-locked=true hotkey-overlay-title="Volume Increase"   { spawn-sh "qs -c noctalia-shell ipc call volume increase"; }
-    XF86AudioLowerVolume    allow-when-locked=true hotkey-overlay-title="Volume Decrease"   { spawn-sh "qs -c noctalia-shell ipc call volume decrease"; }
+    // Volume/Media Controls
+    XF86AudioRaiseVolume    allow-when-locked=true hotkey-overlay-title="Volume Increase"    { spawn-sh "qs -c noctalia-shell ipc call volume increase"; }
+    XF86AudioLowerVolume    allow-when-locked=true hotkey-overlay-title="Volume Decrease"    { spawn-sh "qs -c noctalia-shell ipc call volume decrease"; }
     XF86AudioMute           allow-when-locked=true hotkey-overlay-title="Volume Mute Output" { spawn-sh "qs -c noctalia-shell ipc call volume muteOutput"; }
     XF86AudioMicMute        allow-when-locked=true hotkey-overlay-title="Volume Mute Input"  { spawn-sh "qs -c noctalia-shell ipc call volume muteInput"; }
-    XF86AudioNext           allow-when-locked=true hotkey-overlay-title="Media Next"        { spawn-sh "qs -c noctalia-shell ipc call media next"; }
-    XF86AudioPrev           allow-when-locked=true hotkey-overlay-title="Media Previous"   { spawn-sh "qs -c noctalia-shell ipc call media previous"; }
-    XF86AudioPlay           allow-when-locked=true hotkey-overlay-title="Media Play/Pause" { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
-    XF86AudioPause          allow-when-locked=true hotkey-overlay-title="Media Play/Pause" { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
+    XF86AudioNext           allow-when-locked=true hotkey-overlay-title="Media Next"         { spawn-sh "qs -c noctalia-shell ipc call media next"; }
+    XF86AudioPrev           allow-when-locked=true hotkey-overlay-title="Media Previous"     { spawn-sh "qs -c noctalia-shell ipc call media previous"; }
+    XF86AudioPlay           allow-when-locked=true hotkey-overlay-title="Media Play/Pause"   { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
+    XF86AudioPause          allow-when-locked=true hotkey-overlay-title="Media Play/Pause"   { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
     // Brightness Controls
     XF86MonBrightnessUp     allow-when-locked=true hotkey-overlay-title="Brightness Increase" { spawn-sh "qs -c noctalia-shell ipc call brightness increase"; }
     XF86MonBrightnessDown   allow-when-locked=true hotkey-overlay-title="Brightness Decrease" { spawn-sh "qs -c noctalia-shell ipc call brightness decrease"; }
@@ -33,8 +33,9 @@ binds {
     // #"Applications"
     Mod+Return          repeat=false cooldown-ms=250 hotkey-overlay-title="Terminal"      { spawn-sh "$TERMINAL"; }
     Ctrl+Shift+Escape   repeat=false cooldown-ms=250 hotkey-overlay-title="Task Manager"  { spawn-sh "$TERMINAL -e btop"; }
-    Mod+D               repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher"      { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
+    Mod+S               repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher"      { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
     Mod+W               repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"       { spawn-sh "xdg-open https://"; }
+    Mod+D               repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"       { spawn-sh "xdg-open discord://"; }
     Mod+E               repeat=false cooldown-ms=250 hotkey-overlay-title="File Manager"  { spawn-sh "xdg-open ~"; }
     Mod+V               repeat=false cooldown-ms=250 hotkey-overlay-title="Clipboard"     { spawn-sh "qs -c noctalia-shell ipc call launcher clipboard"; }
     Mod+Period          repeat=false cooldown-ms=250 hotkey-overlay-title="Emoji Picker"  { spawn-sh "qs -c noctalia-shell ipc call launcher emoji"; }
@@ -46,7 +47,7 @@ binds {
     // -----------------------------------------------
     // #"Window"
     Mod+Q        { close-window; }
-    Mod+Shift+Q  { spawn-sh "kill -9 $(niri msg -j focused-window | jq '.pid')"; }
+    Mod+Shift+Q  { spawn-sh "kill -9 $(niri msg -j focused-window | jq -r '.pid')"; }
     Mod+Left     { focus-column-left; }
     Mod+H        { focus-column-left; }
     Mod+Right    { focus-column-right; }

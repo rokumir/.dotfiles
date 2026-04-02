@@ -416,9 +416,10 @@ body {
   background: var(--hover) !important;
 }
 
-/* vc chat titlebar */
-.container__01ae2 > .container__9293f {
-    border-radius: none !important;
+.callContainer_cb9592 /* vc container */,
+.container__01ae2 > .container__9293f /* vc chat titlebar */ {
+  border: none !important;
+  border-radius: 0 !important;
 }
 .popout__0bd4a .content__0bd4a /* VC popout spacing */ {
     margin: 0 !important;
