@@ -91,7 +91,7 @@ return {
 		keys = function()
 			return {
 				{ 'r', function() require('flash').remote() end, mode = 'o', desc = 'Remote Flash' },
-				{ '<c-e>', mode = { 'c' }, function() require('flash').toggle() end, desc = 'Toggle Flash Search' },
+				{ '<c-s>', mode = { 'c' }, function() require('flash').toggle() end, desc = 'Toggle Flash Search' },
 				{ -- Simulate nvim-treesitter incremental selection
 					'<c-space>',
 					mode = { 'n', 'o', 'x' },
