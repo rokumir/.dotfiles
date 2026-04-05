@@ -1,22 +1,22 @@
 # --- Appearance & Theme ---
-theme               = noctalia
-background          = #000
-background-opacity  = 0.75
-window-decoration   = none
+theme                           = noctalia
+background                      = #000
+background-opacity              = 0.75
+window-decoration               = none
 
 # --- Typography ---
-font-family   = Maple Mono NF CN
-font-family   = Noto Color Emoji
-font-family   = Segoe UI Emoji
-font-size     = 10.5
-font-thicken  = true
-font-feature  = +calt, +dlig, +clig, +liga, +ss01, +ss02, +ss03, +ss04, +ss05, +ss06, +ss09, +ss10, +ss11, +ss12, +cv03, +cv09, +cv10, +cv42, +cv43, +zero, +onum
+font-family                     = Maple Mono NF CN
+font-family                     = Noto Color Emoji
+font-family                     = Segoe UI Emoji
+font-size                       = 10.5
+font-thicken                    = true
+font-feature                    = +calt, +dlig, +clig, +liga, +ss01, +ss02, +ss03, +ss04, +ss05, +ss06, +ss09, +ss10, +ss11, +ss12, +cv03, +cv09, +cv10, +cv42, +cv43, +zero, +onum
 
 # --- Font Rendering & Spacing ---
-adjust-cell-height            = 9
-adjust-underline-position     = 6
-# adjust-underline-thickness  = 2
-grapheme-width-method         = unicode
+adjust-cell-height              = 9
+adjust-underline-position       = 6
+# adjust-underline-thickness    = 2
+grapheme-width-method           = unicode
 
 # --- Mouse & Interaction ---
 mouse-hide-while-typing         = true
@@ -26,15 +26,15 @@ shell-integration-features      = sudo, cursor, ssh-env, ssh-terminfo, path
 quick-terminal-position         = center
 
 # --- Visual Effects (Shaders) ---
-custom-shader-animation  = always
-custom-shader            = ?./shaders/cursor-smear.glsl
+custom-shader-animation         = always
+custom-shader                   = ?./shaders/cursor-smear.glsl
 
 # --- System & Updates ---
-auto-update  = check
+auto-update                     = check
 
-progress-style                   = true
-desktop-notifications            = true
-notify-on-command-finish         = unfocused
-notify-on-command-finish-action  = bell, notify
+progress-style                  = true
+desktop-notifications           = true
+notify-on-command-finish        = unfocused
+notify-on-command-finish-action = bell, notify
 
-config-file  = ?./keymaps.ghostty
+config-file                     = ?./keymaps.ghostty
