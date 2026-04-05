@@ -2,6 +2,10 @@
 
 [templates]
 
+[templates.sddm]
+input_path="/usr/share/sddm/themes/noctalia/theme.template.conf"
+output_path="/usr/share/sddm/themes/noctalia/theme.conf"
+
 [templates.niri]
 input_path="~/.config/noctalia/templates/niri.kdl"
 output_path="~/.config/niri/cfg/theme.kdl"
@@ -17,6 +21,6 @@ output_path="~/.cache/noctalia/zen-browser/zen-userChrome.css"
 input_path="~/.config/noctalia/templates/zen/zen-userContent.css"
 output_path="~/.cache/noctalia/zen-browser/zen-userContent.css"
 
-[templates.sddm]
-input_path="/usr/share/sddm/themes/noctalia/theme.template.conf"
-output_path="/usr/share/sddm/themes/noctalia/theme.conf"
+[templates.zathura]
+input_path="~/.config/noctalia/templates/zathurarc"
+output_path="~/.config/zathura/themes/nihil"

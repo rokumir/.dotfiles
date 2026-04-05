@@ -34,7 +34,6 @@ environment {
     PROTON_LOCAL_SHADER_CACHE   "1"
     // Enable AMD Anti-Lag for reduced input latency.
     ENABLE_LAYER_MESA_ANTI_LAG  "1"
-
 }
 
 cursor {
@@ -59,8 +58,8 @@ overview {
 }
 
 recent-windows {
-    debounce-ms 750
-    open-delay-ms 200
+    debounce-ms 200
+    open-delay-ms 100
 
     highlight {
         padding 12
@@ -68,8 +67,14 @@ recent-windows {
     }
 
     previews {
-        max-height 480
-        max-scale 0.5
+        max-height 260
+        max-scale 1
+    }
+
+    binds {
+        Alt+Tab         { next-window     scope="workspace"; }
+        Alt+Shift+Tab   { previous-window scope="workspace"; }
+        Alt+Grave       { next-window     scope="output"; }
     }
 }
 

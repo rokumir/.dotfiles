@@ -81,3 +81,10 @@
     fill: {{colors.primary.default.hex}} !important;
   }
 }
+
+@-moz-document url-prefix("file://") {
+    #viewerContainer > #viewer > .page > .canvasWrapper > canvas {
+        filter: invert(90%) hue-rotate(180deg);
+    }
+}
+

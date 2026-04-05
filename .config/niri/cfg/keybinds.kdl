@@ -5,7 +5,7 @@
 binds {
     // -----------------------------------------------
     // #"System & Meta"
-    Mod+Escape    cooldown-ms=100 { toggle-overview; }
+    Mod+Grave     cooldown-ms=100 { toggle-overview; }
     Mod+ALT+L     repeat=false cooldown-ms=250 hotkey-overlay-title="Lock Screen"  { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
     Mod+Delete    repeat=false cooldown-ms=250 hotkey-overlay-title="Session Menu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
     Mod+F1        repeat=false cooldown-ms=250 hotkey-overlay-title="Keybind Cheatsheet" { spawn-sh "qs -c noctalia-shell ipc call plugin:keybind-cheatsheet toggle"; }
@@ -46,8 +46,8 @@ binds {
 
     // -----------------------------------------------
     // #"Window"
-    Mod+Q        { close-window; }
-    Mod+Shift+Q  { spawn-sh "kill -9 $(niri msg -j focused-window | jq -r '.pid')"; }
+    Mod+Q        repeat=false cooldown-ms=500 { close-window; }
+    Mod+Shift+Q  repeat=false cooldown-ms=500 { spawn-sh "kill -9 $(niri msg -j focused-window | jq -r '.pid')"; }
     Mod+Left     { focus-column-left; }
     Mod+H        { focus-column-left; }
     Mod+Right    { focus-column-right; }
@@ -59,6 +59,10 @@ binds {
     Mod+Home     { focus-column-first; }
     Mod+End      { focus-column-last; }
 
+    Mod+Ctrl+Left    { consume-or-expel-window-left; }
+    Mod+Ctrl+H       { consume-or-expel-window-left; }
+    Mod+Ctrl+Right   { consume-or-expel-window-right; }
+    Mod+Ctrl+L       { consume-or-expel-window-right; }
     Mod+Shift+Left   { move-column-left; }
     Mod+Shift+H      { move-column-left; }
     Mod+Shift+Right  { move-column-right; }
@@ -85,16 +89,6 @@ binds {
     Mod+8    cooldown-ms=150 { focus-workspace 8; }
     Mod+9    cooldown-ms=150 { focus-workspace 9; }
 
-    // Main Workspaces
-    Mod+U   cooldown-ms=150 { focus-workspace "Web"; }
-    Mod+I   cooldown-ms=150 { focus-workspace "Dev"; }
-    Mod+O   cooldown-ms=150 { focus-workspace "Comm"; }
-    Mod+P   cooldown-ms=150 { focus-workspace "Misc"; }
-    Mod+Shift+U   cooldown-ms=150 { move-window-to-workspace "Web"; }
-    Mod+Shift+I   cooldown-ms=150 { move-window-to-workspace "Dev"; }
-    Mod+Shift+O   cooldown-ms=150 { move-window-to-workspace "Comm"; }
-    Mod+Shift+P   cooldown-ms=150 { move-window-to-workspace "Misc"; }
-
     // -----------------------------------------------
     // #"Layout"
     Mod+F             { maximize-window-to-edges; }
@@ -107,10 +101,10 @@ binds {
     Mod+C             { center-column; }
     Mod+CTRL+C        { center-visible-columns; }
 
-    Mod+Minus         { set-column-width "-10%"; }
-    Mod+Equal         { set-column-width "+10%"; }
-    Mod+Shift+Minus   { set-window-height "-10%"; }
-    Mod+Shift+Equal   { set-window-height "+10%"; }
+    Mod+Minus         { set-column-width  "-5%"; }
+    Mod+Equal         { set-column-width  "+5%"; }
+    Mod+Shift+Minus   { set-window-height "-5%"; }
+    Mod+Shift+Equal   { set-window-height "+5%"; }
 
     Mod+Alt+P   repeat=false hotkey-overlay-title="To PIP" { spawn "~/.config/niri/scripts/win-to-pip"; }
 }

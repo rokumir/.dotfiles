@@ -1,8 +1,4 @@
-workspace "Web" {
-}
-workspace "Dev" {
-}
-workspace "Comm" {
+workspace "Misc" {
     layout {
         gaps 30
         struts {
@@ -13,5 +9,20 @@ workspace "Comm" {
         }
     }
 }
-workspace "Misc" {
+workspace "Browse" {
+    layout {
+        gaps 30
+        struts {
+            left 16
+            right 16
+            bottom 16
+            top 16
+        }
+    }
+}
+workspace "Dev" {
+    layout {
+        gaps 1
+        focus-ring { width 1; }
+    }
 }

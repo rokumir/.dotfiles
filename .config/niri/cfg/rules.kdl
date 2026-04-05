@@ -49,12 +49,13 @@ window-rule {
     exclude title="Picture(-| )in(-| )[Pp]icture"
 
     open-maximized-to-edges true
-    open-on-workspace "Web"
+    open-on-workspace "Browse"
 }
 
 // Picture-in-Pictures (PIP)
 window-rule {
     match title="Picture(-| )in(-| )[Pp]icture"
+    match title="Locked up silly corner"
 
     open-maximized-to-edges false  // disable from the browsers' rule
     open-floating true
@@ -147,7 +148,7 @@ window-rule {
     match app-id="spotify"
 
     default-column-width { proportion 0.8; }
-    open-on-workspace "Comm"
+    open-on-workspace "Misc"
 }
 
 // Steam
@@ -171,6 +172,12 @@ window-rule {
 
 // Browsers
 window-rule {
-    match app-id="nemo"
+    match app-id="nemo|org.gnome.Nautilus"
     default-column-width { proportion 0.65; }
+}
+
+// Obsidian
+window-rule {
+    match app-id="obsidian"
+    default-column-width { proportion 0.85; }
 }

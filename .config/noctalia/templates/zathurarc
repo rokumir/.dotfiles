@@ -1,0 +1,48 @@
+# vim:ft=zathurarc
+
+set default-bg "#000000b3"
+set default-fg "#F7F7F6"
+
+set statusbar-fg "#B0B0B0"
+set statusbar-bg "#202020b3"
+
+set inputbar-bg "#151515b3"
+set inputbar-fg "#FFFFFF"
+
+set notification-error-bg "{{colors.error.default.hex}}" #08
+set notification-error-fg "#151515" #00
+
+set notification-warning-bg "{{colors.error.default.hex}}b3" #08
+set notification-warning-fg "#151515" #00
+
+set default-bg              "rgba(0,0,0,.8)"
+set default-fg              "{{colors.on_surface.default.hex}}"
+set recolor-lightcolor      "rgba(0,0,0,0)"
+set recolor-darkcolor       "{{colors.on_surface.default.hex}}"
+
+set statusbar-bg            "rgba(0,0,0,.8)"
+set statusbar-fg            "{{colors.primary.default.hex}}"
+set inputbar-bg             "rgba(0,0,0,.8)"
+set inputbar-fg             "{{colors.primary.default.hex}}"
+
+set notification-bg         "rgba(0,0,0,.8)"
+set notification-fg         "{{colors.primary.default.hex}}"
+set notification-error-bg   "{{colors.on_error.default.rgba | set_alpha 0.8}}"
+set notification-error-fg   "{{colors.error.default.hex}}"
+set notification-warning-bg "{{colors.primary_fixed.default.rgba | set_alpha 0.8}}"
+set notification-warning-fg "{{colors.error_container.default.hex}}"
+
+set index-bg                "rgba(0,0,0,0)"
+set index-fg                "{{colors.on_surface.default.hex}}"
+set index-active-bg         "{{colors.primary.default.hex}}"
+set index-active-fg         "{{colors.on_primary.default.hex}}"
+set highlight-color         "{{colors.primary_fixed.default.rgba | set_alpha: 0.5}}"
+set highlight-active-color  "{{colors.primary_fixed_dim.default.rgba | set_alpha: 0.5}}"
+set highlight-fg            "{{colors.on_primary.default.hex}}"
+
+set completion-bg           "{{colors.on_primary.default.hex}}"
+set completion-fg           "{{colors.primary.default.hex}}"
+set completion-group-bg     "{{colors.on_primary.default.hex}}"
+set completion-group-fg     "{{colors.primary.default.hex}}"
+set completion-highlight-fg "{{colors.on_primary.default.hex}}"
+set completion-highlight-bg "{{colors.primary.default.hex}}"

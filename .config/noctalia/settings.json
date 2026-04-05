@@ -53,7 +53,7 @@
         "capsuleOpacity": 0.7000000000000001,
         "contentPadding": 0,
         "density": "default",
-        "displayMode": "always_visible",
+        "displayMode": "auto_hide",
         "enableExclusionZoneInset": true,
         "fontScale": 1,
         "frameRadius": 8,
@@ -321,7 +321,7 @@
                         "roundedCorners": true,
                         "scale": 1.1665142693125636,
                         "showBackground": true,
-                        "x": 60,
+                        "x": 40,
                         "y": 40
                     },
                     {
@@ -334,7 +334,7 @@
                         "showButtons": false,
                         "showVisualizer": true,
                         "visualizerType": "mirrored",
-                        "x": 60,
+                        "x": 40,
                         "y": 960
                     },
                     {
@@ -344,11 +344,33 @@
                         "format": "HH:mm\\nd MMMM yyyy",
                         "id": "Clock",
                         "roundedCorners": true,
-                        "scale": 1.2128890294568444,
+                        "scale": 1.2061879850952044,
                         "showBackground": true,
                         "useCustomFont": true,
-                        "x": 60,
-                        "y": 180
+                        "x": 40,
+                        "y": 160
+                    },
+                    {
+                        "diskPath": "/",
+                        "id": "SystemStat",
+                        "layout": "side",
+                        "roundedCorners": true,
+                        "scale": 1.5,
+                        "showBackground": true,
+                        "statType": "CPU",
+                        "x": 1520,
+                        "y": 40
+                    },
+                    {
+                        "diskPath": "/",
+                        "id": "SystemStat",
+                        "layout": "bottom",
+                        "roundedCorners": true,
+                        "scale": 1.5,
+                        "showBackground": true,
+                        "statType": "Memory",
+                        "x": 1520,
+                        "y": 240
                     },
                     {
                         "defaultSettings": {
@@ -356,10 +378,10 @@
                             "minimumThreshold": 10
                         },
                         "id": "plugin:catwalk",
-                        "scale": 5,
+                        "scale": 0.57,
                         "showBackground": true,
-                        "x": 1680,
-                        "y": 40
+                        "x": 40,
+                        "y": 360
                     }
                 ]
             }
@@ -416,7 +438,7 @@
         "enableLockScreenMediaControls": true,
         "enableShadows": true,
         "forceBlackScreenCorners": false,
-        "iRadiusRatio": 0.5,
+        "iRadiusRatio": 0.81,
         "keybinds": {
             "keyDown": [
                 "Down",
@@ -455,9 +477,9 @@
         ],
         "lockScreenTint": 0,
         "passwordChars": true,
-        "radiusRatio": 0.5700000000000001,
+        "radiusRatio": 1,
         "reverseScroll": false,
-        "scaleRatio": 0.9500000000000001,
+        "scaleRatio": 1,
         "screenRadiusRatio": 1,
         "shadowDirection": "bottom_right",
         "shadowOffsetX": 2,
@@ -508,7 +530,8 @@
         "use12hourFormat": true,
         "useFahrenheit": true,
         "weatherEnabled": true,
-        "weatherShowEffects": true
+        "weatherShowEffects": true,
+        "weatherTaliaMascotAlways": false
     },
     "network": {
         "bluetoothAutoConnect": true,
@@ -516,8 +539,8 @@
         "bluetoothHideUnnamedDevices": false,
         "bluetoothRssiPollIntervalMs": 60000,
         "bluetoothRssiPollingEnabled": false,
-        "disableDiscoverability": false,
-        "networkPanelView": "ethernet",
+        "disableDiscoverability": true,
+        "networkPanelView": "wifi",
         "wifiDetailsViewMode": "grid"
     },
     "nightLight": {
@@ -706,7 +729,7 @@
         "fontDefaultScale": 0.9400000000000001,
         "fontFixed": "Maple Mono NF CN",
         "fontFixedScale": 1,
-        "panelBackgroundOpacity": 0.6,
+        "panelBackgroundOpacity": 0.5,
         "panelsAttachedToBar": true,
         "scrollbarAlwaysVisible": true,
         "settingsPanelMode": "attached",
