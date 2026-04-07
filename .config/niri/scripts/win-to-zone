@@ -1,0 +1,9 @@
+#!/usr/bin/env fish
+
+set win (niri msg -j focused-window)
+
+if [ "$(echo $win | jq '.is_floating')" != true ]
+    exit 1
+end
+
+# TODO: finish this

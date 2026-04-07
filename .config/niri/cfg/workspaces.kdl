@@ -2,10 +2,10 @@ workspace "Misc" {
     layout {
         gaps 30
         struts {
-            left 16
-            right 16
-            bottom 16
-            top 16
+            left 14
+            right 14
+            bottom 14
+            top 14
         }
     }
 }
@@ -13,10 +13,10 @@ workspace "Browse" {
     layout {
         gaps 30
         struts {
-            left 16
-            right 16
-            bottom 16
-            top 16
+            left 14
+            right 14
+            bottom 14
+            top 14
         }
     }
 }

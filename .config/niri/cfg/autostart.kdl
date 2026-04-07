@@ -1,5 +1,6 @@
 spawn-sh-at-startup "qs -c noctalia-shell"
-spawn-sh-at-startup "niri-float-sticky -title '^(Picture(-| )in(-| )[Pp]icture|Locked up silly corner)$'"
+spawn-sh-at-startup "~/.config/niri/scripts/float-sticky-daemon"
+spawn-sh-at-startup "qs -c noctalia-shell ipc call idleInhibitor enable" // Keep Awake
 
 spawn-sh-at-startup "easyeffects --gapplication-service"
 spawn-sh-at-startup "warp-cli connect"

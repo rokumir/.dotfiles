@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if ! command -v niri-float-sticky >/dev/null 2>&1; then
+	exit 1
+fi
+
+niri-float-sticky \
+	-title '^(Picture(-| )in(-| )[Pp]icture)$' \
+	-title 'Locked up silly corner'
