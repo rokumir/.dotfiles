@@ -14,8 +14,8 @@ function update.system
     end
 
     if type -q bob
-        bob update nightly
-        bob update stable
+        bob update -a
+        or with-gh-token bob update -a
     end
 
     if type -q bun

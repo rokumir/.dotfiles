@@ -13,3 +13,16 @@ set -gx RH_VAULT \
     ~/Documents/works \
     ~/Documents/projects \
     ~/Downloads/throwaways
+
+## ---------------------------------------
+# Paths
+fish_add_path ~/.local/bin
+fish_add_path ~/.scripts
+fish_add_path ~/.local/scripts
+fish_add_path ~/.bun/bin
+fish_add_path ~/.cache/.bun/bin
+fish_add_path ~/.cargo/bin
+fish_add_path ~/.deno/bin
+fish_add_path ~/go/bin
+fish_add_path $XDG_DATA_HOME/bob/nvim-bin
+fish_add_path $XDG_DATA_HOME/fnm
