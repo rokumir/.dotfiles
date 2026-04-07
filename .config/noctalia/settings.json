@@ -41,7 +41,7 @@
         "visualizerType": "linear",
         "volumeFeedback": false,
         "volumeFeedbackSoundFile": "",
-        "volumeOverdrive": true,
+        "volumeOverdrive": false,
         "volumeStep": 5
     },
     "bar": {
@@ -178,6 +178,13 @@
                     "id": "NotificationHistory",
                     "showUnreadBadge": true,
                     "unreadBadgeColor": "primary"
+                },
+                {
+                    "defaultSettings": {
+                        "hideBackground": false,
+                        "minimumThreshold": 10
+                    },
+                    "id": "plugin:catwalk"
                 }
             ]
         }
@@ -249,14 +256,14 @@
             "left": [
                 {
                     "enableOnStateLogic": true,
-                    "generalTooltipText": "Toggle Cloudflare Warp CLI",
+                    "generalTooltipText": "Toggle Cloudflare Warp",
                     "icon": "brand-cloudflare",
                     "id": "CustomButton",
-                    "onClicked": "~/.scripts/toggle-warp",
+                    "onClicked": "toggle-warp",
                     "onMiddleClicked": "",
                     "onRightClicked": "",
                     "showExecTooltip": true,
-                    "stateChecksJson": "[{\"command\":\"warp-cli status | rg -Sw connected\",\"icon\":\"\"}]"
+                    "stateChecksJson": "[{\"command\":\"warp-cli status | rg -S connected &>/dev/null\",\"icon\":\"\"}]"
                 },
                 {
                     "id": "Network"
@@ -319,9 +326,9 @@
                     {
                         "id": "Weather",
                         "roundedCorners": true,
-                        "scale": 1.1665142693125636,
+                        "scale": 1.3399150390752421,
                         "showBackground": true,
-                        "x": 40,
+                        "x": 280,
                         "y": 40
                     },
                     {
@@ -338,17 +345,17 @@
                         "y": 960
                     },
                     {
-                        "clockColor": "error",
-                        "clockStyle": "binary",
-                        "customFont": "",
-                        "format": "HH:mm\\nd MMMM yyyy",
+                        "clockColor": "secondary",
+                        "clockStyle": "minimal",
+                        "customFont": "Playwrite GB J",
+                        "format": "HH:MM\\nddd, d MMM",
                         "id": "Clock",
                         "roundedCorners": true,
-                        "scale": 1.2061879850952044,
+                        "scale": 1.9145841033257212,
                         "showBackground": true,
                         "useCustomFont": true,
                         "x": 40,
-                        "y": 160
+                        "y": 40
                     },
                     {
                         "diskPath": "/",
@@ -378,10 +385,10 @@
                             "minimumThreshold": 10
                         },
                         "id": "plugin:catwalk",
-                        "scale": 0.57,
+                        "scale": 0.5,
                         "showBackground": true,
-                        "x": 40,
-                        "y": 360
+                        "x": 1680,
+                        "y": 960
                     }
                 ]
             }
@@ -427,7 +434,7 @@
         "animationDisabled": false,
         "animationSpeed": 1.6,
         "autoStartAuth": false,
-        "avatarImage": "/home/lopt/Pictures/.face.png",
+        "avatarImage": "/home/lopt/Pictures/.face",
         "boxRadiusRatio": 1,
         "clockFormat": "hh\\nmm",
         "clockStyle": "digital",
@@ -545,12 +552,12 @@
     },
     "nightLight": {
         "autoSchedule": true,
-        "dayTemp": "5273",
+        "dayTemp": "4938",
         "enabled": false,
         "forced": false,
         "manualSunrise": "06:30",
         "manualSunset": "18:30",
-        "nightTemp": "4773"
+        "nightTemp": "4438"
     },
     "noctaliaPerformance": {
         "disableDesktopWidgets": true,

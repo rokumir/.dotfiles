@@ -1,6 +1,6 @@
 # vim:ft=zathurarc
 
-set default-bg "#000000b3"
+set default-bg "rgba(0,0,0,.8)"
 set default-fg "#F7F7F6"
 
 set statusbar-fg "#B0B0B0"
@@ -32,7 +32,7 @@ set notification-error-fg   "{{colors.error.default.hex}}"
 set notification-warning-bg "{{colors.primary_fixed.default.rgba | set_alpha 0.8}}"
 set notification-warning-fg "{{colors.error_container.default.hex}}"
 
-set index-bg                "rgba(0,0,0,0)"
+set index-bg                "rgba(0,0,0,.8)"
 set index-fg                "{{colors.on_surface.default.hex}}"
 set index-active-bg         "{{colors.primary.default.hex}}"
 set index-active-fg         "{{colors.on_primary.default.hex}}"
