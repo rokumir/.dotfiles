@@ -8,12 +8,12 @@ window-decoration               = none
 font-family                     = Maple Mono NF CN
 font-family                     = Noto Color Emoji
 font-family                     = Segoe UI Emoji
-font-size                       = 10.5
+font-size                       = 10
 font-thicken                    = true
 font-feature                    = +calt, +dlig, +clig, +liga, +ss01, +ss02, +ss03, +ss04, +ss05, +ss06, +ss09, +ss10, +ss11, +ss12, +cv03, +cv09, +cv10, +cv42, +cv43, +zero, +onum
 
 # --- Font Rendering & Spacing ---
-adjust-cell-height              = 9
+adjust-cell-height              = 4
 adjust-underline-position       = 6
 # adjust-underline-thickness    = 2
 grapheme-width-method           = unicode
@@ -35,6 +35,7 @@ auto-update                     = check
 progress-style                  = true
 desktop-notifications           = true
 notify-on-command-finish        = unfocused
-notify-on-command-finish-action = bell, notify
+# NOTE: consider fish shell done
+notify-on-command-finish-action = notify
 
 config-file                     = ?./keymaps.ghostty
