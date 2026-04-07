@@ -2,6 +2,21 @@
 ---@type snacks.dashboard.Item[]
 local sep_line_text = { { ('─'):rep(20), hl = 'WinSeparator', align = 'center' } }
 
+local header = {
+	'                                                                       ',
+	'                                                                       ',
+	'                                                                     ',
+	'       ████ ██████           █████      ██                     ',
+	'      ███████████             █████                             ',
+	'      █████████ ███████████████████ ███   ███████████   ',
+	'     █████████  ███    █████████████ █████ ██████████████   ',
+	'    █████████ ██████████ █████████ █████ █████ ████ █████   ',
+	'  ███████████ ███    ███ █████████ █████ █████ ████ █████  ',
+	' ██████  █████████████████████ ████ █████ █████ ████ ██████ ',
+	'                                                                       ',
+	'                                                                       ',
+}
+
 return {
 	'folke/snacks.nvim',
 	keys = {
@@ -21,7 +36,7 @@ return {
 				},
 			},
 			sections = {
-				{ pane = 2, section = 'terminal', cmd = 'tarts', align = 'center', height = 18, padding = 1 },
+				{ text = { { table.concat(header, '\n'), hl = 'Tag' } } }, -- Header with highlight color
 				{ section = 'keys' },
 				{ text = sep_line_text },
 				{ section = 'projects', icon = ' ', title = 'Projects', indent = 4, limit = 5, session = true },

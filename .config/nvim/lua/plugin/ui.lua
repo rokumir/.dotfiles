@@ -161,14 +161,17 @@ return {
 					cond = function() return vim.bo.ff ~= 'unix' end,
 				},
 			}
-			for _, mod in ipairs(s.lualine_y) do
-				mod.separator = { left = '', right = ' ' }
-			end
-
 			s.lualine_z = {
 				{ 'location', separator = ' ', padding = { left = 1, right = 0 } },
 				{ 'progress', padding = { left = 0, right = 1 } },
 			}
+
+			for _, mod in ipairs(s.lualine_b) do
+				mod.separator = { right = '', left = ' ' }
+			end
+			for _, mod in ipairs(s.lualine_y) do
+				mod.separator = { right = ' ', left = '' }
+			end
 
 			return opts
 		end,

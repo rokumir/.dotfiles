@@ -26,9 +26,29 @@ return {
 		opts = {
 			ui = { border = 'rounded' },
 			ensure_installed = {
+				'lua-language-server',
 				'stylua',
+				'vtsls',
 				'biome',
-				'tsgo',
+				'prettier',
+				'js-debug-adapter',
+				'html-lsp',
+				'css-lsp',
+				'css-variables-language-server',
+				'some-sass-language-server',
+				'tailwindcss-language-server',
+				'emmet-language-server',
+				'mdx-analyzer',
+				'ruff',
+				'bash-language-server',
+				'shellcheck',
+				'shfmt',
+				'tree-sitter-cli',
+				'json-lsp',
+				'taplo', -- TOML
+				'yaml-language-server',
+				'qmlls', -- Qt Modeling Language
+				'tsgo', -- Typescript beta
 			},
 		},
 	},

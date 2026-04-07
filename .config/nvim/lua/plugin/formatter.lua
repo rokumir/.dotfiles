@@ -23,6 +23,8 @@ return {
 				dataviewjs = { 'prettier' },
 				kdl = { 'kdlfmt' },
 				jsonc = { 'deno_fmt' },
+				qml = { 'qmlformat' },
+				python = { 'ruff' },
 			},
 		},
 	},
