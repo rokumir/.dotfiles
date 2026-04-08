@@ -1,10 +1,9 @@
 spawn-sh-at-startup "qs -c noctalia-shell"
-spawn-sh-at-startup "~/.config/niri/scripts/float-sticky-daemon"
-spawn-sh-at-startup "qs -c noctalia-shell ipc call idleInhibitor enable" // Keep Awake
+spawn-sh-at-startup "sleep 3; qs -c noctalia-shell ipc call idleInhibitor enable" // Keep Awake
+spawn-sh-at-startup "sleep 3; ~/.config/niri/scripts/float-sticky-daemon"
 
-spawn-sh-at-startup "easyeffects --gapplication-service"
-spawn-sh-at-startup "warp-cli connect"
-spawn-sh-at-startup "sleep 3; amixer -c2 set Master 100% unmute"
+spawn-sh-at-startup "sleep 3; easyeffects --gapplication-service"
+spawn-sh-at-startup "sleep 2; warp-cli connect"
 
 // Default Apps
 spawn-sh-at-startup "gsettings set org.gnome.desktop.default-applications.terminal exec ghostty"

@@ -1,4 +1,29 @@
-// Global rules
+// -------------------------------------------------------------------
+// LAYER RULES
+layer-rule {
+    match namespace="^window-switcher-parallel$"
+    match namespace="^wallpaper-selector$"
+    match namespace="^app-launcher-parallel$"
+    match namespace="^smarthome$"
+    match namespace="^topbar$"
+    background-effect { blur true; xray false; }
+}
+
+// Noctalia
+layer-rule {
+    match namespace="^noctalia-wallpaper*"
+    match namespace="^linux-wallpaperengine$"
+    place-within-backdrop true
+}
+/* Noctalia: blur everywhere without xray for a better look */
+layer-rule {
+  match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
+  background-effect { xray false; }
+}
+
+
+// -------------------------------------------------------------------
+// WINDOW RULES
 window-rule {
     geometry-corner-radius 8
     clip-to-geometry true
@@ -7,28 +32,7 @@ window-rule {
     min-width 355
     min-height 200
 
-    background-effect {
-        blur true
-        xray true
-    }
-}
-
-layer-rule {
-    match namespace="^window-switcher-parallel$"
-    match namespace="^wallpaper-selector$"
-    match namespace="^app-launcher-parallel$"
-    match namespace="^smarthome$"
-    match namespace="^topbar$"
-
-    background-effect {
-        blur true
-        xray false
-    }
-}
-layer-rule {
-    match namespace="^noctalia-wallpaper*"
-    match namespace="^linux-wallpaperengine$"
-    place-within-backdrop true
+    background-effect { blur true; xray false; }
 }
 
 window-rule {
@@ -152,13 +156,26 @@ window-rule {
 
 // Steam
 window-rule {
-    match app-id="steam" title="^Steam.*"
+    match app-id="steam" title="^(Steam).*"
     default-column-width { proportion 0.75; }
 }
-// Steam Friendlist
+// Steam Friend List
 window-rule {
-    match app-id="steam" title="^Friends List$"
+    match app-id="steam" title="^(Friends List)$"
     default-column-width { proportion 0.1; }
+}
+// Steam Notification Toasts
+window-rule {
+    match app-id="steam" title="^(notificationtoasts).*"
+    open-floating true
+    open-focused false
+    default-floating-position x=5 y=5 relative-to="bottom-right"
+}
+// Steam update window
+window-rule {
+    match title="^()$"
+    open-floating true
+    open-focused false
 }
 
 // Screenshot
