@@ -24,7 +24,7 @@ return {
 				kdl = { 'kdlfmt' },
 				jsonc = { 'deno_fmt' },
 				qml = { 'qmlformat' },
-				python = { 'ruff' },
+				python = { 'ruff format ' },
 			},
 		},
 	},

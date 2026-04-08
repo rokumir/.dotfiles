@@ -25,7 +25,7 @@ map { --- WHICH-KEY GROUPS
 	{ '<leader>gh', group = 'hunks' },
 	{ '<leader>s', group = 'search' },
 	{ '<leader>u', group = 'ui' },
-	{ '<leader>t', group = 'tab' },
+	{ '<leader>T', group = 'tab' },
 	{ '<leader>f', group = 'file', icon = '' },
 	{ '<leader>x', group = 'diagnostics/quickfix' },
 	{ '<leader>y', group = 'yanky', icon = '' },
@@ -126,8 +126,8 @@ map { --- WORKSPACE (WINDOWS, TABS, BUFFERS)
 	{ '<c-a-right>', ':vertical resize +1 <cr>', desc = 'Increase Window Width' },
 
 	-- Buffer history
-	{ '<leader>tX', function() Nihil.file.buf_history:clear() end, desc = 'Clear Buffer History' },
-	{ '<leader>ts', function() Nihil.file.buf_history:restore() end, desc = 'Restore Buffer History' },
+	{ '<leader>bX', function() Nihil.file.buf_history:clear() end, desc = 'Clear Buffer History' },
+	{ '<leader>br', function() Nihil.file.buf_history:restore() end, desc = 'Restore Buffer History' },
 	{ '<c-s-t>', function() Nihil.file.buf_history:restore() end, desc = 'Restore Buffer History' },
 	{ ';S', function() Nihil.file.buf_history:picker() end, desc = 'Buffer History Search' },
 	{ '<leader>`', ':b# <cr>', desc = 'Alternate buffer' },

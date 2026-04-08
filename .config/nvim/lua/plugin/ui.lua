@@ -215,15 +215,15 @@ return {
 				},
 
 				{ ';T', snacks_tabpages, desc = 'Tabpages' },
-				{ '<leader>tt', snacks_tabpages, desc = 'Picker' },
-				{ '<leader>td', '<cmd>tabclose<cr>', desc = 'Close' },
+				{ '<leader>Tt', snacks_tabpages, desc = 'Picker' },
+				{ '<leader>Td', '<cmd>tabclose<cr>', desc = 'Close' },
 				{
-					'<leader>tr',
+					'<leader>Tr',
 					function() Snacks.input.input({ icon = '󰓪 ', prompt = 'Rename tab' }, vim.cmd.BufferLineTabRename) end,
 					desc = 'Rename',
 				},
 				{
-					'<leader>tN',
+					'<leader>Tn',
 					function()
 						Snacks.input.input({ icon = '󰓪 ', prompt = 'New tab' }, function(new_name)
 							vim.cmd.tabnew()
