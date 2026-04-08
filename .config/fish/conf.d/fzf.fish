@@ -38,7 +38,7 @@ function fzf.find -d 'Search Files'
         if [ -d "$token" ] && string match -q -- '*/' $token
             $fd_cmd --base-directory $token \
                 | $fzf_cmd --border-label " $token " \
-                | awk "{print $token\$1}"
+                | awk "{print \"$token\$1\"}"
         else
             $fd_cmd \
                 | $fzf_cmd --query "$token" --border-label " $(pwd | sed "s|^$HOME|~|")/ "

@@ -17,9 +17,4 @@ function update.system
         bob update -a
         or with-gh-token bob update -a
     end
-
-    if type -q bun
-        bun upgrade
-        bun update -g --latest
-    end
 end
