@@ -41,7 +41,7 @@
         "visualizerType": "linear",
         "volumeFeedback": false,
         "volumeFeedbackSoundFile": "",
-        "volumeOverdrive": false,
+        "volumeOverdrive": true,
         "volumeStep": 5
     },
     "bar": {
@@ -156,13 +156,6 @@
                     "id": "Tray",
                     "pinned": [
                     ]
-                },
-                {
-                    "displayMode": "onhover",
-                    "iconColor": "none",
-                    "id": "Microphone",
-                    "middleClickCommand": "pwvucontrol || pavucontrol",
-                    "textColor": "none"
                 },
                 {
                     "displayMode": "onhover",
@@ -346,12 +339,12 @@
                     },
                     {
                         "clockColor": "secondary",
-                        "clockStyle": "minimal",
+                        "clockStyle": "binary",
                         "customFont": "Playwrite GB J",
                         "format": "HH:MM\\nddd, d MMM",
                         "id": "Clock",
                         "roundedCorners": true,
-                        "scale": 1.9145841033257212,
+                        "scale": 1.4655935096113564,
                         "showBackground": true,
                         "useCustomFont": true,
                         "x": 40,
