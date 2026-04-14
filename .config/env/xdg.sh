@@ -9,4 +9,6 @@ export XDG_DATA_HOME=$HOME/.local/share
 export XDG_STATE_HOME=$HOME/.local/state
 
 ### MISC
-export TERMINAL=$(gsettings get org.gnome.desktop.default-applications.terminal exec | tr -d "'")
+if command -v gsettings >/dev/null; then
+	export TERMINAL=$(gsettings get org.gnome.desktop.default-applications.terminal exec | tr -d "'")
+fi

@@ -120,6 +120,8 @@ return {
 			InclineNormal = { bg = 'none', fg = mix(cp.comment, cp.white, 0.8) },
 			InclineNormalNC = { link = 'InclineNormal' },
 			MiniIconsAzure = { fg = cp.blueLight },
+			TinyCmdlineBorder = { fg = cp.greenLight },
+			TinyCmdlineNormal = { link = 'Normal' },
 			--#endregion
 
 			--#region lsp

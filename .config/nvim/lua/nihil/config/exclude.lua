@@ -53,6 +53,8 @@ M.filetypes_map = {
 	['cmp_docs'] = true,
 	['cmp_menu'] = true,
 	prompt = true,
+	pager = true,
+	msg = true,
 }
 M.filetypes = vim.tbl_keys(M.filetypes_map) ---@type string[]
 

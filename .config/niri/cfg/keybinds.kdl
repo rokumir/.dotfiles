@@ -9,6 +9,7 @@ binds {
     Mod+ALT+L     repeat=false cooldown-ms=250 hotkey-overlay-title="Lock Screen"  { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
     Mod+Delete    repeat=false cooldown-ms=250 hotkey-overlay-title="Session Menu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
     Mod+F1        repeat=false cooldown-ms=250 hotkey-overlay-title="Keybind Cheatsheet" { spawn-sh "qs -c noctalia-shell ipc call plugin:keybind-cheatsheet toggle"; }
+    Mod+A        repeat=false cooldown-ms=250 hotkey-overlay-title="Control Center" { spawn-sh "qs -c noctalia-shell ipc call controlCenter toggle"; }
 
     // Screenshots
     Mod+Shift+S   repeat=false cooldown-ms=250 hotkey-overlay-title="Screenshot" { spawn "~/.config/niri/scripts/screenshot"; }
@@ -76,7 +77,7 @@ binds {
     Mod+CTRL+Home    { move-column-to-first; }
     Mod+CTRL+End     { move-column-to-last; }
 
-    Mod+Ctrl+P    cooldown-ms=250 hotkey-overlay-title="Toggle Pin" { spawn-sh "niri-float-sticky -ipc toggle_sticky"; }
+    Mod+Ctrl+P    cooldown-ms=250 hotkey-overlay-title="Toggle Pin" { spawn-sh "nsticky sticky toggle-active; notify-send -a 'NSTICKY' 'Toggled Window Sticky'"; }
 
     // -----------------------------------------------
     // #"Workspaces"

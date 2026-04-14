@@ -1,12 +1,6 @@
 local util = require 'lspconfig.util'
 local DOC_WIN_SIZE = vim.g.lsp_doc_max_size or 50
 
-local function default_opts(o)
-	local opts = { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE }
-	if not o then return opts end
-	return vim.tbl_deep_extend('force', opts, o)
-end
-
 local function twoslash_queries_attach_fn(...) return require('twoslash-queries').attach(...) end
 
 return {
@@ -47,10 +41,17 @@ return {
 					{ 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Implementation' },
 					{ 'gy', function() Snacks.picker.lsp_type_definitions() end, desc = 'T[y]pe Definition' },
 
-					{ 'K', function() vim.lsp.buf.hover(default_opts()) end, desc = 'Hover', mode = { 'n', 'v' } },
+					{
+						'K',
+						function() vim.lsp.buf.hover { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE, border = 'rounded' } end,
+						desc = 'Hover',
+						mode = { 'n', 'v' },
+					},
 					{
 						'<c-a-k>',
-						function() return vim.lsp.buf.signature_help(default_opts()) end,
+						function()
+							return vim.lsp.buf.signature_help { max_width = DOC_WIN_SIZE, max_height = DOC_WIN_SIZE, border = 'rounded' }
+						end,
 						mode = { 'i', 'n' },
 						desc = 'Signature Help',
 					},

@@ -224,6 +224,7 @@ return {
 				order = { ' ', '/', 'x', '-' },
 			}
 
+			---@diagnostic disable-next-line: missing-fields
 			opts.ui = {
 				enable = false,
 				enabled = false,

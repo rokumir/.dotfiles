@@ -1,11 +1,10 @@
--- NOTE: Doesn't work 🤷‍♂️
 return {
 	'folke/snacks.nvim',
 	---@type snacks.Config
 	opts = {
 		image = {
-			enabled = true,
-			force = true, -- try displaying the image, even if the terminal does not support it
+			enabled = false,
+			force = false, -- try displaying the image, even if the terminal does not support it
 
 			preferred_protocol = 'wezterm', -- or "kitty"
 			fallback_protocol = 'chafa',

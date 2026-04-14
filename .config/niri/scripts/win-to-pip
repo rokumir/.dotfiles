@@ -12,3 +12,8 @@ niri msg action move-window-to-floating
 niri msg action set-column-width $width
 niri msg action set-window-height $height
 niri msg action move-floating-window --x $loc_x --y $loc_y # bottom left
+
+active_win="$(niri msg -j focused-window | jq '.id')"
+if [[ -n "$active_win" ]]; then
+	nsticky sticky add "$active_win"
+fi

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+device="Logitech G903"
+
+if (
+	! command -v ratbagctl ||
+		! ratbagctl list | rg -wq "$device"
+) >/dev/null 2>&1; then
+	exit 1
+fi
+
+ratbagctl "$device" profile set 1

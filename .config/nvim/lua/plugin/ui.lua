@@ -1,10 +1,7 @@
-local function hl_color(groups, prop) return require('snacks.util').color(groups, prop) end
-local snacks_tabpages = require('nihil.plugin.bufferline').picker.tabpages
-
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
-	{ ---@module 'noice' Better general UI
+	{ -- Better general UI
 		'folke/noice.nvim',
 		keys = function() return {} end,
 		---@module 'noice'
@@ -42,6 +39,30 @@ return {
 		},
 	},
 
+	{ -- FLoating cmdline
+		'rachartier/tiny-cmdline.nvim',
+		init = function() vim.o.cmdheight = 0 end,
+		opts = {
+			-- Cmdline window width
+			width = {
+				value = '45%', -- "N%" = fraction of editor columns, integer = absolute columns
+				min = 40, -- minimum width in columns
+				max = 80, -- maximum width in columns
+			},
+			-- Window position ("N%" = fraction of available space, integer = absolute columns/rows)
+			position = { x = '50%', y = '15%' },
+			border = 'rounded',
+			-- Horizontal offset of the completion menu anchor from the window's left inner edge
+			-- Used to align blink.cmp / nvim-cmp menus with the cmdline window
+			menu_col_offset = 2,
+			-- Cmdline types rendered at the bottom of the screen instead of centered
+			-- "/" and "?" (search) are kept native by default
+			native_types = {},
+			-- Optional callback invoked after every reposition
+			on_reposition = function() require('tiny-cmdline').adapters.blink() end,
+		},
+	},
+
 	{ -- Statusline
 		'lualine.nvim',
 		optional = true,
@@ -54,7 +75,7 @@ return {
 			local Icons = LazyVim.config.icons
 
 			local function color_fn(group)
-				return function() return { fg = hl_color(group, 'fg') } end
+				return function() return { fg = require('snacks.util').color(group, 'fg') } end
 			end
 
 			local o = opts.options
@@ -183,6 +204,7 @@ return {
 			local is_tmux = vim.env.TERM_PROGRAM == 'tmux'
 			local next_tab_key = is_tmux and 'tn' or '<c-tab>'
 			local prev_tab_key = is_tmux and 'tp' or '<c-s-tab>'
+			local snacks_tabpages = require('nihil.plugin.bufferline').picker.tabpages
 
 			return {
 				{ '<tab>', '<cmd>BufferLineCycleNext <cr>', desc = 'Next Buffer', mode = { 'n', 't' } },

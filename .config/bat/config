@@ -1,16 +1,11 @@
 # vim:ft=conf
-
 # Alias for '--decorations always --color always'
 # --force-colorization
---decorations auto --color auto
-
---pager 'less -RFK'
-
-# Set the theme to 'TwoDark'
+--decorations auto
+--color never
+--pager "lezz"
 --theme 'Catppuccin Mocha'
-
 # Show line numbers, Git modifications and file header (but no grid)
 --style plain # default: numbers,changes,header,grid
-
 # Use italic text on the terminal (not supported on all terminals)
 --italic-text always

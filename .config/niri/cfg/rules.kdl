@@ -50,6 +50,7 @@ window-rule {
     match app-id="^(Brave-browser(-beta|-dev|-unstable)?)$"
     match app-id="^([Tt]horium-browser|[Cc]achy-browser)$"
     match app-id="^(zen-alpha|zen)$"
+    match app-id="^([Hh]elium)$"
     exclude title="Picture(-| )in(-| )[Pp]icture"
 
     open-maximized-to-edges true
@@ -149,8 +150,6 @@ window-rule {
     match title=".*(Spotify).*"
     match app-id="spotify"
     match app-id="YouTube Music for Desktop"
-
-    open-on-workspace "Misc"
     default-column-width { proportion 0.8; }
 }
 
@@ -163,6 +162,13 @@ window-rule {
 window-rule {
     match app-id="steam" title="^(Friends List)$"
     default-column-width { proportion 0.1; }
+}
+// Steam Settings
+window-rule {
+    match app-id="steam" title="^(Steam Settings)$"
+    open-floating true
+    default-column-width { proportion 0.5; }
+    default-window-height { proportion 0.6; }
 }
 // Steam Notification Toasts
 window-rule {

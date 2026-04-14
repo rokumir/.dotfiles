@@ -1,8 +1,10 @@
-# --- Appearance & Theme ---
+# --- Appearance ---
 theme                           = noctalia
 background                      = #000
-background-opacity              = 0.75
+background-opacity              = 0.7
 window-decoration               = none
+
+gtk-quick-terminal-layer        = overlay
 
 # --- Typography ---
 font-family                     = Maple Mono
@@ -14,7 +16,6 @@ font-feature                    = +calt, +dlig, +clig, +liga, +zero, +onum
 font-feature                    = -ss01, -ss02, +ss03, -ss04, +ss05, +ss06, +ss09, +ss10, +ss11, +ss12
 font-feature                    = +cv03, +cv05, +cv09, +cv10, +cv31, -cv33, -cv34, -cv35, -cv36, -cv39, +cv42, +cv43, -cv63
 
-# --- Font Rendering & Spacing ____ ---
 adjust-cell-height              = 6
 adjust-underline-position       = 6
 grapheme-width-method           = unicode
@@ -26,17 +27,15 @@ clipboard-trim-trailing-spaces  = true
 shell-integration-features      = sudo, cursor, ssh-env, ssh-terminfo, path
 quick-terminal-position         = center
 
-# --- Visual Effects (Shaders) ---
+# --- Visual Effects ---
 custom-shader-animation         = always
 custom-shader                   = ?./shaders/cursor-smear.glsl
 
-# --- System & Updates ---
+# --- System ---
 auto-update                     = check
-
 progress-style                  = true
 desktop-notifications           = true
-notify-on-command-finish        = unfocused
-# NOTE: consider fish shell done
-notify-on-command-finish-action = notify
+# notify-on-command-finish        = never
+# notify-on-command-finish-action = 
 
 config-file                     = ?./keymaps.ghostty

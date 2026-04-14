@@ -30,9 +30,6 @@ fish_add_path -g ~/go/bin
 
 # ----------------------------------
 # Aliases & functions
-alias nvi 'neovide.exe'
-alias btop-win 'btop.exe'
-
 function wezterm-config
     set -l win_path (win-home)
     set -gx WEZTERM_CONFIG_DIR $win_path/.config/wezterm
@@ -40,18 +37,16 @@ function wezterm-config
     printf $WEZTERM_CONFIG
 end
 
-if type -q pwsh.exe
-    alias pwsh_win 'pwsh.exe -wd "~"'
-    alias pwshw pwsh_win
-    alias pwshw_clean 'pwsh_win -NoProfile'
+alias pwsh_win 'pwsh.exe -wd "~"'
+alias pwshw pwsh_win
+alias pwshw_clean 'pwsh_win -NoProfile'
 
-    function scoop.update
-        pwshw_clean -c "scoop update | scoop list | foreach { scoop update \$_.Name }"
-    end
-    function scoop.clean
-        pwshw_clean -c "scoop cleanup *; scoop cache rm *"
-    end
-    function cargo.windows.update
-        pwshw_clean -c "rustup update; cargo install-update -a; cargo cache -a"
-    end
+function scoop.update
+    pwshw_clean -c "scoop update | scoop list | foreach { scoop update \$_.Name }"
+end
+function scoop.clean
+    pwshw_clean -c "scoop cleanup *; scoop cache rm *"
+end
+function cargo.windows.update
+    pwshw_clean -c "rustup update; cargo install-update -a; cargo cache -a"
 end

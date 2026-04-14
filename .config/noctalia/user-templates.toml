@@ -11,7 +11,7 @@ input_path="~/.config/noctalia/templates/niri.kdl"
 output_path="~/.config/niri/cfg/theme.kdl"
 
 [templates.vesktop]
-input_path="~/.config/noctalia/templates/vesktop.css"
+input_path="~/.config/noctalia/templates/discord.css"
 output_path="~/.config/vesktop/themes/Nihil.theme.css"
 
 [templates.zen_userChrome]

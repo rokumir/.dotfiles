@@ -1,6 +1,6 @@
 spawn-sh-at-startup "qs -c noctalia-shell"
 spawn-sh-at-startup "sleep 3; qs -c noctalia-shell ipc call idleInhibitor enable" // Keep Awake
-spawn-sh-at-startup "sleep 3; ~/.config/niri/scripts/float-sticky-daemon"
+spawn-sh-at-startup "sleep 3; nsticky"
 
 spawn-sh-at-startup "sleep 3; easyeffects --gapplication-service"
 spawn-sh-at-startup "sleep 2; warp-cli connect"

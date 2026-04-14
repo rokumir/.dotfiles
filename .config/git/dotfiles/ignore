@@ -15,5 +15,6 @@
 !.config/ghostty
 !.config/niri
 !.config/noctalia
+!.config/mini.nvim
 
 !.scripts

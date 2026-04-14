@@ -24,7 +24,7 @@
             "com.mitchellh.ghostty",
             "zen"
         ],
-        "position": "center",
+        "position": "bottom_center",
         "screenshotAnnotationTool": "",
         "showCategories": true,
         "showIconBackground": true,
@@ -99,13 +99,11 @@
             ],
             "left": [
                 {
-                    "colorizeDistroLogo": false,
-                    "colorizeSystemIcon": "none",
-                    "customIconPath": "",
-                    "enableColorization": false,
-                    "icon": "noctalia",
-                    "id": "ControlCenter",
-                    "useDistroLogo": false
+                    "defaultSettings": {
+                        "hideBackground": false,
+                        "minimumThreshold": 10
+                    },
+                    "id": "plugin:catwalk"
                 },
                 {
                     "characterCount": 4,
@@ -173,11 +171,13 @@
                     "unreadBadgeColor": "primary"
                 },
                 {
-                    "defaultSettings": {
-                        "hideBackground": false,
-                        "minimumThreshold": 10
-                    },
-                    "id": "plugin:catwalk"
+                    "colorizeDistroLogo": false,
+                    "colorizeSystemIcon": "none",
+                    "customIconPath": "",
+                    "enableColorization": false,
+                    "icon": "noctalia",
+                    "id": "ControlCenter",
+                    "useDistroLogo": false
                 }
             ]
         }
@@ -256,7 +256,7 @@
                     "onMiddleClicked": "",
                     "onRightClicked": "",
                     "showExecTooltip": true,
-                    "stateChecksJson": "[{\"command\":\"warp-cli status | rg -S connected &>/dev/null\",\"icon\":\"\"}]"
+                    "stateChecksJson": "[{\"command\":\"warp-cli status | rg -Swq connected\",\"icon\":\"\"}]"
                 },
                 {
                     "id": "Network"
@@ -719,6 +719,10 @@
             {
                 "enabled": true,
                 "id": "qt"
+            },
+            {
+                "enabled": true,
+                "id": "steam"
             }
         ],
         "enableUserTheming": true

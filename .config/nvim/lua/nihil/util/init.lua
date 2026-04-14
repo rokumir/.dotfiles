@@ -7,6 +7,7 @@ M.keymap = require 'nihil.util.keymap'
 M.markdown = require 'nihil.util.markdown'
 M.path = require 'nihil.util.path'
 M.table = require 'nihil.util.table'
+M.toggles = require 'nihil.util.toggles'
 M.misc = require 'nihil.util.misc'
 
 for k, v in pairs(require 'nihil.util.misc') do

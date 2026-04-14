@@ -376,14 +376,13 @@ return {
 		opts = function(_, opts)
 			local augend = require 'dial.augend'
 
-			table.insert(
-				opts.groups.default,
-				augend.constant.new {
-					elements = { 'on', 'off' },
-					word = true,
-					cyclic = true,
-				}
-			)
+			local new_consts = {
+				{ 'on', 'off' },
+				{ 'yes', 'no' },
+			}
+			for _, const in pairs(new_consts) do
+				table.insert(opts.groups.default, augend.constant.new { elements = const, word = true, cyclic = true })
+			end
 
 			return opts
 		end,

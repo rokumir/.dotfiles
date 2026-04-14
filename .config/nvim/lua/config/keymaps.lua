@@ -276,11 +276,7 @@ if type(LazyVim) ~= 'nil' and type(Snacks) ~= 'nil' then
 			id = 'lualine_statusline',
 			name = 'Lualine Statusline',
 			get = function() return vim.g.nihil_lualine_show ~= false end,
-			set = function(state)
-				require('lualine').hide { place = { 'statusline' }, unhide = state }
-				vim.o.laststatus = state and 3 or 0
-				vim.g.nihil_lualine_show = state
-			end,
+			set = Nihil.toggles.lualine_statusline,
 		})
 		:map '<leader><leader>ul'
 end

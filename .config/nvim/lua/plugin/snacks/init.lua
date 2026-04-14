@@ -24,7 +24,20 @@ return {
 			bigfile = {
 				enabled = true,
 				notify = true, -- show notification when big file detected
-				size = 2 * (1024 * 1024), -- Mb
+				line_length = 58,
+				size = 2 * 1024 * 1024, -- Mb
+				---@param ctx {buf: number, ft:string}
+				setup = function(ctx)
+					_G.nihil = 'foooooooo'
+					if vim.fn.exists ':NoMatchParen' ~= 0 then vim.cmd [[NoMatchParen]] end
+					Snacks.util.wo(0, { foldmethod = 'manual', statuscolumn = '', conceallevel = 0 })
+					vim.b.completion = false
+					vim.b.minianimate_disable = true
+					vim.b.minihipatterns_disable = true
+					vim.schedule(function()
+						if vim.api.nvim_buf_is_valid(ctx.buf) then vim.bo[ctx.buf].syntax = ctx.ft end
+					end)
+				end,
 			},
 
 			indent = {
@@ -51,26 +64,7 @@ return {
 				top_down = false,
 			},
 
-			zen = {
-				-- You can add any `Snacks.toggle` id/key here.
-				-- Toggle state is restored when the window is closed.
-				-- Toggle config options are NOT merged.
-				---@type table<string, boolean>
-				toggles = {
-					dim = true,
-					git_signs = false,
-					mini_diff_signs = false,
-					diagnostics = true,
-					inlay_hints = false,
-				},
-				show = {
-					statusline = false,
-					tabline = true,
-				},
-				win = {
-					backdrop = 25,
-				},
-			},
+			zen = { enabled = false },
 
 			explorer = { replace_netrw = false },
 		},

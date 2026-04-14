@@ -48,7 +48,6 @@ alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl | b
 # Get the error messages from journalctl
 alias jctl="journalctl -p 3 -xb"
 
-
 ## --------------------------------------------------
 ## keymaps
 function fish_user_key_bindings
@@ -88,23 +87,4 @@ function fish_user_key_bindings
     # extenal scripts needed to be sourced, otherwise it won't work as expected
     bind --preset -M insert ctrl-e fzf.find
     bind --preset -M insert ctrl-d fzf.vault
-end
-
-## ---------------------------------------
-## CONFIG ENV
-
-begin
-    set -l config 'source (dirname (status --current-filename))'
-    switch (uname)
-        case Darwin
-            eval "$config/config.darwin.fish"
-        case Linux
-            if set -q WSL_DISTRO_NAME
-                eval "$config/config.wsl.fish"
-            else
-                eval "$config/config.linux.fish"
-            end
-        case '*'
-            eval "$config/config.windows.fish"
-    end
 end

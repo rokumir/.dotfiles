@@ -293,7 +293,8 @@ return {
 		{ ';b', function() Snacks.picker.buffers() end, desc = 'Buffers' },
 		{ ';/', function() Snacks.picker.grep() end, desc = 'Grep' },
 		{ ';:', function() Snacks.picker.command_history() end, desc = 'Command History' },
-		{ ';n', function() Snacks.picker.notifications() end, desc = 'Notification History' },
+		{ ';n', function() Snacks.picker.notifications() end, desc = 'Notification History (LazyVim)' },
+		{ ';N', '<cmd>messages<cr>', desc = 'Notification History' },
 
 		-- Find
 		{ ';f', '', desc = 'find' },

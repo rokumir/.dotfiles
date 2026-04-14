@@ -229,14 +229,4 @@ return {
 			}
 		end,
 	},
-
-	{
-		'lazydev.nvim',
-		optional = true,
-		opts = {
-			library = {
-				{ path = '/usr/share/swayimg/swayimg.lua', words = { 'swayimg' } },
-			},
-		},
-	},
 }
