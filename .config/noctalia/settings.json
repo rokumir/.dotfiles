@@ -146,10 +146,12 @@
             "right": [
                 {
                     "blacklist": [
+                        "zero-trust-client",
+                        "Easy Effects"
                     ],
-                    "chevronColor": "none",
-                    "colorizeIcons": true,
-                    "drawerEnabled": true,
+                    "chevronColor": "primary",
+                    "colorizeIcons": false,
+                    "drawerEnabled": false,
                     "hidePassive": false,
                     "id": "Tray",
                     "pinned": [
