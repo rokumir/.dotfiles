@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-
-NVIM_APPNAME=mini.nvim nvim -R -c 'set nomod' - "$@"
+# HACK: It's easier for `bat` to call a script than code
+# inside of `bat`'s `--pager` option
+NVIM_APPNAME=pager.nvim nvim - "$@"

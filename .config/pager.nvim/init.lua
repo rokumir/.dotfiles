@@ -1,0 +1,5 @@
+require("core")
+require("options")
+require("appearance")
+require("keymaps")
+require("autocmds.after")

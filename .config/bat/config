@@ -2,7 +2,7 @@
 # Alias for '--decorations always --color always'
 # --force-colorization
 --decorations auto
---color never
+--color auto
 --pager "lezz"
 --theme 'Catppuccin Mocha'
 # Show line numbers, Git modifications and file header (but no grid)
