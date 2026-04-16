@@ -15,6 +15,7 @@
 !.config/ghostty
 !.config/niri
 !.config/noctalia
+!.config/satty
 !.config/pager.nvim
 
 !.scripts
