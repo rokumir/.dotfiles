@@ -1,22 +1,3 @@
 {
-  "plugins": {
-    "baleia.nvim": {
-      "rev": "880e97c02edf3148ba2bdc6305ac03eb3c3711e0",
-      "src": "https://github.com/m00qek/baleia.nvim",
-      "version": ">=0.0.0"
-    },
-    "catppuccin": {
-      "rev": "426dbebe06b5c69fd846ceb17b42e12f890aedf1",
-      "src": "https://github.com/catppuccin/nvim"
-    },
-    "nvim-treesitter": {
-      "rev": "42fc28ba918343ebfd5565147a42a26580579482",
-      "src": "https://github.com/nvim-treesitter/nvim-treesitter",
-      "version": ">=0.0.0"
-    },
-    "which-key.nvim": {
-      "rev": "3aab2147e74890957785941f0c1ad87d0a44c15a",
-      "src": "https://github.com/folke/which-key.nvim"
-    }
-  }
+  "plugins": []
 }

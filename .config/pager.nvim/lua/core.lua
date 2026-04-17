@@ -26,14 +26,3 @@ require("nvim-treesitter.configs").setup({
 		additional_vim_regex_highlighting = false,
 	},
 })
-
----------------------------------------------
--- ANSI Escape Parsing
-vim.pack.add({ { src = "https://github.com/m00qek/baleia.nvim", version = vim.version.range("*") } })
-vim.api.nvim_create_autocmd("StdinReadPost", {
-	pattern = "*",
-	callback = function(ev)
-		local baleia = require("baleia").setup({ line_starts_at = 1 })
-		baleia.once(ev.buf)
-	end,
-})

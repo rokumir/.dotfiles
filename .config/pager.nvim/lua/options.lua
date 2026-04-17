@@ -3,7 +3,12 @@ vim.g.maplocalleader = " "
 
 --- Behavior
 vim.opt.backup = false
-vim.opt.backupskip = { "/tmp/*", "/private/tmp/*" }
+vim.opt.writebackup = false
+vim.opt.swapfile = false
+vim.opt.undofile = false
+vim.opt.syntax = "on" -- Standard syntax is often more stable for huge files than TS
+vim.opt.lazyredraw = true -- Don't redraw screen while executing macros/scripts
+vim.opt.shada = ""
 vim.opt.backspace = { "start", "eol", "indent" }
 vim.opt.clipboard = ""
 vim.opt.encoding = "utf-8"
@@ -12,6 +17,7 @@ vim.opt.mouse = "n"
 vim.opt.mousefocus = true
 vim.opt.smoothscroll = true
 vim.opt.timeoutlen = 500
+vim.opt.listchars = { space = " " }
 vim.opt.fillchars = {
 	foldopen = "",
 	foldclose = "",
@@ -47,13 +53,17 @@ vim.opt.cursorline = true
 vim.opt.cursorlineopt = "number"
 vim.opt.guicursor:append({ "n-i-r:blinkwait700-blinkon500-blinkoff500" })
 vim.opt.inccommand = "split"
+vim.opt.foldcolumn = "0"
+vim.opt.cmdheight = 0
 vim.opt.laststatus = 0 -- (0 = never show)
 vim.opt.statusline = " "
+vim.opt.statuscolumn = ""
+vim.opt.signcolumn = "no"
 vim.opt.pumblend = 0
 vim.opt.number = true
 vim.opt.relativenumber = false
-vim.opt.scrolloff = 6
-vim.opt.showtabline = 1
+vim.opt.scrolloff = 5
+vim.opt.showtabline = 0
 vim.opt.splitbelow = true
 vim.opt.splitkeep = "cursor"
 vim.opt.splitright = true
