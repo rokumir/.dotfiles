@@ -40,7 +40,7 @@ actions-on-right-click = []
 actions-on-enter = ["save-to-clipboard"]
 # Actions to trigger on Escape key (order is important)
 # [possible values: save-to-clipboard, save-to-file, save-to-file-as, copy-filepath-to-clipboard, exit]
-actions-on-escape = ["exit"]
+actions-on-escape = []
 # request no window decoration. Please note that the compositor has the final say in this. At this point. requires xdg-decoration-unstable-v1.
 no-window-decoration = true
 # experimental feature: adjust history size for brush input smoothing (0: disabled, default: 0, try e.g. 5 or 10)
@@ -87,6 +87,7 @@ fallback = [
     "Playwrite DE Grund",
     "Maple Mono",
     "Roboto",
+    "DejaVu Sans",
 ]
 
 # Custom colours for the colour palette
