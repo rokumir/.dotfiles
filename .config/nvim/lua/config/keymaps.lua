@@ -204,79 +204,59 @@ map { --- SYSTEM
 	{ '<f2>f', '<cmd>ConformInfo <cr>', desc = 'Conform', icon = '󰃢' },
 	{ '<f2>h', '<cmd>checkhealth <cr>', desc = 'Check Health', icon = '' },
 	{ '<f2>L', function() LazyVim.news.changelog() end, desc = 'LazyVim Changelog', icon = '' },
-	{ '<f2>U', '<cmd>TSUpdate | Lazy update | MasonUpdate <cr>', desc = 'BIG Update', icon = '' },
-	{
-		'<f2>b',
-		function()
-			Snacks.terminal.get('btop', {
-				cwd = vim.env.HOME,
-				win = {
-					ft = 'term_btop',
-					minimal = true,
-					position = 'float',
-					relative = 'editor',
-					height = 0,
-					width = 0.98,
-					keys = { ['<c-q>'] = { 'close', expr = true, mode = 't' } },
-				},
-			})
-		end,
-		desc = 'BTOP',
-		icon = '',
-	},
 }
 
 --- TOGGLES
-if type(LazyVim) ~= 'nil' and type(Snacks) ~= 'nil' then
-	LazyVim.format.snacks_toggle():map '<leader><leader>lf'
-	LazyVim.format.snacks_toggle(true):map '<leader><leader>lF'
-	Snacks.toggle.diagnostics():map '<leader><leader>ld'
-	Snacks.toggle.treesitter():map '<leader><leader>lt'
-	Snacks.toggle.inlay_hints():map '<leader><leader>lh'
+if not LazyVim and not Snacks then return end
 
-	Snacks.toggle.option('spell'):map '<leader><leader>os'
-	Snacks.toggle.option('wrap'):map('<leader><leader>ow'):map '<a-z>'
-	Snacks.toggle.line_number():map '<leader><leader>on'
-	Snacks.toggle.option('relativenumber'):map '<leader><leader>oN'
-	Snacks.toggle
-		.option('conceallevel', {
-			off = 0,
-			on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2,
-			name = 'Conceal Level',
-		})
-		:map '<leader><leader>oc'
-	Snacks.toggle
-		.new({
-			id = 'vim_rulers',
-			name = 'Rulers',
-			get = function() return #vim.o.colorcolumn > 0 end,
-			set = function(state) vim.opt_local.colorcolumn = state and '80,120' or '' end,
-		})
-		:map '<leader><leader>or'
+LazyVim.format.snacks_toggle():map '<leader><leader>lf'
+LazyVim.format.snacks_toggle(true):map '<leader><leader>lF'
+Snacks.toggle.diagnostics():map '<leader><leader>ld'
+Snacks.toggle.treesitter():map '<leader><leader>lt'
+Snacks.toggle.inlay_hints():map '<leader><leader>lh'
 
-	Snacks.toggle.dim():map '<leader><leader>ud'
-	Snacks.toggle.indent():map '<leader><leader>ui'
-	Snacks.toggle.scroll():map '<leader><leader>us'
-	Snacks.toggle.zen():map '<leader><leader>uz'
-	Snacks.toggle.zoom():map '<leader><leader>uZ'
+Snacks.toggle.option('spell'):map '<leader><leader>os'
+Snacks.toggle.option('wrap'):map('<leader><leader>ow'):map '<a-z>'
+Snacks.toggle.line_number():map '<leader><leader>on'
+Snacks.toggle.option('relativenumber'):map '<leader><leader>oN'
+Snacks.toggle
+	.option('conceallevel', {
+		off = 0,
+		on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2,
+		name = 'Conceal Level',
+	})
+	:map '<leader><leader>oc'
+Snacks.toggle
+	.new({
+		id = 'vim_rulers',
+		name = 'Rulers',
+		get = function() return #vim.o.colorcolumn > 0 end,
+		set = function(state) vim.opt_local.colorcolumn = state and '80,120' or '' end,
+	})
+	:map '<leader><leader>or'
 
-	Snacks.toggle.profiler():map '<leader><leader>pp'
-	Snacks.toggle.profiler_highlights():map '<leader><leader>ph'
+Snacks.toggle.dim():map '<leader><leader>ud'
+Snacks.toggle.indent():map '<leader><leader>ui'
+Snacks.toggle.scroll():map '<leader><leader>us'
+Snacks.toggle.zen():map '<leader><leader>uz'
+Snacks.toggle.zoom():map '<leader><leader>uZ'
 
-	Snacks.toggle
-		.new({
-			id = 'lualine_statusline_time_expansion',
-			name = 'Lualine Expand DateTime',
-			get = function() return vim.g.nihil_lualine_time_expanded == true end,
-			set = function(state) vim.g.nihil_lualine_time_expanded = state end,
-		})
-		:map '<leader><leader>ud'
-	Snacks.toggle
-		.new({
-			id = 'lualine_statusline',
-			name = 'Lualine Statusline',
-			get = function() return vim.g.nihil_lualine_show ~= false end,
-			set = Nihil.toggles.lualine_statusline,
-		})
-		:map '<leader><leader>ul'
-end
+Snacks.toggle.profiler():map '<leader><leader>pp'
+Snacks.toggle.profiler_highlights():map '<leader><leader>ph'
+
+Snacks.toggle
+	.new({
+		id = 'lualine_statusline_time_expansion',
+		name = 'Lualine Expand DateTime',
+		get = function() return vim.g.nihil_lualine_time_expanded == true end,
+		set = function(state) vim.g.nihil_lualine_time_expanded = state end,
+	})
+	:map '<leader><leader>ud'
+Snacks.toggle
+	.new({
+		id = 'lualine_statusline',
+		name = 'Lualine Statusline',
+		get = function() return vim.g.nihil_lualine_show ~= false end,
+		set = Nihil.toggles.lualine_statusline,
+	})
+	:map '<leader><leader>ul'
