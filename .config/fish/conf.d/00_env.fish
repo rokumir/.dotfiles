@@ -26,3 +26,12 @@ fish_add_path ~/.deno/bin
 fish_add_path ~/go/bin
 fish_add_path $XDG_DATA_HOME/bob/nvim-bin
 fish_add_path $XDG_DATA_HOME/fnm
+
+## ---------------------------------------
+# User Directories "user-dirs.dirs"
+set file ~/.config/user-dirs.dirs
+test -f $file; or return 1
+
+for var_line in (string match -r '^\s*XDG_[A-Z_]+_DIR\s*=\s*"[^"]+"' -- (string trim -- (cat $file)))
+    eval "export $var_line"
+end
