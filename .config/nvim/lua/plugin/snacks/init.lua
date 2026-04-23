@@ -24,8 +24,8 @@ return {
 			bigfile = {
 				enabled = true,
 				notify = true, -- show notification when big file detected
-				line_length = 58,
-				size = 2 * 1024 * 1024, -- Mb
+				line_length = 1000,
+				size = 800 * 1024, -- Kb
 				---@param ctx {buf: number, ft:string}
 				setup = function(ctx)
 					_G.nihil = 'foooooooo'

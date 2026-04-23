@@ -229,4 +229,10 @@ return {
 			}
 		end,
 	},
+
+	{
+		'SchemaStore.nvim',
+		optional = true,
+		opts = {},
+	},
 }

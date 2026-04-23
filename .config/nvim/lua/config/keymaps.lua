@@ -42,6 +42,19 @@ map { --- EDITOR
 	{ 'jj', '<esc>', mode = 'i', desc = 'Escape Insert Mode' },
 	{ 'jk', '<esc>', mode = 'i', desc = 'Escape Insert Mode' },
 	{ '<c-q>', '<c-c>', mode = 'c', desc = 'Quit CommandLine' },
+	{
+		'<c-g>',
+		function()
+			vim.ui.select({ 'tabs', 'spaces' }, {
+				prompt = 'Select tabs or spaces:',
+				format_item = function(item) return ('I choose %s!'):format(item) end,
+			}, function(choice)
+				vim.o.expandtab = choice == 'spaces'
+				vim.print(('Selected "%s" => expandtab=%s'):format(choice, vim.o.expandtab))
+			end)
+		end,
+		desc = 'Quit CommandLine',
+	},
 
 	{ 'o', 'o<esc>', remap = true, desc = 'Open Line' },
 	{ 'O', 'O<esc>', remap = true, desc = 'Open Line Above' },

@@ -22,9 +22,8 @@ local better_hl_source_exclude = {
 ---@module 'lazy'
 ---@type LazyPluginSpec
 return { -- Blink.cmp
-	'saghen/blink.cmp',
-	build = 'cargo build --release',
-	version = false,
+	'blink.cmp',
+	optional = true,
 
 	dependencies = {
 		-- Colorize completion menu

@@ -57,7 +57,7 @@ return {
 			menu_col_offset = 2,
 			-- Cmdline types rendered at the bottom of the screen instead of centered
 			-- "/" and "?" (search) are kept native by default
-			native_types = {},
+			native_types = { '/' },
 			-- Optional callback invoked after every reposition
 			on_reposition = function() require('tiny-cmdline').adapters.blink() end,
 		},
