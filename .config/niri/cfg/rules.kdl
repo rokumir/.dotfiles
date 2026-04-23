@@ -217,3 +217,9 @@ window-rule {
     default-column-width { proportion 0.7; }
     default-window-height { proportion 0.8; }
 }
+
+// EasyEffectS
+window-rule {
+    match app-id="anytype"
+    default-column-width { proportion 0.9; }
+}

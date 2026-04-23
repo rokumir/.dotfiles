@@ -8,8 +8,8 @@
 
 body {
   /* font options */
-  --font: 'Playwrite GB J, Noto Color Emoji, Segoe UI Emoji'; /* change to '' for default discord font */
-  --code-font: 'Maple Mono NF CN, monospace'; /* change to '' for default discord font */
+  --font: Playwrite GB J, Noto Color Emoji, Segoe UI Emoji; /* change to '' for default discord font */
+  --code-font: Maple Mono, monospace; /* change to '' for default discord font */
   font-weight: 400; /* normal text font weight. DOES NOT AFFECT BOLD TEXT */
 
   /* sizes */

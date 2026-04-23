@@ -9,7 +9,7 @@ binds {
     Mod+ALT+L     repeat=false cooldown-ms=250 hotkey-overlay-title="Lock Screen"  { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
     Mod+Delete    repeat=false cooldown-ms=250 hotkey-overlay-title="Session Menu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
     Mod+F1        repeat=false cooldown-ms=250 hotkey-overlay-title="Keybind Cheatsheet" { spawn-sh "qs -c noctalia-shell ipc call plugin:keybind-cheatsheet toggle"; }
-    Mod+A        repeat=false cooldown-ms=250 hotkey-overlay-title="Control Center" { spawn-sh "qs -c noctalia-shell ipc call controlCenter toggle"; }
+    Mod+A         repeat=false cooldown-ms=250 hotkey-overlay-title="Control Center" { spawn-sh "qs -c noctalia-shell ipc call controlCenter toggle"; }
 
     // Screenshots
     Mod+Shift+S   repeat=false cooldown-ms=250 hotkey-overlay-title="Screenshot" { spawn "~/.config/niri/scripts/screenshot"; }
@@ -34,7 +34,7 @@ binds {
     // #"Applications"
     Mod+Return          repeat=false cooldown-ms=250 hotkey-overlay-title="Terminal"      { spawn-sh "$TERMINAL"; }
     Ctrl+Shift+Escape   repeat=false cooldown-ms=250 hotkey-overlay-title="Task Manager"  { spawn-sh "$TERMINAL -e btop"; }
-    Mod+S               repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher"      { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
+    Mod+F2              repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher"      { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
     Mod+W               repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"       { spawn-sh "xdg-open https://"; }
     Mod+D               repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"       { spawn-sh "xdg-open discord://"; }
     Mod+E               repeat=false cooldown-ms=250 hotkey-overlay-title="File Manager"  { spawn-sh "xdg-open ~"; }
@@ -42,7 +42,7 @@ binds {
     Mod+Period          repeat=false cooldown-ms=250 hotkey-overlay-title="Emoji Picker"  { spawn-sh "qs -c noctalia-shell ipc call launcher emoji"; }
     Mod+Shift+Period    repeat=false cooldown-ms=250 hotkey-overlay-title="Kaomoji Picker"  { spawn-sh "qs -c noctalia-shell ipc call plugin:kaomoji toggle"; }
     Mod+Comma           repeat=false cooldown-ms=250 hotkey-overlay-title="Wallpaper Picker"  { spawn-sh "qs -c noctalia-shell ipc call plugin:wallcards toggle"; }
-    Mod+Shift+c         repeat=false cooldown-ms=250 hotkey-overlay-title="Color Picker"  { spawn-sh "niri msg pick-color | wl-copy"; }
+    Mod+Shift+c         repeat=false cooldown-ms=250 hotkey-overlay-title="Color Picker"  { spawn-sh "~/.config/niri/scripts/color-picker"; }
 
 
     // -----------------------------------------------

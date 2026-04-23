@@ -22,7 +22,8 @@
             "spotify",
             "steam",
             "com.mitchellh.ghostty",
-            "zen"
+            "zen",
+            "anytype"
         ],
         "position": "bottom_center",
         "screenshotAnnotationTool": "",
@@ -69,7 +70,7 @@
         "mouseWheelAction": "content",
         "mouseWheelWrap": true,
         "outerCorners": true,
-        "position": "left",
+        "position": "right",
         "reverseScroll": false,
         "rightClickAction": "controlCenter",
         "rightClickCommand": "",
@@ -175,6 +176,7 @@
                 {
                     "colorizeDistroLogo": false,
                     "colorizeSystemIcon": "none",
+                    "colorizeSystemText": "none",
                     "customIconPath": "",
                     "enableColorization": false,
                     "icon": "noctalia",

@@ -5,15 +5,4 @@ spawn-sh-at-startup "sleep 3; nsticky"
 spawn-sh-at-startup "sleep 3; easyeffects --gapplication-service"
 spawn-sh-at-startup "sleep 2; warp-cli connect"
 
-// Default Apps
-spawn-sh-at-startup "gsettings set org.gnome.desktop.default-applications.terminal exec ghostty"
-spawn-sh-at-startup "gsettings set org.gnome.desktop.default-applications.terminal exec-arg ''"
-// spawn-sh-at-startup "xdg-mime default nemo.desktop inode/directory"
-spawn-sh-at-startup "xdg-mime default org.gnome.Nautilus.desktop inode/directory"
-// UI/UX
-spawn-sh-at-startup "gsettings set org.gnome.desktop.interface color-scheme prefer-dark"
-spawn-sh-at-startup "gsettings set org.gnome.desktop.interface cursor-theme Bibata-Modern-Classic"
-spawn-sh-at-startup "gsettings set org.gnome.desktop.interface cursor-size 20"
-spawn-sh-at-startup "gsettings set org.gnome.desktop.interface gtk-theme Orchis-Dark"
-spawn-sh-at-startup "gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark"
-spawn-sh-at-startup "gsettings set org.gnome.desktop.interface text-scaling-factor 1"
+spawn-sh-at-startup "~/.config/niri/scripts/xdg-mimelist"

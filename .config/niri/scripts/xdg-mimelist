@@ -1,0 +1,28 @@
+#!/usr/bin/env fish
+
+# XDG Mimes
+xdg-settings set default-web-browser zen.desktop
+xdg-settings set default-url-scheme-handler zen.desktop
+
+xdg-mime default org.pwmt.zathura.desktop application/msword
+xdg-mime default org.pwmt.zathura.desktop application/vnd.openxmlformats-officedocument.wordprocessingml.document
+xdg-mime default org.pwmt.zathura-pdf-mupdf.desktop application/pdf
+xdg-mime default satty.desktop (rg '^image/' /usr/share/mime/types)
+
+xdg-mime default vesktop.desktop x-scheme-handler/discord
+
+xdg-mime default org.gnome.Nautilus.desktop inode/directory
+xdg-mime default nemo.desktop inode/directory application/x-gnome-saved-search
+xdg-mime default nemo.desktop inode/directory
+
+# Default Apps
+gsettings set org.gnome.desktop.default-applications.terminal exec ghostty
+gsettings set org.gnome.desktop.default-applications.terminal exec-arg ''
+xdg-mime default org.gnome.Nautilus.desktop inode/directory
+# UI/UX
+gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+gsettings set org.gnome.desktop.interface cursor-theme Bibata-Modern-Classic
+gsettings set org.gnome.desktop.interface cursor-size 20
+gsettings set org.gnome.desktop.interface gtk-theme Orchis-Dark
+gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark
+gsettings set org.gnome.desktop.interface text-scaling-factor 1
