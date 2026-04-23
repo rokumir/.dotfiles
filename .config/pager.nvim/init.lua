@@ -1,5 +1,4 @@
-require("autocmds.before")
 require("options")
 require("appearance")
 require("keymaps")
-require("autocmds.after")
+require("autocmds")
