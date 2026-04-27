@@ -10,7 +10,6 @@
 
 function notify
     notify-send \
-        --expire-time 1000 \
         --app-name='Screenshot Script' \
         $argv
 end

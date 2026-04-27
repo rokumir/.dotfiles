@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-if ! command -v hyprpicker >/dev/null 2>&1; then exit 1; fi
-
-color="$(hyprpicker --format=hex --no-fancy --scale=1 --radius=80)"
+color=$(niri msg pick-color | rg -o '#[0-9a-fA-F]{6}\b')
 # printf to ensure zero leading/trailing newlines
 printf "%s" "$color" | wl-copy
