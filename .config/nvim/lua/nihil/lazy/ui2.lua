@@ -140,7 +140,7 @@ ui2.enable {
 			wildlist = 'msg', -- 'wildmode' "list" message
 			wmsg = 'msg', -- Warning ("search hit BOTTOM", W10, ...)
 		},
-		cmd = { height = 0.6 },
+		cmd = { height = 0.5 },
 		dialog = { height = 0.5 },
 		msg = { height = 0.3, timeout = 1500 },
 		pager = { height = 0.4 },

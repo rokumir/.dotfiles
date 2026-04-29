@@ -59,6 +59,7 @@ return {
 
 			---@type snacks.notifier.Config|{}
 			notifier = {
+				enabled = false,
 				---@type snacks.notifier.style
 				style = 'minimal',
 				top_down = false,

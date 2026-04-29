@@ -1,65 +1,14 @@
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
 return {
-	{ -- Better general UI
-		'folke/noice.nvim',
-		keys = function() return {} end,
-		---@module 'noice'
-		---@type NoiceConfig
-		opts = {
-			presets = {
-				bottom_search = true,
-				command_palette = true,
-				lsp_doc_border = true,
-				inc_rename = false,
-				cmdline_output_to_split = true,
-				long_message_to_split = true,
-			},
-
-			lsp = {
-				progress = { enabled = true },
-				hover = {
-					enabled = true,
-					silent = true,
-					opts = {
-						size = { max_width = 80 },
-					},
-				},
-				signature = {
-					enabled = true,
-					opts = { max_size = 80 },
-					auto_open = { enabled = false, trigger = false, throttle = 50 },
-				},
-				override = {
-					['vim.lsp.util.convert_input_to_markdown_lines'] = true,
-					['vim.lsp.util.stylize_markdown'] = true,
-					['cmp.entry.get_documentation'] = true,
-				},
-			},
-		},
-	},
-
-	{ -- FLoating cmdline
-		'rachartier/tiny-cmdline.nvim',
+	{ -- improve cmdline
+		'nvim-mini/mini.cmdline',
+		version = false,
 		init = function() vim.o.cmdheight = 0 end,
 		opts = {
-			-- Cmdline window width
-			width = {
-				value = '45%', -- "N%" = fraction of editor columns, integer = absolute columns
-				min = 40, -- minimum width in columns
-				max = 80, -- maximum width in columns
-			},
-			-- Window position ("N%" = fraction of available space, integer = absolute columns/rows)
-			position = { x = '50%', y = '15%' },
-			border = 'rounded',
-			-- Horizontal offset of the completion menu anchor from the window's left inner edge
-			-- Used to align blink.cmp / nvim-cmp menus with the cmdline window
-			menu_col_offset = 2,
-			-- Cmdline types rendered at the bottom of the screen instead of centered
-			-- "/" and "?" (search) are kept native by default
-			native_types = { '/' },
-			-- Optional callback invoked after every reposition
-			on_reposition = function() require('tiny-cmdline').adapters.blink() end,
+			autocomplete = { enable = false },
+			autocorrect = { enable = true }, -- adjust non-existing words (commands, options, etc.)
+			autopeek = { enable = true },
 		},
 	},
 

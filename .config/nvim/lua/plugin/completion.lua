@@ -45,8 +45,8 @@ return { -- Blink.cmp
 			['<c-y>'] = false,
 
 			--- movements
-			['<c-u>'] = { 'scroll_documentation_up', 'fallback' },
-			['<c-d>'] = { 'scroll_documentation_down', 'fallback' },
+			['<c-u>'] = { 'scroll_documentation_up', 'scroll_signature_up', 'fallback' },
+			['<c-d>'] = { 'scroll_documentation_down', 'scroll_signature_down', 'fallback' },
 			['<c-k>'] = { 'select_prev', 'fallback' },
 			['<c-j>'] = { 'select_next', 'fallback' },
 			['<up>'] = { 'select_prev', 'fallback' },
@@ -107,18 +107,13 @@ return { -- Blink.cmp
 							width = { max = 35 },
 							text = function(ctx)
 								if better_hl_source_exclude[ctx.source_id] then
-									return require('blink.cmp.config.completion.menu').default.draw.components.label.text(
-										ctx
-									)
+									return require('blink.cmp.config.completion.menu').default.draw.components.label.text(ctx)
 								end
 								return require('colorful-menu').blink_components_text(ctx)
 							end,
 							highlight = function(ctx, text)
 								if better_hl_source_exclude[ctx.source_id] then
-									return require('blink.cmp.config.completion.menu').default.draw.components.label.highlight(
-										ctx,
-										text
-									)
+									return require('blink.cmp.config.completion.menu').default.draw.components.label.highlight(ctx, text)
 								end
 								return require('colorful-menu').blink_components_highlight(ctx)
 							end,
@@ -213,7 +208,16 @@ return { -- Blink.cmp
 		},
 
 		-- Built-in sources configs
-		signature = { enabled = false },
+		signature = {
+			enabled = true,
+			window = {
+				max_width = 50,
+				max_height = 50,
+				border = 'rounded',
+				show_documentation = true,
+				treesitter_highlighting = true,
+			},
+		},
 		cmdline = { enabled = true },
 	},
 }

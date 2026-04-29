@@ -1,2 +1,2 @@
 require 'nihil.lazy.neovide'
---require 'nihil.lazy.ui2'
+require 'nihil.lazy.ui2'

@@ -165,13 +165,17 @@ return {
 			--#endregion
 
 			--#region blink/cmp
-			BlinkCmpMenuBorder = { link = 'FloatBorder' },
+			BlinkCmpLabel = { fg = cp.fgInactive },
+
 			BlinkCmpDoc = { bg = cp.bgDark },
 			BlinkCmpDocBorder = { link = 'FloatBorder' },
 			BlinkCmpDocSeparator = { bg = cp.bgDark, fg = cp.borderDarker },
-			BlinkCmpLabel = { fg = cp.fgInactive },
 
 			BlinkCmpMenu = { fg = cp.fgInactive, link = 'Pmenu' },
+			BlinkCmpMenuBorder = { link = 'FloatBorder' },
+
+			BlinkCmpSignatureHelp = { bg = cp.bgDark },
+			BlinkCmpSignatureHelpBorder = { link = 'FloatBorder' },
 			--#endregion
 
 			--#region render markdown

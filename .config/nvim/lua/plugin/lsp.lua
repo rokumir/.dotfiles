@@ -14,6 +14,7 @@ return {
 
 		---@type vim.diagnostic.Opts
 		diagnostics = {
+			virtual_text = false,
 			float = {
 				focusable = true,
 				style = 'minimal',

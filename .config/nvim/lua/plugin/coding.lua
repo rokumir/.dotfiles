@@ -230,9 +230,79 @@ return {
 		end,
 	},
 
-	{
-		'SchemaStore.nvim',
-		optional = true,
-		opts = {},
+	{ -- "tiny" plugin for displaying inline diagnostic messages with customizable styles and icons
+		'rachartier/tiny-inline-diagnostic.nvim',
+		event = 'VeryLazy',
+		priority = 1000,
+		keys = {
+			{ '<leader><leader>uD', '<cmd>TinyInlineDiag toggle<cr>', desc = 'Toggle Tiny Inline Diagnostic' },
+		},
+		opts = {
+			-- Preset style: classic modern minimal powerline ghost simple nonerdfont amongus
+			preset = 'modern', -- disabled if `use_icons_from_diagnostic=true`
+			transparent_bg = true,
+			transparent_cursorline = true, -- Make cursorline background transparent for diagnostics
+
+			disabled_ft = Nihil.config.exclude.filetypes,
+
+			options = {
+				show_source = { enabled = true, if_many = true },
+				show_code = true, -- Display the diagnostic code of diagnostics (e.g., "F401", "no-dupe-args")
+				use_icons_from_diagnostic = true, -- Use icons from vim.diagnostic.config instead of preset icons
+				set_arrow_to_diag_color = true, -- Color the arrow to match the severity of the first diagnostic
+				throttle = 20,
+				softwrap = 30, -- Minimum number of characters before wrapping long messages
+
+				-- Control how diagnostic messages are displayed
+				-- NOTE: When using display_count = true, you need to enable multiline diagnostics with multilines.enabled = true
+				--       If you want them to always be displayed, you can also set multilines.always_show = true.
+				add_messages = {
+					messages = true, -- Show full diagnostic messages
+					display_count = true, -- Show diagnostic count instead of messages when cursor not on line
+					use_max_severity = true, -- When counting, only show the most severe diagnostic
+					show_multiple_glyphs = true, -- Show multiple icons for multiple diagnostics of same severity
+				},
+
+				-- Settings for multiline diagnostics
+				multilines = {
+					enabled = true, -- Enable support for multiline diagnostic messages
+					always_show = false, -- Always show messages on all lines of multiline diagnostics
+					trim_whitespaces = false, -- Remove leading/trailing whitespace from each line
+					tabstop = 4, -- Number of spaces per tab when expanding tabs
+					severity = nil, -- Filter multiline diagnostics by severity (e.g., { vim.diagnostic.severity.ERROR })
+				},
+				-- Show all diagnostics on the current cursor line, not just those under the cursor
+				show_all_diags_on_cursorline = false,
+				-- Only show diagnostics when the cursor is directly over them, no fallback to line diagnostics
+				show_diags_only_under_cursor = false,
+
+				show_related = { enabled = true, max_count = 3 }, -- Display related diagnostics from LSP relatedInformation
+				enable_on_insert = false, -- Enable diagnostics display in insert mode. May cause visual artifacts; consider setting throttle to 0 if enabled
+				enable_on_select = false, -- Enable diagnostics display in select mode (e.g., during auto-completion)
+
+				overflow = { -- Handle messages that exceed the window width
+					mode = 'wrap', -- "wrap": split into lines, "none": no truncation, "oneline": keep single line
+					padding = 0, -- Extra characters to trigger wrapping earlier
+				},
+
+				-- Break long messages into separate lines
+				break_line = {
+					enabled = true, -- Enable automatic line breaking
+					after = 30, -- Number of characters before inserting a line break
+				},
+
+				-- Virtual text display priority
+				-- Higher values appear above other plugins (e.g., GitBlame)
+				virt_texts = { priority = 2048 },
+				override_open_float = false, -- Automatically disable diagnostics when opening diagnostic float windows
+
+				-- Experimental options, subject to misbehave in future NeoVim releases
+				experimental = {
+					-- Make diagnostics not mirror across windows containing the same buffer
+					-- See: https://github.com/rachartier/tiny-inline-diagnostic.nvim/issues/127
+					use_window_local_extmarks = true,
+				},
+			},
+		},
 	},
 }
