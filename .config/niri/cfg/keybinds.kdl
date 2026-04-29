@@ -37,6 +37,7 @@ binds {
     Mod+F2              repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher"      { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
     Mod+W               repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"       { spawn-sh "xdg-open https://"; }
     Mod+D               repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"       { spawn-sh "xdg-open discord://"; }
+    Mod+M               repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"       { spawn-sh "xdg-open spotify://"; }
     Mod+E               repeat=false cooldown-ms=250 hotkey-overlay-title="File Manager"  { spawn-sh "xdg-open ~"; }
     Mod+V               repeat=false cooldown-ms=250 hotkey-overlay-title="Clipboard"     { spawn-sh "qs -c noctalia-shell ipc call launcher clipboard"; }
     Mod+Period          repeat=false cooldown-ms=250 hotkey-overlay-title="Emoji Picker"  { spawn-sh "qs -c noctalia-shell ipc call launcher emoji"; }
@@ -102,7 +103,6 @@ binds {
     Mod+Shift+F       { maximize-column; }
     Mod+CTRL+F        { expand-column-to-available-width; }
     Mod+Ctrl+Space    { switch-preset-column-width; }
-    Mod+Shift+0       { switch-preset-column-width-back; }
     Mod+C             { center-column; }
     Mod+CTRL+C        { center-visible-columns; }
 

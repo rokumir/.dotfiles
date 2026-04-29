@@ -33,6 +33,9 @@ window-rule {
     min-height 200
 
     background-effect { blur true; xray false; }
+    popups {
+        background-effect { blur true; }
+    }
 }
 
 window-rule {

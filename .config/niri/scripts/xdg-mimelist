@@ -4,12 +4,12 @@
 xdg-settings set default-web-browser zen.desktop
 xdg-settings set default-url-scheme-handler zen.desktop
 
-xdg-mime default org.pwmt.zathura.desktop application/msword
-xdg-mime default org.pwmt.zathura.desktop application/vnd.openxmlformats-officedocument.wordprocessingml.document
-xdg-mime default org.pwmt.zathura-pdf-mupdf.desktop application/pdf
-xdg-mime default satty.desktop (rg '^image/' /usr/share/mime/types)
+# xdg-mime default org.pwmt.zathura-pdf-mupdf.desktop application/pdf
+# xdg-mime default zaread.desktop application/msword application/vnd.openxmlformats-officedocument.wordprocessingml.document
+# xdg-mime default satty.desktop (rg '^image/' /usr/share/mime/types)
 
 xdg-mime default vesktop.desktop x-scheme-handler/discord
+xdg-mime default spotify.desktop x-scheme-handler/spotify
 
 xdg-mime default org.gnome.Nautilus.desktop inode/directory
 xdg-mime default nemo.desktop inode/directory application/x-gnome-saved-search
