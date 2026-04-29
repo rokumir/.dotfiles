@@ -240,13 +240,13 @@ return {
 		opts = {
 			-- Preset style: classic modern minimal powerline ghost simple nonerdfont amongus
 			preset = 'modern', -- disabled if `use_icons_from_diagnostic=true`
-			transparent_bg = true,
+			transparent_bg = false,
 			transparent_cursorline = true, -- Make cursorline background transparent for diagnostics
 
 			disabled_ft = Nihil.config.exclude.filetypes,
 
 			options = {
-				show_source = { enabled = true, if_many = true },
+				show_source = { enabled = false, if_many = true },
 				show_code = true, -- Display the diagnostic code of diagnostics (e.g., "F401", "no-dupe-args")
 				use_icons_from_diagnostic = true, -- Use icons from vim.diagnostic.config instead of preset icons
 				set_arrow_to_diag_color = true, -- Color the arrow to match the severity of the first diagnostic
