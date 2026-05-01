@@ -36,9 +36,9 @@ return {
 		end,
 	},
 
-	{ 'nvim-mini/mini.align', config = true },
+	{ 'nvim-mini/mini.align', config = true }, -- keys: ga, gA
 	{
-		'nvim-mini/mini.pairs',
+		'mini.pairs',
 		optional = true,
 		opts = {
 			modes = { insert = true, command = false, terminal = false },
