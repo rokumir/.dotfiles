@@ -1,0 +1,14 @@
+#!/usr/bin/env fish
+
+count $argv; or exit 1
+
+set app_id $argv[1]
+set command $argv[2]
+
+set id (niri msg -j windows | jq -c "first(.[] | select(.app_id == \"$app_id\")) | .id")
+
+if string length -q -- "$id"
+    niri msg action focus-window --id $id
+else
+    eval "$command"
+end

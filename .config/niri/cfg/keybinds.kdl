@@ -11,6 +11,9 @@ binds {
     Mod+F1        repeat=false cooldown-ms=250 hotkey-overlay-title="Keybind Cheatsheet" { spawn-sh "qs -c noctalia-shell ipc call plugin:keybind-cheatsheet toggle"; }
     Mod+A         repeat=false cooldown-ms=250 hotkey-overlay-title="Control Center" { spawn-sh "qs -c noctalia-shell ipc call controlCenter toggle"; }
 
+    // use keyd to map this to Super
+    Mod+F2        repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher"      { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
+
     // Screenshots
     Mod+Shift+S   repeat=false cooldown-ms=250 hotkey-overlay-title="Screenshot" { spawn "~/.config/niri/scripts/screenshot"; }
     Print         repeat=false cooldown-ms=250 hotkey-overlay-title="Screenshot" { spawn "~/.config/niri/scripts/screenshot"; }
@@ -34,32 +37,34 @@ binds {
     // #"Applications"
     Mod+Return          repeat=false cooldown-ms=250 hotkey-overlay-title="Terminal"      { spawn-sh "$TERMINAL"; }
     Ctrl+Shift+Escape   repeat=false cooldown-ms=250 hotkey-overlay-title="Task Manager"  { spawn-sh "$TERMINAL -e btop"; }
-    Mod+F2              repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher"      { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
-    Mod+W               repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"       { spawn-sh "xdg-open https://"; }
-    Mod+D               repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"       { spawn-sh "xdg-open discord://"; }
-    Mod+M               repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"       { spawn-sh "xdg-open spotify://"; }
-    Mod+E               repeat=false cooldown-ms=250 hotkey-overlay-title="File Manager"  { spawn-sh "xdg-open ~"; }
     Mod+V               repeat=false cooldown-ms=250 hotkey-overlay-title="Clipboard"     { spawn-sh "qs -c noctalia-shell ipc call launcher clipboard"; }
-    Mod+Period          repeat=false cooldown-ms=250 hotkey-overlay-title="Emoji Picker"  { spawn-sh "qs -c noctalia-shell ipc call launcher emoji"; }
-    Mod+Shift+Period    repeat=false cooldown-ms=250 hotkey-overlay-title="Kaomoji Picker"  { spawn-sh "qs -c noctalia-shell ipc call plugin:kaomoji toggle"; }
-    Mod+Comma           repeat=false cooldown-ms=250 hotkey-overlay-title="Wallpaper Picker"  { spawn-sh "qs -c noctalia-shell ipc call plugin:wallcards toggle"; }
-    Mod+Shift+c         repeat=false cooldown-ms=250 hotkey-overlay-title="Color Picker"  { spawn-sh "~/.config/niri/scripts/color-picker"; }
+
+    Mod+Comma         repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Wallpaper"  { spawn-sh "qs -c noctalia-shell ipc call plugin:wallcards toggle"; }
+    Mod+Period        repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Emoji"      { spawn-sh "qs -c noctalia-shell ipc call launcher emoji"; }
+    Mod+Shift+Period  repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Kaomoji"    { spawn-sh "qs -c noctalia-shell ipc call plugin:kaomoji toggle"; }
+    Mod+Shift+c       repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Color"      { spawn-sh "~/.config/niri/scripts/color-picker"; }
+
+    Mod+W  repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"   { spawn-sh "~/.config/niri/scripts/ror zen 'xdg-open https://'"; }
+    Mod+D  repeat=false cooldown-ms=250 hotkey-overlay-title="Discord"   { spawn-sh "~/.config/niri/scripts/ror vesktop 'xdg-open discord://'"; }
+    Mod+M  repeat=false cooldown-ms=250 hotkey-overlay-title="Spotify"   { spawn-sh "~/.config/niri/scripts/ror spotify 'xdg-open spotify://'"; }
+    Mod+E  repeat=false cooldown-ms=250 hotkey-overlay-title="Explorer"  { spawn-sh "xdg-open ~"; }
 
 
     // -----------------------------------------------
     // #"Window"
-    Mod+Q                repeat=false cooldown-ms=500 { close-window; }
-    Mod+Shift+Q          repeat=false cooldown-ms=500 { spawn-sh "kill -9 $(niri msg -j focused-window | jq -r '.pid')"; }
-    Mod+Left             { focus-column-left; }
-    Mod+H                { focus-column-left; }
-    Mod+Right            { focus-column-right; }
-    Mod+L                { focus-column-right; }
-    Mod+Up               { focus-window-or-workspace-up; }
-    Mod+K                { focus-window-or-workspace-up; }
-    Mod+Down             { focus-window-or-workspace-down; }
-    Mod+J                { focus-window-or-workspace-down; }
-    Mod+Home             { focus-column-first; }
-    Mod+End              { focus-column-last; }
+    Mod+Q        repeat=false cooldown-ms=500 { close-window; }
+    Mod+Shift+Q  repeat=false cooldown-ms=500 { spawn-sh "kill -9 $(niri msg -j focused-window | jq -r '.pid')"; }
+    Mod+Left     { focus-column-left; }
+    Mod+H        { focus-column-left; }
+    Mod+Right    { focus-column-right; }
+    Mod+L        { focus-column-right; }
+    Mod+Up       { focus-window-or-workspace-up; }
+    Mod+K        { focus-window-or-workspace-up; }
+    Mod+Down     { focus-window-or-workspace-down; }
+    Mod+J        { focus-window-or-workspace-down; }
+    Mod+Home     { focus-column-first; }
+    Mod+End      { focus-column-last; }
+
     Mod+WheelScrollUp         cooldown-ms=150 { focus-workspace-up; }
     Mod+WheelScrollDown       cooldown-ms=150 { focus-workspace-down; }
     Mod+Ctrl+WheelScrollUp    cooldown-ms=150 { focus-column-right; }
