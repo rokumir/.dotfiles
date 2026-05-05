@@ -6,7 +6,7 @@ binds {
     // -----------------------------------------------
     // #"System & Meta"
     Mod+Grave     cooldown-ms=100 { toggle-overview; }
-    Mod+ALT+L     repeat=false cooldown-ms=250 hotkey-overlay-title="Lock Screen"  { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
+    Mod+Alt+L     repeat=false cooldown-ms=250 hotkey-overlay-title="Lock Screen"  { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
     Mod+Delete    repeat=false cooldown-ms=250 hotkey-overlay-title="Session Menu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
     Mod+F1        repeat=false cooldown-ms=250 hotkey-overlay-title="Keybind Cheatsheet" { spawn-sh "qs -c noctalia-shell ipc call plugin:keybind-cheatsheet toggle"; }
     Mod+A         repeat=false cooldown-ms=250 hotkey-overlay-title="Control Center" { spawn-sh "qs -c noctalia-shell ipc call controlCenter toggle"; }
@@ -117,4 +117,13 @@ binds {
     Mod+Shift+Equal   { set-window-height "+5%"; }
 
     Mod+Alt+P   repeat=false hotkey-overlay-title="To PIP" { spawn "~/.config/niri/scripts/win-to-pip"; }
+
+    // // -----------------------------------------------
+    // // #"Plugin"
+    //
+    // // niri-sidebar
+    // Mod+P      hotkey-overlay-title="Sidebar: Toggle focused window" { spawn-sh "niri-sidebar toggle-window"; }
+    // Mod+S      hotkey-overlay-title="Sidebar: Toggle visibility"     { spawn-sh "niri-sidebar toggle-visibility"; }
+    // Mod+Ctrl+S hotkey-overlay-title="Sidebar: Reverse order"         { spawn-sh "niri-sidebar flip"; }
+    // Mod+Alt+R  hotkey-overlay-title="Sidebar: Force reorder"         { spawn-sh "niri-sidebar reorder"; }
 }

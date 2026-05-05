@@ -7,4 +7,6 @@ include "./cfg/layout.kdl"
 include "./cfg/rules.kdl"
 include "./cfg/workspaces.kdl"
 include "./cfg/misc.kdl"
-include optional=true "./cfg/theme.kdl"
+
+include optional=true "./lib/theme.kdl"
+include optional=true "./lib/performance-mode.kdl"

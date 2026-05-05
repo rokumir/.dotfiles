@@ -8,7 +8,7 @@ output_path="/usr/share/sddm/themes/noctalia/theme.conf"
 
 [templates.niri]
 input_path="~/.config/noctalia/templates/niri.kdl"
-output_path="~/.config/niri/cfg/theme.kdl"
+output_path="~/.config/niri/lib/theme.kdl"
 
 [templates.vesktop]
 input_path="~/.config/noctalia/templates/discord.css"

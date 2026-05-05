@@ -12,7 +12,7 @@
         "enableClipboardHistory": true,
         "enableClipboardSmartIcons": true,
         "enableSessionSearch": true,
-        "enableSettingsSearch": true,
+        "enableSettingsSearch": false,
         "enableWindowsSearch": true,
         "iconMode": "tabler",
         "ignoreMouseInput": false,
