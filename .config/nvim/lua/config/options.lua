@@ -23,6 +23,8 @@ opt.mouse = 'n'
 opt.mousefocus = true
 opt.smoothscroll = true
 opt.timeoutlen = 500
+opt.showcmd = true
+opt.showcmdloc = 'statusline'
 
 --- Editing & Text
 opt.autoindent = true

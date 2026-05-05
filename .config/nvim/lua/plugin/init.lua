@@ -1,6 +1,6 @@
 ---@module 'lazy'
 ---@type LazyPluginSpec[]
-return {
+local M = {
 	{
 		'LazyVim',
 		optional = true,
@@ -78,10 +78,17 @@ return {
 			{ '<leader>qQ', function() require('persistence').save() end, desc = 'Save Session' },
 		},
 	},
-
-	{ 'catppuccin', optional = true, enabled = false },
-	{ 'tokyonight.nvim', optional = true, enabled = false },
-	{ 'nvim-lint', optional = true, enabled = false },
-	{ 'noice.nvim', optional = true, enabled = false },
-	{ 'nui.nvim', optional = true, enabled = false },
 }
+
+-- stylua: ignore
+-- Disable LazyVim's default plugs
+for _, plug in ipairs {
+	'catppuccin',
+	'tokyonight.nvim',
+	'nvim-lint',
+	'nvim-navic',
+	'noice.nvim',
+	'nui.nvim',
+} do table.insert(M, { plug, optional = true, enabled = false }) end
+
+return M

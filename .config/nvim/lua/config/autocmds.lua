@@ -136,3 +136,8 @@ vim.api.nvim_create_autocmd('VimResized', {
 		vim.cmd('tabnext ' .. current_tab)
 	end,
 })
+
+vim.on_key(function()
+	-- vim.schedule ensures we don't interrupt the immediate keypress
+	vim.schedule(function() vim.cmd 'redrawstatus' end)
+end, vim.api.nvim_create_namespace 'lualine_showcmd_kick')

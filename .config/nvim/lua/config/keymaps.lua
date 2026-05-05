@@ -62,6 +62,9 @@ map { --- EDITOR
 	{ '<', '<gv', mode = 'v', desc = 'Indent' },
 	{ '>', '>gv', mode = 'v', desc = 'Unindent' },
 
+	{ 'zO', '<cmd>set foldlevel=30 <cr>', desc = 'Unfold All' },
+	{ 'zC', '<cmd>set foldlevel=0  <cr>', desc = 'Fold All' },
+
 	-- Move lines up/down
 	{ '<a-j>', [[<cmd>execute 'move .+' . v:count1<cr>==]], desc = 'Move Down' },
 	{ '<a-k>', [[<cmd>execute 'move .-' . (v:count1 + 1)<cr>==]], desc = 'Move Up' },

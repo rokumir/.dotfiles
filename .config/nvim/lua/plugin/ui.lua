@@ -19,6 +19,7 @@ return {
 
 		opts = function(_, opts)
 			require('lualine_require').require = require -- PERF: we don't need this lualine require madness 🤷
+
 			vim.o.laststatus = vim.g.lualine_laststatus
 
 			local Icons = LazyVim.config.icons
@@ -27,120 +28,113 @@ return {
 				return function() return { fg = require('snacks.util').color(group, 'fg') } end
 			end
 
-			local o = opts.options
-			o.globalstatus = vim.o.laststatus == 3
-			o.always_show_tabline = false
-			o.always_divide_middle = true
-			o.component_separators = { left = '', right = '' }
-			o.section_separators = { left = '', right = '' }
-			o.refresh = { refresh_time = 16, statusline = 16 } -- ~60fps
-			o.disabled_filetypes = {
-				statusline = {
-					'dashboard',
-					'alpha',
-					'ministarter',
-					'snacks_dashboard',
-				},
-			}
-
-			local s = opts.sections
-			s.lualine_a = { 'mode' }
-			s.lualine_b = {
-				{ 'branch', color = color_fn 'SnacksPickerGitBranch' },
-				{
-					'diff',
-					symbols = {
-						added = Icons.git.added,
-						modified = Icons.git.modified,
-						removed = Icons.git.removed,
-					},
-					source = function()
-						local gitsigns = vim.b.gitsigns_status_dict
-						if gitsigns then
-							return {
-								added = gitsigns.added,
-								modified = gitsigns.changed,
-								removed = gitsigns.removed,
-							}
-						end
-					end,
-				},
-			}
-			s.lualine_c = {
-				LazyVim.lualine.root_dir(),
-				{
-					'filetype',
-					colored = true,
-					icon_only = true,
-					separator = '',
-					padding = { left = 1, right = 0 },
-					color = color_fn 'Attribute',
-				},
-				{
-					LazyVim.lualine.pretty_path {
-						length = 3,
-						relative = 'cwd',
-						modified_hl = 'Error',
-						directory_hl = 'Comment',
-						filename_hl = 'Conditional',
-						modified_sign = ' ' .. Icons.misc.modified,
-						readonly_icon = ' ' .. Icons.misc.readonly,
-					},
-				},
-				{
-					'diagnostics',
-					symbols = {
-						error = Icons.diagnostics.Error,
-						warn = Icons.diagnostics.Warn,
-						info = Icons.diagnostics.Info,
-						hint = Icons.diagnostics.Hint,
+			opts.options = {
+				globalstatus = vim.o.laststatus == 3,
+				always_show_tabline = false,
+				always_divide_middle = true,
+				component_separators = { left = '', right = '' },
+				section_separators = { left = '', right = '' },
+				refresh = { refresh_time = 16, statusline = 16 }, -- ~60fps
+				disabled_filetypes = {
+					statusline = {
+						'dashboard',
+						'alpha',
+						'ministarter',
+						'snacks_dashboard',
 					},
 				},
 			}
 
-			s.lualine_x = {
-				Snacks.profiler.status(),
-				{ -- shows key typing
-					function() return require('noice').api.status.command['get']() end,
-					cond = function() return package.loaded['noice'] and require('noice').api.status.command['has']() end,
-					color = color_fn 'Statement',
+			opts.sections = {
+				lualine_a = { 'mode' },
+				lualine_b = {
+					{ 'branch', color = color_fn 'SnacksPickerGitBranch' },
+					{
+						'diff',
+						symbols = {
+							added = Icons.git.added,
+							modified = Icons.git.modified,
+							removed = Icons.git.removed,
+						},
+						source = function()
+							local gitsigns = vim.b.gitsigns_status_dict
+							if gitsigns then
+								return {
+									added = gitsigns.added,
+									modified = gitsigns.changed,
+									removed = gitsigns.removed,
+								}
+							end
+						end,
+					},
 				},
-				{
-					function() return require('noice').api.status.mode['get']() end,
-					cond = function() return package.loaded['noice'] and require('noice').api.status.mode['has']() end,
-					color = color_fn 'Constant',
+				lualine_c = {
+					LazyVim.lualine.root_dir(),
+					{
+						'filetype',
+						colored = true,
+						icon_only = true,
+						separator = '',
+						padding = { left = 1, right = 0 },
+						color = color_fn 'Attribute',
+					},
+					{
+						LazyVim.lualine.pretty_path {
+							length = 3,
+							relative = 'cwd',
+							modified_hl = 'Error',
+							directory_hl = 'Comment',
+							filename_hl = 'Conditional',
+							modified_sign = ' ' .. Icons.misc.modified,
+							readonly_icon = ' ' .. Icons.misc.readonly,
+						},
+					},
+					{
+						'diagnostics',
+						symbols = {
+							error = Icons.diagnostics.Error,
+							warn = Icons.diagnostics.Warn,
+							info = Icons.diagnostics.Info,
+							hint = Icons.diagnostics.Hint,
+						},
+					},
 				},
-				{ -- Dap
-					function() return '  ' .. require('dap').status() end,
-					cond = function() return package.loaded['dap'] and require('dap').status() ~= '' end,
-					color = color_fn 'Debug',
+
+				lualine_x = {
+					Snacks.profiler.status(),
+
+					{ -- Dap
+						function() return '  ' .. require('dap').status() end,
+						cond = function() return package.loaded['dap'] and require('dap').status() ~= '' end,
+						color = color_fn 'Debug',
+					},
 				},
-			}
-			s.lualine_y = {
-				{ -- word count
-					function()
-						local wc = vim.fn.wordcount()
-						return wc.words .. 'w ' .. wc.chars .. 'c'
-					end,
-					cond = function() return Nihil.config.exclude.document_filetypes_map[vim.bo.ft] end,
+				lualine_y = {
+					{ -- word count
+						function()
+							local wc = vim.fn.wordcount()
+							return wc.words .. 'w ' .. wc.chars .. 'c'
+						end,
+						cond = function() return Nihil.config.exclude.document_filetypes_map[vim.bo.ft] end,
+					},
+					{ 'encoding', cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-8' end },
+					{
+						'fileformat',
+						symbols = { unix = 'lf', dos = 'crlf', mac = 'cr' },
+						cond = function() return vim.bo.ff ~= 'unix' end,
+					},
 				},
-				{ 'encoding', cond = function() return (vim.bo.fenc or vim.go.enc) ~= 'utf-8' end },
-				{
-					'fileformat',
-					symbols = { unix = 'lf', dos = 'crlf', mac = 'cr' },
-					cond = function() return vim.bo.ff ~= 'unix' end,
+				lualine_z = {
+					{ 'location', separator = ' ', padding = { left = 1, right = 0 } },
+					{ 'progress', padding = { left = 0, right = 1 } },
 				},
-			}
-			s.lualine_z = {
-				{ 'location', separator = ' ', padding = { left = 1, right = 0 } },
-				{ 'progress', padding = { left = 0, right = 1 } },
 			}
 
-			for _, mod in ipairs(s.lualine_b) do
-				mod.separator = { right = '', left = ' ' }
+			for i, _ in ipairs(opts.sections.lualine_b) do
+				opts.sections.lualine_b[i].separator = { right = '', left = ' ' }
 			end
-			for _, mod in ipairs(s.lualine_y) do
-				mod.separator = { right = ' ', left = '' }
+			for i, _ in ipairs(opts.sections.lualine_y) do
+				opts.sections.lualine_y[i].separator = { right = ' ', left = '' }
 			end
 
 			return opts
@@ -348,8 +342,6 @@ return {
 		keys = {
 			-- { 'zO', function() require('ufo').openAllFolds() end, nowait = true, desc = 'Unfold All' },
 			-- { 'zC', function() require('ufo').closeAllFolds() end, nowait = true, desc = 'Fold All' },
-			{ 'zO', '<cmd>set foldlevel=30 <cr>', nowait = true, desc = 'Unfold All' },
-			{ 'zC', '<cmd>set foldlevel=0  <cr>', nowait = true, desc = 'Fold All' },
 			{ ']u', function() require('ufo').goNextClosedFold() end, nowait = true, desc = 'Fold: Next' },
 			{ '[u', function() require('ufo').goPreviousClosedFold() end, nowait = true, desc = 'Fold: Prev' },
 		},
