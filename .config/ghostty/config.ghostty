@@ -1,7 +1,7 @@
 # --- Appearance ---
 theme                           = noctalia
 background                      = #000
-background-opacity              = 0.7
+background-opacity              = 0.8
 window-decoration               = none
 
 gtk-quick-terminal-layer        = overlay
@@ -22,7 +22,7 @@ grapheme-width-method           = unicode
 
 # --- Mouse & Interaction ---
 mouse-hide-while-typing         = true
-mouse-scroll-multiplier         = 0.2
+mouse-scroll-multiplier         = 1.5
 clipboard-trim-trailing-spaces  = true
 shell-integration-features      = sudo, cursor, ssh-env, ssh-terminfo, path
 quick-terminal-position         = center
