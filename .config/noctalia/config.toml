@@ -1,0 +1,87 @@
+[audio]
+enable_overdrive = true
+enable_sounds = true
+
+[bar]
+order = [ "Main" ]
+
+    [bar.Main]
+    background_opacity = 0.7
+    capsule_fill = "shadow"
+    capsule_groups = [ "System" ]
+    capsule_opacity = 0.7
+    contact_shadow = true
+    end = [ "tray", "volume", "notifications" ]
+    margin_edge = 0
+    margin_ends = 0
+    position = "right"
+    radius = 0
+    start = [ "control-center", "workspaces", "media" ]
+
+[brightness]
+enable_ddcutil = true
+
+[dock]
+active_monitor_only = true
+auto_hide = true
+background_opacity = 0.3
+enabled = true
+icon_size = 40
+inactive_opacity = 0.8
+inactive_scale = 1.0
+radius = 12
+
+[nightlight]
+use_weather_location = false
+
+[notification]
+layer = "overlay"
+
+[shell]
+avatar_path = "~/Pictures/.face"
+password_style = "random"
+polkit_agent = true
+settings_show_advanced = true
+
+[theme]
+community_palette = "Catppuccin Lavender"
+source = "wallpaper"
+wallpaper_scheme = "m3-tonal-spot"
+
+    [theme.templates]
+    builtin_ids = [ "gtk3", "gtk4", "btop", "qt" ]
+    community_ids = [ "spicetify", "steam", "zed" ]
+    enable_user_templates = true
+
+[wallpaper]
+directory = "~/Pictures/Wallpapers"
+fill_color = "#000000"
+
+[weather]
+auto_locate = true
+
+[widget.clock]
+anchor = true
+
+[widget.control-center]
+capsule = true
+
+[widget.notifications]
+capsule = true
+capsule_group = "System"
+hide_when_no_unread = false
+
+[widget.tray]
+capsule = true
+capsule_group = "System"
+drawer = true
+hidden = [ "zero-trust-client", "Easy Effects" ]
+
+[widget.volume]
+capsule = true
+capsule_group = "System"
+show_label = false
+
+[widget.workspaces]
+capsule = true
+
