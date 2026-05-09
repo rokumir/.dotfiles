@@ -1,0 +1,16 @@
+#!/usr/bin/env fish
+
+# NOTE: Make focused window to float and fullscreen
+
+set is_floating (niri msg -j focused-window | jq '.is_floating')
+
+niri msg action toggle-window-floating
+niri msg action move-floating-window -x 0 -y 0
+
+if [ "$is_floating" = false ]
+    niri msg action set-window-width 1920
+    niri msg action set-window-height 1080
+else
+    niri msg action set-window-width 60%
+    niri msg action set-window-height 100%
+end

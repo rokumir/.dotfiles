@@ -6,13 +6,13 @@ binds {
     // -----------------------------------------------
     // #"System & Meta"
     Mod+Grave     cooldown-ms=100 { toggle-overview; }
-    Mod+Alt+L     repeat=false cooldown-ms=250 hotkey-overlay-title="Lock Screen"  { spawn-sh "qs -c noctalia-shell ipc call lockScreen lock"; }
-    Mod+Delete    repeat=false cooldown-ms=250 hotkey-overlay-title="Session Menu" { spawn-sh "qs -c noctalia-shell ipc call sessionMenu toggle"; }
-    Mod+F1        repeat=false cooldown-ms=250 hotkey-overlay-title="Keybind Cheatsheet" { spawn-sh "qs -c noctalia-shell ipc call plugin:keybind-cheatsheet toggle"; }
-    Mod+A         repeat=false cooldown-ms=250 hotkey-overlay-title="Control Center" { spawn-sh "qs -c noctalia-shell ipc call controlCenter toggle"; }
+    Mod+Alt+L     repeat=false cooldown-ms=250 hotkey-overlay-title="Lock Screen"  { spawn-sh "noctalia msg screen-lock"; }
+    Mod+Delete    repeat=false cooldown-ms=250 hotkey-overlay-title="Session Menu" { spawn-sh "noctalia msg panel-toggle session"; }
+    // Mod+F1        repeat=false cooldown-ms=250 hotkey-overlay-title="Keybind Cheatsheet" { spawn-sh "qs -c noctalia-shell ipc call plugin:keybind-cheatsheet toggle"; }
+    Mod+A         repeat=false cooldown-ms=250 hotkey-overlay-title="Control Center" { spawn-sh "noctalia msg panel-toggle control-center"; }
 
     // use keyd to map this to Super
-    Mod+F2        repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher"      { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
+    Mod+F2        repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher"      { spawn-sh "noctalia msg panel-toggle launcher"; }
 
     // Screenshots
     Mod+Shift+S   repeat=false cooldown-ms=250 hotkey-overlay-title="Screenshot" { spawn "~/.config/niri/scripts/screenshot"; }
@@ -21,27 +21,28 @@ binds {
     Alt+Print     repeat=false cooldown-ms=250 hotkey-overlay-title="WINDOWshot" { spawn-sh "~/.config/niri/scripts/screenshot window"; }
 
     // Volume/Media Controls
-    XF86AudioRaiseVolume    allow-when-locked=true hotkey-overlay-title="Volume Increase"    { spawn-sh "qs -c noctalia-shell ipc call volume increase"; }
-    XF86AudioLowerVolume    allow-when-locked=true hotkey-overlay-title="Volume Decrease"    { spawn-sh "qs -c noctalia-shell ipc call volume decrease"; }
-    XF86AudioMute           allow-when-locked=true hotkey-overlay-title="Volume Mute Output" { spawn-sh "qs -c noctalia-shell ipc call volume muteOutput"; }
-    XF86AudioMicMute        allow-when-locked=true hotkey-overlay-title="Volume Mute Input"  { spawn-sh "qs -c noctalia-shell ipc call volume muteInput"; }
-    XF86AudioNext           allow-when-locked=true hotkey-overlay-title="Media Next"         { spawn-sh "qs -c noctalia-shell ipc call media next"; }
-    XF86AudioPrev           allow-when-locked=true hotkey-overlay-title="Media Previous"     { spawn-sh "qs -c noctalia-shell ipc call media previous"; }
-    XF86AudioPlay           allow-when-locked=true hotkey-overlay-title="Media Play/Pause"   { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
-    XF86AudioPause          allow-when-locked=true hotkey-overlay-title="Media Play/Pause"   { spawn-sh "qs -c noctalia-shell ipc call media playPause"; }
+    XF86AudioRaiseVolume    allow-when-locked=true hotkey-overlay-title="Volume Increase"    { spawn-sh "noctalia msg volume-up 5"; }
+    XF86AudioLowerVolume    allow-when-locked=true hotkey-overlay-title="Volume Decrease"    { spawn-sh "noctalia msg volume-down 5"; }
+    XF86AudioMute           allow-when-locked=true hotkey-overlay-title="Volume Mute Output" { spawn-sh "noctalia msg volume-mute"; }
+    XF86AudioMicMute        allow-when-locked=true hotkey-overlay-title="Volume Mute Input"  { spawn-sh "noctalia msg mic-mute"; }
+    XF86AudioNext           allow-when-locked=true hotkey-overlay-title="Media Next"         { spawn-sh "noctalia msg media next"; }
+    XF86AudioPrev           allow-when-locked=true hotkey-overlay-title="Media Previous"     { spawn-sh "noctalia msg media prev"; }
+    XF86AudioPlay           allow-when-locked=true hotkey-overlay-title="Media Play/Pause"   { spawn-sh "noctalia msg media toggle"; }
+    XF86AudioPause          allow-when-locked=true hotkey-overlay-title="Media Play/Pause"   { spawn-sh "noctalia msg media toggle"; }
     // Brightness Controls
-    XF86MonBrightnessUp     allow-when-locked=true hotkey-overlay-title="Brightness Increase" { spawn-sh "qs -c noctalia-shell ipc call brightness increase"; }
-    XF86MonBrightnessDown   allow-when-locked=true hotkey-overlay-title="Brightness Decrease" { spawn-sh "qs -c noctalia-shell ipc call brightness decrease"; }
+    XF86MonBrightnessUp     allow-when-locked=true hotkey-overlay-title="Brightness Increase" { spawn-sh "noctalia msg brightness-up"; }
+    XF86MonBrightnessDown   allow-when-locked=true hotkey-overlay-title="Brightness Decrease" { spawn-sh "noctalia msg brightness-down"; }
 
     // -----------------------------------------------
     // #"Applications"
     Mod+Return          repeat=false cooldown-ms=250 hotkey-overlay-title="Terminal"      { spawn-sh "$TERMINAL"; }
     Ctrl+Shift+Escape   repeat=false cooldown-ms=250 hotkey-overlay-title="Task Manager"  { spawn-sh "$TERMINAL -e btop"; }
-    Mod+V               repeat=false cooldown-ms=250 hotkey-overlay-title="Clipboard"     { spawn-sh "qs -c noctalia-shell ipc call launcher clipboard"; }
+    Mod+V               repeat=false cooldown-ms=250 hotkey-overlay-title="Clipboard"     { spawn-sh "noctalia msg panel-toggle clipboard"; }
 
-    Mod+Comma         repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Wallpaper"  { spawn-sh "qs -c noctalia-shell ipc call plugin:wallcards toggle"; }
-    Mod+Period        repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Emoji"      { spawn-sh "qs -c noctalia-shell ipc call launcher emoji"; }
-    Mod+Shift+Period  repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Kaomoji"    { spawn-sh "qs -c noctalia-shell ipc call plugin:kaomoji toggle"; }
+    // Mod+Comma         repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Wallpaper"  { spawn-sh "qs -c noctalia-shell ipc call plugin:wallcards toggle"; }
+    Mod+Comma         repeat=false cooldown-ms=250 hotkey-overlay-title="Pick Random Wallpaper"  { spawn-sh "noctalia msg wallpaper-random"; }
+    Mod+Period        repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Emoji"      { spawn-sh "noctalia msg panel-toggle launcher /emo"; }
+    // Mod+Shift+Period  repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Kaomoji"    { spawn-sh "qs -c noctalia-shell ipc call plugin:kaomoji toggle"; }
     Mod+Shift+c       repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Color"      { spawn-sh "~/.config/niri/scripts/color-picker"; }
 
     Mod+W  repeat=false cooldown-ms=250 hotkey-overlay-title="Browser"   { spawn-sh "~/.config/niri/scripts/ror zen 'xdg-open https://'"; }
@@ -64,6 +65,7 @@ binds {
     Mod+J        { focus-window-or-workspace-down; }
     Mod+Home     { focus-column-first; }
     Mod+End      { focus-column-last; }
+    Mod+Alt+F    repeat=false cooldown-ms=200 { spawn-sh "~/.config/niri/scripts/win-to-flullscreen"; }
 
     Mod+WheelScrollUp         cooldown-ms=150 { focus-workspace-up; }
     Mod+WheelScrollDown       cooldown-ms=150 { focus-workspace-down; }

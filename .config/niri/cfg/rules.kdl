@@ -15,6 +15,13 @@ layer-rule {
     match namespace="^linux-wallpaperengine$"
     place-within-backdrop true
 }
+/* Noctalia: floating settings window */
+window-rule {
+  match app-id="dev.noctalia.Noctalia.Settings"
+  open-floating true
+  default-column-width { fixed 1080; }
+  default-window-height { fixed 920; }
+}
 /* Noctalia: blur everywhere without xray for a better look */
 layer-rule {
   match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"

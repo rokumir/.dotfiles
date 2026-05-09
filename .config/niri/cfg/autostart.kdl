@@ -1,8 +1,7 @@
-spawn-sh-at-startup "qs -c noctalia-shell"
-spawn-sh-at-startup "sleep 2; qs -c noctalia-shell ipc call idleInhibitor enable" // Keep Awake
+spawn-at-startup "noctalia"
+spawn-sh-at-startup "noctalia msg caffeine-enable" // Keep Awake
 
-spawn-sh-at-startup "nsticky"
+spawn-at-startup "nsticky"
 spawn-sh-at-startup "warp-cli connect"
-spawn-sh-at-startup "niri-sidebar listen"
 
 spawn-sh-at-startup "~/.config/niri/scripts/xdg-mimelist"
