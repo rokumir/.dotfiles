@@ -6,6 +6,7 @@ enable_sounds = true
 order = [ "Main" ]
 
     [bar.Main]
+    auto_hide = true
     background_opacity = 0.7
     capsule_fill = "shadow"
     capsule_groups = [ "System" ]
@@ -16,6 +17,7 @@ order = [ "Main" ]
     margin_ends = 0
     position = "right"
     radius = 0
+    reserve_space = false
     start = [ "control-center", "workspaces", "media" ]
 
 [brightness]
@@ -23,28 +25,27 @@ enable_ddcutil = true
 
 [dock]
 active_monitor_only = true
-auto_hide = true
 background_opacity = 0.3
+auto_hide = true
 enabled = true
-icon_size = 40
+icon_size = 30
 inactive_opacity = 0.8
 inactive_scale = 1.0
+pinned = [ "zen", "com.mitchellh.ghostty", "vesktop" ]
 radius = 12
 
 [nightlight]
 use_weather_location = false
 
 [notification]
-layer = "overlay"
+layer = "top"
 
 [shell]
-avatar_path = "~/Pictures/.face"
 password_style = "random"
 polkit_agent = true
 settings_show_advanced = true
 
 [theme]
-community_palette = "Catppuccin Lavender"
 source = "wallpaper"
 wallpaper_scheme = "m3-tonal-spot"
 
@@ -54,7 +55,6 @@ wallpaper_scheme = "m3-tonal-spot"
     enable_user_templates = true
 
 [wallpaper]
-directory = "~/Pictures/Wallpapers"
 fill_color = "#000000"
 
 [weather]
@@ -84,4 +84,3 @@ show_label = false
 
 [widget.workspaces]
 capsule = true
-
