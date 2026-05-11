@@ -1,5 +1,5 @@
 spawn-at-startup "noctalia"
-spawn-sh-at-startup "noctalia msg caffeine-enable" // Keep Awake
+spawn-sh-at-startup "sleep 2; noctalia msg caffeine-enable" // Keep Awake
 
 spawn-at-startup "nsticky"
 spawn-sh-at-startup "warp-cli connect"

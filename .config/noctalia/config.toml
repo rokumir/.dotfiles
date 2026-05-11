@@ -8,24 +8,24 @@ order = [ "Main" ]
     [bar.Main]
     auto_hide = true
     background_opacity = 0.7
-    capsule_fill = "shadow"
-    capsule_groups = [ "System" ]
-    capsule_opacity = 0.7
-    contact_shadow = true
-    end = [ "tray", "volume", "notifications" ]
+    radius = 0
     margin_edge = 0
     margin_ends = 0
     position = "right"
-    radius = 0
     reserve_space = false
+    capsule_fill = "shadow"
+    capsule_opacity = 0.7
+    contact_shadow = true
+    capsule_groups = [ "System" ]
     start = [ "control-center", "workspaces", "media" ]
+    end = [ "tray", "volume", "notifications" ]
 
 [brightness]
 enable_ddcutil = true
 
 [dock]
 active_monitor_only = true
-background_opacity = 0.3
+background_opacity = 0.7
 auto_hide = true
 enabled = true
 icon_size = 30
@@ -73,7 +73,6 @@ hide_when_no_unread = false
 
 [widget.tray]
 capsule = true
-capsule_group = "System"
 drawer = true
 hidden = [ "zero-trust-client", "Easy Effects" ]
 
@@ -84,3 +83,4 @@ show_label = false
 
 [widget.workspaces]
 capsule = true
+
