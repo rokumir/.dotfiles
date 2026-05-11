@@ -43,6 +43,42 @@ local KIND_TITLES = {
 	verbose = { '  Verbose', 'Comment' },
 }
 
+local MSG_TARGETS = {
+	-- NOTE:
+	-- "cmd" → command line (floating input area)
+	-- "msg" → small message area (like notifications)
+	-- "pager" → larger scrollable window (like :messages or errors)
+	-- https://neovim.io/doc/user/api-ui-events/#ui-messages
+	-- https://github.com/neovim/neovim/issues/35654
+
+	[''] = 'msg', -- Unknown
+	empty = 'msg', -- Empty message (:echo ""), with empty content. Should clear messages sharing the 'cmdheight' area if it is the only message in a batch.
+	bufwrite = 'msg', -- :write message
+	confirm = 'dialog', -- Message preceding a prompt (:confirm, confirm(), inputlist(), z=, ...)
+	emsg = 'pager', -- Error (errors, internal error, :throw, ...)
+	echo = 'msg', -- :echo message
+	echomsg = 'msg', -- :echomsg message
+	echoerr = 'pager', -- :echoerr message
+	completion = 'msg', -- ins-completion-menu message
+	list_cmd = 'pager', -- List output for various commands (:ls, :set, ...)
+	lua_error = 'pager', -- Error in :lua code
+	lua_print = 'msg', -- print() from :lua code
+	progress = 'msg', -- Progress message emitted by nvim_echo()
+	rpc_error = 'pager', -- Error response from rpcrequest()
+	quickfix = 'msg', -- Quickfix navigation message
+	search_cmd = 'msg', -- Entered search command
+	search_count = 'msg', -- Search count message ("S" flag of 'shortmess')
+	shell_cmd = 'pager', -- :!cmd executed command
+	shell_err = 'pager', -- :!cmd shell stderr output
+	shell_out = 'pager', -- :!cmd shell stdout output
+	shell_ret = 'msg', -- :!cmd shell return code
+	typed_cmd = 'msg', -- Interactively typed command on the cmdline
+	undo = 'msg', -- :undo and :redo message
+	verbose = 'pager', -- 'verbose' message
+	wildlist = 'msg', -- 'wildmode' "list" message
+	wmsg = 'msg', -- Warning ("search hit BOTTOM", W10, ...)
+}
+
 --- State ------------------------------------------------------------
 local last_title = nil
 local last_hl = 'Normal'
@@ -105,41 +141,7 @@ end
 ui2.enable {
 	enable = true,
 	msg = {
-		targets = {
-			-- NOTE:
-			-- "cmd" → command line (floating input area)
-			-- "msg" → small message area (like notifications)
-			-- "pager" → larger scrollable window (like :messages or errors)
-			-- https://neovim.io/doc/user/api-ui-events/#ui-messages
-			-- https://github.com/neovim/neovim/issues/35654
-
-			[''] = 'msg', -- Unknown
-			empty = 'msg', -- Empty message (:echo ""), with empty content. Should clear messages sharing the 'cmdheight' area if it is the only message in a batch.
-			bufwrite = 'msg', -- :write message
-			confirm = 'dialog', -- Message preceding a prompt (:confirm, confirm(), inputlist(), z=, ...)
-			emsg = 'pager', -- Error (errors, internal error, :throw, ...)
-			echo = 'msg', -- :echo message
-			echomsg = 'msg', -- :echomsg message
-			echoerr = 'pager', -- :echoerr message
-			completion = 'msg', -- ins-completion-menu message
-			list_cmd = 'pager', -- List output for various commands (:ls, :set, ...)
-			lua_error = 'pager', -- Error in :lua code
-			lua_print = 'msg', -- print() from :lua code
-			progress = 'msg', -- Progress message emitted by nvim_echo()
-			rpc_error = 'pager', -- Error response from rpcrequest()
-			quickfix = 'msg', -- Quickfix navigation message
-			search_cmd = 'msg', -- Entered search command
-			search_count = 'msg', -- Search count message ("S" flag of 'shortmess')
-			shell_cmd = 'pager', -- :!cmd executed command
-			shell_err = 'pager', -- :!cmd shell stderr output
-			shell_out = 'pager', -- :!cmd shell stdout output
-			shell_ret = 'msg', -- :!cmd shell return code
-			typed_cmd = 'msg', -- Interactively typed command on the cmdline
-			undo = 'msg', -- :undo and :redo message
-			verbose = 'pager', -- 'verbose' message
-			wildlist = 'msg', -- 'wildmode' "list" message
-			wmsg = 'msg', -- Warning ("search hit BOTTOM", W10, ...)
-		},
+		targets = MSG_TARGETS,
 		cmd = { height = 0.5 },
 		dialog = { height = 0.5 },
 		msg = { height = 0.3, timeout = 1500 },
