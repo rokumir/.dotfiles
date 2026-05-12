@@ -24,5 +24,6 @@ workspace "Dev" {
     layout {
         gaps 1
         focus-ring { width 1; }
+        shadow { off; }
     }
 }

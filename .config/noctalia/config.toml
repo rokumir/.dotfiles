@@ -8,25 +8,31 @@ order = [ "Main" ]
     [bar.Main]
     auto_hide = true
     background_opacity = 0.7
-    radius = 0
+    capsule_fill = "shadow"
+    capsule_groups = [ "Utility", "System Monitor", "Media" ]
+    capsule_opacity = 0.4
+    contact_shadow = true
+    end = [ "temp", "ram", "cpu", "tray", "notifications", "input_volume", "volume", "scripted", "control-center" ]
     margin_edge = 0
     margin_ends = 0
-    position = "right"
+    padding = 8
+    position = "top"
+    radius = 0
     reserve_space = false
-    capsule_fill = "shadow"
-    capsule_opacity = 0.7
-    contact_shadow = true
-    capsule_groups = [ "System" ]
-    start = [ "control-center", "workspaces", "media" ]
-    end = [ "tray", "volume", "notifications" ]
+    start = [ "workspaces", "media", "audio_visualizer" ]
 
 [brightness]
 enable_ddcutil = true
 
+[config]
+
+[desktop_widgets]
+enabled = false
+
 [dock]
 active_monitor_only = true
-background_opacity = 0.7
 auto_hide = true
+background_opacity = 0.7
 enabled = true
 icon_size = 30
 inactive_opacity = 0.8
@@ -41,11 +47,31 @@ use_weather_location = false
 layer = "top"
 
 [shell]
+font_family = "Playwrite GB J, sans-serif"
 password_style = "random"
 polkit_agent = true
 settings_show_advanced = true
+telemetry_enabled = true
+
+    [[shell.session.actions]]
+    action = "shutdown"
+    destructive = true
+    enabled = true
+
+    [[shell.session.actions]]
+    action = "lock"
+    enabled = true
+
+    [[shell.session.actions]]
+    action = "logout"
+    enabled = true
+
+    [[shell.session.actions]]
+    action = "reboot"
+    enabled = true
 
 [theme]
+community_palette = "Catppuccin Lavender"
 source = "wallpaper"
 wallpaper_scheme = "m3-tonal-spot"
 
@@ -53,34 +79,84 @@ wallpaper_scheme = "m3-tonal-spot"
     builtin_ids = [ "gtk3", "gtk4", "btop", "qt" ]
     community_ids = [ "spicetify", "steam", "zed" ]
     enable_user_templates = true
+    user_config = "~/.config/noctalia/user-templates.toml"
 
 [wallpaper]
+directory = "~/Pictures/Wallpapers"
 fill_color = "#000000"
 
 [weather]
 auto_locate = true
 
+[widget.audio_visualizer]
+bands = 30
+capsule = true
+capsule_group = "Media"
+low_color = "on_hover"
+mirrored = false
+width = 60.0
+
 [widget.clock]
 anchor = true
+format = "{:%H %M}"
 
 [widget.control-center]
 capsule = true
+capsule_group = "Utility"
+
+[widget.cpu]
+capsule = true
+capsule_group = "System Monitor"
+display = "gauge"
+show_label = false
+
+[widget.input_volume]
+capsule = true
+capsule_group = "Utility"
+show_label = false
+
+[widget.media]
+capsule = true
+capsule_group = "Media"
+color = "on_surface_variant"
+title_scroll = "on_hover"
 
 [widget.notifications]
 capsule = true
-capsule_group = "System"
-hide_when_no_unread = false
+capsule_group = "Utility"
+hide_when_no_unread = true
+
+[widget.ram]
+capsule = true
+capsule_group = "System Monitor"
+show_label = false
+
+[widget.scripted]
+capsule = true
+capsule_group = "Utility"
+hot_reload = true
+script = "~/.scripts/toggle-warp"
+
+[widget.spacer]
+capsule = false
+length = 6.0
+
+[widget.temp]
+capsule = true
+capsule_group = "System Monitor"
+show_label = false
 
 [widget.tray]
 capsule = true
-drawer = true
+capsule_group = ""
+drawer = false
 hidden = [ "zero-trust-client", "Easy Effects" ]
 
 [widget.volume]
 capsule = true
-capsule_group = "System"
+capsule_group = "Utility"
 show_label = false
 
 [widget.workspaces]
 capsule = true
-
+display = "none"
