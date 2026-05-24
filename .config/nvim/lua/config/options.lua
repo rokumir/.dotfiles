@@ -25,6 +25,13 @@ opt.smoothscroll = true
 opt.timeoutlen = 500
 opt.showcmd = true
 opt.showcmdloc = 'statusline'
+vim.opt.shortmess:append {
+	W = true, -- don't show "written"
+	I = true, -- no intro
+	c = true, -- completion messages
+	C = true, -- completion scanning
+	s = true, -- search count
+}
 
 --- Editing & Text
 opt.autoindent = true

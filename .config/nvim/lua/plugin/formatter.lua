@@ -21,10 +21,10 @@ return {
 			log_level = vim.log.levels.WARN,
 			formatters_by_ft = {
 				dataviewjs = { 'prettier' },
-				kdl = { 'kdlfmt' },
 				jsonc = { 'deno_fmt' },
 				qml = { 'qmlformat' },
 				python = { 'ruff format ' },
+				xml = { 'xmlformatter' },
 			},
 		},
 	},

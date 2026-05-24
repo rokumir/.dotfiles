@@ -1,46 +1,17 @@
-// -------------------------------------------------------------------
-// LAYER RULES
-layer-rule {
-    match namespace="^window-switcher-parallel$"
-    match namespace="^wallpaper-selector$"
-    match namespace="^app-launcher-parallel$"
-    match namespace="^smarthome$"
-    match namespace="^topbar$"
-    background-effect { blur true; xray false; }
-}
-
-// Noctalia
+//= LAYERS ============================================================
+// Noctalia Wallpaper
 layer-rule {
     match namespace="^noctalia-wallpaper*"
     match namespace="^linux-wallpaperengine$"
     place-within-backdrop true
 }
-/* Noctalia: blurred backdrop */
+// Noctalia blurred backdrop
 layer-rule {
   match namespace="^noctalia-backdrop*"
   place-within-backdrop true
 }
-/* Noctalia: floating settings window */
-window-rule {
-  match app-id="dev.noctalia.Noctalia.Settings"
-  open-floating true
-  default-column-width { fixed 1080; }
-  default-window-height { fixed 920; }
-}
-/* Noctalia: blur everywhere without xray for a better look */
-layer-rule {
-    match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
-    background-effect { blur true; xray false; }
-}
-/* Noctalia: bar */
-// layer-rule {
-//     match namespace="^noctalia-bar-.*$"
-//     background-effect { blur false; xray false; }
-// }
 
-
-// -------------------------------------------------------------------
-// WINDOW RULES
+//= WINDOWS ============================================================
 window-rule {
     geometry-corner-radius 8
     clip-to-geometry true
@@ -58,6 +29,14 @@ window-rule {
 window-rule {
     match is-floating=false
     tiled-state true
+}
+
+/* Noctalia: floating settings window */
+window-rule {
+  match app-id="dev.noctalia.Noctalia.Settings"
+  open-floating true
+  default-column-width { fixed 1080; }
+  default-window-height { fixed 920; }
 }
 
 // Browsers
@@ -91,11 +70,12 @@ window-rule {
     default-floating-position x=10 y=10 relative-to="bottom-left"
 }
 
-// Terminals
+// Wide apps
 window-rule {
-    match app-id="^(Alacritty|kitty|kitty-dropterm|com.mitchellh.ghostty)$"
+    match app-id="Alacritty|kitty|kitty-dropterm|com.mitchellh.ghostty"
+    match title=".*(Discord).*" app-id="discord|vesktop"
 
-    default-column-width { proportion 0.9; };
+    default-column-width { proportion 0.8; };
 }
 
 // Popups
@@ -112,6 +92,7 @@ window-rule {
     default-window-height { proportion 0.4; }
     default-column-width { proportion 0.6; }
 }
+
 // Oklch Color Picker Popup
 window-rule {
     match title="Oklch Color Picker"
@@ -127,22 +108,13 @@ window-rule {
     default-window-height { }
     default-column-width { }
 }
+
 // Dialogs window rule
 window-rule {
-    match app-id="confirm"
-    match app-id="pavucontrol"
-    match app-id="blueman"
-    match app-id="nm-connection-editor"
-    match app-id="org.gnome.PowerStats"
-    match app-id="cpupower"
-    match app-id="rog-control-center"
-    match app-id="jamesdsp"
-    match app-id="Hello"
-    match app-id="xdg-desktop-portal-gtk"
-    match app-id="system-config-printer"
-    match app-id="ghostty_journalctl"
+    match app-id="confirm|pavucontrol|blueman|nm-connection-editor|org.gnome.PowerStats"
+    match app-id="cpupower|rog-control-center|jamesdsp|Hello|xdg-desktop-portal-gtk"
+    match app-id="ghostty_journalctl|system-config-printer|brave-keep"
     match title=r#".*Extension.*Bitwarden.*"#
-    match app-id="brave-keep"
 
     open-floating true
     default-column-width { proportion 0.45; }
@@ -157,12 +129,6 @@ window-rule {
     open-floating true
     default-window-height { proportion 0.18; }
     default-column-width { proportion 0.26; }
-}
-
-// Discord
-window-rule {
-    match title=".*(Discord).*" app-id="^(discord|vesktop)$"
-    default-column-width { proportion 0.9; }
 }
 
 // Spotify
@@ -203,6 +169,11 @@ window-rule {
     open-floating true
     open-focused false
 }
+// Steam update window
+window-rule {
+    match title="^(FarFarWest)$"
+    open-maximized true
+}
 
 // Screenshot
 window-rule {
@@ -222,24 +193,4 @@ window-rule {
 window-rule {
     match app-id="nemo|org.gnome.Nautilus"
     default-column-width { proportion 0.65; }
-}
-
-// Obsidian
-window-rule {
-    match app-id="obsidian"
-    default-column-width { proportion 0.85; }
-}
-
-// EasyEffectS
-window-rule {
-    match app-id="easyeffects"
-    open-floating true
-    default-column-width { proportion 0.7; }
-    default-window-height { proportion 0.8; }
-}
-
-// EasyEffectS
-window-rule {
-    match app-id="anytype"
-    default-column-width { proportion 0.9; }
 }

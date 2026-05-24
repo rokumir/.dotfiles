@@ -1,0 +1,48 @@
+prefer-no-csd
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+cursor {
+    xcursor-theme "BreezeX-RosePine-Linux"
+    xcursor-size 20
+
+    hide-when-typing
+    hide-after-inactive-ms 10000
+}
+
+debug {
+    // Allows notification actions and window activation from Noctalia.
+    honor-xdg-activation-with-invalid-serial
+    enable-overlay-planes
+}
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+overview {
+    workspace-shadow { off; }
+}
+
+recent-windows {
+    debounce-ms 200
+    open-delay-ms 100
+
+    highlight {
+        padding 12
+        corner-radius 8
+    }
+
+    previews {
+        max-height 260
+        max-scale 1
+    }
+
+    binds {
+        Alt+Tab         { next-window     scope="workspace"; }
+        Alt+Shift+Tab   { previous-window scope="workspace"; }
+        Alt+Grave       { next-window     scope="output"; }
+    }
+}
+
+config-notification {
+}

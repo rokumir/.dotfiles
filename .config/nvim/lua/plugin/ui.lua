@@ -101,6 +101,12 @@ return {
 				},
 
 				lualine_x = {
+					{
+						function() return '@recording ' .. vim.fn.reg_recording() end,
+						cond = function() return vim.fn.reg_recording() ~= '' end,
+						color = color_fn 'Removed',
+					},
+
 					Snacks.profiler.status(),
 
 					{ -- Dap

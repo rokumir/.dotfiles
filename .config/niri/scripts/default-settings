@@ -18,10 +18,9 @@ xdg-mime default nemo.desktop inode/directory
 gsettings set org.gnome.desktop.default-applications.terminal exec ghostty
 gsettings set org.gnome.desktop.default-applications.terminal exec-arg ''
 xdg-mime default org.gnome.Nautilus.desktop inode/directory
-# UI/UX
+
+# Appearance
 gsettings set org.gnome.desktop.interface color-scheme prefer-dark
-gsettings set org.gnome.desktop.interface cursor-theme Bibata-Modern-Classic
-gsettings set org.gnome.desktop.interface cursor-size 20
 gsettings set org.gnome.desktop.interface gtk-theme Orchis-Dark
-gsettings set org.gnome.desktop.interface icon-theme Papirus-Dark
+gsettings set org.gnome.desktop.interface icon-theme Fluent-dark
 gsettings set org.gnome.desktop.interface text-scaling-factor 1

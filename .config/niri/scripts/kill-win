@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2155
+
+win_info="$(niri msg -j focused-window)"
+app_id="$(jq -r '.app_id // empty' <<<"$win_info")"
+app_pid="$(jq -r '.pid // empty' <<<"$win_info")"
+
+[[ -n "$app_id" && -n "$app_pid" ]] || exit 1
+
+kill_by_pid() { kill -9 "$1"; }
+
+resolve_app_name() {
+    local app_id="$1"
+    local desktop="$(
+        fd -HIi -c=never "^${app_id}\.desktop$" \
+            /usr/share/applications \
+            ~/.local/share/applications \
+            2>/dev/null | head -n 1
+    )"
+    [[ -n "$desktop" ]] || return 1
+
+    rg -oP '^Exec=\K[^ %]+' "$desktop" |
+        head -n 1 |
+        xargs basename
+}
+
+pid_count="$(ps hH p "$app_pid" | wc -l)"
+if [[ "$pid_count" -eq 1 ]]; then
+    kill_by_pid "$app_pid"
+    exit 0
+fi
+
+app_name="$(resolve_app_name "$app_id" || true)"
+if [[ -n "${app_name:-}" ]] && killall -q -9 "$app_name"; then
+    exit 0
+fi
+
+kill_by_pid "$app_pid"

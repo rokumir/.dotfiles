@@ -89,6 +89,7 @@ for _, plug in ipairs {
 	'nvim-navic',
 	'noice.nvim',
 	'nui.nvim',
+	'mini.pairs',
 } do table.insert(M, { plug, optional = true, enabled = false }) end
 
 return M

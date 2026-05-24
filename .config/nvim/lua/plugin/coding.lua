@@ -37,38 +37,30 @@ return {
 	},
 
 	{ 'nvim-mini/mini.align', config = true }, -- keys: ga, gA
-	{
-		'mini.pairs',
-		optional = true,
+
+	{ -- Delimiter pairs
+		'windwp/nvim-autopairs',
+		event = 'InsertEnter',
 		opts = {
-			modes = { insert = true, command = false, terminal = false },
-			skip_next = [=[[%w%%%'%[%"%.%`%$]]=],
-			skip_ts = { 'string' },
-			skip_unbalanced = true,
-			markdown = true,
+			disable_filetype = Nihil.config.exclude.filetypes,
+			disable_in_macro = true,
+			disable_in_visualblock = false,
+			disable_in_replace_mode = true,
+			enable_abbr = true,
+			break_undo = true,
+			check_ts = true,
 		},
-		config = function(_, opts) require('nihil.plugin.mini-pairs').setup(opts) end,
 	},
 
 	{ -- Delimiter pairs surroundability
-		'mini.surround',
-		lazy = true,
-		optional = true,
-		opts = {
-			n_lines = 30,
-			respect_selection_type = true,
-			search_method = 'cover_or_nearest', ---@type 'cover'|'cover_or_next'|'cover_or_prev'|'cover_or_nearest'|'next'|'prev'|'nearest'
-			mappings = {
-				add = 'sa', -- Add surrounding in Normal and Visual modes
-				delete = 'sd', -- Delete surrounding
-				find = 'sf', -- Find surrounding (to the right)
-				find_left = 'sF', -- Find surrounding (to the left)
-				highlight = 'sh', -- Highlight surrounding
-				replace = 'sc', -- Replace surrounding
-				update_n_lines = 'sn', -- Update `n_lines`
-				suffix_last = 'l', -- Suffix to search with "prev" method
-				suffix_next = 'n', -- Suffix to search with "next" method
-			},
+		'kylechui/nvim-surround',
+		version = '*',
+		init = function() vim.g.nvim_surround_no_normal_mappings = true end,
+		opts = { highlight = { duration = 250 } },
+		keys = {
+			{ 'sa', '<Plug>(nvim-surround-visual)', mode = { 'v', 's' }, desc = 'Add Surround' },
+			{ 'sc', '<Plug>(nvim-surround-change)', desc = 'Change Surround' },
+			{ 'sd', '<Plug>(nvim-surround-delete)', desc = 'Delete Surround' },
 		},
 	},
 
@@ -166,7 +158,6 @@ return {
 			local cs = require 'coerce.string'
 
 			coerce.setup {
-				keymap_registry = require('coerce.keymap').keymap_registry(),
 				default_mode_keymap_prefixes = {
 					normal_mode = ';c',
 					visual_mode = ';c',
@@ -188,17 +179,13 @@ return {
 					{ keymap = '.', case = case.to_dot_case, description = 'dot.case' },
 					{
 						keymap = ',',
-						case = function(str)
-							local parts = case.split_keyword(str)
-							return table.concat(parts, ',')
-						end,
+						case = function(str) return table.concat(case.split_keyword(str), ',') end,
 						description = 'comma.case',
 					},
 					{
 						keymap = 'U',
 						case = function(str)
-							local parts = case.split_keyword(str)
-							parts = vim.tbl_map(vim.fn.toupper, parts)
+							local parts = vim.tbl_map(vim.fn.toupper, case.split_keyword(str))
 							return table.concat(parts, ' ')
 						end,
 						description = 'UPPER CASE',
@@ -206,8 +193,7 @@ return {
 					{
 						keymap = 'u',
 						case = function(str)
-							local parts = case.split_keyword(str)
-							parts = vim.tbl_map(vim.fn.tolower, parts)
+							local parts = vim.tbl_map(vim.fn.tolower, case.split_keyword(str))
 							return table.concat(parts, ' ')
 						end,
 						description = 'lower case',

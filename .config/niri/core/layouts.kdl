@@ -1,7 +1,12 @@
 layout {
-    gaps 24
+    gaps 6
     always-center-single-column
-    struts { left 0; right 0; bottom 0; top 0; }
+    struts {
+        left   0
+        right  0
+        bottom 0
+        top    0
+    }
 
     background-color "transparent" // for noctalia background
 
@@ -32,5 +37,17 @@ layout {
     tab-indicator {
         position "left"
         place-within-column
+    }
+}
+
+workspace "Misc" {
+    layout {
+        gaps 24
+        struts {
+            left   10
+            right  10
+            bottom 10
+            top    10
+        }
     }
 }

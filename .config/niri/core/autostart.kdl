@@ -1,7 +1,7 @@
 spawn-at-startup "noctalia"
 spawn-sh-at-startup "sleep 2; noctalia msg caffeine-enable" // Keep Awake
 
-spawn-at-startup "nsticky"
+spawn-sh-at-startup "walker --gapplication-service"
 spawn-sh-at-startup "warp-cli connect"
 
-spawn-sh-at-startup "~/.config/niri/scripts/xdg-mimelist"
+spawn-sh-at-startup "~/.config/niri/scripts/default-settings"

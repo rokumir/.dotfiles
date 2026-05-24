@@ -13,6 +13,7 @@ local SKIP_PATTERNS = {
 	'; before #%d+',
 	'%d fewer lines',
 	'%d more lines',
+	'Already at %a+ change',
 }
 
 local DIALOG_KINDS = {

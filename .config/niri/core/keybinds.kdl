@@ -13,7 +13,7 @@ binds {
     Mod+N         repeat=false cooldown-ms=250 hotkey-overlay-title="Control Center" { spawn-sh "noctalia msg panel-toggle control-center"; }
 
     // use keyd to map this to Super
-    Mod+F2        repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher"      { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Mod+F2        repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
 
     // Screenshots
     Mod+Shift+S   repeat=false cooldown-ms=250 hotkey-overlay-title="Screenshot" { spawn "~/.config/niri/scripts/screenshot"; }
@@ -41,7 +41,7 @@ binds {
     Mod+V               repeat=false cooldown-ms=250 hotkey-overlay-title="Clipboard"     { spawn-sh "noctalia msg panel-toggle clipboard"; }
     Mod+Comma           repeat=false cooldown-ms=250 hotkey-overlay-title="Noctalia Settings"  { spawn-sh "noctalia msg settings-toggle"; }
 
-    // Mod+Comma         repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Wallpaper"  { spawn-sh "qs -c noctalia-shell ipc call plugin:wallcards toggle"; }
+    Mod+T         repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Wallpaper"  { spawn-sh "noctalia msg panel-toggle wallpaper"; }
     Mod+Period        repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Emoji"      { spawn-sh "noctalia msg panel-toggle launcher /emo"; }
     // Mod+Shift+Period  repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Kaomoji"    { spawn-sh "qs -c noctalia-shell ipc call plugin:kaomoji toggle"; }
     Mod+Shift+c       repeat=false cooldown-ms=250 hotkey-overlay-title="Picker: Color"      { spawn-sh "~/.config/niri/scripts/color-picker"; }
@@ -55,7 +55,7 @@ binds {
     // -----------------------------------------------
     // #"Window"
     Mod+Q        repeat=false cooldown-ms=500 { close-window; }
-    Mod+Shift+Q  repeat=false cooldown-ms=500 { spawn-sh "kill -9 $(niri msg -j focused-window | jq -r '.pid')"; }
+    Mod+Shift+Q  repeat=false cooldown-ms=500 { spawn-sh "~/.config/niri/scripts/kill-win"; }
     Mod+Left     { focus-column-left; }
     Mod+H        { focus-column-left; }
     Mod+Right    { focus-column-right; }
@@ -106,9 +106,9 @@ binds {
     // -----------------------------------------------
     // #"Layout"
     Mod+F             { maximize-window-to-edges; }
+    Mod+Shift+F       { maximize-column; }
     Mod+Space         { toggle-window-floating; }
     Mod+B             { toggle-column-tabbed-display; }
-    Mod+Shift+F       { maximize-column; }
     Mod+CTRL+F        { expand-column-to-available-width; }
     Mod+Alt+Right     { switch-preset-column-width; }
     Mod+Alt+Left      { switch-preset-column-width-back; }
@@ -121,13 +121,4 @@ binds {
     Mod+Shift+Equal   { set-window-height "+5%"; }
 
     Mod+Alt+P   repeat=false hotkey-overlay-title="To PIP" { spawn "~/.config/niri/scripts/win-to-pip"; }
-
-    // // -----------------------------------------------
-    // // #"Plugin"
-    //
-    // // niri-sidebar
-    // Mod+P      hotkey-overlay-title="Sidebar: Toggle focused window" { spawn-sh "niri-sidebar toggle-window"; }
-    // Mod+S      hotkey-overlay-title="Sidebar: Toggle visibility"     { spawn-sh "niri-sidebar toggle-visibility"; }
-    // Mod+Ctrl+S hotkey-overlay-title="Sidebar: Reverse order"         { spawn-sh "niri-sidebar flip"; }
-    // Mod+Alt+R  hotkey-overlay-title="Sidebar: Force reorder"         { spawn-sh "niri-sidebar reorder"; }
 }

@@ -1,4 +1,4 @@
-source "$__fish_config_dir/os/"(begin
+source "$__fish_config_dir/conf.d/os/"(begin
     switch (uname)
         case Darwin; echo darwin.fish
         case Linux; set -q WSL_DISTRO_NAME; and echo wsl.fish; or echo linux.fish
