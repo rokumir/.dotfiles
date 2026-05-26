@@ -1,5 +1,5 @@
 # --- Appearance ---
-theme                           = noctalia
+theme                           = nihil
 background                      = #000
 background-opacity              = 0.8
 window-decoration               = none
@@ -8,8 +8,6 @@ gtk-quick-terminal-layer        = overlay
 
 # --- Typography ---
 font-family                     = Maple Mono
-font-family                     = Noto Color Emoji
-font-family                     = Segoe UI Emoji
 font-size                       = 11
 font-thicken                    = true
 font-feature                    = +calt, +dlig, +clig, +liga, +zero, +onum
