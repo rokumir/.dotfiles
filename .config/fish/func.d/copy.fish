@@ -1,4 +1,4 @@
-function copy
+function copy -d 'Copy everything from one folder to another location'
     set count (count $argv | tr -d \n)
     if test "$count" = 2; and test -d "$argv[1]"
         set from (echo $argv[1] | trim-right /)

@@ -1,11 +1,5 @@
-function update.system
-    if type -q yay
-        yay
-    else if type -q paru
-        paru
-    else
-        sudo pacman -Syu
-    end
+function update-system -d 'Update installed packages on pacman, AUR, Cargo, and Bob'
+    paru; or sudo pacman -Syu
 
     if type -q cargo rustup
         rustup update

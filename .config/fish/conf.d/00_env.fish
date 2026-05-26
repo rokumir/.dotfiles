@@ -12,6 +12,9 @@ set -gx PAGER bat
 
 set -gx CLIPHIST_MAX_ITEMS 500
 
+set -x MANROFFOPT '-c'
+set -x MANPAGER 'sh -c "col -bx | bat -l man -p"'
+
 ## ---------------------------------------
 # Rokumir Vault Directories
 set -gx RH_VAULT \

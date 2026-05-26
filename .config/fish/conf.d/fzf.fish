@@ -18,24 +18,17 @@ set -gx FZF_DEFAULT_OPTS \
 
 # --------------------------------------------------------------------------
 
-function fzf.find -d 'Search Files'
-    set token (eval echo -- (commandline -t)) # expand vars & tidle
-    set token (string unescape -- $token) # unescape to void compromise the path
+function fzf-files -d 'Search files and directories interactively'
+    set token (commandline -t | string unescape) # expand & unescape tokens cleanly
 
-    set fd_cmd fd \
-        --follow \
-        --hidden \
-        --ignore \
-        --no-require-git
-
+    set fd_cmd fd --follow --hidden --ignore --no-require-git
     set fzf_cmd fzf \
         --bind "alt-i:reload:eval $fd_cmd --unrestricted" \
         --bind 'alt-i:+change-header:'
 
-    # If the current token is a directory and has a trailing slash,
-    # then use it as fd's base directory.
+    # Separate logic based on whether token is an active directory
     begin
-        if [ -d "$token" ] && string match -q -- '*/' $token
+        if test -d "$token"; and string match -q '*/' $token
             $fd_cmd --base-directory $token \
                 | $fzf_cmd --border-label " $token " \
                 | awk "{print \"$token\$1\"}"
@@ -43,55 +36,15 @@ function fzf.find -d 'Search Files'
             $fd_cmd \
                 | $fzf_cmd --query "$token" --border-label " $(pwd | sed "s|^$HOME|~|")/ "
         end
-    end \
-        | read -f result
+    end | read -f result
     or return 1
 
-    __fzf.open $result
+    __fzf-exec $result
 end
 
-function fzf.vault -d 'Vault Search'
-    argparse t/title= print=? absolute=? -- $argv
-    or return 1
-
-    # fzf title
-    set title ' Home '
-    if set -q _flag_title
-        set title $_flag_title
-    end
-
-    # find options
-    set fd_cmd fd \
-        --follow \
-        --hidden \
-        --ignore \
-        --no-require-git \
-        --type directory \
-        --max-depth 1 \
-        --absolute-path \
-        --color never
-
-    begin
-        printf '%s\n' $RH_VAULT
-        $fd_cmd -- . $RH_VAULT
-    end \
-        | sed "s:^$HOME/::; s:/\$::" \
-        | sort -ur \
-        | fzf --border-label $title \
-        | read -l result
-    or return 1
-
-    set result (set -q _flag_absolute && echo $HOME || echo \~)/$result
-
-    if set -q _flag_print
-        echo $result
-    else
-        __fzf.open $result
-    end
-end
-
-function __fzf.open
-    set real_path (eval echo -- $argv)
+function __fzf-exec -d "My fzf internal unified execution logic"
+    set input_path $argv[1]
+    set real_path (eval echo -- $input_path)
     set token
 
     ## Handlers
@@ -106,6 +59,8 @@ function __fzf.open
         begin
             echo '- cmd:' (string unescape -n $token)
             echo '  when:' (date '+%s')
+            echo '  path:'
+            echo '    -' $input_path
         end >>~/.local/share/fish/fish_history
 
         builtin history --merge # merge history file with (empty) internal history
@@ -117,3 +72,34 @@ function __fzf.open
     commandline -f repaint-mode
 end
 
+function fzf-vault -d 'Search and navigate vault directories'
+    argparse title=? print=? absolute=? -- $argv
+    or return 1
+
+    set title ' Home '
+    set -q _flag_title; and set title $_flag_title
+
+    # Generate vault list cleanly
+    begin
+        printf '%s\n' $RH_VAULT
+        fd --follow --hidden --ignore --no-require-git \
+            --type directory --max-depth 1 --absolute-path --color never \
+            -- . $RH_VAULT
+    end \
+        | sed "s:^$HOME/::; s:/\$::" \
+        | sort -ur \
+        | fzf --border-label " $title " \
+        | read -l result
+    or return 1
+
+    # Reconstruct path based on absolute flag
+    set prefix '~'
+    set -q _flag_absolute; and set prefix $HOME
+    set final_path $prefix/$result
+
+    if set -q _flag_print
+        echo $final_path
+    else
+        __fzf-exec $final_path
+    end
+end
