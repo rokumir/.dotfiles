@@ -1,7 +1,7 @@
 # prompt config
 set -U tide_prompt_add_newline_before false
-set -U tide_prompt_color_frame_and_connection 6C6C6C
-set -U tide_prompt_color_separator_same_color 949494
+set -U tide_prompt_color_frame_and_connection black
+set -U tide_prompt_color_separator_same_color brblack
 set -U tide_prompt_icon_connection ' '
 set -U tide_prompt_min_cols 2
 set -U tide_prompt_pad_items true # space between items
@@ -24,8 +24,8 @@ set -U tide_character_vi_icon_visual ' V'
 
 # pwd
 set -U tide_pwd_bg_color normal
-set -U tide_pwd_color_anchors 2AC4F0
-set -U tide_pwd_color_dirs 479BDF
+set -U tide_pwd_color_anchors yellow
+set -U tide_pwd_color_dirs bryellow
 set -U tide_pwd_color_truncated_dirs white
 set -U tide_pwd_icon
 set -U tide_pwd_icon_home
@@ -34,9 +34,9 @@ set -U tide_pwd_icon_unwritable 
 # context
 set -U tide_context_always_display false
 set -U tide_context_bg_color normal
-set -U tide_context_color_default D7AF87
-set -U tide_context_color_root $_tide_color_gold
-set -U tide_context_color_ssh D7AF87
+set -U tide_context_color_default yellow
+set -U tide_context_color_root yellow
+set -U tide_context_color_ssh yellow
 set -U tide_context_hostname_parts 1
 
 # time

@@ -1,4 +1,4 @@
-function mkcd --argument dir -d 'Create and goto folder'
+function mkcd --argument-names dir -d 'Create and goto folder'
     mkdir -pv $dir
     cd $dir
 end

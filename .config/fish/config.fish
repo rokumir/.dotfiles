@@ -1,11 +1,10 @@
-set -U fish_greeting ''
-set -U fish_vi_force_cursor true
-set -U fish_cursor_insert line blink
-set -U fish_cursor_default block blink
-set -U fish_prompt_pwd_dir_length 1
-set -U fish_prompt_pwd_full_dirs 3
+set -g fish_greeting ''
+set -g fish_vi_force_cursor true
+set -g fish_cursor_insert line blink
+set -g fish_cursor_default block blink
+set -g fish_prompt_pwd_dir_length 1
+set -g fish_prompt_pwd_full_dirs 3
 set -p fish_function_path ~/.config/fish/func.d
-fish_config theme choose rose-pine
 
 ## --------------------------------------------------
 ## aliases/functions
@@ -58,9 +57,9 @@ function fish_user_key_bindings
     bind --preset -Mvisual L end-of-line
     bind --preset -Mvisual H beginning-of-line
 
-    set _sc '; commandline -f repaint-mode; set fish_bind_mode insert;'
+    set _sc '; echo; commandline -t ""; commandline -f repaint-mode; set fish_bind_mode insert;'
 
-    bind --preset -Minsert ctrl-p '[ -z "$fish_private_mode" ] && fish --private || echo Private mode is active!!'$_sc
+    bind --preset -Minsert ctrl-p '[ -z "$fish_private_mode" ] && fish --private || echo -e \n(set_color yellow)Private mode is active!!'$_sc
 
     bind --preset -Minsert ctrl-e fzf-files
     bind --preset -Minsert ctrl-d fzf-vault

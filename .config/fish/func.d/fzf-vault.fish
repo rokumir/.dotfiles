@@ -13,7 +13,7 @@ function fzf-vault -d 'Search and navigate vault directories'
             -- . $RH_VAULT
     end \
         | sed "s:^$HOME/::; s:/\$::" \
-        | sort -ur \
+        | sort -fbu \
         | fzf --border-label " $title " \
         | read -l result
     or return 1
