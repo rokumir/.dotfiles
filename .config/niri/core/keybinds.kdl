@@ -15,6 +15,7 @@ binds {
     // use keyd to map this to Super
     Mod+F2        repeat=false cooldown-ms=250 hotkey-overlay-title="Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
 
+
     // Screenshots
     Mod+Shift+S   repeat=false cooldown-ms=250 hotkey-overlay-title="Screenshot" { spawn "~/.config/niri/scripts/screenshot"; }
     Print         repeat=false cooldown-ms=250 hotkey-overlay-title="Screenshot" { spawn "~/.config/niri/scripts/screenshot"; }
@@ -120,5 +121,10 @@ binds {
     Mod+Shift+Minus   { set-window-height "-5%"; }
     Mod+Shift+Equal   { set-window-height "+5%"; }
 
-    Mod+Alt+P   repeat=false hotkey-overlay-title="To PIP" { spawn "~/.config/niri/scripts/win-to-pip"; }
+    // Mod+Alt+P   repeat=false hotkey-overlay-title="To PIP" { spawn "~/.config/niri/scripts/win-to-pip"; }
+
+    Mod+X        hotkey-overlay-title="Toggle window in/out the sidebar" { spawn-sh "niri-sidebar toggle-window"; }
+    Mod+Shift+X  hotkey-overlay-title="Toggle sidebar visibility"        { spawn-sh "niri-sidebar toggle-visibility"; }
+    Mod+Ctrl+X   hotkey-overlay-title="Focus and cycle thru windows"     { spawn-sh "niri-sidebar focus"; }
+    Mod+Alt+X    hotkey-overlay-title="Flip the order of the sidebar"    { spawn-sh "niri-sidebar flip"; }
 }

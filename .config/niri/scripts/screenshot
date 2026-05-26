@@ -1,54 +1,29 @@
 #!/usr/bin/env fish
 
-# NOTE: Help
-# Usage: ~/.config/niri/scripts/screenshot [option]
-# Options:
-#   help      Show this help
+# NOTE: Usage: Options
 #   (no arg)  Capture region
 #   screen    Capture full screen
 #   window    Capture active window
 
-function notify
-    notify-send \
-        --app-name='Screenshot Script' \
-        $argv
-end
-
-set required_programs grim satty inotifywait
-if not type -q $required_programs
-    notify --urgency=critical "$required_programs not found!!"
-    exit 1
-end
-if not set -q XDG_PICTURES_DIR
-    notify --urgency=critical '$XDG_PICTURES_DIR not found!!'
-    exit 1
-end
-
-# -----------------------------------------------------------------------------
-
-set dir "$XDG_PICTURES_DIR/Screenshots"
-mkdir -p $dir
-
-set app (niri msg --json focused-window | jq -r '.app_id // "unknown"')
-set file "$dir/$app"_(date +%Y-%m-%d_%H-%M-%S).png
+set dir ~/Pictures/Screenshots
 set arg $argv[1]
+set timestamp (date +%Y-%m-%d_%H-%M-%S)
 
-begin
-    if [ -z "$arg" ]
-        set slurp_border_color (jq -r '.mPrimary' -- ~/.config/noctalia/colors.json; or echo '#13b77aa6')
-        set sc_area (slurp \
-            -b '#04040499' \
-            -c $slurp_border_color)
-
-        # faster pipeline (no temp file write first)
-        grim -g "$sc_area" - | wl-copy
-        grim -g "$sc_area" -t ppm - | satty \
-            --filename - \
-            --output-filename $file
-    else
-        niri msg action screenshot-$arg --path $file
-        inotifywait -q -e close_write -t 5 (dirname "$file")
-        satty --filename $file --output-filename $file --copy-command wl-copy
-    end
+function notify
+    notify-send --icon satty --app-name Satty $argv
 end
-or notify 'Aborted!'
+
+if [ -n "$arg" ] # screen or window
+    set app (niri msg --json focused-window | jq -r '.app_id // "unknown"')
+    set file "$dir/$app\_$timestamp.png"
+    niri msg action screenshot-$arg --path $file
+else # region
+    set file "$dir/$timestamp.png"
+    set sc_area (slurp -b '#04040499' -c '#13b77aa6'; or begin
+        notify 'Aborted!'
+        exit 1
+    end)
+    grim -g $sc_area $file
+    wl-copy -t image/png <$file
+    notify "Screenshots saved at" (printf $file | sed "s|^$HOME|~|")
+end

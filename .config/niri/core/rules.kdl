@@ -51,9 +51,17 @@ window-rule {
     match app-id="^(zen-alpha|zen)$"
     match app-id="^([Hh]elium)$"
     exclude title="Picture(-| )in(-| )[Pp]icture"
+    exclude title="^()$"
 
     open-maximized-to-edges true
     default-column-width { proportion 0.8; };
+}
+
+// Zen Browser's Boost
+window-rule {
+    match app-id="zen" title="^()$"
+    geometry-corner-radius 16
+    open-floating true
 }
 
 // Picture-in-Pictures (PIP)

@@ -1,7 +1,12 @@
+spawn-sh-at-startup "systemctl --user start stasis"
+
+spawn-sh-at-startup "wl-paste --type text --watch cliphist store"
+spawn-sh-at-startup "wl-paste --type image --watch cliphist store"
+
 spawn-at-startup "noctalia"
 spawn-sh-at-startup "sleep 2; noctalia msg caffeine-enable" // Keep Awake
 
-spawn-sh-at-startup "walker --gapplication-service"
-spawn-sh-at-startup "warp-cli connect"
+spawn-sh-at-startup "sleep 1; warp-cli connect"
+spawn-sh-at-startup "niri-sidebar listen"
 
 spawn-sh-at-startup "~/.config/niri/scripts/default-settings"

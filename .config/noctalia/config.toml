@@ -1,139 +1,246 @@
+[config]
+
+# ------------------------------------------------------------------------------
+# System
+# ------------------------------------------------------------------------------
 [audio]
 enable_overdrive = true
 enable_sounds    = true
 
-[bar]
-order = [ "Main" ]
-
-    [bar.Main]
-    auto_hide          = true
-    background_opacity = 0.7
-    capsule_fill       = "shadow"
-    capsule_groups     = [ "Utility", "System Monitor", "Media" ]
-    capsule_opacity    = 0.4
-    contact_shadow     = true
-    end                = [ "temp", "ram", "cpu", "tray", "notifications", "input_volume", "volume" ]
-    margin_edge        = 0
-    margin_ends        = 0
-    padding            = 8
-    position           = "right"
-    radius             = 0
-    reserve_space      = false
-    start              = [ "workspaces", "media", "audio_visualizer" ]
-
 [brightness]
 enable_ddcutil = true
 
-[config]
-
 [desktop_widgets]
 enabled = false
-
-[dock]
-enabled             = true
-active_monitor_only = true
-auto_hide           = true
-background_opacity  = 0.7
-icon_size           = 30
-inactive_opacity    = 0.8
-inactive_scale      = 1.0
-pinned              = [ "zen", "com.mitchellh.ghostty", "vesktop" ]
-radius              = 12
 
 [nightlight]
 use_weather_location = false
 
 [notification]
-layer = "top"
+layer              = 'top'
 background_opacity = 0.7
-sound_volume = 0.4
+sound_volume       = 0.4
 
 [shell]
 ui_scale               = 0.95
-font_family            = "Playwrite GB J, sans-serif"
-password_style         = "random"
+font_family            = 'Playwrite GB J, sans-serif'
+password_style         = 'random'
 polkit_agent           = true
 settings_show_advanced = true
 telemetry_enabled      = true
 
-    [[shell.session.actions]]
-    action      = "shutdown"
-    destructive = true
-    enabled     = true
+    [shell.panel]
+    open_near_click_clipboard = true
+    open_near_click_launcher  = true
+    session_placement         = "centered"
+
+    [shell.screen_corners]
+    enabled  = true
+    size     = 18
 
     [[shell.session.actions]]
-    action  = "lock"
-    enabled = true
+    action   = "shutdown"
+    enabled  = true
+    shortcut = "1"
+    variant  = "default"
 
     [[shell.session.actions]]
-    action  = "logout"
-    enabled = true
+    action   = "lock"
+    enabled  = true
+    shortcut = "2"
+    variant  = "default"
 
     [[shell.session.actions]]
-    action  = "reboot"
-    enabled = true
+    action   = "logout"
+    enabled  = true
+    shortcut = "3"
+    variant  = "default"
 
-[theme]
-source            = "wallpaper"
-wallpaper_scheme  = "m3-tonal-spot"
+    [[shell.session.actions]]
+    action   = "reboot"
+    enabled  = true
+    shortcut = "4"
+    variant  = "default"
 
-    [theme.templates]
-    builtin_ids           = [ "gtk3", "gtk4", "btop", "qt" ]
-    community_ids         = [ "spicetify", "steam", "zed" ]
-    enable_user_templates = true
-    user_config           = "~/.config/noctalia/user-templates.toml"
+    [[shell.session.actions]]
+    action   = "command"
+    command  = "noctalia msg power-cycle"
+    enabled  = true
+    glyph    = "powersaver"
+    label    = "Cycle Noctalia Power Profile"
+    shortcut = "q"
+    variant  = "outline"
 
-[wallpaper]
-directory  = "~/Pictures/Wallpapers"
-fill_color = "#000000"
+    [[shell.session.actions]]
+    action   = "command"
+    command  = "stasis-cycle-profile"
+    enabled  = true
+    glyph    = "leaf-2"
+    label    = "Cycle Stasis Profile"
+    shortcut = "w"
+    variant  = "outline"
 
 [keybinds]
-cancel = [ "Escape" ]
-down = [ "Ctrl+j", "Down" ]
-left = [ "Ctrl+h", "Left" ]
-right = [ "Ctrl+l", "Right" ]
-up = [ "Ctrl+k", "Up" ]
-validate = [ "Return" ]
+cancel   = [ 'Escape' ]
+down     = [ 'Ctrl+j', 'Down' ]
+left     = [ 'Ctrl+h', 'Left' ]
+right    = [ 'Ctrl+l', 'Right' ]
+up       = [ 'Ctrl+k', 'Up' ]
+validate = [ 'Return' ]
+
+[hooks]
+power_profile_changed = "power-profile-status-notify"
+wallpaper_changed     = "sync-sddm-wallpaper"
+
+
+# ------------------------------------------------------------------------------
+# Theme & Templates
+# ------------------------------------------------------------------------------
+[wallpaper]
+directory  = '~/Pictures/Wallpapers'
+fill_color = '#000000'
+
+[theme]
+source           = 'wallpaper'
+wallpaper_scheme = 'm3-tonal-spot'
+
+    [theme.templates]
+    builtin_ids   = [ 'gtk3', 'gtk4', 'btop', 'qt' ]
+    community_ids = [ 'steam', 'zed' ]
+
+        [theme.templates.user.sddm]
+        input_path  = 'templates/sddm.conf'
+        output_path = '/usr/share/sddm/themes/noctalia/theme.conf'
+
+        [theme.templates.user.niri]
+        input_path  = 'templates/niri.kdl'
+        output_path = '~/.config/niri/lib/theme.kdl'
+
+        [theme.templates.user.vesktop]
+        input_path  = 'templates/discord.css'
+        output_path = '~/.config/vesktop/themes/Nihil.theme.css'
+
+        [theme.templates.user.zen_userChrome]
+        input_path  = 'templates/zen/userChrome.css'
+        output_path = '~/.cache/noctalia/zen-browser/zen-userChrome.css'
+        [theme.templates.user.zen_userContent]
+        input_path  = 'templates/zen/userContent.css'
+        output_path = '~/.cache/noctalia/zen-browser/zen-userContent.css'
+
+        [theme.templates.user.zathura]
+        input_path  = 'templates/zathurarc'
+        output_path = '~/.config/zathura/themes/nihil'
+
+        [theme.templates.user.ghostty]
+        input_path  = 'templates/ghostty'
+        output_path = '~/.config/ghostty/themes/nihil'
+        post_hook   = 'pgrep -f ghostty >/dev/null && pkill -SIGUSR2 ghostty || true'
+
+
+# ------------------------------------------------------------------------------
+# Control Center
+# ------------------------------------------------------------------------------
+[[control_center.shortcuts]]
+type = 'caffeine'
+
+[[control_center.shortcuts]]
+type = 'nightlight'
+
+[[control_center.shortcuts]]
+type = 'notification'
+
+[[control_center.shortcuts]]
+type = 'power_profile'
+
+
+# ------------------------------------------------------------------------------
+# Dock
+# ------------------------------------------------------------------------------
+[dock]
+enabled             = true
+active_monitor_only = true
+auto_hide           = true
+launcher_position   = "start"
+background_opacity  = 0.7
+icon_size           = 30
+inactive_opacity    = 0.8
+inactive_scale      = 1.0
+radius              = 12
+show_dots           = true
+
+# ------------------------------------------------------------------------------
+# Status Bar & widgets
+# ------------------------------------------------------------------------------
+[bar]
+order = [ 'Main' ]
+
+    [bar.Main]
+    auto_hide          = true
+    background_opacity = 0.7
+    scale              = 0.9
+    capsule_fill       = 'shadow'
+    capsule_groups     = [ 'Utility', 'System Monitor', 'Media' ]
+    capsule_opacity    = 0.4
+    contact_shadow     = true
+    margin_edge        = 4.0
+    margin_ends        = 4.0
+    padding            = 8
+    position           = 'top'
+    radius             = 0
+    reserve_space      = true
+    start              = [ "clock", "media", "audio_visualizer" ]
+    center             = [ "workspaces" ]
+    end                = [
+        "tray",
+        "temp",
+        "cpu",
+        "ram",
+        "power_profiles",
+        "toggle-warp-button",
+        "notifications",
+        "input_volume",
+        "volume"
+    ]
 
 [weather]
 auto_locate = true
 
 [widget.audio_visualizer]
-bands         = 30
+bands         = 50
+width         = 120.0
 capsule       = true
-capsule_group = "Media"
-low_color     = "on_hover"
+capsule_group = 'Media'
+low_color     = 'on_hover'
 mirrored      = false
-width         = 60.0
 
 [widget.clock]
-format = "{:%H %M}"
+format = '{:%H %M}'
 
 [widget.cpu]
 capsule       = true
-capsule_group = "System Monitor"
-display       = "gauge"
+capsule_group = 'System Monitor'
+display       = 'gauge'
 show_label    = false
 
 [widget.input_volume]
 capsule       = true
-capsule_group = "Utility"
+capsule_group = 'Utility'
 show_label    = false
 
 [widget.media]
 capsule       = true
-capsule_group = "Media"
-color         = "on_surface_variant"
-title_scroll  = "on_hover"
+capsule_group = 'Media'
+color         = 'on_surface_variant'
+title_scroll  = 'on_hover'
 
 [widget.notifications]
 capsule             = true
-capsule_group       = "Utility"
+capsule_group       = 'Utility'
 hide_when_no_unread = true
 
 [widget.ram]
 capsule       = true
-capsule_group = "System Monitor"
+capsule_group = 'System Monitor'
 show_label    = false
 
 [widget.spacer]
@@ -142,32 +249,33 @@ length  = 6.0
 
 [widget.temp]
 capsule       = true
-capsule_group = "System Monitor"
+capsule_group = 'System Monitor'
 show_label    = false
 
 [widget.tray]
 capsule       = true
-capsule_group = ""
+capsule_group = ''
 drawer        = false
-hidden        = [ "zero-trust-client", "Easy Effects" ]
+hidden        = [ 'zero-trust-client', 'Easy Effects' ]
 
 [widget.volume]
 capsule       = true
-capsule_group = "Utility"
+capsule_group = 'Utility'
 show_label    = false
 
 [widget.workspaces]
+capsule         = true
+display         = 'none'
+hide_when_empty = true
+
+[widget.power_profiles]
 capsule = true
-display = "none"
+capsule_group = "Utility"
 
-[[control_center.shortcuts]]
-type = "caffeine"
-
-[[control_center.shortcuts]]
-type = "nightlight"
-
-[[control_center.shortcuts]]
-type = "notification"
-
-[[control_center.shortcuts]]
-type = "power_profile"
+[widget.toggle-warp-button]
+capsule = true
+capsule_group = "Utility"
+command = "toggle-warp"
+glyph = "cloud"
+tooltip = "Toggle Warp Cloudflare"
+type = "custom_button"
