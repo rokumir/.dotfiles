@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+profile=$(powerprofilesctl get)
+notify-send --icon leaf --app-name 'Power Profile' \
+    "Power Profile: $profile" \
+    "Current active profile is \"$profile\""

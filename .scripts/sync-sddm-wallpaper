@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+DEST_DIR="/usr/share/sddm/themes/noctalia/Assets"
+SETTING_PATH="$HOME/.local/state/noctalia/settings.toml"
+WALLPAPER=$(toml2json "$SETTING_PATH" | jq -r ".wallpaper.default.path // empty")
+
+TEMP_DIR="$HOME/.cache/noctalia"
+TEMP_OLD_BG="$TEMP_DIR/$(basename "$WALLPAPER")"
+TEMP_NEW_BG="$TEMP_DIR/background.png"
+
+mkdir -p "$TEMP_DIR"
+
+if [[ -d "$SETTING_PATH" ]]; then
+    notify-send -u critical "[SDDM] Noctalia's settings not found!"
+    exit 1
+fi
+if [[ -z "$WALLPAPER" ]]; then
+    notify-send -u critical "[SDDM] Noctalia's wallpaper not found!"
+    exit 1
+fi
+
+#------------------------------------------------------------------------
+
+# Convert whatever the wallpaper is to `background.png`
+cp -fa "$WALLPAPER" "$TEMP_OLD_BG"
+ffmpeg -i "$TEMP_OLD_BG" "$TEMP_NEW_BG" 2>/dev/null
+mv -f "$TEMP_NEW_BG" "$DEST_DIR"

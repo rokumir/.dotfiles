@@ -1,0 +1,116 @@
+#!/usr/bin/env fish
+
+# NOTE: AI GENERATED CODE.
+# NOTE: THIS IS NOT SAFE YET.
+
+# Usage:
+# Optional environment variables:
+#    OUTDIR    destination directory (default: same dir as input)
+#    ENHANCE   1 to apply a mild sharpening pass before encoding
+#    UPSCALE   integer scale factor used only when ENHANCE=1 and >1 (default: 1)
+#    FPS       fixed fps for animation inputs (default: keep source timing)
+
+function _webp_out --argument-names in
+    set -l dir (dirname -- "$in")
+    set -l base (basename -- "$in")
+    set -l stem (string replace -r '\.[^.]+$' '' -- "$base")
+
+    set -q OUTDIR; and set dir (realpath $OUTDIR)
+
+    echo "$dir/$stem.webp"
+end
+
+function _webp_filter
+    set -l filter ""
+
+    if test "$ENHANCE" = 1
+        set -l scale_factor 1
+        if set -q UPSCALE
+            set scale_factor $UPSCALE
+        end
+
+        if test "$scale_factor" -gt 1
+            set filter "scale=iw*$scale_factor:ih*$scale_factor:flags=lanczos,unsharp=5:5:0.8:3:3:0.4"
+        else
+            set filter "unsharp=5:5:0.8:3:3:0.4"
+        end
+    end
+
+    if set -q FPS
+        if test -n "$filter"
+            set filter "$filter,fps=$FPS"
+        else
+            set filter "fps=$FPS"
+        end
+    end
+
+    echo "$filter"
+end
+
+function webpify --argument-names in
+    if not test -f "$in"
+        echo "skip: not a file: $in" >&2
+        return 1
+    end
+
+    set -l base (basename -- "$in")
+    set -l ext (string lower -- (string replace -r '^.*\.([^.]+)$' '$1' -- "$base"))
+
+    if test "$ext" = "$base"
+        echo "skip: no extension: $in" >&2
+        return 2
+    end
+
+    set -l out (_webp_out "$in")
+    # -nostdin prevents ffmpeg from swallowing shell loop inputs
+    set -l common -hide_banner -y -nostdin
+    set -l filter (_webp_filter)
+
+    switch $ext
+        case png jpg jpeg bmp tif tiff webp avif heic
+            # --- STATIC IMAGES ---
+            # Kept strictly lossless (-lossless 1) to match original quality.
+            # -compression_level 5 balances great compression with fast processing speeds.
+            if test -n "$filter"
+                ffmpeg $common -i "$in" -vf "$filter" -an \
+                    -c:v libwebp -lossless 1 -compression_level 5 -preset picture \
+                    "$out"
+            else
+                ffmpeg $common -i "$in" -an \
+                    -c:v libwebp -lossless 1 -compression_level 5 -preset picture \
+                    "$out"
+            end
+            or return $status
+
+        case gif mp4 mov mkv webm avi m4v
+            # --- ANIMATIONS & VIDEOS ---
+            # Lossless WebP animations create astronomically large files.
+            # Instead, we use high-quality lossy (-lossless 0 -q:v 85) which is visually
+            # identical to the human eye but results in file sizes up to 10x-20x smaller.
+            if test -n "$filter"
+                ffmpeg $common -i "$in" -vf "$filter" -an \
+                    -c:v libwebp -lossless 0 -q:v 85 -compression_level 4 -preset default -loop 0 \
+                    "$out"
+            else
+                ffmpeg $common -i "$in" -an \
+                    -c:v libwebp -lossless 0 -q:v 85 -compression_level 4 -preset default -loop 0 \
+                    "$out"
+            end
+            or return $status
+
+        case '*'
+            echo "skip: unsupported extension: $in" >&2
+            return 3
+    end
+
+    echo "wrote: $out"
+end
+
+if test (count $argv) -lt 1
+    echo "usage: (basename -- $argv[1]) file1 [file2 ...]" >&2
+    exit 1
+end
+
+for f in $argv
+    webpify "$f"
+end

@@ -1,0 +1,19 @@
+#!/usr/bin/env fish
+
+type -q stasis || exit 1
+
+set active_profile (stasis info | rg -oP '^Profile:\s+\K.*')
+set profiles none \
+    (stasis list profiles | tail -n +2 | colrm 1 2)
+
+set active_index (contains --index $active_profile $profiles)
+set next_index (math "($active_index % $(count $profiles)) + 1")
+set next_profile $profiles[$next_index]
+
+notify-send \
+    --icon leaf-2 --app-name STASIS \
+    "STASIS: $(string upper $next_profile) profile" \
+    "Change profile to: $next_profile"
+
+set -gx STASIS_ACTIVE_PROFILE $next_profile
+stasis profile $STASIS_ACTIVE_PROFILE
