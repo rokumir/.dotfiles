@@ -1,10 +1,11 @@
 return {
 	'folke/snacks.nvim',
+	---@module 'snacks'
 	---@type snacks.Config
 	opts = {
 		image = {
-			enabled = false,
-			force = false, -- try displaying the image, even if the terminal does not support it
+			enabled = true,
+			force = true, -- try displaying the image, even if the terminal does not support it
 
 			preferred_protocol = 'wezterm', -- or "kitty"
 			fallback_protocol = 'chafa',
@@ -16,6 +17,8 @@ return {
 			icons = { math = '󰪚 ', chart = '󰄧 ', image = ' ' },
 			debug = { request = false, convert = false, placement = false },
 			env = {},
+
+			math = { enabled = true },
 
 			img_dirs = { 'img', 'images', 'assets', 'static', 'public', 'media', 'attachments', '__assets', 'banners' },
 			formats = {
@@ -58,17 +61,7 @@ return {
 				statuscolumn = '',
 			},
 
-			---@class snacks.image.convert.Config
-			convert = {
-				notify = true, -- show a notification on error
-				---@type table<string,snacks.image.args>
-				magick = {
-					default = { '{src}[0]', '-scale', '1920x1080>' }, -- default for raster images
-					vector = { '-density', 192, '{src}[0]' }, -- used by vector images like svg
-					math = { '-density', 192, '{src}[0]', '-trim' },
-					pdf = { '-density', 192, '{src}[0]', '-background', 'white', '-alpha', 'remove', '-trim' },
-				},
-			},
+			convert = { notify = true }, -- show a notification on error
 		},
 	},
 }

@@ -152,21 +152,16 @@ return {
 	{ -- Change text case
 		'gregorias/coerce.nvim',
 		lazy = false,
+		keys = {
+			{ ';c', '', mode = 'n' },
+			{ ';c', '', mode = 'x' },
+		},
 		config = function()
 			local coerce = require 'coerce'
 			local case = require 'coerce.case'
 			local cs = require 'coerce.string'
 
 			coerce.setup {
-				default_mode_keymap_prefixes = {
-					normal_mode = ';c',
-					visual_mode = ';c',
-				},
-				default_mode_mask = {
-					normal_mode = true,
-					visual_mode = true,
-					motion_mode = false,
-				},
 				cases = {
 					{ keymap = 'c', case = case.to_camel_case, description = 'camelCase' },
 					{ keymap = 'k', case = case.to_kebab_case, description = 'kebab-case' },
@@ -179,13 +174,17 @@ return {
 					{ keymap = '.', case = case.to_dot_case, description = 'dot.case' },
 					{
 						keymap = ',',
-						case = function(str) return table.concat(case.split_keyword(str), ',') end,
+						case = function(str)
+							local parts = case.split_keyword(str)
+							return table.concat(parts, ',')
+						end,
 						description = 'comma.case',
 					},
 					{
 						keymap = 'U',
 						case = function(str)
-							local parts = vim.tbl_map(vim.fn.toupper, case.split_keyword(str))
+							local parts = case.split_keyword(str)
+							parts = vim.tbl_map(vim.fn.toupper, parts)
 							return table.concat(parts, ' ')
 						end,
 						description = 'UPPER CASE',
@@ -193,7 +192,8 @@ return {
 					{
 						keymap = 'u',
 						case = function(str)
-							local parts = vim.tbl_map(vim.fn.tolower, case.split_keyword(str))
+							local parts = case.split_keyword(str)
+							parts = vim.tbl_map(vim.fn.tolower, parts)
 							return table.concat(parts, ' ')
 						end,
 						description = 'lower case',
@@ -212,6 +212,12 @@ return {
 						description = 'Title Case',
 					},
 				},
+			}
+
+			local wke = require('coerce.keymaps').which_key_expand
+			require('which-key').add {
+				{ ';c', group = '+Coerce word', expand = wke.normal_mode, mode = 'n' },
+				{ ';c', group = '+Coerce visual', expand = wke.visual_mode, mode = 'x' },
 			}
 		end,
 	},

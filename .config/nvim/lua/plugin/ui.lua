@@ -17,7 +17,7 @@ return {
 		optional = true,
 		event = 'VeryLazy',
 
-		opts = function(_, opts)
+		config = function(_, opts)
 			require('lualine_require').require = require -- PERF: we don't need this lualine require madness 🤷
 
 			vim.o.laststatus = vim.g.lualine_laststatus
@@ -143,7 +143,7 @@ return {
 				opts.sections.lualine_y[i].separator = { right = ' ', left = '' }
 			end
 
-			return opts
+			require('lualine').setup(opts)
 		end,
 	},
 
@@ -309,11 +309,11 @@ return {
 			{ '[;', function() require('dropbar.api').goto_context_start() end, desc = 'Previous LSP context' },
 			{ '];', function() require('dropbar.api').select_next_context() end, desc = 'Next LSP context' },
 		},
-		opts = function()
+		config = function()
 			local sources = require 'dropbar.sources'
 			local source_fallback = require('dropbar.utils').source.fallback
-			---@type dropbar_configs_t
-			return {
+
+			require('dropbar').setup {
 				sources = {
 					path = {
 						max_depth = 1,

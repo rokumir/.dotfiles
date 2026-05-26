@@ -25,6 +25,7 @@ return {
 				qml = { 'qmlformat' },
 				python = { 'ruff format ' },
 				xml = { 'xmlformatter' },
+				toml = { 'taplo' },
 			},
 		},
 	},
