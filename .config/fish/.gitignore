@@ -5,3 +5,5 @@ fishd.tmp*
 conf.d/*.local*
 functions/
 completions/
+
+**/_tide*
