@@ -1,6 +1,7 @@
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Outputs
 output "HDMI-A-1" {
     mode "1920x1080@100.000"
+    // mode "1920x1080@59.934"
     scale 1
-    variable-refresh-rate
+    variable-refresh-rate on-demand=true
 }

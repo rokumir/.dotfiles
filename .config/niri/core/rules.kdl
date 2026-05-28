@@ -7,8 +7,8 @@ layer-rule {
 }
 // Noctalia blurred backdrop
 layer-rule {
-  match namespace="^noctalia-backdrop*"
-  place-within-backdrop true
+    match namespace="^noctalia-backdrop*"
+    place-within-backdrop true
 }
 
 //= WINDOWS ============================================================
@@ -84,6 +84,12 @@ window-rule {
     match title=".*(Discord).*" app-id="discord|vesktop"
 
     default-column-width { proportion 0.8; };
+}
+
+// Terminal
+window-rule {
+    match app-id="Alacritty|kitty|kitty-dropterm|com.mitchellh.ghostty"
+    variable-refresh-rate true
 }
 
 // Popups
@@ -181,6 +187,10 @@ window-rule {
 window-rule {
     match title="^(FarFarWest)$"
     open-maximized true
+}
+window-rule {
+    match app-id="^(steam_app_).*"
+    variable-refresh-rate true
 }
 
 // Screenshot

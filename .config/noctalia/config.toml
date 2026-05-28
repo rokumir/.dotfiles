@@ -1,4 +1,6 @@
 [config]
+[noctalia_state]
+setup_wizard_completed = true
 
 # ------------------------------------------------------------------------------
 # System
@@ -71,15 +73,6 @@ telemetry_enabled      = true
     shortcut = "q"
     variant  = "outline"
 
-    [[shell.session.actions]]
-    action   = "command"
-    command  = "stasis-cycle-profile"
-    enabled  = true
-    glyph    = "leaf-2"
-    label    = "Cycle Stasis Profile"
-    shortcut = "w"
-    variant  = "outline"
-
 [keybinds]
 cancel   = [ 'Escape' ]
 down     = [ 'Ctrl+j', 'Down' ]
@@ -135,6 +128,29 @@ wallpaper_scheme = 'm3-tonal-spot'
         input_path  = 'templates/ghostty'
         output_path = '~/.config/ghostty/themes/nihil'
         post_hook   = 'pgrep -f ghostty >/dev/null && pkill -SIGUSR2 ghostty || true'
+
+
+# ------------------------------------------------------------------------------
+# Idle
+# ------------------------------------------------------------------------------
+[idle]
+behavior_order = [ "lock", "screen-off", "suspend" ]
+
+    [idle.behavior.lock]
+    action = "lock"
+    enabled = true
+    timeout = 600
+
+    [idle.behavior.screen-off]
+    action = "screen_off"
+    enabled = true
+    timeout = 660
+
+    [idle.behavior.suspend]
+    action = "suspend"
+    enabled = true
+    lock_before_suspend = true
+    timeout = 900
 
 
 # ------------------------------------------------------------------------------
